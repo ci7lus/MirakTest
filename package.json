@@ -1,0 +1,29 @@
+{
+  "name": "ts",
+  "version": "1.0.0",
+  "description": "My project template for TypeScript.",
+  "author": "ci7lus <7887955+ci7lus@users.noreply.github.com>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": ""
+  },
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "package.json",
+    "dist/**/*"
+  ],
+  "scripts": {
+    "dev": "nodemon",
+    "build": "tsc",
+    "lint": "prettier --check './src/**/*.{js,ts,tsx}'",
+    "format": "prettier --write './src/**/*.{js,ts,tsx}'"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.6",
+    "prettier": "^2.2.1",
+    "ts-node": "^9.1.1",
+    "typescript": "^4.1.3"
+  }
+}
