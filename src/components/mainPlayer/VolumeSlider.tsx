@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
 import { useDebounce } from "react-use"
 import { useRecoilState } from "recoil"
 import { mainPlayerVolume } from "../../atoms/mainPlayer"
@@ -14,6 +14,9 @@ export const VolumeSlider: React.VFC<{}> = () => {
     100,
     [volume]
   )
+  useEffect(() => {
+    setVolume(playerVolume)
+  }, [playerVolume])
 
   return (
     <input

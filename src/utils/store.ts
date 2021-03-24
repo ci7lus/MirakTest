@@ -3,6 +3,7 @@ import pkg from "../../package.json"
 import {
   mainPlayerBounds,
   mainPlayerLastSelectedServiceId,
+  mainPlayerVolume,
 } from "../atoms/mainPlayer"
 import { mirakurunSetting, sayaSetting } from "../atoms/settings"
 
@@ -19,6 +20,7 @@ const store = new Store<{}>({
     baseUrl: { type: "string" },
     secure: { type: "boolean" },
   },
+  [mainPlayerVolume.key]: { type: "number" },
   [mainPlayerBounds.key]: {
     width: { type: "number" },
     height: { type: "number" },

@@ -3,6 +3,7 @@ import { useRecoilTransactionObserver_UNSTABLE } from "recoil"
 import {
   mainPlayerBounds,
   mainPlayerLastSelectedServiceId,
+  mainPlayerVolume,
 } from "../../atoms/mainPlayer"
 import { mirakurunSetting, sayaSetting } from "../../atoms/settings"
 import { store } from "../../utils/store"
@@ -23,6 +24,14 @@ export const RecoilObserver: React.VFC<{}> = () => {
           try {
             const snap = snapshot.getLoadable(sayaSetting).getValue()
             store.set(sayaSetting.key, snap)
+          } catch (e) {
+            console.error(e)
+          }
+          break
+        case mainPlayerVolume.key:
+          try {
+            const snap = snapshot.getLoadable(mainPlayerVolume).getValue()
+            store.set(mainPlayerVolume.key, snap)
           } catch (e) {
             console.error(e)
           }

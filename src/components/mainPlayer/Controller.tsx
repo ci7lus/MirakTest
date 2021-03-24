@@ -44,7 +44,7 @@ export const Controller: React.VFC<{}> = () => {
   const [subtitleEnabled, setSubtitleEnabled] = useRecoilState(
     mainPlayerSubtitleEnabled
   )
-  const volume = useRecoilValue(mainPlayerVolume)
+  const [volume, setVolume] = useRecoilState(mainPlayerVolume)
 
   useEffect(() => {
     if (!selectedService) return
@@ -136,13 +136,19 @@ export const Controller: React.VFC<{}> = () => {
           ))}
         </select>
         <div className="flex items-center justify-center space-x-1">
-          {volume === 0 ? (
-            <VolumeX size={22} />
-          ) : volume < 75 ? (
-            <Volume1 size={22} />
-          ) : (
-            <Volume2 size={22} />
-          )}
+          <button
+            type="button"
+            className="focus:outline-none"
+            onClick={() => setVolume((volume) => (0 < volume ? 0 : 100))}
+          >
+            {volume === 0 ? (
+              <VolumeX size={22} />
+            ) : volume < 75 ? (
+              <Volume1 size={22} />
+            ) : (
+              <Volume2 size={22} />
+            )}
+          </button>
           <VolumeSlider />
         </div>
         <button
