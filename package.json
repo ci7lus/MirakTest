@@ -1,29 +1,79 @@
 {
-  "name": "ts",
+  "name": "miraktest",
   "version": "1.0.0",
-  "description": "My project template for TypeScript.",
+  "description": "MirakTest",
   "author": "ci7lus <7887955+ci7lus@users.noreply.github.com>",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": ""
+    "url": "https://github.com/ci7lus/miraktest.git"
   },
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
-  "files": [
-    "package.json",
-    "dist/**/*"
-  ],
+  "main": "dist/index.electron.js",
   "scripts": {
-    "dev": "nodemon",
-    "build": "tsc",
+    "dev:electron": "NODE_ENV=development electron .",
+    "dev:webpack": "webpack --mode development --color -w",
+    "build:electron": "electron-builder",
+    "build:tsc": "tsc --build tsconfig.tsc.json",
+    "build:webpack": "NODE_ENV=production webpack --mode production",
+    "build": "yarn build:webpack && yarn build:tsc && yarn build:electron",
     "lint": "prettier --check './src/**/*.{js,ts,tsx}'",
     "format": "prettier --write './src/**/*.{js,ts,tsx}'"
   },
   "devDependencies": {
-    "nodemon": "^2.0.6",
+    "@babel/core": "^7.13.10",
+    "@babel/plugin-proposal-class-properties": "^7.13.0",
+    "@babel/plugin-transform-modules-commonjs": "^7.13.8",
+    "@babel/plugin-transform-react-jsx": "^7.12.17",
+    "@babel/plugin-transform-runtime": "^7.13.10",
+    "@babel/plugin-transform-typescript": "^7.13.0",
+    "@babel/preset-env": "^7.13.10",
+    "@babel/preset-react": "^7.12.13",
+    "@babel/preset-typescript": "^7.13.0",
+    "@babel/runtime": "^7.13.10",
+    "@tailwindcss/custom-forms": "^0.2.1",
+    "@types/dplayer": "^1.25.1",
+    "@types/mini-css-extract-plugin": "^1.2.2",
+    "@types/react": "^17.0.3",
+    "@types/react-dom": "^17.0.2",
+    "@types/webpack": "^4.41.26",
+    "autoprefixer": "^10.2.5",
+    "babel-loader": "^8.2.2",
+    "css-loader": "^5.1.3",
+    "electron": "^12.0.1",
+    "electron-builder": "^22.10.5",
+    "jest": "^26.6.3",
+    "mini-css-extract-plugin": "^1.3.9",
+    "node-loader": "^1.0.2",
+    "postcss": "^8.2.8",
+    "postcss-loader": "^5.2.0",
     "prettier": "^2.2.1",
+    "sass": "^1.32.8",
+    "sass-loader": "^11.0.1",
+    "tailwindcss": "^2.0.3",
+    "tailwindcss-textshadow": "^2.1.3",
     "ts-node": "^9.1.1",
-    "typescript": "^4.1.3"
+    "typescript": "^4.2.3",
+    "webpack": "^5.26.3",
+    "webpack-cli": "^4.5.0"
+  },
+  "dependencies": {
+    "@neneka/dplayer": "^1.26.0-patch.0",
+    "axios": "^0.21.1",
+    "electron-reload": "^1.5.0",
+    "electron-store": "^7.0.2",
+    "js-base64": "^3.6.0",
+    "react": "^17.0.1",
+    "react-dom": "^17.0.1",
+    "react-feather": "^2.0.9",
+    "react-toastify": "^7.0.3",
+    "react-use": "^17.2.1",
+    "recoil": "^0.1.3",
+    "reconnecting-websocket": "^4.4.0",
+    "webchimera.js": "^0.3.1",
+    "zod": "^1.11.13"
+  },
+  "cmake-js": {
+    "runtime": "electron",
+    "runtimeVersion": "12.0.1"
   }
 }

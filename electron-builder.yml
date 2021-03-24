@@ -1,0 +1,31 @@
+appId: io.github.ci7lus.miraktest
+productName: MirakTest
+copyright: Copyright © 2021 ci7lus
+directories:
+  output: "./build"
+files:
+  - "index.html"
+  - "package.json"
+  - "dist/**/*.js"
+  - "dist/**/*.css"
+  - "assets/**/*"
+  - "!node_modules/**/*"
+  - from: node_modules/webchimera.js
+    to: node_modules/webchimera.js
+  - from: node_modules/bindings
+    to: node_modules/bindings
+publish: null
+npmRebuild: false
+npmArgs: "--runtime=node "
+mac:
+  entitlements: "entitlements.plist"
+  entitlementsInherit: "entitlements.plist"
+win:
+  target:
+    - "zip"
+    - "nsis"
+linux:
+  category: "AudioVideo"
+  target:
+    - "AppImage"
+    - "tar.gz"

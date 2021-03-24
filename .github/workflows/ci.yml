@@ -12,6 +12,8 @@ jobs:
   lint:
     runs-on: ubuntu-latest
 
+    timeout-minutes: 10
+
     strategy:
       matrix:
         node-version: [12.x]
@@ -33,12 +35,14 @@ jobs:
             ${{ runner.os }}-yarn-
       - name: Install
         run: |
-          yarn
+          yarn --ignore-scripts
       - name: Lint
         run: |
           yarn lint
   build:
     runs-on: ubuntu-latest
+
+    timeout-minutes: 30
 
     strategy:
       matrix:
@@ -62,8 +66,10 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-yarn-
       - name: Install
+        if: runner.os == 'macOS'
         run: |
-          yarn
+          yarn --ignore-scripts
       - name: Build
+        if: runner.os == 'macOS'
         run: |
           yarn build
