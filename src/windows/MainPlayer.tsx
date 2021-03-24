@@ -7,8 +7,12 @@ import { SayaComments } from "../components/mainPlayer/Saya"
 import { remote } from "electron"
 import { Splash } from "../components/global/Splash"
 import { MirakurunManager } from "../components/mainPlayer/MirakurunManager"
-import { useRecoilState } from "recoil"
-import { mainPlayerBounds, mainPlayerRoute } from "../atoms/mainPlayer"
+import { useRecoilState, useRecoilValue } from "recoil"
+import {
+  mainPlayerBounds,
+  mainPlayerRoute,
+  mainPlayerTitle,
+} from "../atoms/mainPlayer"
 import { VirtualWindowComponent } from "./Virtual"
 
 export const MainPlayer: React.VFC<{}> = () => {
@@ -112,6 +116,16 @@ export const MainPlayer: React.VFC<{}> = () => {
       window.off("closed", onClosed)
     }
   }, [])
+  // タイトル
+  const title = useRecoilValue(mainPlayerTitle)
+  useEffect(() => {
+    const window = remote.getCurrentWindow()
+    if (title) {
+      window.setTitle(title)
+    } else {
+      window.setTitle(remote.app.name)
+    }
+  }, [title])
 
   return (
     <>

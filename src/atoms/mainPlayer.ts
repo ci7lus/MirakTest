@@ -1,6 +1,6 @@
 import { atom } from "recoil"
 import pkg from "../../package.json"
-import { Service } from "../infra/mirakurun/api"
+import { Program, Service } from "../infra/mirakurun/api"
 import { MainPlayerRoute } from "../types/struct"
 
 const prefix = `${pkg.name}.mainPlayer`
@@ -23,6 +23,11 @@ export const mainPlayerUrl = atom<string | null>({
 export const mainPlayerVolume = atom<number>({
   key: `${prefix}.volume`,
   default: 100,
+})
+
+export const mainPlayerCurrentProgram = atom<Program | null>({
+  key: `${prefix}.currentProgram`,
+  default: null,
 })
 
 export const mainPlayerSelectedService = atom<Service | null>({

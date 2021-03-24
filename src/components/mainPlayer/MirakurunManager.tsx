@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react"
+import React, { useEffect, useRef, useState } from "react"
 import { toast } from "react-toastify"
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil"
 import {
@@ -8,6 +8,7 @@ import {
 } from "../../atoms/mainPlayer"
 import {
   mirakurunCompatibility,
+  mirakurunPrograms,
   mirakurunServices,
   mirakurunVersion,
 } from "../../atoms/mirakurun"
@@ -17,13 +18,13 @@ import {
   Service,
   ServicesApiAxiosParamCreator,
 } from "../../infra/mirakurun/api"
-import { MirakurunSetting } from "../../types/struct"
 
 export const MirakurunManager: React.VFC<{}> = () => {
   const mirakurunSettingValue = useRecoilValue(mirakurunSetting)
   const setCompatibility = useSetRecoilState(mirakurunCompatibility)
   const setVersion = useSetRecoilState(mirakurunVersion)
   const setServices = useSetRecoilState(mirakurunServices)
+  const setPrograms = useSetRecoilState(mirakurunPrograms)
   const [selectedService, setSelectedService] = useRecoilState(
     mainPlayerSelectedService
   )
@@ -31,20 +32,25 @@ export const MirakurunManager: React.VFC<{}> = () => {
   const [lastSelectedServiceId, setLastSelectedServiceId] = useRecoilState(
     mainPlayerLastSelectedServiceId
   )
-  const [isFirstAppeal, setIsFirstAppeal] = useState(true)
 
-  const init = async (mirakurunSetting: MirakurunSetting) => {
-    if (!mirakurunSetting.baseUrl) {
-      toast.info(
-        "Mirakurun の設定が行われていません。設定画面から設定を行ってください。",
-        { autoClose: false }
-      )
-      setIsFirstAppeal(false)
+  const programUpdateTimer = useRef<NodeJS.Timeout | null>(null)
+
+  const updatePrograms = async (mirakurun: MirakurunAPI) => {
+    try {
+      const programs = await mirakurun.programs.getPrograms()
+      setPrograms(programs.data)
+      console.log(`番組情報を更新しました。件数:`, programs.data.length)
+    } catch (error) {
+      console.error(error)
+      toast.error("番組情報の取得に失敗しました")
       return
     }
-    let mirakurun: MirakurunAPI
+  }
+
+  const [isFirstAppeal, setIsFirstAppeal] = useState(true)
+
+  const init = async (mirakurun: MirakurunAPI) => {
     try {
-      mirakurun = new MirakurunAPI(mirakurunSetting)
       const version = await mirakurun.version.checkVersion()
       let message: string
       if (typeof version.data === "string") {
@@ -75,6 +81,14 @@ export const MirakurunManager: React.VFC<{}> = () => {
       toast.error("サービス情報の取得に失敗しました")
       return
     }
+    await updatePrograms(mirakurun)
+    if (programUpdateTimer.current) {
+      clearInterval(programUpdateTimer.current)
+    }
+    programUpdateTimer.current = setInterval(
+      () => updatePrograms(mirakurun),
+      1000 * 60 * 60
+    )
     if (lastSelectedServiceId) {
       const service = services.find(
         (service) => service.id === lastSelectedServiceId
@@ -89,8 +103,28 @@ export const MirakurunManager: React.VFC<{}> = () => {
     }
   }
   useEffect(() => {
-    init(mirakurunSettingValue)
+    if (mirakurunSettingValue.baseUrl) {
+      try {
+        const mirakurun = new MirakurunAPI(mirakurunSettingValue)
+        init(mirakurun)
+      } catch (error) {
+        console.error(error)
+      }
+    } else {
+      toast.info(
+        "Mirakurun の設定が行われていません。設定画面から設定を行ってください。",
+        { autoClose: false }
+      )
+      setIsFirstAppeal(false)
+    }
+    return () => {
+      if (programUpdateTimer.current) {
+        clearInterval(programUpdateTimer.current)
+        programUpdateTimer.current = null
+      }
+    }
   }, [mirakurunSettingValue])
+
   const updateToSelectedService = async (selectedService: Service) => {
     const mirakurun = new MirakurunAPI(mirakurunSettingValue)
     const req = await ServicesApiAxiosParamCreator(
@@ -109,6 +143,7 @@ export const MirakurunManager: React.VFC<{}> = () => {
     setUrl(url)
     setLastSelectedServiceId(selectedService.id)
   }
+
   useEffect(() => {
     if (!selectedService) return
     console.log(`表示サービスを変更します:`, selectedService)

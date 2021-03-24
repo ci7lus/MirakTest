@@ -2,12 +2,15 @@ import React, { useEffect, useRef, useState } from "react"
 import { MessageSquare, Volume1 } from "react-feather"
 import { VolumeSlider } from "./VolumeSlider"
 import { CommentOpacitySlider } from "./CommentOpacitySlider"
-import { useRecoilState, useRecoilValue } from "recoil"
-import { mirakurunServices } from "../../atoms/mirakurun"
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil"
+import { mirakurunPrograms, mirakurunServices } from "../../atoms/mirakurun"
 import {
+  mainPlayerCurrentProgram,
   mainPlayerLastSelectedServiceId,
   mainPlayerSelectedService,
+  mainPlayerTitle,
 } from "../../atoms/mainPlayer"
+import { useNow } from "../../hooks/date"
 
 export const Controller: React.VFC<{}> = () => {
   const [isVisible, setIsVisible] = useState(false)
@@ -21,6 +24,29 @@ export const Controller: React.VFC<{}> = () => {
   const [selectedService, setSelectedService] = useRecoilState(
     mainPlayerSelectedService
   )
+  const now = useNow()
+  const programs = useRecoilValue(mirakurunPrograms)
+  const setCurrentProgram = useSetRecoilState(mainPlayerCurrentProgram)
+  const setTitle = useSetRecoilState(mainPlayerTitle)
+
+  useEffect(() => {
+    if (!selectedService) return
+    const currentProgram = programs?.find(
+      (program) =>
+        program.serviceId === selectedService.serviceId &&
+        now.isAfter(program.startAt) &&
+        now.isBefore(program.startAt + program.duration)
+    )
+    console.log("放送中の番組:", currentProgram)
+    let title = `${selectedService.name}`
+    if (currentProgram) {
+      setCurrentProgram(currentProgram)
+      if (currentProgram.name) {
+        title = `${currentProgram.name} - ${selectedService.name}`
+      }
+    }
+    setTitle(title)
+  }, [programs, selectedService, now])
 
   const [isServiceNameShowing, setIsServiceNameShowing] = useState(false)
   const lastServiceId = useRecoilValue(mainPlayerLastSelectedServiceId)
@@ -41,11 +67,18 @@ export const Controller: React.VFC<{}> = () => {
       onMouseLeave={() => setIsVisible(false)}
     >
       <div
-        className={`select-none transition-opacity duration-150 ease-in-out p-4 text-4xl text-green-300 serviceNameOutline ${
+        className={`select-none transition-opacity duration-150 ease-in-out p-4 ${
           isServiceNameShowing ? "opacity-100" : "opacity-0"
         }`}
       >
-        {selectedService?.name}
+        <div className="text-4xl text-green-400 serviceNameOutline">
+          {[
+            selectedService?.remoteControlKeyId || selectedService?.serviceId,
+            selectedService?.name,
+          ]
+            .filter((s) => s !== undefined)
+            .join(" ")}
+        </div>
       </div>
       <div
         className={`text-gray-100 flex space-x-4 select-none transition-opacity duration-150 ease-in-out w-full p-2 bg-black bg-opacity-50 ${
@@ -53,7 +86,7 @@ export const Controller: React.VFC<{}> = () => {
         }`}
       >
         <select
-          className="appearance-none border border-gray-800 rounded py-2 px-2 leading-tight focus:outline-none bg-gray-800 focus:bg-gray-700 focus:border-gray-500 text-gray-100"
+          className="appearance-none border border-gray-800 rounded py-2 px-2 leading-tight focus:outline-none bg-gray-800 bg-opacity-50 focus:bg-gray-700 focus:border-gray-500 text-gray-100"
           value={selectedService?.id}
           onChange={(e) => {
             const selectedId = e.target.value
@@ -68,9 +101,20 @@ export const Controller: React.VFC<{}> = () => {
             <optgroup key={serviceType} label={serviceType}>
               {services
                 ?.filter((service) => service.channel?.type === serviceType)
+                .sort((a, b) =>
+                  (b.remoteControlKeyId || b.serviceId) <
+                  (a.remoteControlKeyId || a.serviceId)
+                    ? 1
+                    : -1
+                )
                 .map((service) => (
                   <option key={service.id} value={service.id}>
-                    {service.name}
+                    {[
+                      service.remoteControlKeyId || service.serviceId,
+                      service.name,
+                    ]
+                      .filter((s) => s !== undefined)
+                      .join(" ")}
                   </option>
                 ))}
             </optgroup>

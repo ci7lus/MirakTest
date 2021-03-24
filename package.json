@@ -59,6 +59,7 @@
   "dependencies": {
     "@neneka/dplayer": "^1.26.0-patch.0",
     "axios": "^0.21.1",
+    "dayjs": "^1.10.4",
     "electron-reload": "^1.5.0",
     "electron-store": "^7.0.2",
     "js-base64": "^3.6.0",
