@@ -1,4 +1,4 @@
-import React, { useEffect } from "react"
+import React, { useEffect, useRef } from "react"
 import { ToastContainer, Slide } from "react-toastify"
 import { injectStyle } from "react-toastify/dist/inject-style"
 import { Controller } from "../components/mainPlayer/Controller"
@@ -10,14 +10,26 @@ import { MirakurunManager } from "../components/mainPlayer/MirakurunManager"
 import { useRecoilState, useRecoilValue } from "recoil"
 import {
   mainPlayerBounds,
+  mainPlayerLastSelectedServiceId,
   mainPlayerRoute,
+  mainPlayerSelectedService,
   mainPlayerTitle,
 } from "../atoms/mainPlayer"
 import { VirtualWindowComponent } from "./Virtual"
+import { mirakurunServices } from "../atoms/mirakurun"
+import { useRefFromState } from "../hooks/ref"
 
 export const MainPlayer: React.VFC<{}> = () => {
   const [route, setRoute] = useRecoilState(mainPlayerRoute)
   const [bounds, setBounds] = useRecoilState(mainPlayerBounds)
+  const [selectedService, setSelectedService] = useRecoilState(
+    mainPlayerSelectedService
+  )
+  const selectedServiceRef = useRefFromState(selectedService)
+  const lastSelectedServiceId = useRecoilValue(mainPlayerLastSelectedServiceId)
+  const lastSelectedServiceIdRef = useRefFromState(lastSelectedServiceId)
+  const services = useRecoilValue(mirakurunServices)
+  const servicesRef = useRefFromState(services)
   useEffect(() => {
     injectStyle()
     // 16:9以下の比率になったら戻す
@@ -53,6 +65,30 @@ export const MainPlayer: React.VFC<{}> = () => {
       const noParams = typeof params !== "object"
       e.preventDefault()
       remote.Menu.buildFromTemplate([
+        {
+          label: "再生オフ",
+          type: "checkbox",
+          checked: selectedServiceRef.current === null,
+          click: () => {
+            if (selectedServiceRef.current) {
+              setSelectedService(null)
+            } else {
+              if (servicesRef.current && 0 < servicesRef.current?.length) {
+                const lastSelectedService = servicesRef.current.find(
+                  (service) => service.id === lastSelectedServiceIdRef.current
+                )
+                if (lastSelectedService) {
+                  setSelectedService(lastSelectedService)
+                } else {
+                  setSelectedService(servicesRef.current[0])
+                }
+              }
+            }
+          },
+        },
+        {
+          type: "separator",
+        },
         {
           label: "最前面に固定",
           type: "checkbox",
@@ -155,7 +191,7 @@ export const MainPlayer: React.VFC<{}> = () => {
           <div className="absolute top-0 left-0 w-full h-full">
             <Controller />
           </div>
-          <div className="absolute top-0 left-0 w-full h-full">
+          <div className="absolute top-0 left-0 w-full h-full pointer-events-none">
             <VirtualWindowComponent route={route} setRoute={setRoute} />
           </div>
         </div>

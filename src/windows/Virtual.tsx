@@ -18,7 +18,7 @@ export const VirtualWindowComponent: React.VFC<{
       leaveFrom="opacity-100"
       leaveTo="opacity-0"
     >
-      <div className="w-full h-full p-8 relative flex flex-col justify-center">
+      <div className="w-full h-full p-8 relative flex flex-col justify-center pointer-events-auto">
         <div
           className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 z-10"
           onClick={() => setRoute(null)}

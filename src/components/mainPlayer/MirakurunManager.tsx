@@ -145,13 +145,15 @@ export const MirakurunManager: React.VFC<{}> = () => {
   }
 
   useEffect(() => {
-    if (!selectedService) return
-    console.log(`表示サービスを変更します:`, selectedService)
-    try {
-      updateToSelectedService(selectedService)
-    } catch (error) {
-      console.error(error)
-    } finally {
+    if (selectedService) {
+      console.log(`表示サービスを変更します:`, selectedService)
+      try {
+        updateToSelectedService(selectedService)
+      } catch (error) {
+        console.error(error)
+      }
+    } else {
+      setUrl(null)
     }
   }, [selectedService])
   return <></>

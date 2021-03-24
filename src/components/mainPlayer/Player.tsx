@@ -22,9 +22,14 @@ export const Player: React.VFC<{}> = () => {
 
   const url = useRecoilValue(mainPlayerUrl)
   useEffect(() => {
-    if (!url || !playerRef.current) return
-    playerRef.current.play(url)
-    console.log("URL再生:", url)
+    if (!playerRef.current) return
+    if (url) {
+      playerRef.current.play(url)
+      console.log("URL再生:", url)
+    } else {
+      playerRef.current.stop()
+      console.log("再生停止")
+    }
   }, [url])
 
   const volume = useRecoilValue(mainPlayerVolume)
@@ -60,6 +65,9 @@ export const Player: React.VFC<{}> = () => {
           break
         case "unable_to_open":
           toast.error("映像の受信に失敗しました")
+          break
+        case "end_of_stream":
+          renderContext.fillTransparent()
           break
         case "unknown":
           console.log(message)
