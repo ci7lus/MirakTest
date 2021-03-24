@@ -57,6 +57,7 @@
     "webpack-cli": "^4.5.0"
   },
   "dependencies": {
+    "@headlessui/react": "^0.3.1",
     "@neneka/dplayer": "^1.26.0-patch.0",
     "axios": "^0.21.1",
     "dayjs": "^1.10.4",

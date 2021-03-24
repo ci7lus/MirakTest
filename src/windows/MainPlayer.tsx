@@ -155,11 +155,9 @@ export const MainPlayer: React.VFC<{}> = () => {
           <div className="absolute top-0 left-0 w-full h-full">
             <Controller />
           </div>
-          {route && (
-            <div className="absolute top-0 left-0 w-full h-full">
-              <VirtualWindowComponent route={route} setRoute={setRoute} />
-            </div>
-          )}
+          <div className="absolute top-0 left-0 w-full h-full">
+            <VirtualWindowComponent route={route} setRoute={setRoute} />
+          </div>
         </div>
       </div>
     </>

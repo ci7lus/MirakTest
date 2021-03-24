@@ -17,7 +17,7 @@ export type MirakurunSetting = {
   baseUrl?: string
 }
 
-export type MainPlayerRoute = "settings" | null
+export type MainPlayerRoute = "settings" | "programTable" | null
 
 export type SayaSetting = {
   baseUrl?: string
