@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react"
-import { MessageSquare, Volume1 } from "react-feather"
+import { MessageSquare, Type, Volume1, Volume2, VolumeX } from "react-feather"
 import { VolumeSlider } from "./VolumeSlider"
 import { CommentOpacitySlider } from "./CommentOpacitySlider"
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil"
@@ -8,7 +8,9 @@ import {
   mainPlayerCurrentProgram,
   mainPlayerLastSelectedServiceId,
   mainPlayerSelectedService,
+  mainPlayerSubtitleEnabled,
   mainPlayerTitle,
+  mainPlayerVolume,
 } from "../../atoms/mainPlayer"
 import { useNow } from "../../hooks/date"
 
@@ -28,6 +30,11 @@ export const Controller: React.VFC<{}> = () => {
   const programs = useRecoilValue(mirakurunPrograms)
   const setCurrentProgram = useSetRecoilState(mainPlayerCurrentProgram)
   const setTitle = useSetRecoilState(mainPlayerTitle)
+
+  const [subtitleEnabled, setSubtitleEnabled] = useRecoilState(
+    mainPlayerSubtitleEnabled
+  )
+  const volume = useRecoilValue(mainPlayerVolume)
 
   useEffect(() => {
     if (!selectedService) return
@@ -81,7 +88,7 @@ export const Controller: React.VFC<{}> = () => {
         </div>
       </div>
       <div
-        className={`text-gray-100 flex space-x-4 select-none transition-opacity duration-150 ease-in-out w-full p-2 bg-black bg-opacity-50 ${
+        className={`px-2 overflow-auto text-gray-100 flex space-x-4 select-none transition-opacity duration-150 ease-in-out w-full p-2 bg-black bg-opacity-50 ${
           isVisible ? "opacity-100" : "opacity-0"
         }`}
       >
@@ -121,11 +128,28 @@ export const Controller: React.VFC<{}> = () => {
           ))}
         </select>
         <div className="flex items-center justify-center space-x-1">
-          <Volume1 size={20} />
+          {volume === 0 ? (
+            <VolumeX size={22} />
+          ) : volume < 75 ? (
+            <Volume1 size={22} />
+          ) : (
+            <Volume2 size={22} />
+          )}
           <VolumeSlider />
         </div>
+        <button
+          aria-label={`字幕は${subtitleEnabled}です`}
+          title="字幕切り替え"
+          type="button"
+          className={`focus:outline-none p-2 rounded-md bg-gray-800 ${
+            subtitleEnabled ? "text-gray-100" : "text-gray-500"
+          }`}
+          onClick={() => setSubtitleEnabled((value) => !value)}
+        >
+          <Type size={22} />
+        </button>
         <div className="flex items-center justify-center space-x-1">
-          <MessageSquare size={20} />
+          <MessageSquare size={22} />
           <CommentOpacitySlider />
         </div>
       </div>

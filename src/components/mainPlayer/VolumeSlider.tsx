@@ -20,7 +20,7 @@ export const VolumeSlider: React.VFC<{}> = () => {
       aria-label="音量"
       type="range"
       min="0"
-      max="100"
+      max="150"
       value={volume}
       onChange={(e) => {
         const p = parseInt(e.target.value)

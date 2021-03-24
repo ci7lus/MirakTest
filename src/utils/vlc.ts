@@ -32,8 +32,17 @@ export const VLCLogFilter = (s: string) => {
       width: parseInt(width),
       height: parseInt(height),
     } as const
+  } else if (s.startsWith("psz_subtitle_data")) {
+    const m = s.match(/psz_subtitle_data \[(.*)\s\]/)
+    if (!m) return { category: "psz_subtitle_data" } as const
+    return {
+      category: "psz_subtitle_data",
+      array: Uint8Array.from(m[1].split(" ").map((s) => parseInt(`0x${s}`))),
+    } as const
   } else if (s.startsWith("VLC is unable to open the MRL")) {
     return { category: "unable_to_open" } as const
+  } else if (s.includes("successfully opened")) {
+    return { category: "successfully_opened" } as const
   } else {
     return { category: "unknown" } as const
   }

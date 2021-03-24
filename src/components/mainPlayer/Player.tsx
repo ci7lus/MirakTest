@@ -1,8 +1,12 @@
 import React, { useEffect, useRef, useState } from "react"
-import { useRecoilValue } from "recoil"
+import { useRecoilState, useRecoilValue } from "recoil"
 import WebChimeraJs from "webchimera.js"
 import { toast } from "react-toastify"
-import { mainPlayerUrl, mainPlayerVolume } from "../../atoms/mainPlayer"
+import {
+  mainPlayerSubtitleEnabled,
+  mainPlayerUrl,
+  mainPlayerVolume,
+} from "../../atoms/mainPlayer"
 import { VideoRenderer } from "../../utils/videoRenderer"
 import { VLCLogFilter } from "../../utils/vlc"
 
@@ -30,6 +34,14 @@ export const Player: React.VFC<{}> = () => {
     console.log("音量変更:", volume)
   }, [volume])
 
+  const [subtitleEnabled, setSubtitleEnabled] = useRecoilState(
+    mainPlayerSubtitleEnabled
+  )
+  useEffect(() => {
+    if (!playerRef.current) return
+    playerRef.current.subtitles.track = Number(subtitleEnabled)
+  }, [subtitleEnabled])
+
   useEffect(() => {
     const renderContext = new VideoRenderer(canvasRef.current!)
     const player = WebChimeraJs.createPlayer()
@@ -42,6 +54,9 @@ export const Player: React.VFC<{}> = () => {
             setAspect(width / height)
             console.log(`Aspect: ${width / height}`)
           }
+          break
+        case "successfully_opened":
+          setSubtitleEnabled(false)
           break
         case "unable_to_open":
           toast.error("映像の受信に失敗しました")

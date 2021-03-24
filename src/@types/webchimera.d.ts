@@ -1,5 +1,11 @@
 declare module "webchimera.js" {
   export type PixelFormat = "RV32" | "I420"
+  export type VLCSubtitle = {
+    readonly count: number
+    [key: number]: string
+    track: number
+    delay: number
+  }
   export interface Player {
     readonly vlcVersion: string
     readonly playing: boolean
@@ -23,6 +29,7 @@ declare module "webchimera.js" {
         vOffset: number
       } & Uint8Array
     ) => void
+    subtitles: VLCSubtitle
   }
   export const createPlayer: () => Player
 }

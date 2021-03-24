@@ -15,6 +15,11 @@ export const mainPlayerBounds = atom<Electron.Rectangle | null>({
   default: null,
 })
 
+export const mainPlayerSubtitleEnabled = atom<boolean>({
+  key: `${prefix}.subtitleEnabled`,
+  default: false,
+})
+
 export const mainPlayerUrl = atom<string | null>({
   key: `${prefix}.url`,
   default: null,
