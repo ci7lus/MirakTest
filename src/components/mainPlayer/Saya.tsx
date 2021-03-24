@@ -22,7 +22,7 @@ export const SayaComments: React.VFC<{}> = () => {
       }
 
       ws = new ReconnectingWebSocket(
-        `${wsUrl.href}/comments/${service.serviceId}/live`
+        `${wsUrl.href}/comments/${service.id}/live`
       )
       ws.addEventListener("message", (e) => {
         const payload: CommentPayload = JSON.parse(e.data)
