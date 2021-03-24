@@ -85,6 +85,7 @@ export const Player: React.VFC<{}> = () => {
         frame.vOffset
       )
     }
+    player.volume = volume
     // @ts-ignore
     window.player = player
     playerRef.current = player

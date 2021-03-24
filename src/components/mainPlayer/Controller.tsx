@@ -47,7 +47,10 @@ export const Controller: React.VFC<{}> = () => {
   const [volume, setVolume] = useRecoilState(mainPlayerVolume)
 
   useEffect(() => {
-    if (!selectedService) return
+    if (!selectedService) {
+      setTitle(null)
+      return
+    }
     const currentProgram = programs?.find(
       (program) =>
         program.serviceId === selectedService.serviceId &&
