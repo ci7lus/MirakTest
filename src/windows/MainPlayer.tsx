@@ -1,5 +1,6 @@
 import React, { useEffect } from "react"
 import { ToastContainer, Slide } from "react-toastify"
+import { injectStyle } from "react-toastify/dist/inject-style"
 import { Controller } from "../components/mainPlayer/Controller"
 import { Player } from "../components/mainPlayer/Player"
 import { SayaComments } from "../components/mainPlayer/Saya"
@@ -13,6 +14,7 @@ import { VirtualWindowComponent } from "./Virtual"
 export const MainPlayer: React.VFC<{}> = () => {
   const [route, setRoute] = useRecoilState(mainPlayerRoute)
   useEffect(() => {
+    injectStyle()
     // 16:9以下の比率になったら戻す
     const window = remote.getCurrentWindow()
     const onResize = () => {
@@ -85,7 +87,6 @@ export const MainPlayer: React.VFC<{}> = () => {
     })
     return () => {
       window.off("resized", onResize)
-      window.off("ready-to-show", onResize)
       window.off("closed", onClosed)
     }
   }, [])
@@ -96,9 +97,12 @@ export const MainPlayer: React.VFC<{}> = () => {
         position="top-right"
         autoClose={3000}
         closeOnClick
+        transition={Slide}
+        hideProgressBar={false}
+        newestOnTop={false}
+        rtl={false}
         draggable
         pauseOnHover
-        transition={Slide}
       />
       <MirakurunManager />
       <div className="w-full h-screen bg-gray-900 text-gray-100 flex items-center justify-center">

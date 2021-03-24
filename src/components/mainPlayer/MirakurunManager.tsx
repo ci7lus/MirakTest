@@ -1,4 +1,4 @@
-import React, { useEffect } from "react"
+import React, { useEffect, useState } from "react"
 import { toast } from "react-toastify"
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil"
 import {
@@ -31,6 +31,7 @@ export const MirakurunManager: React.VFC<{}> = () => {
   const [lastSelectedServiceId, setLastSelectedServiceId] = useRecoilState(
     mainPlayerLastSelectedServiceId
   )
+  const [isFirstAppeal, setIsFirstAppeal] = useState(true)
 
   const init = async (mirakurunSetting: MirakurunSetting) => {
     if (!mirakurunSetting.baseUrl) {
@@ -38,6 +39,7 @@ export const MirakurunManager: React.VFC<{}> = () => {
         "Mirakurun の設定が行われていません。設定画面から設定を行ってください。",
         { autoClose: false }
       )
+      setIsFirstAppeal(false)
       return
     }
     let mirakurun: MirakurunAPI
@@ -54,7 +56,10 @@ export const MirakurunManager: React.VFC<{}> = () => {
         setVersion(version.data.current || null)
         message = `Mirakurun (${version.data.current})`
       }
-      toast.info(message)
+      if (!isFirstAppeal) {
+        toast.info(message)
+      }
+      setIsFirstAppeal(false)
     } catch (error) {
       console.error(error)
       toast.error("Mirakurun への接続に失敗しました")
