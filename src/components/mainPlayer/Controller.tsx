@@ -13,9 +13,19 @@ import {
   mainPlayerVolume,
 } from "../../atoms/mainPlayer"
 import { useNow } from "../../hooks/date"
+import { useDebounce } from "react-use"
 
 export const Controller: React.VFC<{}> = () => {
   const [isVisible, setIsVisible] = useState(false)
+
+  const [lastCurMoved, setLastCurMoved] = useState(0)
+  useDebounce(
+    () => {
+      setIsVisible(false)
+    },
+    3000,
+    [lastCurMoved]
+  )
 
   const services = useRecoilValue(mirakurunServices)
   const serviceTypes = Array.from(
@@ -70,7 +80,10 @@ export const Controller: React.VFC<{}> = () => {
     <div
       ref={componentRef}
       className="w-full h-full flex flex-col justify-between"
-      onMouseEnter={() => setIsVisible(true)}
+      onMouseMove={() => {
+        setIsVisible(true)
+        setLastCurMoved(new Date().getTime())
+      }}
       onMouseLeave={() => setIsVisible(false)}
     >
       <div
@@ -108,12 +121,7 @@ export const Controller: React.VFC<{}> = () => {
             <optgroup key={serviceType} label={serviceType}>
               {services
                 ?.filter((service) => service.channel?.type === serviceType)
-                .sort((a, b) =>
-                  (b.remoteControlKeyId || b.serviceId) <
-                  (a.remoteControlKeyId || a.serviceId)
-                    ? 1
-                    : -1
-                )
+                .sort((a, b) => (b.serviceId < a.serviceId ? 1 : -1))
                 .map((service) => (
                   <option key={service.id} value={service.id}>
                     {[
