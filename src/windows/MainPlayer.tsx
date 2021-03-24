@@ -38,6 +38,15 @@ export const MainPlayer: React.VFC<{}> = () => {
       e.preventDefault()
       remote.Menu.buildFromTemplate([
         {
+          label: "最前面に固定",
+          type: "checkbox",
+          checked: window.isAlwaysOnTop(),
+          click: () => window.setAlwaysOnTop(!window.isAlwaysOnTop()),
+        },
+        {
+          type: "separator",
+        },
+        {
           label: "設定",
           click: () => setRoute("settings"),
         },
