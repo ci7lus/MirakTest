@@ -18,13 +18,16 @@ publish: null
 npmRebuild: false
 npmArgs: "--runtime=node "
 mac:
+  icon: "assets/miraktest.icns"
   entitlements: "entitlements.plist"
   entitlementsInherit: "entitlements.plist"
 win:
+  icon: "assets/miraktest.ico"
   target:
     - "zip"
     - "nsis"
 linux:
+  icon: "assets/miraktest.iconset"
   category: "AudioVideo"
   target:
     - "AppImage"
