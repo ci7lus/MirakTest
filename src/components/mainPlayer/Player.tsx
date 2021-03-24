@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from "react"
 import { useRecoilValue } from "recoil"
 import WebChimeraJs from "webchimera.js"
+import { toast } from "react-toastify"
 import { mainPlayerUrl, mainPlayerVolume } from "../../atoms/mainPlayer"
 import { VideoRenderer } from "../../utils/videoRenderer"
 import { VLCLogFilter } from "../../utils/vlc"
@@ -41,6 +42,9 @@ export const Player: React.VFC<{}> = () => {
             setAspect(width / height)
             console.log(`Aspect: ${width / height}`)
           }
+          break
+        case "unable_to_open":
+          toast.error("映像の受信に失敗しました")
           break
         case "unknown":
           console.log(message)

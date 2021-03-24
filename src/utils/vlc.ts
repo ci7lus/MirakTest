@@ -32,6 +32,8 @@ export const VLCLogFilter = (s: string) => {
       width: parseInt(width),
       height: parseInt(height),
     } as const
+  } else if (s.startsWith("VLC is unable to open the MRL")) {
+    return { category: "unable_to_open" } as const
   } else {
     return { category: "unknown" } as const
   }
