@@ -1,40 +1,32 @@
 import { MutableSnapshot } from "recoil"
-import { mainPlayerLastSelectedServiceId } from "../atoms/mainPlayer"
 import {
-  mirakurunSetting,
-  mirakurunSettingParser,
-  sayaSetting,
-  sayaSettingParser,
-} from "../atoms/settings"
+  mainPlayerBounds,
+  mainPlayerLastSelectedServiceId,
+} from "../atoms/mainPlayer"
+import { mirakurunSetting, sayaSetting } from "../atoms/settings"
 import { store } from "./store"
 
 export const initializeState = (mutableSnapShot: MutableSnapshot) => {
   const savedMirakurunSetting = store.get(mirakurunSetting.key, null)
   if (savedMirakurunSetting) {
-    try {
-      const parsed = mirakurunSettingParser.parse(
-        JSON.parse(savedMirakurunSetting)
-      )
-      mutableSnapShot.set(mirakurunSetting, parsed)
-    } catch {}
+    mutableSnapShot.set(mirakurunSetting, savedMirakurunSetting)
   }
   const savedSayaSetting = store.get(sayaSetting.key, null)
   if (savedSayaSetting) {
-    try {
-      const parsed = sayaSettingParser.parse(JSON.parse(savedSayaSetting))
-      mutableSnapShot.set(sayaSetting, parsed)
-    } catch {}
+    mutableSnapShot.set(sayaSetting, savedSayaSetting)
+  }
+  const savedMainPlayerBounds = store.get(mainPlayerBounds.key, null)
+  if (savedMainPlayerBounds) {
+    mutableSnapShot.set(mainPlayerBounds, savedMainPlayerBounds)
   }
   const savedMainPlayerLastSelectedServiceId = store.get(
     mainPlayerLastSelectedServiceId.key,
     null
   )
   if (savedMainPlayerLastSelectedServiceId) {
-    try {
-      const parsed = JSON.parse(savedMainPlayerLastSelectedServiceId)
-      if (!Number.isNaN(parsed)) {
-        mutableSnapShot.set(mainPlayerLastSelectedServiceId, parsed)
-      }
-    } catch {}
+    mutableSnapShot.set(
+      mainPlayerLastSelectedServiceId,
+      savedMainPlayerLastSelectedServiceId
+    )
   }
 }

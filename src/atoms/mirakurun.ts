@@ -2,19 +2,19 @@ import { atom } from "recoil"
 import pkg from "../../package.json"
 import { Service } from "../infra/mirakurun/api"
 
-const prefix = `${pkg.name}:mirakurun`
+const prefix = `${pkg.name}.mirakurun`
 
 export const mirakurunCompatibility = atom<"Mirakurun" | "Mirakc" | null>({
-  key: `${prefix}:compatibility`,
+  key: `${prefix}.compatibility`,
   default: null,
 })
 
 export const mirakurunVersion = atom<string | null>({
-  key: `${prefix}:version`,
+  key: `${prefix}.version`,
   default: null,
 })
 
 export const mirakurunServices = atom<Service[] | null>({
-  key: `${prefix}:services`,
+  key: `${prefix}.services`,
   default: null,
 })

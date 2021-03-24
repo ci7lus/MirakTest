@@ -1,12 +1,10 @@
 import React from "react"
 import { useRecoilTransactionObserver_UNSTABLE } from "recoil"
-import { mainPlayerLastSelectedServiceId } from "../../atoms/mainPlayer"
 import {
-  mirakurunSetting,
-  mirakurunSettingParser,
-  sayaSetting,
-  sayaSettingParser,
-} from "../../atoms/settings"
+  mainPlayerBounds,
+  mainPlayerLastSelectedServiceId,
+} from "../../atoms/mainPlayer"
+import { mirakurunSetting, sayaSetting } from "../../atoms/settings"
 import { store } from "../../utils/store"
 
 export const RecoilObserver: React.VFC<{}> = () => {
@@ -16,8 +14,7 @@ export const RecoilObserver: React.VFC<{}> = () => {
         case mirakurunSetting.key:
           try {
             const snap = snapshot.getLoadable(mirakurunSetting).getValue()
-            mirakurunSettingParser.parse(snap)
-            store.set(mirakurunSetting.key, JSON.stringify(snap))
+            store.set(mirakurunSetting.key, snap)
           } catch (e) {
             console.error(e)
           }
@@ -25,8 +22,15 @@ export const RecoilObserver: React.VFC<{}> = () => {
         case sayaSetting.key:
           try {
             const snap = snapshot.getLoadable(sayaSetting).getValue()
-            sayaSettingParser.parse(snap)
-            store.set(sayaSetting.key, JSON.stringify(snap))
+            store.set(sayaSetting.key, snap)
+          } catch (e) {
+            console.error(e)
+          }
+          break
+        case mainPlayerBounds.key:
+          try {
+            const snap = snapshot.getLoadable(mainPlayerBounds).getValue()
+            store.set(mainPlayerBounds.key, snap)
           } catch (e) {
             console.error(e)
           }
@@ -36,9 +40,7 @@ export const RecoilObserver: React.VFC<{}> = () => {
             const snap = snapshot
               .getLoadable(mainPlayerLastSelectedServiceId)
               .getValue()
-            if (Number.isNaN(snap))
-              throw new Error("mainPlayerLastSelectedServiceId NaN")
-            store.set(mainPlayerLastSelectedServiceId.key, JSON.stringify(snap))
+            store.set(mainPlayerLastSelectedServiceId.key, snap)
           } catch (e) {
             console.error(e)
           }

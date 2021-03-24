@@ -8,27 +8,39 @@ import { remote } from "electron"
 import { Splash } from "../components/global/Splash"
 import { MirakurunManager } from "../components/mainPlayer/MirakurunManager"
 import { useRecoilState } from "recoil"
-import { mainPlayerRoute } from "../atoms/mainPlayer"
+import { mainPlayerBounds, mainPlayerRoute } from "../atoms/mainPlayer"
 import { VirtualWindowComponent } from "./Virtual"
 
 export const MainPlayer: React.VFC<{}> = () => {
   const [route, setRoute] = useRecoilState(mainPlayerRoute)
+  const [bounds, setBounds] = useRecoilState(mainPlayerBounds)
   useEffect(() => {
     injectStyle()
     // 16:9以下の比率になったら戻す
     const window = remote.getCurrentWindow()
-    const onResize = () => {
+    const onResizedOrMoved = () => {
       const bounds = window.getContentBounds()
       const min = Math.ceil((bounds.width / 16) * 9)
       if (bounds.height < min) {
-        window.setContentBounds({
+        const targetBounds = {
           ...bounds,
           height: min,
-        })
+        }
+        window.setContentBounds(targetBounds)
+        setBounds(targetBounds)
+      } else {
+        setBounds(bounds)
       }
     }
-    window.on("resized", onResize)
-    onResize()
+    window.on("resized", onResizedOrMoved)
+    window.on("moved", onResizedOrMoved)
+    // 前回のウィンドウサイズが保存されていれば戻す
+    if (bounds) {
+      window.setContentBounds(bounds, true)
+    } else {
+      onResizedOrMoved()
+    }
+
     // メインウィンドウを閉じたら終了する
     const onClosed = () => remote.app.quit()
     window.on("closed", onClosed)
@@ -95,7 +107,8 @@ export const MainPlayer: React.VFC<{}> = () => {
       ]).popup()
     })
     return () => {
-      window.off("resized", onResize)
+      window.off("resized", onResizedOrMoved)
+      window.off("moved", onResizedOrMoved)
       window.off("closed", onClosed)
     }
   }, [])

@@ -3,34 +3,44 @@ import pkg from "../../package.json"
 import { Service } from "../infra/mirakurun/api"
 import { MainPlayerRoute } from "../types/struct"
 
-const prefix = `${pkg.name}:mainPlayer`
+const prefix = `${pkg.name}.mainPlayer`
+
+export const mainPlayerTitle = atom<string | null>({
+  key: `${prefix}.title`,
+  default: null,
+})
+
+export const mainPlayerBounds = atom<Electron.Rectangle | null>({
+  key: `${prefix}.bounds`,
+  default: null,
+})
 
 export const mainPlayerUrl = atom<string | null>({
-  key: `${prefix}:url`,
+  key: `${prefix}.url`,
   default: null,
 })
 
 export const mainPlayerVolume = atom<number>({
-  key: `${prefix}:volume`,
+  key: `${prefix}.volume`,
   default: 100,
 })
 
 export const mainPlayerSelectedService = atom<Service | null>({
-  key: `${prefix}:selectedService`,
+  key: `${prefix}.selectedService`,
   default: null,
 })
 
 export const mainPlayerLastSelectedServiceId = atom<number | null>({
-  key: `${prefix}:lastSelectedServiceId`,
+  key: `${prefix}.lastSelectedServiceId`,
   default: null,
 })
 
 export const mainPlayerRoute = atom<MainPlayerRoute>({
-  key: `${prefix}:route`,
+  key: `${prefix}.route`,
   default: null,
 })
 
 export const mainPlayerCommentOpacity = atom<number>({
-  key: `${prefix}:commentOpacity`,
+  key: `${prefix}.commentOpacity`,
   default: 0.8,
 })
