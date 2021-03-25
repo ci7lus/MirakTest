@@ -2,7 +2,7 @@
   "name": "miraktest",
   "productName": "MirakTest",
   "version": "1.0.0",
-  "description": "マルチプラットフォーム Mirakurun クライアント",
+  "description": "Mirakurun 映像視聴確認用アプリ",
   "author": "ci7lus <7887955+ci7lus@users.noreply.github.com>",
   "license": "MIT",
   "repository": {
