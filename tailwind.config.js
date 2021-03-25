@@ -3,9 +3,8 @@ module.exports = {
     enabled: process.env.NODE_ENV === "production",
     mode: "all",
     content: [
-      "./*.html",
-      "./src/**/*.ts",
-      "./src/**/*.tsx",
+      "./index.html",
+      "./src/**/*.{ts,tsx,scss}",
       "node_modules/react-toastify/dist/ReactToastify.css",
     ],
     whitelist: [],
