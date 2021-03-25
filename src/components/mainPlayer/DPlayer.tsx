@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from "react"
-import DPlayer from "dplayer"
+import DPlayer, { DPlayerEvents } from "dplayer"
 import { CommentPayload } from "../../types/struct"
 import { trimCommentForFlow } from "../../utils/comment"
 import { useRecoilValue } from "recoil"
@@ -67,6 +67,10 @@ export const DPlayerWrap: React.VFC<{
     })
 
     playerInstance.danmaku.opacity(commentOpacity)
+
+    playerInstance.on("pause" as DPlayerEvents.pause, () => {
+      playerInstance.play()
+    })
 
     player.current = playerInstance
     // @ts-ignore

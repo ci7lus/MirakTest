@@ -11,7 +11,7 @@ export const CommentOpacitySlider: React.VFC<{}> = () => {
 
   useDebounce(
     () => {
-      setCommentOpacity(Math.ceil(opacity / 10))
+      setCommentOpacity(opacity / 10)
     },
     100,
     [opacity]
