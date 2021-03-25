@@ -5,6 +5,7 @@ import { CommentOpacitySlider } from "./CommentOpacitySlider"
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil"
 import { mirakurunPrograms, mirakurunServices } from "../../atoms/mirakurun"
 import {
+  mainPlayerAudioChannel,
   mainPlayerCurrentProgram,
   mainPlayerLastSelectedServiceId,
   mainPlayerSelectedService,
@@ -14,6 +15,7 @@ import {
 } from "../../atoms/mainPlayer"
 import { useNow } from "../../hooks/date"
 import { useDebounce } from "react-use"
+import { VLCAudioChannel, VLCAudioChannelTranslated } from "../../utils/vlc"
 
 export const Controller: React.VFC<{}> = () => {
   const [isVisible, setIsVisible] = useState(false)
@@ -77,6 +79,8 @@ export const Controller: React.VFC<{}> = () => {
     return () => clearInterval(timer)
   }, [lastServiceId])
 
+  const [audioChannel, setAudioChannel] = useRecoilState(mainPlayerAudioChannel)
+
   const componentRef = useRef<HTMLDivElement>(null)
 
   return (
@@ -104,7 +108,7 @@ export const Controller: React.VFC<{}> = () => {
         </div>
       </div>
       <div
-        className={`px-2 overflow-auto text-gray-100 flex space-x-4 select-none transition-opacity duration-150 ease-in-out w-full p-2 bg-black bg-opacity-50 ${
+        className={`flex space-x-2 px-2 pr-4 overflow-auto text-gray-100 select-none transition-opacity duration-150 ease-in-out w-full p-2 bg-black bg-opacity-50 ${
           isVisible ? "opacity-100" : "opacity-0"
         }`}
       >
@@ -138,6 +142,17 @@ export const Controller: React.VFC<{}> = () => {
             </optgroup>
           ))}
         </select>
+        <button
+          aria-label={`字幕は${subtitleEnabled}です`}
+          title="字幕切り替え"
+          type="button"
+          className={`focus:outline-none p-2 rounded-md bg-gray-800 ${
+            subtitleEnabled ? "text-gray-100" : "text-gray-500"
+          }`}
+          onClick={() => setSubtitleEnabled((value) => !value)}
+        >
+          <Type size={22} />
+        </button>
         <div className="flex items-center justify-center space-x-1">
           <button
             type="button"
@@ -154,21 +169,26 @@ export const Controller: React.VFC<{}> = () => {
           </button>
           <VolumeSlider />
         </div>
-        <button
-          aria-label={`字幕は${subtitleEnabled}です`}
-          title="字幕切り替え"
-          type="button"
-          className={`focus:outline-none p-2 rounded-md bg-gray-800 ${
-            subtitleEnabled ? "text-gray-100" : "text-gray-500"
-          }`}
-          onClick={() => setSubtitleEnabled((value) => !value)}
+        <select
+          className="appearance-none border border-gray-800 rounded py-2 px-2 leading-tight focus:outline-none bg-gray-800 bg-opacity-50 focus:bg-gray-700 focus:border-gray-500 text-gray-100"
+          value={audioChannel}
+          onChange={(e) => {
+            const selectedChannel = parseInt(e.target.value)
+            if (Number.isNaN(selectedChannel)) return
+            setAudioChannel(selectedChannel)
+          }}
         >
-          <Type size={22} />
-        </button>
+          {Object.entries(VLCAudioChannel).map(([k, v]) => (
+            <option key={k} value={v}>
+              {VLCAudioChannelTranslated[v]}
+            </option>
+          ))}
+        </select>
         <div className="flex items-center justify-center space-x-1">
           <MessageSquare size={22} />
           <CommentOpacitySlider />
         </div>
+        <div className="pr-2" />
       </div>
     </div>
   )

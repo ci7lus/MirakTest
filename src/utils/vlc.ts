@@ -49,3 +49,20 @@ export const VLCLogFilter = (s: string) => {
     return { category: "unknown" } as const
   }
 }
+
+export const VLCAudioChannel = {
+  Stereo: 1,
+  ReverseStereo: 2,
+  Left: 3,
+  Right: 4,
+  Dolby: 5,
+}
+
+export const VLCAudioChannelTranslated = [
+  "ステレオ",
+  "ステレオ",
+  "反転ステレオ",
+  "左",
+  "右",
+  "ドルビー",
+]

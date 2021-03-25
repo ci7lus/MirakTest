@@ -3,6 +3,7 @@ import { useRecoilState, useRecoilValue } from "recoil"
 import WebChimeraJs from "webchimera.js"
 import { toast } from "react-toastify"
 import {
+  mainPlayerAudioChannel,
   mainPlayerSubtitleEnabled,
   mainPlayerUrl,
   mainPlayerVolume,
@@ -45,7 +46,15 @@ export const Player: React.VFC<{}> = () => {
   useEffect(() => {
     if (!playerRef.current) return
     playerRef.current.subtitles.track = Number(subtitleEnabled)
+    console.log("字幕変更:", Number(subtitleEnabled))
   }, [subtitleEnabled])
+
+  const audioTrack = useRecoilValue(mainPlayerAudioChannel)
+  useEffect(() => {
+    if (!playerRef.current) return
+    playerRef.current.audio.channel = audioTrack
+    console.log("オーディオチャンネル変更:", audioTrack)
+  }, [audioTrack])
 
   useEffect(() => {
     const renderContext = new VideoRenderer(canvasRef.current!)

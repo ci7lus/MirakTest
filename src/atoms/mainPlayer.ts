@@ -2,6 +2,7 @@ import { atom } from "recoil"
 import pkg from "../../package.json"
 import { Program, Service } from "../infra/mirakurun/api"
 import { MainPlayerRoute } from "../types/struct"
+import { VLCAudioChannel } from "../utils/vlc"
 
 const prefix = `${pkg.name}.mainPlayer`
 
@@ -28,6 +29,11 @@ export const mainPlayerUrl = atom<string | null>({
 export const mainPlayerVolume = atom<number>({
   key: `${prefix}.volume`,
   default: 100,
+})
+
+export const mainPlayerAudioChannel = atom<number>({
+  key: `${prefix}.audioChannel`,
+  default: VLCAudioChannel.Stereo,
 })
 
 export const mainPlayerCurrentProgram = atom<Program | null>({
