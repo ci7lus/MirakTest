@@ -157,7 +157,7 @@ export const MainPlayer: React.VFC<{}> = () => {
   useEffect(() => {
     const window = remote.getCurrentWindow()
     if (title) {
-      window.setTitle(title)
+      window.setTitle(`${title} - ${remote.app.name}`)
     } else {
       window.setTitle(remote.app.name)
     }
