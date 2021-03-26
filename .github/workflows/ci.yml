@@ -74,6 +74,18 @@ jobs:
       - name: Build
         run: |
           yarn build
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: build
+          path: |
+            build
+      - name: Upload dist artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: dist
+          path: |
+            dist
   build-macos:
     runs-on: macOS-latest
 
@@ -117,3 +129,15 @@ jobs:
       - name: Build
         run: |
           yarn build
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: build
+          path: |
+            build
+      - name: Upload dist artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: dist
+          path: |
+            dist
