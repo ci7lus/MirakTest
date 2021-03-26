@@ -70,7 +70,7 @@ jobs:
           sudo apt-get install build-essential cmake libvlc-dev
       - name: Install
         run: |
-          yarn --ignore-scripts
+          yarn
       - name: Build
         run: |
           yarn build
@@ -125,7 +125,7 @@ jobs:
           brew install vlc
       - name: Install
         run: |
-          yarn --ignore-scripts
+          yarn
       - name: Build
         run: |
           yarn build
