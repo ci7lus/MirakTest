@@ -1,9 +1,11 @@
 import { app, BrowserWindow, screen } from "electron"
 import path from "path"
+import Store from "electron-store"
 
 let window: BrowserWindow | null = null
 
 const init = () => {
+  Store.initRenderer()
   const display = screen.getPrimaryDisplay()
   window = new BrowserWindow({
     width: Math.ceil(1280 / display.scaleFactor),
