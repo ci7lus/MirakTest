@@ -107,10 +107,12 @@ jobs:
         id: brew-cache
         run: echo "::set-output name=dir::$(brew --cache)/downloads"
       - name: Brew cache
-        uses: actions/cache@v1
+        uses: actions/cache@v2
         with:
           path: ${{ steps.brew-cache.outputs.dir }}
           key: ${{ runner.os }}-${{ hashFiles('Brewfile') }}
+          restore-keys: |
+            ${{ runner.os }}-brew-
       - id: yarn-cache-dir-path
         run: echo "::set-output name=dir::$(yarn cache dir)"
       - uses: actions/cache@v2
@@ -123,6 +125,7 @@ jobs:
       - name: Install deps
         run: |
           brew install vlc
+          brew install cmake
       - name: Install
         run: |
           yarn
