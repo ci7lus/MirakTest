@@ -95,9 +95,8 @@ jobs:
       - name: Upload build artifact
         uses: actions/upload-artifact@v2
         with:
-          name: webchimera-macos
-          path: |
-            ${{ env.BUILD_DIR }}
+          name: wc-${{ runner.os }}
+          path: ${{ env.BUILD_DIR }}/WebChimera.js.node
   build-ubuntu:
     runs-on: ubuntu-latest
 
@@ -130,6 +129,13 @@ jobs:
       - name: Install
         run: |
           yarn
+      - uses: actions/download-artifact@v2
+        with:
+          name: wc-${{ runner.os }}
+      - name: WC Prepare
+        run: |
+          mv WebChimera.js.node node_modules/webchimera.js
+          echo "module.exports = require('./WebChimera.js.node')" > node_modules/webchimera.js/index.js
       - name: Build
         run: |
           yarn build
@@ -207,9 +213,9 @@ jobs:
       - name: Upload build artifact
         uses: actions/upload-artifact@v2
         with:
-          name: webchimera-macos
+          name: wc-${{ runner.os }}
           path: |
-            ${{ env.BUILD_DIR }}
+            ${{ env.BUILD_DIR }}/WebChimera.js.node
   build-macos:
     runs-on: macOS-latest
 
@@ -253,6 +259,13 @@ jobs:
       - name: Install
         run: |
           yarn
+      - uses: actions/download-artifact@v2
+        with:
+          name: wc-${{ runner.os }}
+      - name: WC Prepare
+        run: |
+          mv WebChimera.js.node node_modules/webchimera.js
+          echo "module.exports = require('./WebChimera.js.node')" > node_modules/webchimera.js/index.js
       - name: Build
         run: |
           yarn build
