@@ -1,6 +1,7 @@
 import path from "path"
 import fs from "fs"
 import child from "child_process"
+import glob from "glob"
 import type { Arch, Target, Packager } from "electron-builder"
 
 // https://www.electron.build/configuration/configuration#afterpack
@@ -23,11 +24,19 @@ exports.default = async (ctx: AfterPackContext) => {
       return
     }
     console.log("webchimera lib を Contents/Frameworks にコピーします")
-    await new Promise((res, rej) => {
-      child.exec(`cp -r ${src} ${dest}`, (err, std) => {
+    const files = await new Promise<string[]>((res, rej) => {
+      glob(path.join(src, "*"), (err, files) => {
         if (err) rej(err)
-        res(std)
+        res(files)
       })
     })
+    for (const file of files) {
+      await new Promise((res, rej) => {
+        child.exec(`cp -r ${file} ${dest}`, (err, std) => {
+          if (err) rej(err)
+          res(std)
+        })
+      })
+    }
   }
 }
