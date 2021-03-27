@@ -80,19 +80,19 @@ jobs:
       - name: Upload build artifact
         uses: actions/upload-artifact@v2
         with:
-          name: build
+          name: ubuntu-build
           path: |
             build
       - name: Upload dist artifact
         uses: actions/upload-artifact@v2
         with:
-          name: dist
+          name: ubuntu-dist
           path: |
             dist
       - name: Upload build artifact
         uses: actions/upload-artifact@v2
         with:
-          name: build-image
+          name: ubuntu-build-image
           path: |
             build/*.AppImage
             build/*.tar.gz
@@ -145,18 +145,18 @@ jobs:
       - name: Upload build artifact
         uses: actions/upload-artifact@v2
         with:
-          name: build
+          name: mac-build
           path: |
             build
       - name: Upload dist artifact
         uses: actions/upload-artifact@v2
         with:
-          name: dist
+          name: mac-dist
           path: |
             dist
       - name: Upload build-image artifact
         uses: actions/upload-artifact@v2
         with:
-          name: build-image
+          name: mac-build-image
           path: |
             build/*.dmg
