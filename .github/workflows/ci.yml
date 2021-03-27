@@ -22,7 +22,7 @@ jobs:
         node-version: [12.x]
 
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v2
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v1
         with:
@@ -42,7 +42,7 @@ jobs:
       - name: Lint
         run: |
           yarn lint
-  build-ubuntu:
+  prepare-webchimera-ubuntu:
     runs-on: ubuntu-latest
 
     timeout-minutes: 30
@@ -53,8 +53,64 @@ jobs:
 
     needs: lint
 
+    env:
+      VLC_VER: 3.0.11.1
+      ELECTRON_VER: 12.0.1
+      BUILD_DIR: ./build/Release
+      npm_config_wcjs_runtime: electron
+      npm_config_wcjs_runtime_version: 12.0.1
+      npm_config_wcjs_arch: x64
+
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v2
+        with:
+          repository: "RSATom/WebChimera.js"
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+      - id: yarn-cache-dir-path
+        run: echo "::set-output name=dir::$(yarn cache dir)"
+      - uses: actions/cache@v2
+        id: yarn-cache # use this to check for `cache-hit` (`steps.yarn-cache.outputs.cache-hit != 'true'`)
+        with:
+          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}-wc
+          restore-keys: |
+            ${{ runner.os }}-yarn-wc-
+      - name: Prepare
+        run: |
+          git submodule update --init --recursive
+          sudo apt-get install build-essential cmake libvlc-dev
+      - name: Build
+        run: |
+          if [[ "$npm_config_wcjs_runtime" = "electron" && "$npm_config_wcjs_runtime_version" = "latest" ]]; then export npm_config_wcjs_runtime_version=`npm show electron version`; fi
+          export WCJS_ARCHIVE=WebChimera.js_${npm_config_wcjs_runtime}_${npm_config_wcjs_runtime_version}_${npm_config_wcjs_arch}_${OS_NAME}.zip
+          export WCJS_ARCHIVE_PATH=$BUILD_DIR/$WCJS_ARCHIVE
+          export WCJS_FULL_ARCHIVE=WebChimera.js_${npm_config_wcjs_runtime}_v${npm_config_wcjs_runtime_version}_VLC_v${VLC_VER}_${npm_config_wcjs_arch}_${OS_NAME}.tar.gz
+          if [ "$OS_NAME" = "macOS" ]; then export WCJS_FULL_ARCHIVE_PATH=$BUILD_DIR/$WCJS_FULL_ARCHIVE; else export WCJS_FULL_ARCHIVE_PATH=$WCJS_ARCHIVE_PATH; fi
+          yarn install
+        env:
+          OS_NAME: ${{ runner.os }}
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: webchimera-macos
+          path: |
+            ${{ env.BUILD_DIR }}
+  build-ubuntu:
+    runs-on: ubuntu-latest
+
+    timeout-minutes: 30
+
+    strategy:
+      matrix:
+        node-version: [12.x]
+
+    needs: prepare-webchimera-ubuntu
+
+    steps:
+      - uses: actions/checkout@v2
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v1
         with:
@@ -96,7 +152,7 @@ jobs:
           path: |
             build/*.AppImage
             build/*.tar.gz
-  build-macos:
+  prepare-webchimera-macos:
     runs-on: macOS-latest
 
     timeout-minutes: 30
@@ -107,8 +163,66 @@ jobs:
 
     needs: lint
 
+    env:
+      VLC_VER: 3.0.11.1
+      ELECTRON_VER: 12.0.1
+      BUILD_DIR: ./build/Release
+      npm_config_wcjs_runtime: electron
+      npm_config_wcjs_runtime_version: 12.0.1
+      npm_config_wcjs_arch: x64
+
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v2
+        with:
+          repository: "RSATom/WebChimera.js"
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+      - id: yarn-cache-dir-path
+        run: echo "::set-output name=dir::$(yarn cache dir)"
+      - uses: actions/cache@v2
+        id: yarn-cache # use this to check for `cache-hit` (`steps.yarn-cache.outputs.cache-hit != 'true'`)
+        with:
+          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}-wc
+          restore-keys: |
+            ${{ runner.os }}-yarn-wc-
+      - name: Prepare
+        run: |
+          git submodule update --init --recursive
+          curl -L -o ./deps/vlc-$VLC_VER.dmg http://get.videolan.org/vlc/$VLC_VER/macosx/vlc-$VLC_VER.dmg
+          hdiutil mount ./deps/vlc-$VLC_VER.dmg
+          cp -R "/Volumes/VLC media player/VLC.app" ./deps
+      - name: Build
+        run: |
+          if [[ "$npm_config_wcjs_runtime" = "electron" && "$npm_config_wcjs_runtime_version" = "latest" ]]; then export npm_config_wcjs_runtime_version=`npm show electron version`; fi
+          export WCJS_ARCHIVE=WebChimera.js_${npm_config_wcjs_runtime}_${npm_config_wcjs_runtime_version}_${npm_config_wcjs_arch}_${OS_NAME}.zip
+          export WCJS_ARCHIVE_PATH=$BUILD_DIR/$WCJS_ARCHIVE
+          export WCJS_FULL_ARCHIVE=WebChimera.js_${npm_config_wcjs_runtime}_v${npm_config_wcjs_runtime_version}_VLC_v${VLC_VER}_${npm_config_wcjs_arch}_${OS_NAME}.tar.gz
+          if [ "$OS_NAME" = "macOS" ]; then export WCJS_FULL_ARCHIVE_PATH=$BUILD_DIR/$WCJS_FULL_ARCHIVE; else export WCJS_FULL_ARCHIVE_PATH=$WCJS_ARCHIVE_PATH; fi
+          yarn install
+        env:
+          OS_NAME: ${{ runner.os }}
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: webchimera-macos
+          path: |
+            ${{ env.BUILD_DIR }}
+  build-macos:
+    runs-on: macOS-latest
+
+    timeout-minutes: 30
+
+    strategy:
+      matrix:
+        node-version: [12.x]
+
+    needs: prepare-webchimera-macos
+
+    steps:
+      - uses: actions/checkout@v2
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v1
         with:
