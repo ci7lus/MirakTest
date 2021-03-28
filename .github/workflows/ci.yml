@@ -78,10 +78,10 @@ jobs:
           key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}-wc
           restore-keys: |
             ${{ runner.os }}-yarn-wc-
-      - name: Prepare
-        run: |
-          git submodule update --init --recursive
-          sudo apt-get install build-essential cmake libvlc-dev
+      - name: Submodule update
+        run: git submodule update --init --recursive
+      - name: Install deps
+        run: sudo apt-get install build-essential cmake libvlc-dev
       - name: Build
         run: |
           if [[ "$npm_config_wcjs_runtime" = "electron" && "$npm_config_wcjs_runtime_version" = "latest" ]]; then export npm_config_wcjs_runtime_version=`npm show electron version`; fi
@@ -194,9 +194,10 @@ jobs:
           key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}-wc
           restore-keys: |
             ${{ runner.os }}-yarn-wc-
-      - name: Prepare
+      - name: submodule
+        run: git submodule update --init --recursive
+      - name: Download VLC
         run: |
-          git submodule update --init --recursive
           curl -L -o ./deps/vlc-$VLC_VER.dmg http://get.videolan.org/vlc/$VLC_VER/macosx/vlc-$VLC_VER.dmg
           hdiutil mount ./deps/vlc-$VLC_VER.dmg
           cp -R "/Volumes/VLC media player/VLC.app" ./deps
@@ -220,7 +221,7 @@ jobs:
         run: |
           cd deps/VLC.app/Contents/MacOS
           zip -rq ../vlc_lib.zip .
-      - name: Upload vlc artifact
+      - name: VLC related libs are licensed under LGPL and GPLv2
         uses: actions/upload-artifact@v2
         with:
           name: vlc-${{ runner.os }}
@@ -242,16 +243,6 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: ${{ matrix.node-version }}
-      - name: Get brew cache directory
-        id: brew-cache
-        run: echo "::set-output name=dir::$(brew --cache)/downloads"
-      - name: Brew cache
-        uses: actions/cache@v2
-        with:
-          path: ${{ steps.brew-cache.outputs.dir }}
-          key: ${{ runner.os }}-${{ hashFiles('Brewfile') }}
-          restore-keys: |
-            ${{ runner.os }}-brew-
       - id: yarn-cache-dir-path
         run: echo "::set-output name=dir::$(yarn cache dir)"
       - uses: actions/cache@v2
@@ -261,13 +252,14 @@ jobs:
           key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
             ${{ runner.os }}-yarn-
-      - name: Install deps
+      - name: Install VLC
         run: |
-          brew install vlc
-          brew install cmake
+          wget https://raw.githubusercontent.com/Homebrew/homebrew-cask/d1d695e55a15ed145c01c0cf52c9db3210a7d0c2/Casks/vlc.rb
+          brew install vlc.rb
       - name: Install
         run: |
           yarn
+          ls -la node_modules/webchimera.js
       - uses: actions/download-artifact@v2
         with:
           name: wc-${{ runner.os }}
