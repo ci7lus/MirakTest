@@ -2,6 +2,7 @@ import path from "path"
 import fs from "fs"
 import child from "child_process"
 import glob from "glob"
+import axios from "axios"
 import type { Arch, Target, Packager } from "electron-builder"
 
 // https://www.electron.build/configuration/configuration#afterpack
@@ -38,5 +39,22 @@ exports.default = async (ctx: AfterPackContext) => {
         })
       })
     }
+    console.log("VLC の COPYRING, COPYRING.LIB をバンドルにコピーします")
+    const COPYRING = await axios.get(
+      "https://raw.githubusercontent.com/videolan/vlc/master/COPYING",
+      { responseType: "text" }
+    )
+    await fs.promises.writeFile(
+      path.join(dest, "../VLC-COPYRING"),
+      COPYRING.data
+    )
+    const COPYRING_LIB = await axios.get(
+      "https://raw.githubusercontent.com/videolan/vlc/master/COPYING.LIB",
+      { responseType: "text" }
+    )
+    await fs.promises.writeFile(
+      path.join(dest, "../VLC-COPYRING.LIB"),
+      COPYRING_LIB.data
+    )
   }
 }

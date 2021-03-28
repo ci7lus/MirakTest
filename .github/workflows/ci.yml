@@ -274,7 +274,7 @@ jobs:
       - uses: actions/download-artifact@v2
         with:
           name: vlc-${{ runner.os }}
-      - name: WC Prepare
+      - name: VLC related libs are licensed under LGPL and GPLv2
         run: |
           mv WebChimera.js.node node_modules/webchimera.js
           echo "module.exports = require('./WebChimera.js.node')" > node_modules/webchimera.js/index.js
