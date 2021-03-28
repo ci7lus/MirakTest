@@ -15,10 +15,19 @@ interface AfterPackContext {
   targets: Array<Target>
 }
 
+const exec = async (command: string) => {
+  return await new Promise((res, rej) => {
+    child.exec(command, (err, std) => {
+      if (err) rej(err)
+      res(std)
+    })
+  })
+}
+
 exports.default = async (ctx: AfterPackContext) => {
   if (ctx.electronPlatformName === "darwin") {
-    const src = path.resolve("./node_modules/webchimera.js/lib")
-    const dest = path.resolve("./build/mac/MirakTest.app/Contents/Frameworks")
+    const src = path.resolve("./vlc_libs/")
+    const dest = path.resolve("./build/mac/MirakTest.app/Contents/Frameworks/")
 
     if (!fs.existsSync(src) || !fs.existsSync(dest)) {
       console.log("ファイルが存在しません、スキップします")
@@ -32,12 +41,7 @@ exports.default = async (ctx: AfterPackContext) => {
       })
     })
     for (const file of files) {
-      await new Promise((res, rej) => {
-        child.exec(`cp -r ${file} ${dest}`, (err, std) => {
-          if (err) rej(err)
-          res(std)
-        })
-      })
+      await exec(`cp -Ra ${file} ${dest}`)
     }
     console.log("VLC の COPYRING, COPYRING.LIB をバンドルにコピーします")
     const COPYRING = await axios.get(

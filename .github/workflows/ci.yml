@@ -174,9 +174,10 @@ jobs:
           npm_config_wcjs_arch: x64
       - name: VLC related libs are licensed under LGPL and GPLv2
         run: |
-          cp -Ra /Applications/VLC.app/Contents/MacOS/lib node_modules/webchimera.js/lib
-          mkdir node_modules/webchimera.js/lib/vlc
-          cp -Ra /Applications/VLC.app/Contents/MacOS/{lib,plugins,share} node_modules/webchimera.js/lib/vlc
+          cp -Ra /Applications/VLC.app/Contents/MacOS/lib vlc_libs
+          mkdir vlc_libs/vlc
+          cp -Ra /Applications/VLC.app/Contents/MacOS/{plugins,share} vlc_libs/vlc
+          rm -rf vlc_libs/vlc/share/locale
       - name: Build
         run: |
           yarn build
