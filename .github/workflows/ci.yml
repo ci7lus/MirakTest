@@ -173,11 +173,7 @@ jobs:
           npm_config_wcjs_runtime_version: 12.0.1
           npm_config_wcjs_arch: x64
       - name: VLC related libs are licensed under LGPL and GPLv2
-        run: |
-          cp -Ra /Applications/VLC.app/Contents/MacOS/lib vlc_libs
-          mkdir vlc_libs/vlc
-          cp -Ra /Applications/VLC.app/Contents/MacOS/{plugins,share} vlc_libs/vlc
-          rm -rf vlc_libs/vlc/share/locale
+        run: ./make_vlclibs.sh
       - name: Build
         run: |
           yarn build
