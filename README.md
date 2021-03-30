@@ -18,11 +18,11 @@ Electron を使用した Mirakurun の映像視聴確認用アプリです。鋭
 
 ### 安定版
 
-macOS / Linux ビルドを [Releases](https://github.com/ci7lus/MirakTest/releases) にて配布しています。
+macOS 版ビルドを [Releases](https://github.com/ci7lus/MirakTest/releases) にて配布しています。Intel / M1 mac (Rosetta 2) 上で動作する macOS Catalina / Big Sur での動作を確認しています。その他ディストリビュージョン版の配布については未定です。
 
 ### 開発版
 
-下記開発手順に沿ってビルドを行うか、CI にてコミット毎にビルドが行われているので、コミットメッセージ右の緑色チェック → Artifacts からダウンロードできます。現在は macOS / Linux ビルドのみで、動作確認を行っているのは macOS のみです。
+下記開発手順に沿ってビルドを行うか、CI にてコミット毎にビルドが行われているので、コミットメッセージ右の緑色チェック → Artifacts からダウンロードできます。現在は macOS / Linux ビルドのみです。
 
 ## 開発
 
@@ -51,6 +51,7 @@ sudo apt-get install build-essential cmake libvlc-dev
 git clone git@github.com:ci7lus/MirakTest.git
 cd MirakTest
 yarn
+./setup_wcjs.sh
 yarn build
 ```
 
@@ -60,7 +61,7 @@ yarn build
 
 ### 補足
 
-Linux / Windows に関しては開発者が環境を持ち合わせていないため、動作確認ができません。該当環境にて動作確認ができた場合は、お知らせいただけると嬉しいです。マルチプラットフォームを名乗れるようになります。
+Linux / Windows に関しては動作確認ができていません。該当環境にて動作確認ができた場合は、お知らせいただけると嬉しいです。マルチプラットフォームを名乗れるようになります。
 
 ## 謝辞
 
