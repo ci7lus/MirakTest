@@ -37,6 +37,8 @@ brew install vlc
 git clone git@github.com:ci7lus/MirakTest.git
 cd MirakTest
 yarn
+./setup_vlclib_mac.sh
+./setup_wcjs.sh
 yarn build
 ```
 
