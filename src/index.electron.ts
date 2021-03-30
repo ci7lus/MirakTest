@@ -36,13 +36,19 @@ app.on("ready", () => init())
 
 app.on("window-all-closed", () => app.quit())
 
-try {
-  require("electron-reload")(
-    [path.resolve(__dirname, "index.html"), path.resolve(__dirname, "dist/")],
-    {
+const reloadTargetPaths = [
+  path.resolve(__dirname, "../index.html"),
+  path.resolve(__dirname, "index.electron.js"),
+  path.resolve(__dirname, "main.js"),
+]
+
+if (!require.main?.filename.includes("app.asar")) {
+  try {
+    require("electron-reload")(reloadTargetPaths, {
       electron: process.execPath,
-    }
-  )
-} catch (e) {
-  console.error(e)
+    })
+    console.log("electron-reload enabled")
+  } catch (e) {
+    console.error(e)
+  }
 }

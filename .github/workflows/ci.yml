@@ -6,7 +6,10 @@ on:
       - "**"
     tags-ignore:
       - "**"
-  pull_request:
+    paths-ignore:
+      - .gitignore
+      - LICENSE
+      - "**.md"
 
 jobs:
   lint:
@@ -19,7 +22,7 @@ jobs:
         node-version: [12.x]
 
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v2
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v1
         with:
@@ -27,7 +30,7 @@ jobs:
       - id: yarn-cache-dir-path
         run: echo "::set-output name=dir::$(yarn cache dir)"
       - uses: actions/cache@v2
-        id: yarn-cache # use this to check for `cache-hit` (`steps.yarn-cache.outputs.cache-hit != 'true'`)
+        id: yarn-cache
         with:
           path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
           key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
@@ -39,7 +42,7 @@ jobs:
       - name: Lint
         run: |
           yarn lint
-  build:
+  build-ubuntu:
     runs-on: ubuntu-latest
 
     timeout-minutes: 30
@@ -51,7 +54,7 @@ jobs:
     needs: lint
 
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v2
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v1
         with:
@@ -59,17 +62,113 @@ jobs:
       - id: yarn-cache-dir-path
         run: echo "::set-output name=dir::$(yarn cache dir)"
       - uses: actions/cache@v2
-        id: yarn-cache # use this to check for `cache-hit` (`steps.yarn-cache.outputs.cache-hit != 'true'`)
+        id: yarn-cache
         with:
           path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
           key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
             ${{ runner.os }}-yarn-
-      - name: Install
-        if: runner.os == 'macOS'
+      - name: Install deps
         run: |
-          yarn --ignore-scripts
+          sudo apt-get install build-essential cmake libvlc-dev
+      - name: Install
+        run: |
+          yarn
+      - name: Build webchimera.js
+        run: ./setup_wcjs.sh
+        env:
+          OS_NAME: ${{ runner.os }}
+          VLC_VER: 3.0.12
+          ELECTRON_VER: 12.0.1
+          BUILD_DIR: ./build/Release
+          npm_config_wcjs_runtime: electron
+          npm_config_wcjs_runtime_version: 12.0.1
+          npm_config_wcjs_arch: x64
       - name: Build
-        if: runner.os == 'macOS'
         run: |
           yarn build
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: ubuntu-build
+          path: |
+            build
+      - name: Upload dist artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: ubuntu-dist
+          path: |
+            dist
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: ubuntu-build-image
+          path: |
+            build/*.AppImage
+            build/*.tar.gz
+  build-macos:
+    runs-on: macOS-latest
+
+    timeout-minutes: 30
+
+    strategy:
+      matrix:
+        node-version: [12.x]
+
+    needs: lint
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+      - id: yarn-cache-dir-path
+        run: echo "::set-output name=dir::$(yarn cache dir)"
+      - uses: actions/cache@v2
+        id: yarn-cache
+        with:
+          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
+      - name: Install VLC
+        run: |
+          wget https://raw.githubusercontent.com/Homebrew/homebrew-cask/d1d695e55a15ed145c01c0cf52c9db3210a7d0c2/Casks/vlc.rb
+          brew install vlc.rb
+      - name: Install
+        run: |
+          yarn
+      - name: Build webchimera.js
+        run: ./setup_wcjs.sh
+        env:
+          OS_NAME: ${{ runner.os }}
+          VLC_VER: 3.0.12
+          ELECTRON_VER: 12.0.1
+          BUILD_DIR: ./build/Release
+          npm_config_wcjs_runtime: electron
+          npm_config_wcjs_runtime_version: 12.0.1
+          npm_config_wcjs_arch: x64
+      - name: VLC related libs are licensed under LGPL and GPLv2
+        run: ./setup_vlclib_mac.sh
+      - name: Build
+        run: |
+          yarn build
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: mac-build
+          path: |
+            build
+      - name: Upload dist artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: mac-dist
+          path: |
+            dist
+      - name: Upload build-image artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: mac-build-image
+          path: |
+            build/*.dmg
