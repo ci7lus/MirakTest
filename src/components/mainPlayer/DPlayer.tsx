@@ -42,7 +42,7 @@ export const DPlayerWrap: React.VFC<{
       autoplay: true,
       screenshot: true,
       video: {
-        url: "https://files.catbox.moe/tvs9xy.mp4",
+        url: "./assets/blank.mp4",
       },
       danmaku,
       lang: "ja-jp",
