@@ -130,16 +130,7 @@ export const MirakurunManager: React.VFC<{}> = () => {
     const req = await ServicesApiAxiosParamCreator(
       mirakurun.getConfigure()
     ).getServiceStream(selectedService.id)
-    let url = mirakurunSettingValue.baseUrl + req.url
-    if (mirakurunSettingValue.username || mirakurunSettingValue.password) {
-      const auth = [
-        mirakurunSettingValue.username,
-        mirakurunSettingValue.password,
-      ]
-        .filter((s) => s)
-        .join(":")
-      url = url.replace("//", `//${auth}@`)
-    }
+    const url = mirakurunSettingValue.baseUrl + req.url
     setUrl(url)
     setLastSelectedServiceId(selectedService.id)
   }

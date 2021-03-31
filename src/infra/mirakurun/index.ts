@@ -21,25 +21,17 @@ import {
   VersionApi,
 } from "./api"
 import { Configuration } from "./configuration"
-import pkg from "../../../package.json"
 import { MirakurunSetting } from "../../types/struct"
 
 export class MirakurunAPI {
-  username?: string
-  password?: string
   baseUrl: string
-  constructor({ username, password, baseUrl }: MirakurunSetting) {
-    this.username = username
-    this.password = password
+  constructor({ baseUrl }: MirakurunSetting) {
     if (!baseUrl) throw new Error("Mirakurun baseUrl error")
     this.baseUrl = baseUrl
   }
 
   getConfigure() {
     return new Configuration({
-      username: this.username,
-      password: this.password,
-      userAgent: `${pkg.name}/${pkg.version} Electron/${process.versions.electron} Chrome/${process.versions.chrome} (${process.platform}) (+${pkg.repository.url})`,
       basePath: this.baseUrl,
     })
   }

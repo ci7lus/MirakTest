@@ -8,8 +8,6 @@ export const mirakurunSetting = atom<MirakurunSetting>({
   key: `${prefix}.mirakurun`,
   default: {
     baseUrl: undefined,
-    username: undefined,
-    password: undefined,
   },
 })
 

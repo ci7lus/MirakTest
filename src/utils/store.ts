@@ -13,8 +13,6 @@ const store = new Store<{}>({
   projectName: pkg.name,
   [mirakurunSetting.key]: {
     baseUrl: { type: "string" },
-    username: { type: "string" },
-    password: { type: "string" },
   },
   [sayaSetting.key]: {
     baseUrl: { type: "string" },

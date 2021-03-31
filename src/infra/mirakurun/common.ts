@@ -175,16 +175,12 @@ export const createRequestFunction = function (
       url: (configuration?.basePath || basePath) + axiosArgs.url,
     }
     // openapi 認証部書き換え
+    const url = new URL(configuration?.basePath || basePath)
     const headers: { [key: string]: string } = {}
-    if (configuration && (configuration.username || configuration.password)) {
+    if (url.username || url.password) {
       headers["Authorization"] = `Basic ${Base64.encode(
-        [configuration.username, configuration.password]
-          .filter((s) => s)
-          .join(":")
+        [url.username, url.password].filter((s) => s).join(":")
       )}`
-    }
-    if (configuration && configuration.userAgent) {
-      //headers["user-agent"] = configuration.userAgent
     }
     axiosRequestArgs.headers = Object.assign(
       axiosRequestArgs.headers || {},
