@@ -2,7 +2,7 @@
 
 # MirakTest
 
-\[WIP\] [Mirakurun](https://github.com/Chinachu/Mirakurun) 映像視聴確認用アプリ
+[Mirakurun](https://github.com/Chinachu/Mirakurun) 映像視聴確認用アプリ
 
 ## 概要
 
