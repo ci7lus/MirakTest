@@ -18,7 +18,22 @@ Electron を使用した Mirakurun の映像視聴確認用アプリです。鋭
 
 ### 安定版
 
-macOS 版ビルドを [Releases](https://github.com/ci7lus/MirakTest/releases) にて配布しています。Intel / M1 mac (Rosetta 2) 上で動作する macOS Catalina / Big Sur での動作を確認しています。その他ディストリビュージョン版の配布については未定です。
+macOS / Linux 版ビルドを [Releases](https://github.com/ci7lus/MirakTest/releases) にて配布しています。
+
+#### macOS での実行
+
+dmg をマウントして app を Applications にコピーします。<br />
+Intel / M1 mac (Rosetta 2) 上で動作する macOS Catalina / Big Sur での動作を確認しています。
+
+#### Linux (debian) での実行
+
+vlc の導入が必要です。
+
+```bash
+apt-get install vlc
+```
+
+AppImage に実行権限をつけ `--no-sandbox` をつけて実行するか、アーカイブ版の `chrome-sandbox` を適切な権限に設定してください（[参考](https://github.com/Revolutionary-Games/Thrive/issues/749)）。
 
 ### 開発版
 
@@ -30,8 +45,6 @@ macOS 版ビルドを [Releases](https://github.com/ci7lus/MirakTest/releases) �
 
 ### macOS
 
-調査中
-
 ```bash
 brew install vlc
 git clone git@github.com:ci7lus/MirakTest.git
@@ -42,12 +55,10 @@ yarn
 yarn build
 ```
 
-### Linux
-
-調査中
+### Linux (debian)
 
 ```bash
-sudo apt-get install build-essential cmake libvlc-dev
+sudo apt-get install build-essential cmake libvlc-dev vlc
 git clone git@github.com:ci7lus/MirakTest.git
 cd MirakTest
 yarn
@@ -61,7 +72,7 @@ yarn build
 
 ### 補足
 
-Linux / Windows に関しては動作確認ができていません。該当環境にて動作確認ができた場合は、お知らせいただけると嬉しいです。マルチプラットフォームを名乗れるようになります。
+Windows に関しては動作確認ができていません。動作確認ができた場合は、お知らせいただけると嬉しいです。
 
 ## 謝辞
 
