@@ -41,12 +41,12 @@ AppImage に実行権限をつけ `--no-sandbox` をつけて実行するか、�
 
 ## 開発
 
-メイン機能の依存として [WebChimera.js](https://github.com/RSATom/WebChimera.js) を利用しています。[Build PreRequests](https://github.com/RSATom/WebChimera.js#build-prerequisites) と [Prebuild binaries](https://github.com/RSATom/WebChimera.js#prebuilt-binaries) の導入が必要です。
+メイン機能の依存として [WebChimera.js](https://github.com/RSATom/WebChimera.js) を利用しています。[Build PreRequests](https://github.com/RSATom/WebChimera.js#build-prerequisites) の導入が必要です。
 
 ### macOS
 
 ```bash
-brew install vlc
+brew install vlc cmake
 git clone git@github.com:ci7lus/MirakTest.git
 cd MirakTest
 yarn
