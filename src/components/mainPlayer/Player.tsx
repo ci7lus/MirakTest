@@ -1,9 +1,11 @@
 import React, { useEffect, useRef, useState } from "react"
-import { useRecoilState, useRecoilValue } from "recoil"
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil"
 import WebChimeraJs from "webchimera.js"
 import { toast } from "react-toastify"
 import {
   mainPlayerAudioChannel,
+  mainPlayerAudioTrack,
+  mainPlayerAudioTracks,
   mainPlayerSubtitleEnabled,
   mainPlayerUrl,
   mainPlayerVolume,
@@ -49,12 +51,20 @@ export const Player: React.VFC<{}> = () => {
     console.log("字幕変更:", Number(subtitleEnabled))
   }, [subtitleEnabled])
 
-  const audioTrack = useRecoilValue(mainPlayerAudioChannel)
+  const audioChannel = useRecoilValue(mainPlayerAudioChannel)
   useEffect(() => {
     if (!playerRef.current) return
-    playerRef.current.audio.channel = audioTrack
-    console.log("オーディオチャンネル変更:", audioTrack)
+    playerRef.current.audio.channel = audioChannel
+    console.log("オーディオチャンネル変更:", audioChannel)
+  }, [audioChannel])
+
+  const audioTrack = useRecoilValue(mainPlayerAudioTrack)
+  useEffect(() => {
+    if (!playerRef.current) return
+    playerRef.current.audio.track = audioTrack
+    console.log("オーディオトラック変更:", audioTrack)
   }, [audioTrack])
+  const setAudioTracks = useSetRecoilState(mainPlayerAudioTracks)
 
   useEffect(() => {
     const renderContext = new VideoRenderer(canvasRef.current!)
@@ -71,6 +81,14 @@ export const Player: React.VFC<{}> = () => {
           break
         case "successfully_opened":
           setSubtitleEnabled(false)
+          break
+        case "received_first_picture":
+        case "es_out_program_epg":
+          setAudioTracks(
+            [...Array(player.audio.count).keys()].map(
+              (trackId) => player.audio[trackId]
+            )
+          )
           break
         case "unable_to_open":
           toast.error("映像の受信に失敗しました")

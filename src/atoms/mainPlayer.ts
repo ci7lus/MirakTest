@@ -36,6 +36,16 @@ export const mainPlayerAudioChannel = atom<number>({
   default: VLCAudioChannel.Stereo,
 })
 
+export const mainPlayerAudioTrack = atom<number>({
+  key: `${prefix}.audioTrack`,
+  default: 1,
+})
+
+export const mainPlayerAudioTracks = atom<string[]>({
+  key: `${prefix}.audioTracks`,
+  default: [],
+})
+
 export const mainPlayerCurrentProgram = atom<Program | null>({
   key: `${prefix}.currentProgram`,
   default: null,

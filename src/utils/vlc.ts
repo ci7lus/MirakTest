@@ -43,8 +43,16 @@ export const VLCLogFilter = (s: string) => {
     return { category: "unable_to_open" } as const
   } else if (s.includes("successfully opened")) {
     return { category: "successfully_opened" } as const
+  } else if (s.startsWith("Received first picture")) {
+    return { category: "received_first_picture" } as const
+  } else if (s.startsWith("EsOutProgramEpg")) {
+    return { category: "es_out_program_epg" } as const
   } else if (s.startsWith("end of stream")) {
     return { category: "end_of_stream" } as const
+  } else if (s.startsWith("Buffering")) {
+    const m = s.match(/Buffering (\d+)%/)
+    if (!m) return { category: "buffering" } as const
+    return { category: "buffering", progress: parseInt(m[1]) } as const
   } else {
     return { category: "unknown" } as const
   }

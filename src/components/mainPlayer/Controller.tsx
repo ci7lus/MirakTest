@@ -6,6 +6,8 @@ import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil"
 import { mirakurunPrograms, mirakurunServices } from "../../atoms/mirakurun"
 import {
   mainPlayerAudioChannel,
+  mainPlayerAudioTrack,
+  mainPlayerAudioTracks,
   mainPlayerCurrentProgram,
   mainPlayerLastSelectedServiceId,
   mainPlayerSelectedService,
@@ -47,6 +49,9 @@ export const Controller: React.VFC<{}> = () => {
     mainPlayerSubtitleEnabled
   )
   const [volume, setVolume] = useRecoilState(mainPlayerVolume)
+
+  const [audioTrack, setAudioTrack] = useRecoilState(mainPlayerAudioTrack)
+  const audioTracks = useRecoilValue(mainPlayerAudioTracks)
 
   useEffect(() => {
     if (!selectedService) {
@@ -184,6 +189,26 @@ export const Controller: React.VFC<{}> = () => {
             </option>
           ))}
         </select>
+        {3 <= audioTracks.length && (
+          <select
+            className="appearance-none border border-gray-800 rounded py-2 px-2 leading-tight focus:outline-none bg-gray-800 bg-opacity-50 focus:bg-gray-700 focus:border-gray-500 text-gray-100"
+            value={audioTrack}
+            onChange={(e) => {
+              const selectedTrack = parseInt(e.target.value)
+              if (Number.isNaN(selectedTrack)) return
+              setAudioTrack(selectedTrack)
+            }}
+          >
+            {audioTracks.map((trackName, i) => {
+              if (i === 0) return <></>
+              return (
+                <option key={trackName} value={i}>
+                  {trackName.replace("Track", "トラック")}
+                </option>
+              )
+            })}
+          </select>
+        )}
         <div className="flex items-center justify-center space-x-1">
           <MessageSquare size={22} />
           <CommentOpacitySlider />
