@@ -8,6 +8,7 @@ import {
   mainPlayerAudioChannel,
   mainPlayerAudioTrack,
   mainPlayerAudioTracks,
+  mainPlayerCommentOpacity,
   mainPlayerCurrentProgram,
   mainPlayerLastSelectedServiceId,
   mainPlayerSelectedService,
@@ -49,6 +50,7 @@ export const Controller: React.VFC<{}> = () => {
     mainPlayerSubtitleEnabled
   )
   const [volume, setVolume] = useRecoilState(mainPlayerVolume)
+  const setCommentOpacity = useSetRecoilState(mainPlayerCommentOpacity)
 
   const [audioTrack, setAudioTrack] = useRecoilState(mainPlayerAudioTrack)
   const audioTracks = useRecoilValue(mainPlayerAudioTracks)
@@ -210,7 +212,15 @@ export const Controller: React.VFC<{}> = () => {
           </select>
         )}
         <div className="flex items-center justify-center space-x-1">
-          <MessageSquare size={22} />
+          <button
+            type="button"
+            className="focus:outline-none"
+            onClick={() =>
+              setCommentOpacity((opacity) => (0 < opacity ? 0 : 0.8))
+            }
+          >
+            <MessageSquare size={22} />
+          </button>
           <CommentOpacitySlider />
         </div>
         <div className="pr-2" />

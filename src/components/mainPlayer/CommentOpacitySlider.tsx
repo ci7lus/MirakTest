@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
 import { useDebounce } from "react-use"
 import { useRecoilState } from "recoil"
 import { mainPlayerCommentOpacity } from "../../atoms/mainPlayer"
@@ -16,6 +16,9 @@ export const CommentOpacitySlider: React.VFC<{}> = () => {
     100,
     [opacity]
   )
+  useEffect(() => {
+    setOpacity(commentOpacity * 10)
+  }, [commentOpacity])
 
   return (
     <input
