@@ -1,0 +1,2 @@
+convert miraktest.iconset/icon_256x256.png miraktest.ico
+iconutil -c icns miraktest.iconset

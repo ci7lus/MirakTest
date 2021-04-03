@@ -2,4 +2,3 @@ convert miraktest.iconset/icon_512x512.png -resize 256x256 miraktest.iconset/ico
 convert miraktest.iconset/icon_512x512.png -resize 128x128 miraktest.iconset/icon_128x128.png
 convert miraktest.iconset/icon_512x512.png -resize 32x32 miraktest.iconset/icon_32x32.png
 convert miraktest.iconset/icon_512x512.png -resize 16x16 miraktest.iconset/icon_16x16.png
-convert miraktest.iconset/icon_256x256.png miraktest.ico

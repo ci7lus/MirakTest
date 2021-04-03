@@ -8,8 +8,11 @@ export const Splash: React.FC<{}> = ({ children }) => {
   return (
     <div className="overflow-hidden select-none">
       <div className="w-full h-screen flex items-center justify-center">
-        <div className="flex flex-col items-center justify-center space-y-6">
-          <img width="256px" src="./assets/miraktest.png" />
+        <div className="flex flex-col items-center justify-center space-y-4">
+          <div className="flex items-center justify-center space-x-8 mr-4">
+            <img width="100px" src="./assets/miraktest_logo.png" />
+            <img width="200px" src="./assets/miraktest_text.svg" />
+          </div>
           {children && (
             <div
               className="pl-6 text-gray-100 transition-all duration-300 ease-in-out"
