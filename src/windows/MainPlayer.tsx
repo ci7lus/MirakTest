@@ -33,35 +33,35 @@ export const MainPlayer: React.VFC<{}> = () => {
   useEffect(() => {
     injectStyle()
     // 16:9以下の比率になったら戻す
-    const window = remote.getCurrentWindow()
+    const remoteWindow = remote.getCurrentWindow()
     const onResizedOrMoved = () => {
-      const bounds = window.getContentBounds()
+      const bounds = remoteWindow.getContentBounds()
       const min = Math.ceil((bounds.width / 16) * 9)
       if (bounds.height < min) {
         const targetBounds = {
           ...bounds,
           height: min,
         }
-        window.setContentBounds(targetBounds)
+        remoteWindow.setContentBounds(targetBounds)
         setBounds(targetBounds)
       } else {
         setBounds(bounds)
       }
     }
-    window.on("resized", onResizedOrMoved)
-    window.on("moved", onResizedOrMoved)
+    remoteWindow.on("resized", onResizedOrMoved)
+    remoteWindow.on("moved", onResizedOrMoved)
     // 前回のウィンドウサイズが保存されていれば戻す
     if (bounds) {
-      window.setContentBounds(bounds, true)
+      remoteWindow.setContentBounds(bounds, true)
     } else {
       onResizedOrMoved()
     }
 
     // メインウィンドウを閉じたら終了する
     const onClosed = () => remote.app.quit()
-    window.on("closed", onClosed)
+    remoteWindow.on("closed", onClosed)
     // コンテキストメニュー
-    window.webContents.on("context-menu", (e, params) => {
+    remoteWindow.webContents.on("context-menu", (e, params) => {
       const noParams = typeof params !== "object"
       e.preventDefault()
       remote.Menu.buildFromTemplate([
@@ -92,8 +92,9 @@ export const MainPlayer: React.VFC<{}> = () => {
         {
           label: "最前面に固定",
           type: "checkbox",
-          checked: window.isAlwaysOnTop(),
-          click: () => window.setAlwaysOnTop(!window.isAlwaysOnTop()),
+          checked: remoteWindow.isAlwaysOnTop(),
+          click: () =>
+            remoteWindow.setAlwaysOnTop(!remoteWindow.isAlwaysOnTop()),
         },
         {
           type: "separator",
@@ -124,7 +125,7 @@ export const MainPlayer: React.VFC<{}> = () => {
           label: "削除",
           role: "delete",
           visible: noParams || params.editFlags.canDelete,
-          click: () => window.webContents.delete(),
+          click: () => remoteWindow.webContents.delete(),
         },
         {
           label: "すべて選択",
@@ -137,7 +138,7 @@ export const MainPlayer: React.VFC<{}> = () => {
         {
           label: "再読み込み",
           role: "reload",
-          click: () => window.webContents.reload(),
+          click: () => remoteWindow.webContents.reload(),
         },
         {
           label: "終了",
@@ -147,9 +148,9 @@ export const MainPlayer: React.VFC<{}> = () => {
       ]).popup()
     })
     return () => {
-      window.off("resized", onResizedOrMoved)
-      window.off("moved", onResizedOrMoved)
-      window.off("closed", onClosed)
+      remoteWindow.off("resized", onResizedOrMoved)
+      remoteWindow.off("moved", onResizedOrMoved)
+      remoteWindow.off("closed", onClosed)
     }
   }, [])
   // タイトル
@@ -177,7 +178,14 @@ export const MainPlayer: React.VFC<{}> = () => {
         pauseOnHover
       />
       <MirakurunManager />
-      <div className="w-full h-screen bg-gray-900 text-gray-100 flex items-center justify-center">
+      <div
+        className="w-full h-screen bg-gray-900 text-gray-100 flex items-center justify-center"
+        onDoubleClick={() => {
+          const remoteWindow = remote.getCurrentWindow()
+          if (!remoteWindow.fullScreenable) return
+          remoteWindow.setFullScreen(!remoteWindow.isFullScreen())
+        }}
+      >
         <div className="relative w-full h-full overflow-hidden">
           <div className="absolute top-0 left-0 w-full h-full">
             <Splash />
