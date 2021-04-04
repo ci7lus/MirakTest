@@ -6,8 +6,7 @@ directories:
 files:
   - "index.html"
   - "package.json"
-  - "dist/**/*.js"
-  - "dist/**/*.css"
+  - "dist/**/*"
   - "assets/**/*"
   - "!node_modules"
   - "node_modules/bindings"
@@ -197,6 +196,9 @@ files:
   - "node_modules/lru-cache"
   - "node_modules/yallist"
   - "node_modules/type-fest"
+  - "node_modules/discord-rpc"
+  - "node_modules/node-fetch"
+  - "node_modules/ws"
   - from: node_modules/webchimera.js
     to: node_modules/webchimera.js
 publish: null

@@ -20,6 +20,8 @@ import { useNow } from "../../hooks/date"
 import { useDebounce } from "react-use"
 import { VLCAudioChannel, VLCAudioChannelTranslated } from "../../utils/vlc"
 import { ScreenShotController } from "./controllers/ScreenShot"
+import { ipcRenderer } from "electron"
+import type { Presence } from "discord-rpc"
 
 export const Controller: React.VFC<{}> = () => {
   const [isVisible, setIsVisible] = useState(false)
@@ -59,6 +61,7 @@ export const Controller: React.VFC<{}> = () => {
   useEffect(() => {
     if (!selectedService) {
       setTitle(null)
+      ipcRenderer.send("rich-presence", null)
       return
     }
     const currentProgram = programs?.find(
@@ -74,6 +77,18 @@ export const Controller: React.VFC<{}> = () => {
       if (currentProgram.name) {
         title = `${currentProgram.name} - ${selectedService.name}`
       }
+      const activity: Presence = {
+        largeImageKey: "miraktest_icon",
+        details: selectedService.name,
+        state: currentProgram.name,
+        startTimestamp: currentProgram.startAt / 1000,
+        endTimestamp: (currentProgram.startAt + currentProgram.duration) / 1000,
+        instance: false,
+      }
+      ipcRenderer.send("rich-presence", activity)
+    } else {
+      setCurrentProgram(null)
+      ipcRenderer.send("rich-presence", null)
     }
     setTitle(title)
   }, [programs, selectedService, now])

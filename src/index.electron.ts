@@ -1,6 +1,7 @@
-import { app, BrowserWindow, screen } from "electron"
+import { app, BrowserWindow, screen, ipcMain } from "electron"
 import path from "path"
 import Store from "electron-store"
+import RPC from "discord-rpc"
 
 let window: BrowserWindow | null = null
 
@@ -52,3 +53,24 @@ if (!require.main?.filename.includes("app.asar")) {
     console.error(e)
   }
 }
+
+const clientId = "828277784396824596"
+
+let rpc: RPC.Client | null = null
+
+try {
+  RPC.register(clientId)
+  rpc = new RPC.Client({ transport: "ipc" })
+  rpc.login({ clientId })
+} catch (error) {
+  console.error(error)
+}
+
+ipcMain.on("rich-presence", (event, arg) => {
+  if (!rpc) return
+  if (arg) {
+    rpc.setActivity(arg)
+  } else {
+    rpc.clearActivity()
+  }
+})

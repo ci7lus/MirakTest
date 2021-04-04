@@ -13,7 +13,11 @@ type Package = {
   dependencies?: { [key: string]: string }
 }
 
-const targets = ["webchimera.js@^0.3.1", "electron-store@^7.0.2"]
+const targets = [
+  "webchimera.js@^0.3.1",
+  "electron-store@^7.0.2",
+  "discord-rpc@^3.2.0",
+]
 const file = fs.readFileSync("yarn.lock", "utf8")
 const lock = yarn.parse(file)
 if (lock.type !== "success") throw new Error(lock.type)

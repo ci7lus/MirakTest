@@ -91,6 +91,7 @@ export const Player: React.VFC<{}> = () => {
         })
       } catch (error) {
         toast.error("キャプチャに失敗しました", { autoClose: 2000 })
+        console.error(error)
       }
     })()
   }, [screenShotTrigger])
