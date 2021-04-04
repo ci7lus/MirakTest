@@ -19,6 +19,7 @@ import {
 import { useNow } from "../../hooks/date"
 import { useDebounce } from "react-use"
 import { VLCAudioChannel, VLCAudioChannelTranslated } from "../../utils/vlc"
+import { ScreenShotController } from "./controllers/ScreenShot"
 
 export const Controller: React.VFC<{}> = () => {
   const [isVisible, setIsVisible] = useState(false)
@@ -149,17 +150,6 @@ export const Controller: React.VFC<{}> = () => {
             </optgroup>
           ))}
         </select>
-        <button
-          aria-label={`字幕は${subtitleEnabled}です`}
-          title="字幕切り替え"
-          type="button"
-          className={`focus:outline-none p-2 rounded-md bg-gray-800 ${
-            subtitleEnabled ? "text-gray-100" : "text-gray-500"
-          }`}
-          onClick={() => setSubtitleEnabled((value) => !value)}
-        >
-          <Type size={22} />
-        </button>
         <div className="flex items-center justify-center space-x-1">
           <button
             type="button"
@@ -211,6 +201,18 @@ export const Controller: React.VFC<{}> = () => {
             })}
           </select>
         )}
+        <button
+          aria-label={`字幕は${subtitleEnabled}です`}
+          title="字幕切り替え"
+          type="button"
+          className={`focus:outline-none p-2 rounded-md bg-gray-800 ${
+            subtitleEnabled ? "text-gray-100" : "text-gray-500"
+          }`}
+          onClick={() => setSubtitleEnabled((value) => !value)}
+        >
+          <Type size={22} />
+        </button>
+        <ScreenShotController />
         <div className="flex items-center justify-center space-x-1">
           <button
             type="button"

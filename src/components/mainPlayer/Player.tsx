@@ -6,6 +6,7 @@ import {
   mainPlayerAudioChannel,
   mainPlayerAudioTrack,
   mainPlayerAudioTracks,
+  mainPlayerScreenShotTrigger,
   mainPlayerSubtitleEnabled,
   mainPlayerUrl,
   mainPlayerVolume,
@@ -66,8 +67,38 @@ export const Player: React.VFC<{}> = () => {
   }, [audioTrack])
   const setAudioTracks = useSetRecoilState(mainPlayerAudioTracks)
 
+  const screenShotTrigger = useRecoilValue(mainPlayerScreenShotTrigger)
   useEffect(() => {
-    const renderContext = new VideoRenderer(canvasRef.current!)
+    if (!screenShotTrigger || !canvasRef.current) return
+    ;(async () => {
+      try {
+        const glCanvas = canvasRef.current!
+        const canvas = document.createElement("canvas")
+        canvas.height = glCanvas.height
+        canvas.width = Math.ceil(glCanvas.height / aspect)
+        const context = canvas.getContext("2d", { alpha: false })
+        if (!context) throw new Error("ctx")
+        context.drawImage(glCanvas, 0, 0, canvas.width, canvas.height)
+        const blob = await new Promise<Blob | null>((res) =>
+          canvas.toBlob((blob) => res(blob), "image/png", 1)
+        )
+        if (!blob) throw new Error("blob")
+        await navigator.clipboard.write([
+          new window.ClipboardItem({ [blob.type]: blob }),
+        ])
+        toast.info("クリップボードにキャプチャがコピーされました", {
+          autoClose: 2000,
+        })
+      } catch (error) {
+        toast.error("キャプチャに失敗しました", { autoClose: 2000 })
+      }
+    })()
+  }, [screenShotTrigger])
+
+  useEffect(() => {
+    const renderContext = new VideoRenderer(canvasRef.current!, {
+      preserveDrawingBuffer: true,
+    })
     const player = WebChimeraJs.createPlayer()
     player.onLogMessage = (level, message, format) => {
       const parsed = VLCLogFilter(message)
