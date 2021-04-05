@@ -5,7 +5,7 @@ import { trimCommentForFlow } from "../../utils/comment"
 import { useRecoilValue } from "recoil"
 import { mainPlayerCommentOpacity } from "../../atoms/mainPlayer"
 
-export const DPlayerWrap: React.VFC<{
+export const CoiledDPlayerWrapper: React.VFC<{
   comment: CommentPayload | null
 }> = ({ comment }) => {
   const dplayerElementRef = useRef<HTMLDivElement>(null)

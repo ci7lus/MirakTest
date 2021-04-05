@@ -3,13 +3,13 @@ import { RecoilRoot } from "recoil"
 import { RecoilObserver } from "./components/global/RecoilObserver"
 import { Splash } from "./components/global/Splash"
 import { initializeState } from "./utils/recoil"
-import { MainPlayer } from "./windows/MainPlayer"
+import { CoiledMainPlayer } from "./windows/MainPlayer"
 import { Settings } from "./windows/Settings"
 
 const Router: React.VFC<{}> = () => {
   const hash = window.location.hash as "#MainPlayer" | "#Settings" | "#EPG"
   if (hash === "#MainPlayer") {
-    return <MainPlayer />
+    return <CoiledMainPlayer />
   } else if (hash === "#Settings") {
     return <Settings />
   } else {

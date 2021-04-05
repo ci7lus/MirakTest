@@ -14,7 +14,7 @@ import {
 import { VideoRenderer } from "../../utils/videoRenderer"
 import { VLCLogFilter } from "../../utils/vlc"
 
-export const Player: React.VFC<{}> = () => {
+export const CoiledVideoPlayer: React.VFC<{}> = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const containerRef = useRef<HTMLDivElement>(null)
 

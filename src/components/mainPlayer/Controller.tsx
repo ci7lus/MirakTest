@@ -1,7 +1,5 @@
 import React, { useEffect, useRef, useState } from "react"
-import { MessageSquare, Type, Volume1, Volume2, VolumeX } from "react-feather"
-import { VolumeSlider } from "./VolumeSlider"
-import { CommentOpacitySlider } from "./CommentOpacitySlider"
+import { CommentOpacitySlider } from "./controllers/CommentOpacitySlider"
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil"
 import { mirakurunPrograms, mirakurunServices } from "../../atoms/mirakurun"
 import {
@@ -18,12 +16,16 @@ import {
 } from "../../atoms/mainPlayer"
 import { useNow } from "../../hooks/date"
 import { useDebounce } from "react-use"
-import { VLCAudioChannel, VLCAudioChannelTranslated } from "../../utils/vlc"
-import { ScreenShotController } from "./controllers/ScreenShot"
+import { CoiledScreenShotButton } from "./controllers/ScreenShotButton"
 import { ipcRenderer } from "electron"
 import type { Presence } from "discord-rpc"
+import { ServiceSelector } from "./controllers/ServiceSelector"
+import { VolumeSlider } from "./controllers/VolumeSlider"
+import { AudioChannelSelector } from "./controllers/AudioChannelSelector"
+import { AudioTrackSelector } from "./controllers/AudioTrackSelector"
+import { SubtitleToggleButton } from "./controllers/SubtitleToggleButton"
 
-export const Controller: React.VFC<{}> = () => {
+export const CoiledController: React.VFC<{}> = () => {
   const [isVisible, setIsVisible] = useState(false)
 
   const [lastCurMoved, setLastCurMoved] = useState(0)
@@ -36,11 +38,6 @@ export const Controller: React.VFC<{}> = () => {
   )
 
   const services = useRecoilValue(mirakurunServices)
-  const serviceTypes = Array.from(
-    new Set(
-      services?.map((service) => service.channel?.type).filter((s) => s) || []
-    )
-  )
   const [selectedService, setSelectedService] = useRecoilState(
     mainPlayerSelectedService
   )
@@ -53,7 +50,9 @@ export const Controller: React.VFC<{}> = () => {
     mainPlayerSubtitleEnabled
   )
   const [volume, setVolume] = useRecoilState(mainPlayerVolume)
-  const setCommentOpacity = useSetRecoilState(mainPlayerCommentOpacity)
+  const [commentOpacity, setCommentOpacity] = useRecoilState(
+    mainPlayerCommentOpacity
+  )
 
   const [audioTrack, setAudioTrack] = useRecoilState(mainPlayerAudioTrack)
   const audioTracks = useRecoilValue(mainPlayerAudioTracks)
@@ -101,7 +100,6 @@ export const Controller: React.VFC<{}> = () => {
     const timer = setTimeout(() => setIsServiceNameShowing(false), 5 * 1000)
     return () => clearInterval(timer)
   }, [lastServiceId])
-
   const [audioChannel, setAudioChannel] = useRecoilState(mainPlayerAudioChannel)
 
   const componentRef = useRef<HTMLDivElement>(null)
@@ -135,111 +133,32 @@ export const Controller: React.VFC<{}> = () => {
           isVisible ? "opacity-100" : "opacity-0"
         }`}
       >
-        <select
-          className="appearance-none border border-gray-800 rounded py-2 px-2 leading-tight focus:outline-none bg-gray-800 bg-opacity-50 focus:bg-gray-700 focus:border-gray-500 text-gray-100"
-          value={selectedService?.id}
-          onChange={(e) => {
-            const selectedId = e.target.value
-            const service = services?.find(
-              (service) => service.id.toString() === selectedId
-            )
-            if (!service) return
-            setSelectedService(service)
-          }}
-        >
-          {serviceTypes.map((serviceType) => (
-            <optgroup key={serviceType} label={serviceType}>
-              {services
-                ?.filter((service) => service.channel?.type === serviceType)
-                .sort((a, b) => (b.serviceId < a.serviceId ? 1 : -1))
-                .map((service) => (
-                  <option key={service.id} value={service.id}>
-                    {[
-                      service.remoteControlKeyId || service.serviceId,
-                      service.name,
-                    ]
-                      .filter((s) => s !== undefined)
-                      .join(" ")}
-                  </option>
-                ))}
-            </optgroup>
-          ))}
-        </select>
-        <div className="flex items-center justify-center space-x-1">
-          <button
-            type="button"
-            className="focus:outline-none"
-            onClick={() => setVolume((volume) => (0 < volume ? 0 : 100))}
-          >
-            {volume === 0 ? (
-              <VolumeX size={22} />
-            ) : volume < 75 ? (
-              <Volume1 size={22} />
-            ) : (
-              <Volume2 size={22} />
-            )}
-          </button>
-          <VolumeSlider />
-        </div>
-        <select
-          className="appearance-none border border-gray-800 rounded py-2 px-2 leading-tight focus:outline-none bg-gray-800 bg-opacity-50 focus:bg-gray-700 focus:border-gray-500 text-gray-100"
-          value={audioChannel}
-          onChange={(e) => {
-            const selectedChannel = parseInt(e.target.value)
-            if (Number.isNaN(selectedChannel)) return
-            setAudioChannel(selectedChannel)
-          }}
-        >
-          {Object.entries(VLCAudioChannel).map(([k, v]) => (
-            <option key={k} value={v}>
-              {VLCAudioChannelTranslated[v]}
-            </option>
-          ))}
-        </select>
+        <ServiceSelector
+          services={services}
+          selectedService={selectedService}
+          setSelectedService={setSelectedService}
+        />
+        <VolumeSlider volume={volume} setVolume={setVolume} />
+        <AudioChannelSelector
+          audioChannel={audioChannel}
+          setAudioChannel={setAudioChannel}
+        />
         {3 <= audioTracks.length && (
-          <select
-            className="appearance-none border border-gray-800 rounded py-2 px-2 leading-tight focus:outline-none bg-gray-800 bg-opacity-50 focus:bg-gray-700 focus:border-gray-500 text-gray-100"
-            value={audioTrack}
-            onChange={(e) => {
-              const selectedTrack = parseInt(e.target.value)
-              if (Number.isNaN(selectedTrack)) return
-              setAudioTrack(selectedTrack)
-            }}
-          >
-            {audioTracks.map((trackName, i) => {
-              if (i === 0) return <></>
-              return (
-                <option key={trackName} value={i}>
-                  {trackName.replace("Track", "トラック")}
-                </option>
-              )
-            })}
-          </select>
+          <AudioTrackSelector
+            audioTrack={audioTrack}
+            setAudioTrack={setAudioTrack}
+            audioTracks={audioTracks}
+          />
         )}
-        <button
-          aria-label={`字幕は${subtitleEnabled}です`}
-          title="字幕切り替え"
-          type="button"
-          className={`focus:outline-none p-2 rounded-md bg-gray-800 ${
-            subtitleEnabled ? "text-gray-100" : "text-gray-500"
-          }`}
-          onClick={() => setSubtitleEnabled((value) => !value)}
-        >
-          <Type size={22} />
-        </button>
-        <ScreenShotController />
-        <div className="flex items-center justify-center space-x-1">
-          <button
-            type="button"
-            className="focus:outline-none"
-            onClick={() =>
-              setCommentOpacity((opacity) => (0 < opacity ? 0 : 0.8))
-            }
-          >
-            <MessageSquare size={22} />
-          </button>
-          <CommentOpacitySlider />
-        </div>
+        <SubtitleToggleButton
+          subtitleEnabled={subtitleEnabled}
+          setSubtitleEnabled={setSubtitleEnabled}
+        />
+        <CoiledScreenShotButton />
+        <CommentOpacitySlider
+          commentOpacity={commentOpacity}
+          setCommentOpacity={setCommentOpacity}
+        />
         <div className="pr-2" />
       </div>
     </div>

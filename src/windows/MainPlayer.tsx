@@ -1,9 +1,9 @@
 import React, { useEffect, useRef } from "react"
 import { ToastContainer, Slide } from "react-toastify"
 import { injectStyle } from "react-toastify/dist/inject-style"
-import { Controller } from "../components/mainPlayer/Controller"
-import { Player } from "../components/mainPlayer/Player"
-import { SayaComments } from "../components/mainPlayer/Saya"
+import { CoiledController } from "../components/mainPlayer/Controller"
+import { CoiledVideoPlayer } from "../components/mainPlayer/VideoPlayer"
+import { CoiledSayaComments } from "../components/mainPlayer/Saya"
 import { remote } from "electron"
 import { Splash } from "../components/global/Splash"
 import { MirakurunManager } from "../components/mainPlayer/MirakurunManager"
@@ -19,7 +19,7 @@ import { VirtualWindowComponent } from "./Virtual"
 import { mirakurunServices } from "../atoms/mirakurun"
 import { useRefFromState } from "../hooks/ref"
 
-export const MainPlayer: React.VFC<{}> = () => {
+export const CoiledMainPlayer: React.VFC<{}> = () => {
   const [route, setRoute] = useRecoilState(mainPlayerRoute)
   const [bounds, setBounds] = useRecoilState(mainPlayerBounds)
   const [selectedService, setSelectedService] = useRecoilState(
@@ -191,13 +191,13 @@ export const MainPlayer: React.VFC<{}> = () => {
             <Splash />
           </div>
           <div className="absolute top-0 left-0 w-full h-full flex items-center justify-center">
-            <Player />
+            <CoiledVideoPlayer />
           </div>
           <div className="absolute top-0 left-0 w-full h-full">
-            <SayaComments />
+            <CoiledSayaComments />
           </div>
           <div className="absolute top-0 left-0 w-full h-full">
-            <Controller />
+            <CoiledController />
           </div>
           <div className="absolute top-0 left-0 w-full h-full pointer-events-none">
             <VirtualWindowComponent route={route} setRoute={setRoute} />

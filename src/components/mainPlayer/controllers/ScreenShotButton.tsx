@@ -3,7 +3,7 @@ import { Camera } from "react-feather"
 import { useSetRecoilState } from "recoil"
 import { mainPlayerScreenShotTrigger } from "../../../atoms/mainPlayer"
 
-export const ScreenShotController: React.VFC<{}> = () => {
+export const CoiledScreenShotButton: React.VFC<{}> = () => {
   const setScreenShotTrigger = useSetRecoilState(mainPlayerScreenShotTrigger)
 
   return (
