@@ -21,8 +21,10 @@ export const CoiledSayaComments: React.VFC<{}> = () => {
         wsUrl.protocol = "ws:"
       }
 
+      if (!service.channel) throw new Error("service.channel")
+
       ws = new ReconnectingWebSocket(
-        `${wsUrl.href}/comments/${service.id}/live`
+        `${wsUrl.href}/comments/${service.channel.type}_${service.serviceId}/live`
       )
       ws.addEventListener("message", (e) => {
         const payload: CommentPayload = JSON.parse(e.data)
