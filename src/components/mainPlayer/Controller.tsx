@@ -87,7 +87,12 @@ export const CoiledController: React.VFC<{}> = () => {
       ipcRenderer.send("rich-presence", activity)
     } else {
       setCurrentProgram(null)
-      ipcRenderer.send("rich-presence", null)
+      const activity: Presence = {
+        largeImageKey: "miraktest_icon",
+        details: selectedService.name,
+        instance: false,
+      }
+      ipcRenderer.send("rich-presence", activity)
     }
     setTitle(title)
   }, [programs, selectedService, now])
