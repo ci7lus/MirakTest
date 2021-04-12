@@ -28,7 +28,7 @@ export const MirakurunManager: React.VFC<{}> = () => {
   const [selectedService, setSelectedService] = useRecoilState(
     mainPlayerSelectedService
   )
-  const setUrl = useSetRecoilState(mainPlayerUrl)
+  const [url, setUrl] = useRecoilState(mainPlayerUrl)
   const [lastSelectedServiceId, setLastSelectedServiceId] = useRecoilState(
     mainPlayerLastSelectedServiceId
   )
@@ -130,9 +130,14 @@ export const MirakurunManager: React.VFC<{}> = () => {
     const req = await ServicesApiAxiosParamCreator(
       mirakurun.getConfigure()
     ).getServiceStream(selectedService.id)
-    const url = mirakurunSettingValue.baseUrl + req.url
-    setUrl(url)
-    setLastSelectedServiceId(selectedService.id)
+    const requestUrl = mirakurunSettingValue.baseUrl + req.url
+    setTimeout(
+      () => {
+        setUrl(requestUrl)
+        setLastSelectedServiceId(selectedService.id)
+      },
+      url ? 500 : 0
+    )
   }
 
   useEffect(() => {
