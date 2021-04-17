@@ -131,6 +131,7 @@ export const MirakurunManager: React.VFC<{}> = () => {
       mirakurun.getConfigure()
     ).getServiceStream(selectedService.id)
     const requestUrl = mirakurunSettingValue.baseUrl + req.url
+    setUrl(null)
     setTimeout(
       () => {
         setUrl(requestUrl)
