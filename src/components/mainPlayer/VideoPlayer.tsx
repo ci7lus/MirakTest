@@ -88,9 +88,13 @@ export const CoiledVideoPlayer: React.VFC<{}> = () => {
         ])
         toast.info("クリップボードにキャプチャがコピーされました", {
           autoClose: 2000,
+          pauseOnFocusLoss: false,
         })
       } catch (error) {
-        toast.error("キャプチャに失敗しました", { autoClose: 2000 })
+        toast.error("キャプチャに失敗しました", {
+          autoClose: 2000,
+          pauseOnFocusLoss: false,
+        })
         console.error(error)
       }
     })()
