@@ -209,6 +209,8 @@ mac:
   icon: "assets/miraktest.icns"
   entitlements: "entitlements.plist"
   entitlementsInherit: "entitlements.plist"
+  extendInfo:
+    NSHumanReadableCopyright: "Copyright © 2021 ci7lus\n\nこのアプリは libVLC を同梱しています。このアプリイメージには LGPLv2.1 または GPLv2 が適用されます。"
 win:
   icon: "assets/miraktest.ico"
   target:
