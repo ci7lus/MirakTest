@@ -23,3 +23,7 @@ export type SayaSetting = {
   baseUrl?: string
   secure?: boolean
 }
+
+export type ScreenShotSetting = {
+  basePath?: string
+}

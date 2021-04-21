@@ -1,4 +1,7 @@
 import React, { useEffect, useRef, useState } from "react"
+import fs from "fs"
+import path from "path"
+import { remote } from "electron"
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil"
 import WebChimeraJs from "webchimera.js"
 import { toast } from "react-toastify"
@@ -7,12 +10,15 @@ import {
   mainPlayerAudioTrack,
   mainPlayerAudioTracks,
   mainPlayerScreenShotTrigger,
+  mainPlayerSelectedService,
   mainPlayerSubtitleEnabled,
   mainPlayerUrl,
   mainPlayerVolume,
 } from "../../atoms/mainPlayer"
 import { VideoRenderer } from "../../utils/videoRenderer"
 import { VLCLogFilter } from "../../utils/vlc"
+import { screenshotSetting } from "../../atoms/settings"
+import dayjs from "dayjs"
 
 export const CoiledVideoPlayer: React.VFC<{}> = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null)
@@ -67,9 +73,26 @@ export const CoiledVideoPlayer: React.VFC<{}> = () => {
   }, [audioTrack])
   const setAudioTracks = useSetRecoilState(mainPlayerAudioTracks)
 
-  const screenShotTrigger = useRecoilValue(mainPlayerScreenShotTrigger)
+  // スクリーンショットフォルダ初期設定
+  const [screenshot, setScreenshot] = useRecoilState(screenshotSetting)
   useEffect(() => {
-    if (!screenShotTrigger || !canvasRef.current) return
+    if (screenshot.basePath) return
+    const pictures = remote.app.getPath("pictures")
+    if (!pictures) return
+    fs.promises
+      .stat(pictures)
+      .then(() => {
+        setScreenshot({ ...screenshot, basePath: pictures })
+        console.log("スクリーンショット用パス:", pictures)
+      })
+      .catch(console.error)
+  }, [])
+  const selectedService = useRecoilValue(mainPlayerSelectedService)
+
+  // スクリーンショットフォルダ初期設定
+  const screenshotTrigger = useRecoilValue(mainPlayerScreenShotTrigger)
+  useEffect(() => {
+    if (!screenshotTrigger || !canvasRef.current) return
     ;(async () => {
       try {
         const glCanvas = canvasRef.current!
@@ -86,7 +109,25 @@ export const CoiledVideoPlayer: React.VFC<{}> = () => {
         await navigator.clipboard.write([
           new window.ClipboardItem({ [blob.type]: blob }),
         ])
-        toast.info("クリップボードにキャプチャがコピーされました", {
+        if (screenshot.basePath) {
+          try {
+            const buffer = Buffer.from(await blob.arrayBuffer())
+            const baseName = [
+              "mirak",
+              dayjs().format("YYYY-MM-DD-HH-mm-ss-SSS"),
+              selectedService?.name,
+            ]
+              .filter((s) => s)
+              .join("_")
+            const fileName = `${baseName}.png`
+            const filePath = path.join(screenshot.basePath, fileName)
+            await fs.promises.writeFile(filePath, buffer)
+            console.log(`キャプチャを保存しました:`, filePath)
+          } catch (error) {
+            console.error(error)
+          }
+        }
+        toast.info("キャプチャしました", {
           autoClose: 2000,
           pauseOnFocusLoss: false,
         })
@@ -98,7 +139,7 @@ export const CoiledVideoPlayer: React.VFC<{}> = () => {
         console.error(error)
       }
     })()
-  }, [screenShotTrigger])
+  }, [screenshotTrigger])
 
   useEffect(() => {
     const renderContext = new VideoRenderer(canvasRef.current!, {

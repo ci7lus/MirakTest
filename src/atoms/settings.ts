@@ -1,6 +1,10 @@
 import { atom } from "recoil"
 import pkg from "../../package.json"
-import { MirakurunSetting, SayaSetting } from "../types/struct"
+import {
+  MirakurunSetting,
+  SayaSetting,
+  ScreenShotSetting,
+} from "../types/struct"
 
 const prefix = `${pkg.name}.settings`
 
@@ -17,4 +21,9 @@ export const sayaSetting = atom<SayaSetting>({
     baseUrl: undefined,
     secure: false,
   },
+})
+
+export const screenshotSetting = atom<ScreenShotSetting>({
+  key: `${prefix}.screenshot`,
+  default: {},
 })

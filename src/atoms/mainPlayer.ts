@@ -62,7 +62,7 @@ export const mainPlayerLastSelectedServiceId = atom<number | null>({
 })
 
 export const mainPlayerScreenShotTrigger = atom<number>({
-  key: `${prefix}.screenShotTrigger`,
+  key: `${prefix}.screenshotTrigger`,
   default: 0,
 })
 

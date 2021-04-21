@@ -4,7 +4,11 @@ import {
   mainPlayerLastSelectedServiceId,
   mainPlayerVolume,
 } from "../atoms/mainPlayer"
-import { mirakurunSetting, sayaSetting } from "../atoms/settings"
+import {
+  mirakurunSetting,
+  sayaSetting,
+  screenshotSetting,
+} from "../atoms/settings"
 import { store } from "./store"
 
 export const initializeState = (mutableSnapShot: MutableSnapshot) => {
@@ -15,6 +19,10 @@ export const initializeState = (mutableSnapShot: MutableSnapshot) => {
   const savedSayaSetting = store.get(sayaSetting.key, null)
   if (savedSayaSetting) {
     mutableSnapShot.set(sayaSetting, savedSayaSetting)
+  }
+  const savedScreenShotSetting = store.get(screenshotSetting.key, null)
+  if (savedScreenShotSetting) {
+    mutableSnapShot.set(screenshotSetting, savedScreenShotSetting)
   }
   const savedMainPlayerVolume = store.get(mainPlayerVolume.key, null)
   if (savedMainPlayerVolume !== null) {

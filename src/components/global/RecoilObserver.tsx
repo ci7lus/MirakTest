@@ -5,7 +5,11 @@ import {
   mainPlayerLastSelectedServiceId,
   mainPlayerVolume,
 } from "../../atoms/mainPlayer"
-import { mirakurunSetting, sayaSetting } from "../../atoms/settings"
+import {
+  mirakurunSetting,
+  sayaSetting,
+  screenshotSetting,
+} from "../../atoms/settings"
 import { store } from "../../utils/store"
 
 export const RecoilObserver: React.VFC<{}> = () => {
@@ -24,6 +28,14 @@ export const RecoilObserver: React.VFC<{}> = () => {
           try {
             const snap = snapshot.getLoadable(sayaSetting).getValue()
             store.set(sayaSetting.key, snap)
+          } catch (e) {
+            console.error(e)
+          }
+          break
+        case screenshotSetting.key:
+          try {
+            const snap = snapshot.getLoadable(screenshotSetting).getValue()
+            store.set(screenshotSetting.key, snap)
           } catch (e) {
             console.error(e)
           }
