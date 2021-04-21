@@ -178,14 +178,7 @@ export const CoiledMainPlayer: React.VFC<{}> = () => {
         pauseOnHover
       />
       <MirakurunManager />
-      <div
-        className="w-full h-screen bg-gray-900 text-gray-100 flex items-center justify-center"
-        onDoubleClick={() => {
-          const remoteWindow = remote.getCurrentWindow()
-          if (!remoteWindow.fullScreenable) return
-          remoteWindow.setFullScreen(!remoteWindow.isFullScreen())
-        }}
-      >
+      <div className="w-full h-screen bg-gray-900 text-gray-100 flex items-center justify-center">
         <div className="relative w-full h-full overflow-hidden">
           <div className="absolute top-0 left-0 w-full h-full">
             <Splash />

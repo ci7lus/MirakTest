@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from "react"
+import { remote } from "electron"
 import { CommentOpacitySlider } from "./controllers/CommentOpacitySlider"
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil"
 import { mirakurunPrograms, mirakurunServices } from "../../atoms/mirakurun"
@@ -118,6 +119,11 @@ export const CoiledController: React.VFC<{}> = () => {
         setLastCurMoved(new Date().getTime())
       }}
       onMouseLeave={() => setIsVisible(false)}
+      onDoubleClick={() => {
+        const remoteWindow = remote.getCurrentWindow()
+        if (!remoteWindow.fullScreenable) return
+        remoteWindow.setFullScreen(!remoteWindow.isFullScreen())
+      }}
     >
       <div
         className={`select-none transition-opacity duration-150 ease-in-out p-4 ${
@@ -137,6 +143,9 @@ export const CoiledController: React.VFC<{}> = () => {
         className={`flex space-x-2 px-2 pr-4 overflow-auto text-gray-100 select-none transition-opacity duration-150 ease-in-out w-full p-2 bg-black bg-opacity-50 ${
           isVisible ? "opacity-100" : "opacity-0"
         }`}
+        onDoubleClick={(e) => {
+          e.stopPropagation()
+        }}
       >
         <ServiceSelector
           services={services}
