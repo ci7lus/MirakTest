@@ -9,6 +9,7 @@ import {
   mainPlayerAudioChannel,
   mainPlayerAudioTrack,
   mainPlayerAudioTracks,
+  mainPlayerIsPlaying,
   mainPlayerScreenShotTrigger,
   mainPlayerSelectedService,
   mainPlayerSubtitleEnabled,
@@ -41,6 +42,17 @@ export const CoiledVideoPlayer: React.VFC<{}> = () => {
       console.log("再生停止")
     }
   }, [url])
+  const [isPlaying, setIsPlaying] = useRecoilState(mainPlayerIsPlaying)
+  useEffect(() => {
+    if (!playerRef.current || playerRef.current.playing || !url) return
+    if (isPlaying) {
+      playerRef.current.play(url)
+      console.log("再生再開", url)
+    } else {
+      playerRef.current.stop()
+      console.log("再生停止")
+    }
+  }, [isPlaying])
 
   const volume = useRecoilValue(mainPlayerVolume)
   useEffect(() => {
@@ -157,6 +169,7 @@ export const CoiledVideoPlayer: React.VFC<{}> = () => {
           }
           break
         case "successfully_opened":
+          setIsPlaying(true)
           setSubtitleEnabled(false)
           break
         case "received_first_picture":
@@ -169,6 +182,7 @@ export const CoiledVideoPlayer: React.VFC<{}> = () => {
           break
         case "unable_to_open":
           toast.error("映像の受信に失敗しました")
+          setIsPlaying(false)
           break
         case "end_of_stream":
           renderContext.fillTransparent()

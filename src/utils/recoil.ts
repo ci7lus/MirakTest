@@ -1,4 +1,5 @@
-import { MutableSnapshot } from "recoil"
+import { useEffect, useRef } from "react"
+import { MutableSnapshot, RecoilState, useRecoilValue } from "recoil"
 import {
   mainPlayerBounds,
   mainPlayerLastSelectedServiceId,
@@ -42,4 +43,13 @@ export const initializeState = (mutableSnapShot: MutableSnapshot) => {
       savedMainPlayerLastSelectedServiceId
     )
   }
+}
+
+export const useRecoilValueRef = <T>(s: RecoilState<T>) => {
+  const value = useRecoilValue(s)
+  const ref = useRef<T>()
+  useEffect(() => {
+    ref.current = value
+  }, [value])
+  return [value, ref] as const
 }

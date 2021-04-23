@@ -7,9 +7,10 @@ import { CoiledSayaComments } from "../components/mainPlayer/Saya"
 import { remote } from "electron"
 import { Splash } from "../components/global/Splash"
 import { MirakurunManager } from "../components/mainPlayer/MirakurunManager"
-import { useRecoilState, useRecoilValue } from "recoil"
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil"
 import {
   mainPlayerBounds,
+  mainPlayerIsPlaying,
   mainPlayerLastSelectedServiceId,
   mainPlayerRoute,
   mainPlayerSelectedService,
@@ -18,6 +19,7 @@ import {
 import { VirtualWindowComponent } from "./Virtual"
 import { mirakurunServices } from "../atoms/mirakurun"
 import { useRefFromState } from "../hooks/ref"
+import { useRecoilValueRef } from "../utils/recoil"
 
 export const CoiledMainPlayer: React.VFC<{}> = () => {
   const [route, setRoute] = useRecoilState(mainPlayerRoute)
@@ -30,6 +32,8 @@ export const CoiledMainPlayer: React.VFC<{}> = () => {
   const lastSelectedServiceIdRef = useRefFromState(lastSelectedServiceId)
   const services = useRecoilValue(mirakurunServices)
   const servicesRef = useRefFromState(services)
+  const [, isPlayingRef] = useRecoilValueRef(mainPlayerIsPlaying)
+  const setIsPlaying = useSetRecoilState(mainPlayerIsPlaying)
   useEffect(() => {
     injectStyle()
     // 16:9以下の比率になったら戻す
@@ -66,12 +70,17 @@ export const CoiledMainPlayer: React.VFC<{}> = () => {
       e.preventDefault()
       remote.Menu.buildFromTemplate([
         {
-          label: "再生オフ",
+          label: "再生停止",
           type: "checkbox",
-          checked: selectedServiceRef.current === null,
+          checked: isPlayingRef.current === false,
           click: () => {
-            if (selectedServiceRef.current) {
-              setSelectedService(null)
+            // 再生中である場合停止
+            if (isPlayingRef.current) {
+              setIsPlaying(false)
+              // 再生中でなく、サービスが埋められている（停止 or 受信失敗）の際に再生開始
+            } else if (selectedServiceRef.current) {
+              setIsPlaying(true)
+              // 再生中でなく、サービスが埋められていない場合サービスを埋めることによって再生開始を試みる
             } else {
               if (servicesRef.current && 0 < servicesRef.current?.length) {
                 const lastSelectedService = servicesRef.current.find(

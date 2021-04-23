@@ -21,6 +21,11 @@ export const mainPlayerSubtitleEnabled = atom<boolean>({
   default: false,
 })
 
+export const mainPlayerIsPlaying = atom<boolean>({
+  key: `${prefix}.isPlaying`,
+  default: false,
+})
+
 export const mainPlayerUrl = atom<string | null>({
   key: `${prefix}.url`,
   default: null,
