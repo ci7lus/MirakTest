@@ -44,11 +44,11 @@ export const CoiledVideoPlayer: React.VFC<{}> = () => {
   }, [url])
   const [isPlaying, setIsPlaying] = useRecoilState(mainPlayerIsPlaying)
   useEffect(() => {
-    if (!playerRef.current || playerRef.current.playing || !url) return
-    if (isPlaying) {
+    if (!playerRef.current || !url) return
+    if (isPlaying && !playerRef.current.playing) {
       playerRef.current.play(url)
       console.log("再生再開", url)
-    } else {
+    } else if (!isPlaying) {
       playerRef.current.stop()
       console.log("再生停止")
     }
