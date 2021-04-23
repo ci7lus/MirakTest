@@ -25,6 +25,7 @@ import { VolumeSlider } from "./controllers/VolumeSlider"
 import { AudioChannelSelector } from "./controllers/AudioChannelSelector"
 import { AudioTrackSelector } from "./controllers/AudioTrackSelector"
 import { SubtitleToggleButton } from "./controllers/SubtitleToggleButton"
+import { useRefFromState } from "../../hooks/ref"
 
 export const CoiledController: React.VFC<{}> = () => {
   const [isVisible, setIsVisible] = useState(false)
@@ -110,6 +111,28 @@ export const CoiledController: React.VFC<{}> = () => {
 
   const componentRef = useRef<HTMLDivElement>(null)
 
+  const [mouse, setMouse] = useState([0, 0])
+  const mouseRef = useRefFromState(mouse)
+  const animId = useRef<number>(0)
+
+  const currentWindow = remote.getCurrentWindow()
+
+  const moveWindow = () => {
+    const [mouseX, mouseY] = mouseRef.current
+    const { x, y } = remote.screen.getCursorScreenPoint()
+    const xPos = x - mouseX
+    const yPos = y - mouseY - 22
+    if (0 < xPos && 0 < yPos) {
+      currentWindow.setPosition(xPos, yPos)
+    }
+    animId.current = requestAnimationFrame(moveWindow)
+  }
+  const cancelMove = () => {
+    cancelAnimationFrame(animId.current)
+  }
+
+  currentWindow.on("leave-full-screen", () => cancelMove())
+
   return (
     <div
       ref={componentRef}
@@ -124,6 +147,13 @@ export const CoiledController: React.VFC<{}> = () => {
         if (!remoteWindow.fullScreenable) return
         remoteWindow.setFullScreen(!remoteWindow.isFullScreen())
       }}
+      onMouseDown={(e) => {
+        if (e.button === 2) return
+        setMouse([e.clientX, e.clientY])
+        requestAnimationFrame(moveWindow)
+      }}
+      onMouseUp={cancelMove}
+      onContextMenu={cancelMove}
     >
       <div
         className={`select-none transition-opacity duration-150 ease-in-out p-4 ${
@@ -143,9 +173,8 @@ export const CoiledController: React.VFC<{}> = () => {
         className={`flex space-x-2 px-2 pr-4 overflow-auto text-gray-100 select-none transition-opacity duration-150 ease-in-out w-full p-2 bg-black bg-opacity-50 ${
           isVisible ? "opacity-100" : "opacity-0"
         }`}
-        onDoubleClick={(e) => {
-          e.stopPropagation()
-        }}
+        onDoubleClick={(e) => e.stopPropagation()}
+        onMouseDown={(e) => e.stopPropagation()}
       >
         <ServiceSelector
           services={services}
