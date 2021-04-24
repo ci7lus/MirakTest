@@ -26,6 +26,7 @@ import { AudioChannelSelector } from "./controllers/AudioChannelSelector"
 import { AudioTrackSelector } from "./controllers/AudioTrackSelector"
 import { SubtitleToggleButton } from "./controllers/SubtitleToggleButton"
 import { useRefFromState } from "../../hooks/ref"
+import { experimentalSetting } from "../../atoms/settings"
 
 export const CoiledController: React.VFC<{}> = () => {
   const [isVisible, setIsVisible] = useState(false)
@@ -127,11 +128,14 @@ export const CoiledController: React.VFC<{}> = () => {
     }
     animId.current = requestAnimationFrame(moveWindow)
   }
-  const cancelMove = () => {
-    cancelAnimationFrame(animId.current)
-  }
+  // 実行タイミング回避
+  const cancelMove = () =>
+    setTimeout(() => cancelAnimationFrame(animId.current), 10)
 
+  // フルスクリーンモード脱出時の追従
   currentWindow.on("leave-full-screen", () => cancelMove())
+
+  const experimental = useRecoilValue(experimentalSetting)
 
   return (
     <div
@@ -148,7 +152,12 @@ export const CoiledController: React.VFC<{}> = () => {
         remoteWindow.setFullScreen(!remoteWindow.isFullScreen())
       }}
       onMouseDown={(e) => {
-        if (e.button === 2) return
+        if (
+          e.button === 2 ||
+          !document.hasFocus() ||
+          !experimental.isWindowDragMoveEnabled
+        )
+          return
         setMouse([e.clientX, e.clientY])
         requestAnimationFrame(moveWindow)
       }}

@@ -1,6 +1,7 @@
 import { atom } from "recoil"
 import pkg from "../../package.json"
 import {
+  ExperimentalSetting,
   MirakurunSetting,
   SayaSetting,
   ScreenShotSetting,
@@ -27,5 +28,12 @@ export const screenshotSetting = atom<ScreenShotSetting>({
   key: `${prefix}.screenshot`,
   default: {
     saveAsAFile: true,
+  },
+})
+
+export const experimentalSetting = atom<ExperimentalSetting>({
+  key: `${prefix}.experimental`,
+  default: {
+    isWindowDragMoveEnabled: false,
   },
 })

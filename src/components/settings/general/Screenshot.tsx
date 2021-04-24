@@ -21,7 +21,7 @@ export const ScreenshotSettingForm: React.VFC<{
   return (
     <>
       <p className="text-lg">スクリーンショットの設定</p>
-      <label className="mb-2 block">
+      <label className="block">
         <span>ファイルに保存する</span>
         <input
           type="checkbox"

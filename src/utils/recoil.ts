@@ -6,6 +6,7 @@ import {
   mainPlayerVolume,
 } from "../atoms/mainPlayer"
 import {
+  experimentalSetting,
   mirakurunSetting,
   sayaSetting,
   screenshotSetting,
@@ -24,6 +25,10 @@ export const initializeState = (mutableSnapShot: MutableSnapshot) => {
   const savedScreenShotSetting = store.get(screenshotSetting.key, null)
   if (savedScreenShotSetting) {
     mutableSnapShot.set(screenshotSetting, savedScreenShotSetting)
+  }
+  const savedExperimentalSetting = store.get(experimentalSetting.key, null)
+  if (savedExperimentalSetting) {
+    mutableSnapShot.set(experimentalSetting, savedExperimentalSetting)
   }
   const savedMainPlayerVolume = store.get(mainPlayerVolume.key, null)
   if (savedMainPlayerVolume !== null) {

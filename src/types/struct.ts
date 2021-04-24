@@ -28,3 +28,7 @@ export type ScreenShotSetting = {
   saveAsAFile: boolean
   basePath?: string
 }
+
+export type ExperimentalSetting = {
+  isWindowDragMoveEnabled: boolean
+}
