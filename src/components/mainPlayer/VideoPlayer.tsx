@@ -121,7 +121,7 @@ export const CoiledVideoPlayer: React.VFC<{}> = () => {
         await navigator.clipboard.write([
           new window.ClipboardItem({ [blob.type]: blob }),
         ])
-        if (screenshot.basePath) {
+        if (screenshot.saveAsAFile && screenshot.basePath) {
           try {
             const buffer = Buffer.from(await blob.arrayBuffer())
             const baseName = [

@@ -25,5 +25,7 @@ export const sayaSetting = atom<SayaSetting>({
 
 export const screenshotSetting = atom<ScreenShotSetting>({
   key: `${prefix}.screenshot`,
-  default: {},
+  default: {
+    saveAsAFile: true,
+  },
 })

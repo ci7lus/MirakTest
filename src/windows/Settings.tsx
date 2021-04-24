@@ -1,12 +1,15 @@
 import React, { useState } from "react"
+import { CoiledGeneralSetting } from "../components/settings/general"
 import { MirakurunSettingForm } from "../components/settings/Mirakurun"
 import { SayaSettingForm } from "../components/settings/Saya"
 import { store } from "../utils/store"
 
-type Routes = "Mirakurun" | "Saya"
+type Routes = "General" | "Mirakurun" | "Saya"
 
 const Router: React.VFC<{ route: Routes }> = ({ route }) => {
-  if (route === "Mirakurun") {
+  if (route === "General") {
+    return <CoiledGeneralSetting />
+  } else if (route === "Mirakurun") {
     return <MirakurunSettingForm />
   } else if (route === "Saya") {
     return <SayaSettingForm />
@@ -16,13 +19,22 @@ const Router: React.VFC<{ route: Routes }> = ({ route }) => {
 }
 
 export const Settings: React.VFC<{}> = () => {
-  const [route, setRoute] = useState<Routes>("Mirakurun")
+  const [route, setRoute] = useState<Routes>("General")
   return (
     <div
       className="w-full h-full flex bg-gray-800 text-gray-100"
       style={{ height: "80vh" }}
     >
       <div className="w-1/3 border-r border-gray-600 py-4 overflow-auto flex flex-col">
+        <button
+          type="button"
+          className={`focus:outline-none p-4 border-b border-gray-400 text-left ${
+            route === "General" && "bg-blue-500"
+          }`}
+          onClick={() => setRoute("General")}
+        >
+          一般設定
+        </button>
         <button
           type="button"
           className={`focus:outline-none p-4 border-b border-gray-400 text-left ${

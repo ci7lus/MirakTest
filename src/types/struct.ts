@@ -25,5 +25,6 @@ export type SayaSetting = {
 }
 
 export type ScreenShotSetting = {
+  saveAsAFile: boolean
   basePath?: string
 }
