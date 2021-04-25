@@ -15,9 +15,9 @@ export const AudioTrackSelector: React.VFC<{
     }}
   >
     {audioTracks.map((trackName, i) => {
-      if (i === 0) return <></>
+      if (i === 0) return <React.Fragment key={i}></React.Fragment>
       return (
-        <option key={trackName} value={i}>
+        <option key={i} value={i}>
           {trackName.replace("Track", "トラック")}
         </option>
       )
