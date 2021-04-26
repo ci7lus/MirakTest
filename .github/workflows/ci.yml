@@ -79,14 +79,6 @@ jobs:
           yarn
       - name: Build webchimera.js
         run: ./setup_wcjs.sh
-        env:
-          OS_NAME: ${{ runner.os }}
-          VLC_VER: 3.0.12
-          ELECTRON_VER: 12.0.1
-          BUILD_DIR: ./build/Release
-          npm_config_wcjs_runtime: electron
-          npm_config_wcjs_runtime_version: 12.0.1
-          npm_config_wcjs_arch: x64
       - name: Build
         run: |
           yarn build
@@ -144,14 +136,6 @@ jobs:
           yarn
       - name: Build webchimera.js
         run: ./setup_wcjs.sh
-        env:
-          OS_NAME: ${{ runner.os }}
-          VLC_VER: 3.0.12
-          ELECTRON_VER: 12.0.1
-          BUILD_DIR: ./build/Release
-          npm_config_wcjs_runtime: electron
-          npm_config_wcjs_runtime_version: 12.0.1
-          npm_config_wcjs_arch: x64
       - name: VLC related libs are licensed under LGPL and GPLv2
         run: ./setup_vlclib_mac.sh
       - name: Build
