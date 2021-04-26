@@ -2,6 +2,9 @@
 
 # MirakTest
 
+[![GitHub release (latest by date)](https://img.shields.io/github/v/release/ci7lus/MirakTest)](https://github.com/ci7lus/MirakTest/releases)
+[![CI](https://github.com/ci7lus/MirakTest/actions/workflows/ci.yml/badge.svg)](https://github.com/ci7lus/MirakTest/actions/workflows/ci.yml)
+
 [Mirakurun](https://github.com/Chinachu/Mirakurun) 映像視聴確認用アプリ
 
 ## 概要
