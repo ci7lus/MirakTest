@@ -64,6 +64,7 @@ export const CoiledDPlayerWrapper: React.VFC<{
       contextmenu: [],
       loop: true,
       volume: 0,
+      hotkey: false,
     })
 
     playerInstance.danmaku.opacity(commentOpacity)

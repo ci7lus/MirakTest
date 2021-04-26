@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react"
 import { remote } from "electron"
 import { CommentOpacitySlider } from "./controllers/CommentOpacitySlider"
-import { useRecoilState, useRecoilValue } from "recoil"
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil"
 import { mirakurunServices } from "../../atoms/mirakurun"
 import {
   mainPlayerAudioChannel,
@@ -9,6 +9,7 @@ import {
   mainPlayerAudioTracks,
   mainPlayerCommentOpacity,
   mainPlayerLastSelectedServiceId,
+  mainPlayerScreenshotTrigger,
   mainPlayerSelectedService,
   mainPlayerSubtitleEnabled,
   mainPlayerVolume,
@@ -84,6 +85,20 @@ export const CoiledController: React.VFC<{}> = () => {
     requestAnimationFrame(() => cancelAnimationFrame(animId.current))
 
   const experimental = useRecoilValue(experimentalSetting)
+
+  // キーボードショートカット
+  const setScreenshotTrigger = useSetRecoilState(mainPlayerScreenshotTrigger)
+  useEffect(() => {
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "s" && e.metaKey === true) {
+        setScreenshotTrigger(performance.now())
+      }
+    }
+    window.addEventListener("keydown", onKeyDown)
+    return () => {
+      window.removeEventListener("keydown", onKeyDown)
+    }
+  }, [])
 
   return (
     <div
