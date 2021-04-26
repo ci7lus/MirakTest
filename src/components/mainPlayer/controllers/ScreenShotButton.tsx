@@ -12,7 +12,7 @@ export const CoiledScreenShotButton: React.VFC<{}> = () => {
       title="画面キャプチャ"
       type="button"
       className={`focus:outline-none p-2 rounded-md bg-gray-800 text-gray-100`}
-      onClick={() => setScreenShotTrigger(new Date().getTime())}
+      onClick={() => setScreenShotTrigger(performance.now())}
     >
       <Camera size={22} />
     </button>

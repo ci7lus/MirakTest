@@ -128,12 +128,17 @@ export const CoiledController: React.VFC<{}> = () => {
     }
     animId.current = requestAnimationFrame(moveWindow)
   }
-  // 実行タイミング回避
-  const cancelMove = () =>
-    setTimeout(() => cancelAnimationFrame(animId.current), 10)
+  // 移動キャンセル
+  const cancelMoveWindow = () =>
+    requestAnimationFrame(() => cancelAnimationFrame(animId.current))
 
   // フルスクリーンモード脱出時の追従
-  currentWindow.on("leave-full-screen", () => cancelMove())
+  useEffect(() => {
+    currentWindow.on("leave-full-screen", cancelMoveWindow)
+    return () => {
+      currentWindow.off("leave-full-screen", cancelMoveWindow)
+    }
+  }, [])
 
   const experimental = useRecoilValue(experimentalSetting)
 
@@ -143,13 +148,12 @@ export const CoiledController: React.VFC<{}> = () => {
       className="w-full h-full flex flex-col justify-between"
       onMouseMove={() => {
         setIsVisible(true)
-        setLastCurMoved(new Date().getTime())
+        setLastCurMoved(performance.now())
       }}
       onMouseLeave={() => setIsVisible(false)}
       onDoubleClick={() => {
-        const remoteWindow = remote.getCurrentWindow()
-        if (!remoteWindow.fullScreenable) return
-        remoteWindow.setFullScreen(!remoteWindow.isFullScreen())
+        if (!currentWindow.fullScreenable) return
+        currentWindow.setFullScreen(!currentWindow.isFullScreen())
       }}
       onMouseDown={(e) => {
         if (
@@ -161,8 +165,8 @@ export const CoiledController: React.VFC<{}> = () => {
         setMouse([e.clientX, e.clientY])
         requestAnimationFrame(moveWindow)
       }}
-      onMouseUp={cancelMove}
-      onContextMenu={cancelMove}
+      onMouseUp={cancelMoveWindow}
+      onContextMenu={cancelMoveWindow}
     >
       <div
         className={`select-none transition-opacity duration-150 ease-in-out p-4 ${
