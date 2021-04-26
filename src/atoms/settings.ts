@@ -4,7 +4,7 @@ import {
   ExperimentalSetting,
   MirakurunSetting,
   SayaSetting,
-  ScreenShotSetting,
+  ScreenshotSetting,
 } from "../types/struct"
 
 const prefix = `${pkg.name}.settings`
@@ -24,7 +24,7 @@ export const sayaSetting = atom<SayaSetting>({
   },
 })
 
-export const screenshotSetting = atom<ScreenShotSetting>({
+export const screenshotSetting = atom<ScreenshotSetting>({
   key: `${prefix}.screenshot`,
   default: {
     saveAsAFile: true,

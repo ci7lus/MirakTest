@@ -22,9 +22,9 @@ export const initializeState = (mutableSnapShot: MutableSnapshot) => {
   if (savedSayaSetting) {
     mutableSnapShot.set(sayaSetting, savedSayaSetting)
   }
-  const savedScreenShotSetting = store.get(screenshotSetting.key, null)
-  if (savedScreenShotSetting) {
-    mutableSnapShot.set(screenshotSetting, savedScreenShotSetting)
+  const savedScreenshotSetting = store.get(screenshotSetting.key, null)
+  if (savedScreenshotSetting) {
+    mutableSnapShot.set(screenshotSetting, savedScreenshotSetting)
   }
   const savedExperimentalSetting = store.get(experimentalSetting.key, null)
   if (savedExperimentalSetting) {

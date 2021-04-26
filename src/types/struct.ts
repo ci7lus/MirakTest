@@ -24,7 +24,7 @@ export type SayaSetting = {
   secure?: boolean
 }
 
-export type ScreenShotSetting = {
+export type ScreenshotSetting = {
   saveAsAFile: boolean
   basePath?: string
 }

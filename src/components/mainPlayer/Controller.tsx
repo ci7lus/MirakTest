@@ -17,7 +17,7 @@ import {
 } from "../../atoms/mainPlayer"
 import { useNow } from "../../hooks/date"
 import { useDebounce } from "react-use"
-import { CoiledScreenShotButton } from "./controllers/ScreenShotButton"
+import { CoiledScreenshotButton } from "./controllers/ScreenshotButton"
 import { ipcRenderer } from "electron"
 import type { Presence } from "discord-rpc"
 import { ServiceSelector } from "./controllers/ServiceSelector"
@@ -210,7 +210,7 @@ export const CoiledController: React.VFC<{}> = () => {
           subtitleEnabled={subtitleEnabled}
           setSubtitleEnabled={setSubtitleEnabled}
         />
-        <CoiledScreenShotButton />
+        <CoiledScreenshotButton />
         <CommentOpacitySlider
           commentOpacity={commentOpacity}
           setCommentOpacity={setCommentOpacity}

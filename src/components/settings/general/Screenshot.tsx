@@ -1,13 +1,13 @@
 import React, { useState } from "react"
 import { File } from "react-feather"
 import clsx from "clsx"
-import { ScreenShotSetting } from "../../../types/struct"
+import { ScreenshotSetting } from "../../../types/struct"
 import { useDebounce } from "react-use"
 import { remote } from "electron"
 
 export const ScreenshotSettingForm: React.VFC<{
-  screenshotSetting: ScreenShotSetting
-  setScreenshotSetting: React.Dispatch<React.SetStateAction<ScreenShotSetting>>
+  screenshotSetting: ScreenshotSetting
+  setScreenshotSetting: React.Dispatch<React.SetStateAction<ScreenshotSetting>>
 }> = ({ screenshotSetting, setScreenshotSetting }) => {
   const [saveAsAFile, setSaveAsAFile] = useState(screenshotSetting.saveAsAFile)
   const [basePath, setBasePath] = useState(screenshotSetting.basePath)

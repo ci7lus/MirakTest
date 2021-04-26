@@ -1,10 +1,10 @@
 import React from "react"
 import { Camera } from "react-feather"
 import { useSetRecoilState } from "recoil"
-import { mainPlayerScreenShotTrigger } from "../../../atoms/mainPlayer"
+import { mainPlayerScreenshotTrigger } from "../../../atoms/mainPlayer"
 
-export const CoiledScreenShotButton: React.VFC<{}> = () => {
-  const setScreenShotTrigger = useSetRecoilState(mainPlayerScreenShotTrigger)
+export const CoiledScreenshotButton: React.VFC<{}> = () => {
+  const setScreenshotTrigger = useSetRecoilState(mainPlayerScreenshotTrigger)
 
   return (
     <button
@@ -12,7 +12,7 @@ export const CoiledScreenShotButton: React.VFC<{}> = () => {
       title="画面キャプチャ"
       type="button"
       className={`focus:outline-none p-2 rounded-md bg-gray-800 text-gray-100`}
-      onClick={() => setScreenShotTrigger(performance.now())}
+      onClick={() => setScreenshotTrigger(performance.now())}
     >
       <Camera size={22} />
     </button>

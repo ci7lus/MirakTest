@@ -10,7 +10,7 @@ import {
   mainPlayerAudioTrack,
   mainPlayerAudioTracks,
   mainPlayerIsPlaying,
-  mainPlayerScreenShotTrigger,
+  mainPlayerScreenshotTrigger,
   mainPlayerSelectedService,
   mainPlayerSubtitleEnabled,
   mainPlayerUrl,
@@ -102,7 +102,7 @@ export const CoiledVideoPlayer: React.VFC<{}> = () => {
   const selectedService = useRecoilValue(mainPlayerSelectedService)
 
   // スクリーンショットフォルダ初期設定
-  const screenshotTrigger = useRecoilValue(mainPlayerScreenShotTrigger)
+  const screenshotTrigger = useRecoilValue(mainPlayerScreenshotTrigger)
   useEffect(() => {
     if (!screenshotTrigger || !canvasRef.current) return
     ;(async () => {
