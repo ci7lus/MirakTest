@@ -1,25 +1,20 @@
 import React, { useEffect, useRef, useState } from "react"
 import { remote } from "electron"
 import { CommentOpacitySlider } from "./controllers/CommentOpacitySlider"
-import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil"
-import { mirakurunPrograms, mirakurunServices } from "../../atoms/mirakurun"
+import { useRecoilState, useRecoilValue } from "recoil"
+import { mirakurunServices } from "../../atoms/mirakurun"
 import {
   mainPlayerAudioChannel,
   mainPlayerAudioTrack,
   mainPlayerAudioTracks,
   mainPlayerCommentOpacity,
-  mainPlayerCurrentProgram,
   mainPlayerLastSelectedServiceId,
   mainPlayerSelectedService,
   mainPlayerSubtitleEnabled,
-  mainPlayerTitle,
   mainPlayerVolume,
 } from "../../atoms/mainPlayer"
-import { useNow } from "../../hooks/date"
 import { useDebounce } from "react-use"
 import { CoiledScreenshotButton } from "./controllers/ScreenshotButton"
-import { ipcRenderer } from "electron"
-import type { Presence } from "discord-rpc"
 import { ServiceSelector } from "./controllers/ServiceSelector"
 import { VolumeSlider } from "./controllers/VolumeSlider"
 import { AudioChannelSelector } from "./controllers/AudioChannelSelector"
@@ -44,10 +39,6 @@ export const CoiledController: React.VFC<{}> = () => {
   const [selectedService, setSelectedService] = useRecoilState(
     mainPlayerSelectedService
   )
-  const now = useNow()
-  const programs = useRecoilValue(mirakurunPrograms)
-  const setCurrentProgram = useSetRecoilState(mainPlayerCurrentProgram)
-  const setTitle = useSetRecoilState(mainPlayerTitle)
 
   const [subtitleEnabled, setSubtitleEnabled] = useRecoilState(
     mainPlayerSubtitleEnabled
@@ -59,46 +50,6 @@ export const CoiledController: React.VFC<{}> = () => {
 
   const [audioTrack, setAudioTrack] = useRecoilState(mainPlayerAudioTrack)
   const audioTracks = useRecoilValue(mainPlayerAudioTracks)
-
-  useEffect(() => {
-    if (!selectedService) {
-      setTitle(null)
-      ipcRenderer.send("rich-presence", null)
-      return
-    }
-    const currentProgram = programs?.find(
-      (program) =>
-        program.serviceId === selectedService.serviceId &&
-        now.isAfter(program.startAt) &&
-        now.isBefore(program.startAt + program.duration)
-    )
-    console.log("放送中の番組:", currentProgram)
-    let title = `${selectedService.name}`
-    if (currentProgram) {
-      setCurrentProgram(currentProgram)
-      if (currentProgram.name) {
-        title = `${currentProgram.name} - ${selectedService.name}`
-      }
-      const activity: Presence = {
-        largeImageKey: "miraktest_icon",
-        details: selectedService.name,
-        state: currentProgram.name,
-        startTimestamp: currentProgram.startAt / 1000,
-        endTimestamp: (currentProgram.startAt + currentProgram.duration) / 1000,
-        instance: false,
-      }
-      ipcRenderer.send("rich-presence", activity)
-    } else {
-      setCurrentProgram(null)
-      const activity: Presence = {
-        largeImageKey: "miraktest_icon",
-        details: selectedService.name,
-        instance: false,
-      }
-      ipcRenderer.send("rich-presence", activity)
-    }
-    setTitle(title)
-  }, [programs, selectedService, now])
 
   const [isServiceNameShowing, setIsServiceNameShowing] = useState(false)
   const lastServiceId = useRecoilValue(mainPlayerLastSelectedServiceId)

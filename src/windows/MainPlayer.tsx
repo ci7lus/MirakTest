@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react"
+import React, { useEffect } from "react"
 import { ToastContainer, Slide } from "react-toastify"
 import { injectStyle } from "react-toastify/dist/inject-style"
 import { CoiledController } from "../components/mainPlayer/Controller"
@@ -20,6 +20,7 @@ import { VirtualWindowComponent } from "./Virtual"
 import { mirakurunServices } from "../atoms/mirakurun"
 import { useRefFromState } from "../hooks/ref"
 import { useRecoilValueRef } from "../utils/recoil"
+import { CoiledProgramTitleManager } from "../components/mainPlayer/ProgramTitleManager"
 
 export const CoiledMainPlayer: React.VFC<{}> = () => {
   const [route, setRoute] = useRecoilState(mainPlayerRoute)
@@ -187,6 +188,7 @@ export const CoiledMainPlayer: React.VFC<{}> = () => {
         pauseOnHover
       />
       <MirakurunManager />
+      <CoiledProgramTitleManager />
       <div className="w-full h-screen bg-gray-900 text-gray-100 flex items-center justify-center">
         <div className="relative w-full h-full overflow-hidden">
           <div className="absolute top-0 left-0 w-full h-full">
