@@ -73,7 +73,7 @@ export const CoiledController: React.VFC<{}> = () => {
     const [mouseX, mouseY] = mouseRef.current
     const { x, y } = remote.screen.getCursorScreenPoint()
     const xPos = x - mouseX
-    const yPos = y - mouseY - 22
+    const yPos = y - mouseY - window.outerHeight + window.innerHeight
     if (0 < xPos && 0 < yPos) {
       currentWindow.setPosition(xPos, yPos)
     }
@@ -82,14 +82,6 @@ export const CoiledController: React.VFC<{}> = () => {
   // 移動キャンセル
   const cancelMoveWindow = () =>
     requestAnimationFrame(() => cancelAnimationFrame(animId.current))
-
-  // フルスクリーンモード脱出時の追従
-  useEffect(() => {
-    currentWindow.on("leave-full-screen", cancelMoveWindow)
-    return () => {
-      currentWindow.off("leave-full-screen", cancelMoveWindow)
-    }
-  }, [])
 
   const experimental = useRecoilValue(experimentalSetting)
 
