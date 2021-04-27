@@ -36,7 +36,7 @@ module.exports = {
 Set-Location ".."
 
 # Setup Electron 11
-yarn add -D electron@^11
+yarn add -D electron@11.1.0 --ignore-scripts
 InsertAfter ".\electron-builder.yml" "^afterPack" "electronVersion: `"11.1.0`""
 ReplaceOne ".\package.json" "`"browserslist`": .+" "`"browserslist`": `"electron 11.1.0`""
 ReplaceOne ".\package.json" "`"runtimeVersion`": .+" "`"runtimeVersion`": `"11.1.0`""
