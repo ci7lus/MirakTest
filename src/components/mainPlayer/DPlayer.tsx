@@ -68,6 +68,7 @@ export const CoiledDPlayerWrapper: React.VFC<{
     })
 
     playerInstance.danmaku.opacity(commentOpacity)
+    playerInstance.danmaku.show()
 
     playerInstance.on("pause" as DPlayerEvents.pause, () => {
       playerInstance.play()
