@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react"
+import React, { memo, useEffect, useRef, useState } from "react"
 import fs from "fs"
 import path from "path"
 import { remote } from "electron"
@@ -21,7 +21,7 @@ import { VLCLogFilter } from "../../utils/vlc"
 import { screenshotSetting } from "../../atoms/settings"
 import dayjs from "dayjs"
 
-export const CoiledVideoPlayer: React.VFC<{}> = () => {
+export const CoiledVideoPlayer: React.VFC<{}> = memo(() => {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const containerRef = useRef<HTMLDivElement>(null)
 
@@ -223,4 +223,4 @@ export const CoiledVideoPlayer: React.VFC<{}> = () => {
       <canvas style={{ width: width, height: height }} ref={canvasRef}></canvas>
     </div>
   )
-}
+})

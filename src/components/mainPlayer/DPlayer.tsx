@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react"
+import React, { memo, useEffect, useRef } from "react"
 import DPlayer, { DPlayerEvents } from "dplayer"
 import { CommentPayload } from "../../types/struct"
 import { trimCommentForFlow } from "../../utils/comment"
@@ -7,7 +7,7 @@ import { mainPlayerCommentOpacity } from "../../atoms/mainPlayer"
 
 export const CoiledDPlayerWrapper: React.VFC<{
   comment: CommentPayload | null
-}> = ({ comment }) => {
+}> = memo(({ comment }) => {
   const dplayerElementRef = useRef<HTMLDivElement>(null)
   const player = useRef<DPlayer | null>()
 
@@ -114,4 +114,4 @@ button.dplayer-mobile-icon.dplayer-mobile-play {
       <div ref={dplayerElementRef}></div>
     </>
   )
-}
+})

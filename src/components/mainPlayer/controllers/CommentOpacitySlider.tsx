@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from "react"
+import React, { memo, useEffect, useState } from "react"
 import { MessageSquare } from "react-feather"
 import { useDebounce } from "react-use"
 
 export const CommentOpacitySlider: React.VFC<{
   commentOpacity: number
   setCommentOpacity: React.Dispatch<React.SetStateAction<number>>
-}> = ({ commentOpacity, setCommentOpacity }) => {
+}> = memo(({ commentOpacity, setCommentOpacity }) => {
   const [rangeOpacity, setRangeOpacity] = useState(commentOpacity * 10)
 
   useDebounce(
@@ -42,4 +42,4 @@ export const CommentOpacitySlider: React.VFC<{
       />
     </div>
   )
-}
+})

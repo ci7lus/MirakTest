@@ -1,10 +1,10 @@
-import React from "react"
+import React, { memo } from "react"
 
 export const AudioTrackSelector: React.VFC<{
   audioTrack: number
   setAudioTrack: React.Dispatch<React.SetStateAction<number>>
   audioTracks: string[]
-}> = ({ audioTrack, setAudioTrack, audioTracks }) => (
+}> = memo(({ audioTrack, setAudioTrack, audioTracks }) => (
   <select
     className="appearance-none border border-gray-800 rounded py-2 px-2 leading-tight focus:outline-none bg-gray-800 bg-opacity-50 focus:bg-gray-700 focus:border-gray-500 text-gray-100"
     value={audioTrack}
@@ -23,4 +23,4 @@ export const AudioTrackSelector: React.VFC<{
       )
     })}
   </select>
-)
+))

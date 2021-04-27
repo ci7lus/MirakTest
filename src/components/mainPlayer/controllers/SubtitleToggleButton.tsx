@@ -1,10 +1,10 @@
-import React from "react"
+import React, { memo } from "react"
 import { Type } from "react-feather"
 
 export const SubtitleToggleButton: React.VFC<{
   subtitleEnabled: boolean
   setSubtitleEnabled: React.Dispatch<React.SetStateAction<boolean>>
-}> = ({ subtitleEnabled, setSubtitleEnabled }) => (
+}> = memo(({ subtitleEnabled, setSubtitleEnabled }) => (
   <button
     aria-label={`字幕は${subtitleEnabled}です`}
     title="字幕切り替え"
@@ -16,4 +16,4 @@ export const SubtitleToggleButton: React.VFC<{
   >
     <Type size={22} />
   </button>
-)
+))

@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from "react"
+import React, { memo, useEffect, useState } from "react"
 import { VolumeX, Volume1, Volume2 } from "react-feather"
 import { useDebounce } from "react-use"
 
 export const VolumeSlider: React.VFC<{
   volume: number
   setVolume: React.Dispatch<React.SetStateAction<number>>
-}> = ({ volume, setVolume }) => {
+}> = memo(({ volume, setVolume }) => {
   const [rangeVolume, setRangeVolume] = useState(volume)
 
   useDebounce(
@@ -48,4 +48,4 @@ export const VolumeSlider: React.VFC<{
       />
     </div>
   )
-}
+})
