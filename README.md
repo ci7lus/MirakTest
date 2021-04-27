@@ -69,6 +69,17 @@ yarn
 yarn build
 ```
 
+### Windows
+
+```powershell
+choco install -y cmake
+git clone git@github.com:ci7lus/MirakTest.git
+cd MirakTest
+yarn
+./setup_wcjs.ps1
+yarn build
+```
+
 ## 謝辞
 
 MirakTest は次のプロジェクトを利用/参考にして実装しています。
