@@ -1,8 +1,8 @@
-﻿{
+{
   "name": "miraktest",
   "productName": "MirakTest",
   "version": "1.3.0",
-  "description": "Mirakurun 譏蜒剰ｦ冶・遒ｺ隱咲畑繧｢繝励Μ",
+  "description": "Mirakurun 映像視聴確認用アプリ",
   "author": "ci7lus <7887955+ci7lus@users.noreply.github.com>",
   "license": "MIT",
   "repository": {
