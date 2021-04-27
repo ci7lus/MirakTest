@@ -188,8 +188,8 @@ jobs:
             ${{ runner.os }}-yarn-
       - name: Install
         run: |
-          yarn
-      - name: Build webchimera.js
+          yarn --ignore-scripts
+      - name: Setup for windows
         run: ./setup_wcjs.ps1
       - name: Build
         run: |
