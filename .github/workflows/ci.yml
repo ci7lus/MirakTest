@@ -103,7 +103,7 @@ jobs:
             build/*.AppImage
             build/*.tar.gz
   build-macos:
-    runs-on: macOS-latest
+    runs-on: macos-latest
 
     timeout-minutes: 30
 
@@ -190,7 +190,7 @@ jobs:
         run: |
           yarn --ignore-scripts
       - name: Setup for windows
-        run: ./setup_wcjs.ps1
+        run: pwsh ./setup_wcjs.ps1
       - name: Build
         run: |
           yarn build
