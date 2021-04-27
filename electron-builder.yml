@@ -1,4 +1,4 @@
-appId: io.github.ci7lus.miraktest
+﻿appId: io.github.ci7lus.miraktest
 productName: MirakTest
 copyright: Copyright © 2021 ci7lus
 directories:
@@ -205,7 +205,6 @@ publish: null
 npmRebuild: false
 npmArgs: "--runtime=node "
 afterPack: "./dist/afterpack.js"
-electronVersion: "11.1.0"
 mac:
   icon: "assets/miraktest.icns"
   entitlements: "entitlements.plist"
