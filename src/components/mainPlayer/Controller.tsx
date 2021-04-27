@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react"
 import { remote } from "electron"
 import { CommentOpacitySlider } from "./controllers/CommentOpacitySlider"
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil"
-import { mirakurunServices } from "../../atoms/mirakurun"
+import { mirakurunPrograms, mirakurunServices } from "../../atoms/mirakurun"
 import {
   mainPlayerAudioChannel,
   mainPlayerAudioTrack,
@@ -36,6 +36,7 @@ export const CoiledController: React.VFC<{}> = () => {
     [lastCurMoved]
   )
 
+  const programs = useRecoilValue(mirakurunPrograms)
   const services = useRecoilValue(mirakurunServices)
   const [selectedService, setSelectedService] = useRecoilState(
     mainPlayerSelectedService
@@ -151,6 +152,11 @@ export const CoiledController: React.VFC<{}> = () => {
           services={services}
           selectedService={selectedService}
           setSelectedService={setSelectedService}
+          programs={
+            experimental.isProgramDetailInServiceSelectorEnabled
+              ? programs
+              : null
+          }
         />
         <VolumeSlider volume={volume} setVolume={setVolume} />
         <AudioChannelSelector

@@ -11,16 +11,34 @@ export const ExperimentalSettingForm: React.VFC<{
   const [isWindowDragMoveEnabled, setIsWindowDragMoveEnabled] = useState(
     experimentalSetting.isWindowDragMoveEnabled
   )
+  const [
+    isProgramDetailInServiceSelectorEnabled,
+    setIsProgramDetailInServiceSelectorEnabled,
+  ] = useState(experimentalSetting.isProgramDetailInServiceSelectorEnabled)
   useDebounce(
     () => {
-      setExperimentalSetting({ isWindowDragMoveEnabled })
+      setExperimentalSetting({
+        isWindowDragMoveEnabled,
+        isProgramDetailInServiceSelectorEnabled,
+      })
     },
     100,
-    [isWindowDragMoveEnabled]
+    [isWindowDragMoveEnabled, isProgramDetailInServiceSelectorEnabled]
   )
   return (
     <>
       <p className="text-lg">試験的な設定</p>
+      <label className="block">
+        <span>サービスセレクターに番組情報を表示する</span>
+        <input
+          type="checkbox"
+          className="block mt-2 form-checkbox"
+          checked={isProgramDetailInServiceSelectorEnabled || false}
+          onChange={() =>
+            setIsProgramDetailInServiceSelectorEnabled((enabled) => !enabled)
+          }
+        />
+      </label>
       <label className="block">
         <span>ウィンドウをドラッグで移動する</span>
         <input

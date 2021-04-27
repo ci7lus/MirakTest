@@ -11,6 +11,7 @@ import {
 import { mirakurunPrograms } from "../../atoms/mirakurun"
 import { useNow } from "../../hooks/date"
 import { Program } from "../../infra/mirakurun/api"
+import { getCurrentProgramOfService } from "../../utils/program"
 
 export const CoiledProgramTitleManager: React.VFC<{}> = () => {
   const selectedService = useRecoilValue(mainPlayerSelectedService)
@@ -29,12 +30,11 @@ export const CoiledProgramTitleManager: React.VFC<{}> = () => {
       ipcRenderer.send("rich-presence", null)
       return
     }
-    const currentProgram = programs?.find(
-      (program) =>
-        program.serviceId === selectedService.serviceId &&
-        now.isAfter(program.startAt) &&
-        now.isBefore(program.startAt + program.duration)
-    )
+    const currentProgram = getCurrentProgramOfService({
+      programs: programs || [],
+      serviceId: selectedService.serviceId,
+      now,
+    })
     setProgram(currentProgram || null)
     let title = `${selectedService.name}`
     if (currentProgram) {
