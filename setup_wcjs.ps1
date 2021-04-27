@@ -10,13 +10,13 @@ function InsertAfter ([string]$file, [string]$needle, [string]$text, [string]$en
     $lnum = $(Select-String -pattern "$needle" -path "$file" | ForEach-Object { $_.ToString().split(":")[2] } ) - 1
     If ($lnum -ne -1) {
         $data[$lnum] = $data[$lnum] + "`n$text"
-        $data | Out-File "$file" -Encoding "$encoding"
+        $data -Join "`n" | Out-File "$file" -Encoding "$encoding" -NoNewline
     }
 }
 
 function ReplaceOne ([string]$file, [string]$needle, [string]$text, [string]$encoding = "utf8NoBOM") {
     $data = Get-Content "$file" | ForEach-Object { $_ -replace "$needle", "$text" }
-    $data | Out-File "$file" -Encoding "$encoding"
+    $data -Join "`n" | Out-File "$file" -Encoding "$encoding" -NoNewline
 }
 
 # Setup Electron 11
