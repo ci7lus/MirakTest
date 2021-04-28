@@ -16,7 +16,7 @@ const store = new Store<{}>({
   },
   [sayaSetting.key]: {
     baseUrl: { type: "string" },
-    secure: { type: "boolean" },
+    replaces: { type: "array" },
   },
   [mainPlayerVolume.key]: { type: "number" },
   [mainPlayerBounds.key]: {

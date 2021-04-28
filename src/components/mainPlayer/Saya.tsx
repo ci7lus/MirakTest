@@ -15,7 +15,7 @@ export const CoiledSayaComments: React.VFC<{}> = memo(() => {
     let ws: ReconnectingWebSocket
     try {
       const wsUrl = new URL(saya.baseUrl)
-      if (saya.secure) {
+      if (wsUrl.protocol === "https:") {
         wsUrl.protocol = "wss:"
       } else {
         wsUrl.protocol = "ws:"
@@ -23,8 +23,16 @@ export const CoiledSayaComments: React.VFC<{}> = memo(() => {
 
       if (!service.channel) throw new Error("service.channel")
 
+      let channelType = service.channel.type as string
+      const repl = (saya.replaces || []).find(
+        ([before]) => before === channelType
+      )
+      if (repl) {
+        channelType = repl[1]
+      }
+
       ws = new ReconnectingWebSocket(
-        `${wsUrl.href}/comments/${service.channel.type}_${service.serviceId}/live`
+        `${wsUrl.href}/comments/${channelType}_${service.serviceId}/live`
       )
       ws.addEventListener("message", (e) => {
         const payload: CommentPayload = JSON.parse(e.data)

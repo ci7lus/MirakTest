@@ -11,16 +11,13 @@ const prefix = `${pkg.name}.settings`
 
 export const mirakurunSetting = atom<MirakurunSetting>({
   key: `${prefix}.mirakurun`,
-  default: {
-    baseUrl: undefined,
-  },
+  default: {},
 })
 
 export const sayaSetting = atom<SayaSetting>({
   key: `${prefix}.saya`,
   default: {
-    baseUrl: undefined,
-    secure: false,
+    replaces: [],
   },
 })
 

@@ -21,7 +21,7 @@ export type MainPlayerRoute = "settings" | "programTable" | null
 
 export type SayaSetting = {
   baseUrl?: string
-  secure?: boolean
+  replaces: [string, string][]
 }
 
 export type ScreenshotSetting = {
