@@ -219,7 +219,7 @@ win:
 nsis:
   oneClick: false
   allowToChangeInstallationDirectory: true
-  license: "assets/license.txt"
+  license: "assets/license.rtf"
 linux:
   icon: "assets/miraktest.iconset"
   category: "AudioVideo"
