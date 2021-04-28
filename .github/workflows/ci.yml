@@ -11,6 +11,10 @@ on:
       - LICENSE
       - "**.md"
   pull_request:
+    paths-ignore:
+      - .gitignore
+      - LICENSE
+      - "**.md"
 
 jobs:
   lint:
