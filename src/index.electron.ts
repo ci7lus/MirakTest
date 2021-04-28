@@ -2,10 +2,17 @@ import { app, BrowserWindow, screen, ipcMain } from "electron"
 import path from "path"
 import Store from "electron-store"
 import RPC from "discord-rpc"
+import WebChimeraJs from "webchimera.js"
 
 let window: BrowserWindow | null = null
 
 const init = () => {
+  if (process.platform == "win32" && WebChimeraJs.path) {
+    const VLCPluginPath = path.join(WebChimeraJs.path, "plugins")
+    console.log("win32 detected, VLC_PLUGIN_PATH:", VLCPluginPath)
+    process.env["VLC_PLUGIN_PATH"] = VLCPluginPath
+  }
+
   Store.initRenderer()
   const display = screen.getPrimaryDisplay()
   window = new BrowserWindow({

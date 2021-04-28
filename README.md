@@ -21,7 +21,7 @@ Electron を使用した Mirakurun の映像視聴確認用アプリです。鋭
 
 ### 安定版
 
-macOS / Linux 版ビルドを [Releases](https://github.com/ci7lus/MirakTest/releases) にて配布しています。
+macOS / Linux / Windows 版ビルドを [Releases](https://github.com/ci7lus/MirakTest/releases) にて配布しています。
 
 #### macOS での実行
 
@@ -66,6 +66,17 @@ git clone git@github.com:ci7lus/MirakTest.git
 cd MirakTest
 yarn
 ./setup_wcjs.sh
+yarn build
+```
+
+### Windows
+
+```powershell
+choco install -y cmake powershell-core
+git clone git@github.com:ci7lus/MirakTest.git
+cd MirakTest
+yarn --ignore-scripts
+pwsh ./setup_wcjs.ps1
 yarn build
 ```
 
