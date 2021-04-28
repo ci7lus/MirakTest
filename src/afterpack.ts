@@ -49,23 +49,22 @@ exports.default = async (ctx: AfterPackContext) => {
   } else if (ctx.electronPlatformName === "win32") {
     dest = path.resolve("./build/win-unpacked/")
   }
-  if (["dawrin", "win32"].includes(ctx.electronPlatformName)) {
-    console.log("libVLC の COPYRING, COPYRING.LIB をコピーします")
-    const COPYRING = await axios.get(
-      "https://raw.githubusercontent.com/videolan/vlc/master/COPYING",
-      { responseType: "text" }
-    )
-    await fs.promises.writeFile(
-      path.join(dest, "./LICENSE.VLC-COPYRING.txt"),
-      COPYRING.data
-    )
-    const COPYRING_LIB = await axios.get(
-      "https://raw.githubusercontent.com/videolan/vlc/master/COPYING.LIB",
-      { responseType: "text" }
-    )
-    await fs.promises.writeFile(
-      path.join(dest, "./LICENSE.VLC-COPYRING.LIB.txt"),
-      COPYRING_LIB.data
-    )
-  }
+
+  console.log("libVLC の COPYRING, COPYRING.LIB をコピーします")
+  const COPYRING = await axios.get(
+    "https://raw.githubusercontent.com/videolan/vlc/master/COPYING",
+    { responseType: "text" }
+  )
+  await fs.promises.writeFile(
+    path.join(dest, "./LICENSE.VLC-COPYRING.txt"),
+    COPYRING.data
+  )
+  const COPYRING_LIB = await axios.get(
+    "https://raw.githubusercontent.com/videolan/vlc/master/COPYING.LIB",
+    { responseType: "text" }
+  )
+  await fs.promises.writeFile(
+    path.join(dest, "./LICENSE.VLC-COPYRING.LIB.txt"),
+    COPYRING_LIB.data
+  )
 }

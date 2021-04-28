@@ -216,6 +216,10 @@ win:
   target:
     - "zip"
     - "nsis"
+nsis:
+  oneClick: false
+  allowToChangeInstallationDirectory: true
+  license: "assets/license.txt"
 linux:
   icon: "assets/miraktest.iconset"
   category: "AudioVideo"

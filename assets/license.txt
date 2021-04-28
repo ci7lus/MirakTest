@@ -1,0 +1,3 @@
+MirakTest は、Mirakurun 映像視聴確認用アプリです。
+ソースコードは https://github.com/ci7lus/MirakTest にて公開されています。
+macOS 向けビルド及び Windows 向けビルドには libVLC が同梱されています。これらのビルドには LGPLv2.1 または GPLv2 が適用されます。
