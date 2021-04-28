@@ -118,9 +118,18 @@ export const CoiledVideoPlayer: React.VFC<{}> = memo(() => {
           canvas.toBlob((blob) => res(blob), "image/png", 1)
         )
         if (!blob) throw new Error("blob")
-        await navigator.clipboard.write([
-          new window.ClipboardItem({ [blob.type]: blob }),
-        ])
+        try {
+          await navigator.clipboard.write([
+            new window.ClipboardItem({ [blob.type]: blob }),
+          ])
+          toast.info("キャプチャしました", {
+            autoClose: 2000,
+            pauseOnFocusLoss: false,
+          })
+        } catch (error) {
+          console.error(error)
+        }
+
         if (screenshot.saveAsAFile && screenshot.basePath) {
           try {
             const buffer = Buffer.from(await blob.arrayBuffer())
@@ -139,10 +148,6 @@ export const CoiledVideoPlayer: React.VFC<{}> = memo(() => {
             console.error(error)
           }
         }
-        toast.info("キャプチャしました", {
-          autoClose: 2000,
-          pauseOnFocusLoss: false,
-        })
       } catch (error) {
         toast.error("キャプチャに失敗しました", {
           autoClose: 2000,
