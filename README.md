@@ -21,7 +21,7 @@ Electron を使用した Mirakurun の映像視聴確認用アプリです。鋭
 
 ### 安定版
 
-macOS / Linux 版ビルドを [Releases](https://github.com/ci7lus/MirakTest/releases) にて配布しています。
+macOS / Linux / Windows 版ビルドを [Releases](https://github.com/ci7lus/MirakTest/releases) にて配布しています。
 
 #### macOS での実行
 
