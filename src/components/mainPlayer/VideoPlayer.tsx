@@ -189,6 +189,10 @@ export const CoiledVideoPlayer: React.VFC<{}> = memo(() => {
           toast.error("映像の受信に失敗しました")
           setIsPlaying(false)
           break
+        case "eof_reached":
+          toast.error("接続が中断されました")
+          setIsPlaying(false)
+          break
         case "end_of_stream":
           renderContext.fillTransparent()
           break

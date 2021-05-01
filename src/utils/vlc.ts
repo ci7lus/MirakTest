@@ -49,6 +49,8 @@ export const VLCLogFilter = (s: string) => {
     return { category: "es_out_program_epg" } as const
   } else if (s.startsWith("end of stream")) {
     return { category: "end_of_stream" } as const
+  } else if (s.startsWith("EOF reached")) {
+    return { category: "eof_reached" } as const
   } else if (s.startsWith("Buffering")) {
     const m = s.match(/Buffering (\d+)%/)
     if (!m) return { category: "buffering" } as const
