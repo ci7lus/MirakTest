@@ -95,6 +95,20 @@ export const CoiledController: React.VFC<{}> = () => {
     const onKeyDown = (e: KeyboardEvent) => {
       if (e.key === "s" && e.metaKey === true) {
         setScreenshotTrigger(performance.now())
+      } else if (e.key === "ArrowUp") {
+        // 音量+10
+        setVolume((volume) =>
+          controller.volumeRange[1] - 10 < volume
+            ? controller.volumeRange[1]
+            : volume + 10
+        )
+      } else if (e.key === "ArrowDown") {
+        // 音量-10
+        setVolume((volume) =>
+          volume < controller.volumeRange[0] + 10
+            ? controller.volumeRange[0]
+            : volume - 10
+        )
       }
     }
     window.addEventListener("keydown", onKeyDown)
@@ -128,6 +142,18 @@ export const CoiledController: React.VFC<{}> = () => {
       }}
       onMouseUp={cancelMoveWindow}
       onContextMenu={cancelMoveWindow}
+      onWheel={(e) => {
+        setVolume((volume) => {
+          const target = volume + e.deltaY
+          if (target < controller.volumeRange[0]) {
+            return controller.volumeRange[0]
+          } else if (controller.volumeRange[1] < target) {
+            return controller.volumeRange[1]
+          } else {
+            return target
+          }
+        })
+      }}
     >
       <div
         className={`select-none transition-opacity duration-150 ease-in-out p-4 ${
