@@ -6,7 +6,7 @@ import {
   MirakurunSetting,
   SayaSetting,
   ScreenshotSetting,
-} from "../types/struct"
+} from "../types/setting"
 
 const prefix = `${pkg.name}.settings`
 

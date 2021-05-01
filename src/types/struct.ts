@@ -10,26 +10,3 @@ export type CommentPayload = {
   type: "right"
   commands: []
 }
-
-export type MirakurunSetting = {
-  username?: string
-  password?: string
-  baseUrl?: string
-}
-
-export type MainPlayerRoute = "settings" | "programTable" | null
-
-export type SayaSetting = {
-  baseUrl?: string
-  replaces: [string, string][]
-}
-
-export type ScreenshotSetting = {
-  saveAsAFile: boolean
-  basePath?: string
-}
-
-export type ExperimentalSetting = {
-  isWindowDragMoveEnabled: boolean
-  isProgramDetailInServiceSelectorEnabled: boolean
-}

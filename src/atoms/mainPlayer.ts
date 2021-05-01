@@ -1,7 +1,7 @@
 import { atom } from "recoil"
 import pkg from "../../package.json"
 import { Program, Service } from "../infra/mirakurun/api"
-import { MainPlayerRoute } from "../types/struct"
+import { MainPlayerRoute } from "../types/mainPlayer"
 import { VLCAudioChannel } from "../utils/vlc"
 
 const prefix = `${pkg.name}.mainPlayer`

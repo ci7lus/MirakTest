@@ -21,7 +21,7 @@ import {
   VersionApi,
 } from "./api"
 import { Configuration } from "./configuration"
-import { MirakurunSetting } from "../../types/struct"
+import { MirakurunSetting } from "../../types/setting"
 
 export class MirakurunAPI {
   baseUrl: string

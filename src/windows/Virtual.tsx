@@ -1,5 +1,5 @@
 import React from "react"
-import { MainPlayerRoute } from "../types/struct"
+import { MainPlayerRoute } from "../types/mainPlayer"
 import { Settings } from "./Settings"
 import { X } from "react-feather"
 import { Transition } from "@headlessui/react"
