@@ -26,9 +26,9 @@ export const ExperimentalSettingForm: React.VFC<{
     [isWindowDragMoveEnabled, isProgramDetailInServiceSelectorEnabled]
   )
   return (
-    <>
+    <div>
       <p className="text-lg">試験的な設定</p>
-      <label className="block">
+      <label className="block mt-4">
         <span>サービスセレクターに番組情報を表示する</span>
         <input
           type="checkbox"
@@ -39,7 +39,7 @@ export const ExperimentalSettingForm: React.VFC<{
           }
         />
       </label>
-      <label className="block">
+      <label className="block mt-4">
         <span>ウィンドウをドラッグで移動する</span>
         <input
           type="checkbox"
@@ -48,6 +48,6 @@ export const ExperimentalSettingForm: React.VFC<{
           onChange={() => setIsWindowDragMoveEnabled((enabled) => !enabled)}
         />
       </label>
-    </>
+    </div>
   )
 }

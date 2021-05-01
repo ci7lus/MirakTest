@@ -5,7 +5,9 @@ import { useDebounce } from "react-use"
 export const VolumeSlider: React.VFC<{
   volume: number
   setVolume: React.Dispatch<React.SetStateAction<number>>
-}> = memo(({ volume, setVolume }) => {
+  min: number
+  max: number
+}> = memo(({ volume, setVolume, min, max }) => {
   const [rangeVolume, setRangeVolume] = useState(volume)
 
   useDebounce(
@@ -37,8 +39,8 @@ export const VolumeSlider: React.VFC<{
       <input
         aria-label="音量"
         type="range"
-        min="0"
-        max="150"
+        min={min}
+        max={max}
         value={rangeVolume}
         onChange={(e) => {
           const p = parseInt(e.target.value)

@@ -1,10 +1,18 @@
 import React, { useState } from "react"
 import { useRecoilState } from "recoil"
-import { experimentalSetting, screenshotSetting } from "../../../atoms/settings"
+import {
+  controllerSetting,
+  experimentalSetting,
+  screenshotSetting,
+} from "../../../atoms/settings"
+import { ControllerSettingForm } from "./Controller"
 import { ExperimentalSettingForm } from "./Experimental"
 import { ScreenshotSettingForm } from "./Screenshot"
 
 export const CoiledGeneralSetting: React.VFC<{}> = () => {
+  const [coiledControllerSetting, setCoiledControllerSetting] = useRecoilState(
+    controllerSetting
+  )
   const [coiledScreenshotSetting, setCoiledScreenshotSetting] = useRecoilState(
     screenshotSetting
   )
@@ -23,7 +31,11 @@ export const CoiledGeneralSetting: React.VFC<{}> = () => {
         setExperimental(experimental)
       }}
     >
-      <div className=" flex flex-col space-y-4">
+      <div className="flex flex-col space-y-8">
+        <ControllerSettingForm
+          controllerSetting={coiledControllerSetting}
+          setControllerSetting={setCoiledControllerSetting}
+        />
         <ScreenshotSettingForm
           screenshotSetting={screenshot}
           setScreenshotSetting={setScreenshot}

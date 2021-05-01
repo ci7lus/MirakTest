@@ -22,7 +22,7 @@ import { AudioChannelSelector } from "./controllers/AudioChannelSelector"
 import { AudioTrackSelector } from "./controllers/AudioTrackSelector"
 import { SubtitleToggleButton } from "./controllers/SubtitleToggleButton"
 import { useRefFromState } from "../../hooks/ref"
-import { experimentalSetting } from "../../atoms/settings"
+import { controllerSetting, experimentalSetting } from "../../atoms/settings"
 
 export const CoiledController: React.VFC<{}> = () => {
   const [isVisible, setIsVisible] = useState(false)
@@ -86,6 +86,8 @@ export const CoiledController: React.VFC<{}> = () => {
     requestAnimationFrame(() => cancelAnimationFrame(animId.current))
 
   const experimental = useRecoilValue(experimentalSetting)
+
+  const controller = useRecoilValue(controllerSetting)
 
   // キーボードショートカット
   const setScreenshotTrigger = useSetRecoilState(mainPlayerScreenshotTrigger)
@@ -158,7 +160,12 @@ export const CoiledController: React.VFC<{}> = () => {
               : null
           }
         />
-        <VolumeSlider volume={volume} setVolume={setVolume} />
+        <VolumeSlider
+          volume={volume}
+          setVolume={setVolume}
+          min={controller.volumeRange[0]}
+          max={controller.volumeRange[1]}
+        />
         <AudioChannelSelector
           audioChannel={audioChannel}
           setAudioChannel={setAudioChannel}

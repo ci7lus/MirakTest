@@ -19,9 +19,9 @@ export const ScreenshotSettingForm: React.VFC<{
     [saveAsAFile, basePath]
   )
   return (
-    <>
+    <div>
       <p className="text-lg">スクリーンショットの設定</p>
-      <label className="block">
+      <label className="block mt-4">
         <span>ファイルに保存する</span>
         <input
           type="checkbox"
@@ -30,7 +30,7 @@ export const ScreenshotSettingForm: React.VFC<{
           onChange={() => setSaveAsAFile((enabled) => !enabled)}
         />
       </label>
-      <label className="mb-2 block">
+      <label className="mt-4 mb-2 block">
         <span>保存するフォルダ</span>
         <div className="flex justify-center flex-grow">
           <input
@@ -68,6 +68,6 @@ export const ScreenshotSettingForm: React.VFC<{
           </button>
         </div>
       </label>
-    </>
+    </div>
   )
 }

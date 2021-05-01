@@ -1,5 +1,6 @@
 import { atom } from "recoil"
 import pkg from "../../package.json"
+import { ControllerSetting } from "../types/setting"
 import {
   ExperimentalSetting,
   MirakurunSetting,
@@ -18,6 +19,13 @@ export const sayaSetting = atom<SayaSetting>({
   key: `${prefix}.saya`,
   default: {
     replaces: [],
+  },
+})
+
+export const controllerSetting = atom<ControllerSetting>({
+  key: `${prefix}.controller`,
+  default: {
+    volumeRange: [0, 150],
   },
 })
 

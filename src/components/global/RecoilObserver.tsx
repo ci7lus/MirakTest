@@ -6,6 +6,7 @@ import {
   mainPlayerVolume,
 } from "../../atoms/mainPlayer"
 import {
+  controllerSetting,
   experimentalSetting,
   mirakurunSetting,
   sayaSetting,
@@ -29,6 +30,14 @@ export const RecoilObserver: React.VFC<{}> = () => {
           try {
             const snap = snapshot.getLoadable(sayaSetting).getValue()
             store.set(sayaSetting.key, snap)
+          } catch (e) {
+            console.error(e)
+          }
+          break
+        case controllerSetting.key:
+          try {
+            const snap = snapshot.getLoadable(controllerSetting).getValue()
+            store.set(controllerSetting.key, snap)
           } catch (e) {
             console.error(e)
           }
