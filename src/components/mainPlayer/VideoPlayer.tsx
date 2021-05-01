@@ -190,11 +190,13 @@ export const CoiledVideoPlayer: React.VFC<{}> = memo(() => {
           setIsPlaying(false)
           break
         case "eof_reached":
-          toast.error("接続が中断されました")
           setIsPlaying(false)
           break
         case "end_of_stream":
           renderContext.fillTransparent()
+          break
+        case "waiting_decoder_fifos_to_empty":
+          toast.error("接続が中断されました")
           break
         case "unknown":
           console.log(message)

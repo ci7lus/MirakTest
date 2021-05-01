@@ -51,6 +51,8 @@ export const VLCLogFilter = (s: string) => {
     return { category: "end_of_stream" } as const
   } else if (s.startsWith("EOF reached")) {
     return { category: "eof_reached" } as const
+  } else if (s.startsWith("waiting decoder fifos to empty")) {
+    return { category: "waiting_decoder_fifos_to_empty" } as const
   } else if (s.startsWith("Buffering")) {
     const m = s.match(/Buffering (\d+)%/)
     if (!m) return { category: "buffering" } as const
