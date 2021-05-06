@@ -77,28 +77,25 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-yarn-
       - name: Install deps
-        run: |
-          sudo apt-get install build-essential cmake libvlc-dev
+        run: sudo apt-get install build-essential cmake libvlc-dev
       - name: Install
-        run: |
-          yarn
+        run: yarn
       - name: Build webchimera.js
         run: ./setup_wcjs.sh
       - name: Build
-        run: |
-          yarn build
+        run: yarn build
+      - name: Pack build artifact
+        run: zip -r build.zip ./build
       - name: Upload build artifact
         uses: actions/upload-artifact@v2
         with:
           name: ubuntu-build
-          path: |
-            build
+          path: build.zip
       - name: Upload dist artifact
         uses: actions/upload-artifact@v2
         with:
           name: ubuntu-dist
-          path: |
-            dist
+          path: dist
       - name: Upload build artifact
         uses: actions/upload-artifact@v2
         with:
@@ -137,33 +134,30 @@ jobs:
           wget https://raw.githubusercontent.com/Homebrew/homebrew-cask/d1d695e55a15ed145c01c0cf52c9db3210a7d0c2/Casks/vlc.rb
           brew install vlc.rb
       - name: Install
-        run: |
-          yarn
+        run: yarn
       - name: Build webchimera.js
         run: ./setup_wcjs.sh
       - name: VLC related libs are licensed under LGPL and GPLv2
         run: ./setup_vlclib_mac.sh
       - name: Build
-        run: |
-          yarn build
+        run: yarn build
+      - name: Pack build artifact
+        run: zip -r build.zip ./build
       - name: Upload build artifact
         uses: actions/upload-artifact@v2
         with:
           name: mac-build
-          path: |
-            build
+          path: build.zip
       - name: Upload dist artifact
         uses: actions/upload-artifact@v2
         with:
           name: mac-dist
-          path: |
-            dist
+          path: dist
       - name: Upload build-image artifact
         uses: actions/upload-artifact@v2
         with:
           name: mac-build-image
-          path: |
-            build/*.dmg
+          path: build/*.dmg
   build-windows:
     runs-on: windows-latest
 
@@ -191,25 +185,23 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-yarn-
       - name: Install
-        run: |
-          yarn --ignore-scripts
+        run: yarn --ignore-scripts
       - name: Setup for windows
         run: pwsh ./setup_wcjs.ps1
       - name: Build
-        run: |
-          yarn build
+        run: yarn build
+      - name: Pack build artifact
+        run: powershell Compress-Archive -Path build -DestinationPath build.zip
       - name: Upload build artifact
         uses: actions/upload-artifact@v2
         with:
           name: windows-build
-          path: |
-            build
+          path: build.zip
       - name: Upload dist artifact
         uses: actions/upload-artifact@v2
         with:
           name: windows-dist
-          path: |
-            dist
+          path: dist
       - name: Upload build artifact
         uses: actions/upload-artifact@v2
         with:
