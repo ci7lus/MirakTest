@@ -143,6 +143,9 @@ export const CoiledController: React.VFC<{}> = () => {
       onMouseUp={cancelMoveWindow}
       onContextMenu={cancelMoveWindow}
       onWheel={(e) => {
+        if (e.deltaX !== 0) return
+        setIsVisible(true)
+        setLastCurMoved(performance.now())
         setVolume((volume) => {
           const target = volume + e.deltaY
           if (target < controller.volumeRange[0]) {
