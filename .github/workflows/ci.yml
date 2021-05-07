@@ -85,7 +85,7 @@ jobs:
       - name: Build
         run: yarn build
       - name: Pack build artifact
-        run: zip -r build.zip ./build
+        run: zip -rq build.zip ./build -x 'build/*.AppImage' -x 'build/*.tar.gz'
       - name: Upload build artifact
         uses: actions/upload-artifact@v2
         with:
@@ -142,7 +142,7 @@ jobs:
       - name: Build
         run: yarn build
       - name: Pack build artifact
-        run: zip -r build.zip ./build
+        run: zip -rq build.zip ./build -x 'build/*.dmg'
       - name: Upload build artifact
         uses: actions/upload-artifact@v2
         with:
