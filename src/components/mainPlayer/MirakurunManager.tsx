@@ -81,7 +81,7 @@ export const MirakurunManager: React.VFC<{}> = () => {
       toast.error("サービス情報の取得に失敗しました")
       return
     }
-    await updatePrograms(mirakurun)
+    updatePrograms(mirakurun)
     if (programUpdateTimer.current) {
       clearInterval(programUpdateTimer.current)
     }
