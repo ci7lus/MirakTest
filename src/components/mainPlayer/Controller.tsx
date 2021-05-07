@@ -109,6 +109,8 @@ export const CoiledController: React.VFC<{}> = () => {
             ? controller.volumeRange[0]
             : volume - 10
         )
+      } else if (e.key === "m") {
+        setVolume((volume) => (0 < volume ? 0 : 100))
       }
     }
     window.addEventListener("keydown", onKeyDown)
