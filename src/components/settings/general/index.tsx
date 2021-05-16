@@ -10,17 +10,13 @@ import { ExperimentalSettingForm } from "./Experimental"
 import { ScreenshotSettingForm } from "./Screenshot"
 
 export const CoiledGeneralSetting: React.VFC<{}> = () => {
-  const [coiledControllerSetting, setCoiledControllerSetting] = useRecoilState(
-    controllerSetting
-  )
-  const [coiledScreenshotSetting, setCoiledScreenshotSetting] = useRecoilState(
-    screenshotSetting
-  )
+  const [coiledControllerSetting, setCoiledControllerSetting] =
+    useRecoilState(controllerSetting)
+  const [coiledScreenshotSetting, setCoiledScreenshotSetting] =
+    useRecoilState(screenshotSetting)
   const [screenshot, setScreenshot] = useState(coiledScreenshotSetting)
-  const [
-    coiledExperimentalSetting,
-    setCoiledExperimentalSetting,
-  ] = useRecoilState(experimentalSetting)
+  const [coiledExperimentalSetting, setCoiledExperimentalSetting] =
+    useRecoilState(experimentalSetting)
   const [experimental, setExperimental] = useState(coiledExperimentalSetting)
   return (
     <form
