@@ -131,8 +131,9 @@ jobs:
             ${{ runner.os }}-yarn-
       - name: Install VLC
         run: |
-          wget https://raw.githubusercontent.com/Homebrew/homebrew-cask/d1d695e55a15ed145c01c0cf52c9db3210a7d0c2/Casks/vlc.rb
-          brew install vlc.rb
+          # VLC 3.0.14
+          wget https://raw.githubusercontent.com/Homebrew/homebrew-cask/d2c682daa22954206a6d608dc68e30ce13e5695f/Casks/vlc.rb
+          brew install ./vlc.rb
       - name: Install
         run: yarn
       - name: Build webchimera.js
