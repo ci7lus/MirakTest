@@ -1724,13 +1724,14 @@ export const ChannelsApiFp = function (configuration?: Configuration) {
     ): Promise<
       (axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>
     > {
-      const localVarAxiosArgs = await localVarAxiosParamCreator.getChannelStream(
-        type,
-        channel,
-        xMirakurunPriority,
-        decode,
-        options
-      )
+      const localVarAxiosArgs =
+        await localVarAxiosParamCreator.getChannelStream(
+          type,
+          channel,
+          xMirakurunPriority,
+          decode,
+          options
+        )
       return createRequestFunction(
         localVarAxiosArgs,
         globalAxios,
@@ -1783,12 +1784,13 @@ export const ChannelsApiFp = function (configuration?: Configuration) {
     ): Promise<
       (axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<Channel>>
     > {
-      const localVarAxiosArgs = await localVarAxiosParamCreator.getChannelsByType(
-        type,
-        channel,
-        name,
-        options
-      )
+      const localVarAxiosArgs =
+        await localVarAxiosParamCreator.getChannelsByType(
+          type,
+          channel,
+          name,
+          options
+        )
       return createRequestFunction(
         localVarAxiosArgs,
         globalAxios,
@@ -1812,12 +1814,13 @@ export const ChannelsApiFp = function (configuration?: Configuration) {
     ): Promise<
       (axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<Service>>
     > {
-      const localVarAxiosArgs = await localVarAxiosParamCreator.getServiceByChannel(
-        type,
-        channel,
-        id,
-        options
-      )
+      const localVarAxiosArgs =
+        await localVarAxiosParamCreator.getServiceByChannel(
+          type,
+          channel,
+          id,
+          options
+        )
       return createRequestFunction(
         localVarAxiosArgs,
         globalAxios,
@@ -1845,14 +1848,15 @@ export const ChannelsApiFp = function (configuration?: Configuration) {
     ): Promise<
       (axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>
     > {
-      const localVarAxiosArgs = await localVarAxiosParamCreator.getServiceStreamByChannel(
-        type,
-        channel,
-        id,
-        xMirakurunPriority,
-        decode,
-        options
-      )
+      const localVarAxiosArgs =
+        await localVarAxiosParamCreator.getServiceStreamByChannel(
+          type,
+          channel,
+          id,
+          xMirakurunPriority,
+          decode,
+          options
+        )
       return createRequestFunction(
         localVarAxiosArgs,
         globalAxios,
@@ -1874,11 +1878,12 @@ export const ChannelsApiFp = function (configuration?: Configuration) {
     ): Promise<
       (axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<Service>>
     > {
-      const localVarAxiosArgs = await localVarAxiosParamCreator.getServicesByChannel(
-        type,
-        channel,
-        options
-      )
+      const localVarAxiosArgs =
+        await localVarAxiosParamCreator.getServicesByChannel(
+          type,
+          channel,
+          options
+        )
       return createRequestFunction(
         localVarAxiosArgs,
         globalAxios,
@@ -2616,9 +2621,8 @@ export const ConfigApiFp = function (configuration?: Configuration) {
         basePath?: string
       ) => AxiosPromise<Array<ConfigChannelsItem>>
     > {
-      const localVarAxiosArgs = await localVarAxiosParamCreator.getChannelsConfig(
-        options
-      )
+      const localVarAxiosArgs =
+        await localVarAxiosParamCreator.getChannelsConfig(options)
       return createRequestFunction(
         localVarAxiosArgs,
         globalAxios,
@@ -2684,10 +2688,8 @@ export const ConfigApiFp = function (configuration?: Configuration) {
         basePath?: string
       ) => AxiosPromise<Array<ConfigChannelsItem>>
     > {
-      const localVarAxiosArgs = await localVarAxiosParamCreator.updateChannelsConfig(
-        body,
-        options
-      )
+      const localVarAxiosArgs =
+        await localVarAxiosParamCreator.updateChannelsConfig(body, options)
       return createRequestFunction(
         localVarAxiosArgs,
         globalAxios,
@@ -2707,10 +2709,8 @@ export const ConfigApiFp = function (configuration?: Configuration) {
     ): Promise<
       (axios?: AxiosInstance, basePath?: string) => AxiosPromise<ConfigServer>
     > {
-      const localVarAxiosArgs = await localVarAxiosParamCreator.updateServerConfig(
-        body,
-        options
-      )
+      const localVarAxiosArgs =
+        await localVarAxiosParamCreator.updateServerConfig(body, options)
       return createRequestFunction(
         localVarAxiosArgs,
         globalAxios,
@@ -2733,10 +2733,8 @@ export const ConfigApiFp = function (configuration?: Configuration) {
         basePath?: string
       ) => AxiosPromise<Array<ConfigTunersItem>>
     > {
-      const localVarAxiosArgs = await localVarAxiosParamCreator.updateTunersConfig(
-        body,
-        options
-      )
+      const localVarAxiosArgs =
+        await localVarAxiosParamCreator.updateTunersConfig(body, options)
       return createRequestFunction(
         localVarAxiosArgs,
         globalAxios,
@@ -3763,12 +3761,13 @@ export const ProgramsApiFp = function (configuration?: Configuration) {
     ): Promise<
       (axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>
     > {
-      const localVarAxiosArgs = await localVarAxiosParamCreator.getProgramStream(
-        id,
-        xMirakurunPriority,
-        decode,
-        options
-      )
+      const localVarAxiosArgs =
+        await localVarAxiosParamCreator.getProgramStream(
+          id,
+          xMirakurunPriority,
+          decode,
+          options
+        )
       return createRequestFunction(
         localVarAxiosArgs,
         globalAxios,
@@ -4398,12 +4397,13 @@ export const ServicesApiFp = function (configuration?: Configuration) {
     ): Promise<
       (axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<Service>>
     > {
-      const localVarAxiosArgs = await localVarAxiosParamCreator.getServiceByChannel(
-        type,
-        channel,
-        id,
-        options
-      )
+      const localVarAxiosArgs =
+        await localVarAxiosParamCreator.getServiceByChannel(
+          type,
+          channel,
+          id,
+          options
+        )
       return createRequestFunction(
         localVarAxiosArgs,
         globalAxios,
@@ -4427,12 +4427,13 @@ export const ServicesApiFp = function (configuration?: Configuration) {
     ): Promise<
       (axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>
     > {
-      const localVarAxiosArgs = await localVarAxiosParamCreator.getServiceStream(
-        id,
-        xMirakurunPriority,
-        decode,
-        options
-      )
+      const localVarAxiosArgs =
+        await localVarAxiosParamCreator.getServiceStream(
+          id,
+          xMirakurunPriority,
+          decode,
+          options
+        )
       return createRequestFunction(
         localVarAxiosArgs,
         globalAxios,
@@ -4460,14 +4461,15 @@ export const ServicesApiFp = function (configuration?: Configuration) {
     ): Promise<
       (axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>
     > {
-      const localVarAxiosArgs = await localVarAxiosParamCreator.getServiceStreamByChannel(
-        type,
-        channel,
-        id,
-        xMirakurunPriority,
-        decode,
-        options
-      )
+      const localVarAxiosArgs =
+        await localVarAxiosParamCreator.getServiceStreamByChannel(
+          type,
+          channel,
+          id,
+          xMirakurunPriority,
+          decode,
+          options
+        )
       return createRequestFunction(
         localVarAxiosArgs,
         globalAxios,
@@ -4527,11 +4529,12 @@ export const ServicesApiFp = function (configuration?: Configuration) {
     ): Promise<
       (axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<Service>>
     > {
-      const localVarAxiosArgs = await localVarAxiosParamCreator.getServicesByChannel(
-        type,
-        channel,
-        options
-      )
+      const localVarAxiosArgs =
+        await localVarAxiosParamCreator.getServicesByChannel(
+          type,
+          channel,
+          options
+        )
       return createRequestFunction(
         localVarAxiosArgs,
         globalAxios,
@@ -5338,13 +5341,14 @@ export const StreamApiFp = function (configuration?: Configuration) {
     ): Promise<
       (axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>
     > {
-      const localVarAxiosArgs = await localVarAxiosParamCreator.getChannelStream(
-        type,
-        channel,
-        xMirakurunPriority,
-        decode,
-        options
-      )
+      const localVarAxiosArgs =
+        await localVarAxiosParamCreator.getChannelStream(
+          type,
+          channel,
+          xMirakurunPriority,
+          decode,
+          options
+        )
       return createRequestFunction(
         localVarAxiosArgs,
         globalAxios,
@@ -5414,12 +5418,13 @@ export const StreamApiFp = function (configuration?: Configuration) {
     ): Promise<
       (axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>
     > {
-      const localVarAxiosArgs = await localVarAxiosParamCreator.getProgramStream(
-        id,
-        xMirakurunPriority,
-        decode,
-        options
-      )
+      const localVarAxiosArgs =
+        await localVarAxiosParamCreator.getProgramStream(
+          id,
+          xMirakurunPriority,
+          decode,
+          options
+        )
       return createRequestFunction(
         localVarAxiosArgs,
         globalAxios,
@@ -5443,12 +5448,13 @@ export const StreamApiFp = function (configuration?: Configuration) {
     ): Promise<
       (axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>
     > {
-      const localVarAxiosArgs = await localVarAxiosParamCreator.getServiceStream(
-        id,
-        xMirakurunPriority,
-        decode,
-        options
-      )
+      const localVarAxiosArgs =
+        await localVarAxiosParamCreator.getServiceStream(
+          id,
+          xMirakurunPriority,
+          decode,
+          options
+        )
       return createRequestFunction(
         localVarAxiosArgs,
         globalAxios,
@@ -5476,14 +5482,15 @@ export const StreamApiFp = function (configuration?: Configuration) {
     ): Promise<
       (axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>
     > {
-      const localVarAxiosArgs = await localVarAxiosParamCreator.getServiceStreamByChannel(
-        type,
-        channel,
-        id,
-        xMirakurunPriority,
-        decode,
-        options
-      )
+      const localVarAxiosArgs =
+        await localVarAxiosParamCreator.getServiceStreamByChannel(
+          type,
+          channel,
+          id,
+          xMirakurunPriority,
+          decode,
+          options
+        )
       return createRequestFunction(
         localVarAxiosArgs,
         globalAxios,
@@ -6020,10 +6027,8 @@ export const TunersApiFp = function (configuration?: Configuration) {
     ): Promise<
       (axios?: AxiosInstance, basePath?: string) => AxiosPromise<object>
     > {
-      const localVarAxiosArgs = await localVarAxiosParamCreator.killTunerProcess(
-        index,
-        options
-      )
+      const localVarAxiosArgs =
+        await localVarAxiosParamCreator.killTunerProcess(index, options)
       return createRequestFunction(
         localVarAxiosArgs,
         globalAxios,
