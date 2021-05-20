@@ -13,6 +13,7 @@ import { useNow } from "../../hooks/date"
 import { Program } from "../../infra/mirakurun/api"
 import { getCurrentProgramOfService } from "../../utils/program"
 import { getServiceLogoForPresence } from "../../utils/presence"
+import { experimentalSetting } from "../../atoms/settings"
 
 export const CoiledProgramTitleManager: React.VFC<{}> = () => {
   const selectedService = useRecoilValue(mainPlayerSelectedService)
@@ -20,6 +21,7 @@ export const CoiledProgramTitleManager: React.VFC<{}> = () => {
   const programs = useRecoilValue(mirakurunPrograms)
   const setCurrentProgram = useSetRecoilState(mainPlayerCurrentProgram)
   const setTitle = useSetRecoilState(mainPlayerTitle)
+  const experimental = useRecoilValue(experimentalSetting)
 
   const isPlaying = useRecoilValue(mainPlayerIsPlaying)
 
@@ -57,7 +59,9 @@ export const CoiledProgramTitleManager: React.VFC<{}> = () => {
         endTimestamp: (currentProgram.startAt + currentProgram.duration) / 1000,
         instance: false,
       }
-      ipcRenderer.send("rich-presence", activity)
+      if (experimental.isRichPresenceEnabled) {
+        ipcRenderer.send("rich-presence", activity)
+      }
     } else {
       setCurrentProgram(null)
       const activity: Presence = {
@@ -67,10 +71,15 @@ export const CoiledProgramTitleManager: React.VFC<{}> = () => {
         details: selectedService.name,
         instance: false,
       }
-      ipcRenderer.send("rich-presence", activity)
+      if (experimental.isRichPresenceEnabled) {
+        ipcRenderer.send("rich-presence", activity)
+      }
+    }
+    if (experimental.isRichPresenceEnabled === false) {
+      ipcRenderer.send("rich-presence", null)
     }
     setTitle(title)
-  }, [programs, selectedService, now, isPlaying])
+  }, [programs, selectedService, now, isPlaying, experimental])
 
   useEffect(() => {
     if (!program) return

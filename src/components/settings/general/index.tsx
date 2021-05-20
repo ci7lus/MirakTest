@@ -38,7 +38,7 @@ export const CoiledGeneralSetting: React.VFC<{}> = () => {
         />
         <ExperimentalSettingForm
           experimentalSetting={experimental}
-          setExperimentalSetting={setCoiledExperimentalSetting}
+          setExperimentalSetting={setExperimental}
         />
       </div>
       <button
