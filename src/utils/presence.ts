@@ -1,7 +1,8 @@
 import type { Service } from "../infra/mirakurun/api"
 
 export const PresenceRegisteredGRLogos = [
-  1040, 1048, 1056, 1064, 1072, 17424, 17432, 17440, 17448, 23608,
+  1040, 1048, 1056, 1064, 1072, 17424, 17432, 17440, 17448, 23608, 34840, 37904,
+  37912, 37920,
 ]
 
 export const PresenceRegisteredBSLogos = [
