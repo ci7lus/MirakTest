@@ -14,6 +14,7 @@ import { Program } from "../../infra/mirakurun/api"
 import { getCurrentProgramOfService } from "../../utils/program"
 import { getServiceLogoForPresence } from "../../utils/presence"
 import { experimentalSetting } from "../../atoms/settings"
+import pkg from "../../../package.json"
 
 export const CoiledProgramTitleManager: React.VFC<{}> = () => {
   const selectedService = useRecoilValue(mainPlayerSelectedService)
@@ -40,10 +41,12 @@ export const CoiledProgramTitleManager: React.VFC<{}> = () => {
     })
     setProgram(currentProgram || null)
     let title = selectedService.name
+    const version = `${pkg.productName} ${pkg.version}`
     const logo = getServiceLogoForPresence(selectedService)
     const largeImageKey = logo || "miraktest_icon"
     const smallImageKey = logo ? "miraktest_icon" : undefined
-    const largeImageText = logo ? selectedService.name : undefined
+    const largeImageText = logo ? selectedService.name : version
+    const smallImageText = logo ? version : undefined
     if (currentProgram) {
       setCurrentProgram(currentProgram)
       if (currentProgram.name) {
@@ -53,6 +56,7 @@ export const CoiledProgramTitleManager: React.VFC<{}> = () => {
         largeImageKey,
         largeImageText,
         smallImageKey,
+        smallImageText,
         details: selectedService.name,
         state: currentProgram.name,
         startTimestamp: currentProgram.startAt / 1000,
@@ -68,6 +72,7 @@ export const CoiledProgramTitleManager: React.VFC<{}> = () => {
         largeImageKey,
         largeImageText,
         smallImageKey,
+        smallImageText,
         details: selectedService.name,
         instance: false,
       }
