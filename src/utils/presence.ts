@@ -1,8 +1,8 @@
 import type { Service } from "../infra/mirakurun/api"
 
 export const PresenceRegisteredGRLogos = [
-  1040, 1048, 1056, 1064, 1072, 17424, 17432, 17440, 17448, 23608, 24632, 34840,
-  37904, 37912, 37920,
+  1040, 1048, 1056, 1064, 1072, 17424, 17432, 17440, 17448, 23608, 24632, 24680,
+  34840, 37904, 37912, 37920, 38008,
 ]
 
 export const PresenceRegisteredBSLogos = [
@@ -11,12 +11,6 @@ export const PresenceRegisteredBSLogos = [
 ]
 
 export const getServiceLogoForPresence = (service: Service) => {
-  if (PresenceRegisteredGRLogos.includes(service.serviceId)) {
-    return `gr_${service.serviceId}`
-  }
-  if (PresenceRegisteredBSLogos.includes(service.serviceId)) {
-    return `bs_${service.serviceId}`
-  }
   if (service.name.includes("ＮＨＫ総合") || service.name.includes("NHK総合")) {
     return "gr_nhkg"
   }
@@ -25,6 +19,16 @@ export const getServiceLogoForPresence = (service: Service) => {
     service.name.includes("NHKEテレ")
   ) {
     return "gr_nhke"
+  }
+  for (const sub of [...Array(3).keys()]) {
+    // +3までサブチャンネルとする
+    const serviceId = service.serviceId - sub
+    if (PresenceRegisteredGRLogos.includes(serviceId)) {
+      return `gr_${serviceId}`
+    }
+    if (PresenceRegisteredBSLogos.includes(serviceId)) {
+      return `bs_${serviceId}`
+    }
   }
   return false
 }
