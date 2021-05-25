@@ -129,11 +129,11 @@ jobs:
           key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
             ${{ runner.os }}-yarn-
-      - name: Install VLC
+      - name: Download VLC
         run: |
-          # VLC 3.0.14
-          wget https://raw.githubusercontent.com/Homebrew/homebrew-cask/d2c682daa22954206a6d608dc68e30ce13e5695f/Casks/vlc.rb
-          brew install ./vlc.rb
+          wget https://github.com/vivid-lapin/vlc-miraktest/releases/download/3.0.14.1/vlc-3.0.14.dmg -O /tmp/vlc.dmg
+          hdiutil mount /tmp/vlc.dmg
+          cp -Ra "/Volumes/VLC media player/VLC.app" .
       - name: Install
         run: yarn
       - name: Build webchimera.js

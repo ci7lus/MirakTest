@@ -63,6 +63,7 @@
   "dependencies": {
     "@headlessui/react": "^1.2.0",
     "@neneka/dplayer": "^1.26.0-patch.0",
+    "aribb24.js": "^1.6.8",
     "axios": "^0.21.1",
     "dayjs": "^1.10.4",
     "discord-rpc": "^3.2.0",

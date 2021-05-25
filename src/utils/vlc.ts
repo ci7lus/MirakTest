@@ -39,6 +39,22 @@ export const VLCLogFilter = (s: string) => {
       category: "psz_subtitle_data",
       array: Uint8Array.from(m[1].split(" ").map((s) => parseInt(`0x${s}`))),
     } as const
+  } else if (s.startsWith("arib_data")) {
+    const m = s.match(/^arib_data \[(.+)\]\[(\d+)\]$/)
+    if (!m) return { category: "arib_data" } as const
+    return {
+      category: "arib_data",
+      data: m[1],
+      pts: parseInt(m[2]),
+    }
+  } else if (s.startsWith("i_pcr")) {
+    const m = s.match(/^i_pcr \[(\d+)\]\[(\d+)\]$/)
+    if (!m) return { category: "i_pcr" }
+    return {
+      category: "i_pcr",
+      i_pcr: parseInt(m[1]),
+      pcr_i_first: parseInt(m[2]),
+    }
   } else if (s.startsWith("VLC is unable to open the MRL")) {
     return { category: "unable_to_open" } as const
   } else if (s.includes("successfully opened")) {

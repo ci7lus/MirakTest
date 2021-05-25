@@ -6,13 +6,17 @@ import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil"
 import WebChimeraJs from "webchimera.js"
 import { toast } from "react-toastify"
 import {
+  mainPlayerAribSubtitleData,
   mainPlayerAudioChannel,
   mainPlayerAudioTrack,
   mainPlayerAudioTracks,
+  mainPlayerDisplayingAribSubtitleData,
   mainPlayerIsPlaying,
+  mainPlayerPlayingTime,
   mainPlayerScreenshotTrigger,
   mainPlayerSelectedService,
   mainPlayerSubtitleEnabled,
+  mainPlayerTsPts,
   mainPlayerUrl,
   mainPlayerVolume,
 } from "../../atoms/mainPlayer"
@@ -20,6 +24,7 @@ import { VideoRenderer } from "../../utils/videoRenderer"
 import { VLCLogFilter } from "../../utils/vlc"
 import { screenshotSetting } from "../../atoms/settings"
 import dayjs from "dayjs"
+import { CanvasProvider } from "aribb24.js"
 
 export const CoiledVideoPlayer: React.VFC<{}> = memo(() => {
   const canvasRef = useRef<HTMLCanvasElement>(null)
@@ -101,6 +106,10 @@ export const CoiledVideoPlayer: React.VFC<{}> = memo(() => {
   }, [])
   const selectedService = useRecoilValue(mainPlayerSelectedService)
 
+  const displayingAribSubtitleData = useRecoilValue(
+    mainPlayerDisplayingAribSubtitleData
+  )
+
   // スクリーンショットフォルダ初期設定
   const screenshotTrigger = useRecoilValue(mainPlayerScreenshotTrigger)
   useEffect(() => {
@@ -114,6 +123,18 @@ export const CoiledVideoPlayer: React.VFC<{}> = memo(() => {
         const context = canvas.getContext("2d", { alpha: false })
         if (!context) throw new Error("ctx")
         context.drawImage(glCanvas, 0, 0, canvas.width, canvas.height)
+        if (displayingAribSubtitleData && screenshot.includeSubtitle === true) {
+          const subtitleCanvas = document.createElement("canvas")
+          subtitleCanvas.height = canvas.height
+          subtitleCanvas.width = canvas.width
+          const provider = new CanvasProvider(displayingAribSubtitleData, 0)
+          provider.render({
+            canvas: subtitleCanvas,
+            width: canvas.width,
+            height: canvas.height,
+          })
+          context.drawImage(subtitleCanvas, 0, 0, canvas.width, canvas.height)
+        }
         const blob = await new Promise<Blob | null>((res) =>
           canvas.toBlob((blob) => res(blob), "image/png", 1)
         )
@@ -158,6 +179,10 @@ export const CoiledVideoPlayer: React.VFC<{}> = memo(() => {
     })()
   }, [screenshotTrigger])
 
+  const setAribSubtitleData = useSetRecoilState(mainPlayerAribSubtitleData)
+  const setTsPts = useSetRecoilState(mainPlayerTsPts)
+  const setPlayingTime = useSetRecoilState(mainPlayerPlayingTime)
+
   useEffect(() => {
     const renderContext = new VideoRenderer(canvasRef.current!, {
       preserveDrawingBuffer: true,
@@ -176,6 +201,15 @@ export const CoiledVideoPlayer: React.VFC<{}> = memo(() => {
         case "successfully_opened":
           setIsPlaying(true)
           setSubtitleEnabled(false)
+          break
+        case "arib_data":
+          setPlayingTime(player.time)
+          parsed.data &&
+            setAribSubtitleData({ data: parsed.data, pts: parsed.pts })
+          break
+        case "i_pcr":
+          setPlayingTime(player.time)
+          parsed.i_pcr && setTsPts([parsed.i_pcr, parsed.pcr_i_first])
           break
         case "received_first_picture":
         case "es_out_program_epg":

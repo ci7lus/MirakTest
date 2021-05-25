@@ -66,6 +66,29 @@ export const mainPlayerLastSelectedServiceId = atom<number | null>({
   default: null,
 })
 
+export const mainPlayerPlayingTime = atom<number>({
+  key: `${prefix}.playingTime`,
+  default: 0,
+})
+
+export const mainPlayerAribSubtitleData = atom<{
+  data: string
+  pts: number
+} | null>({
+  key: `${prefix}.aribSubtitleData`,
+  default: null,
+})
+
+export const mainPlayerTsPts = atom<[number, number]>({
+  key: `${prefix}.mainPlayerTsPts`,
+  default: [0, 0],
+})
+
+export const mainPlayerDisplayingAribSubtitleData = atom<Uint8Array | null>({
+  key: `${prefix}.displayngAribSubtitleData`,
+  default: null,
+})
+
 export const mainPlayerScreenshotTrigger = atom<number>({
   key: `${prefix}.screenshotTrigger`,
   default: 0,
