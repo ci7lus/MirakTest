@@ -11,6 +11,7 @@ import {
 import { CanvasProvider } from "aribb24.js"
 import { tryBase64ToUint8Array } from "../../utils/string"
 import { useRefFromState } from "../../hooks/ref"
+import clsx from "clsx"
 
 export const CoiledSubtitleRenderer: React.VFC<{}> = memo(({}) => {
   const canvasRef = useRef<HTMLCanvasElement>(null)
@@ -94,7 +95,11 @@ export const CoiledSubtitleRenderer: React.VFC<{}> = memo(({}) => {
     <canvas
       width={1920}
       height={1080}
-      className="pointer-events-none w-full"
+      className={clsx(
+        "pointer-events-none",
+        "w-full",
+        !subtitleEnabled && "opacity-0"
+      )}
       style={{ height }}
       ref={canvasRef}
     ></canvas>
