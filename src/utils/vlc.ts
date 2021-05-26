@@ -55,6 +55,8 @@ export const VLCLogFilter = (s: string) => {
       i_pcr: parseInt(m[1]),
       pcr_i_first: parseInt(m[2]),
     }
+  } else if (s.startsWith("arib parser was destroyed")) {
+    return { category: "arib_parser_was_destroyed" }
   } else if (s.startsWith("VLC is unable to open the MRL")) {
     return { category: "unable_to_open" } as const
   } else if (s.includes("successfully opened")) {

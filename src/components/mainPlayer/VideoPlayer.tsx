@@ -212,6 +212,8 @@ export const CoiledVideoPlayer: React.VFC<{}> = memo(() => {
           break
         case "successfully_opened":
           setIsPlaying(true)
+          break
+        case "arib_parser_was_destroyed":
           setSubtitleEnabled(false)
           break
         case "arib_data":
