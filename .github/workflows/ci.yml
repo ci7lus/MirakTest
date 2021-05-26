@@ -133,7 +133,7 @@ jobs:
         run: |
           wget https://github.com/vivid-lapin/vlc-miraktest/releases/download/3.0.14.1/vlc-3.0.14.dmg -O /tmp/vlc.dmg
           hdiutil mount /tmp/vlc.dmg
-          cp -Ra "/Volumes/VLC media player/VLC.app" .
+          cp -Ra "/Volumes/VLC media player/VLC.app" /Applications
       - name: Install
         run: yarn
       - name: Build webchimera.js
