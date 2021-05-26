@@ -1,5 +1,5 @@
 set -eu
-export ELECTRON_VER="$(yarn info electron version --silent)"
+export ELECTRON_VER="$(yarn --silent electron --version | sed -e "s/v//")"
 export BUILD_DIR="./build/Release"
 export npm_config_wcjs_runtime=electron
 export npm_config_wcjs_runtime_version=$ELECTRON_VER

@@ -77,7 +77,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-yarn-
       - name: Install deps
-        run: sudo apt-get install build-essential cmake libvlc-dev
+        run: sudo apt-get install cmake=3.16.3-1ubuntu1 libvlc-dev=3.0.9.2-1
       - name: Install
         run: yarn
       - name: Build webchimera.js

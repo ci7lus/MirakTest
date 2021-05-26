@@ -77,7 +77,7 @@
     "react-use": "^17.2.4",
     "recoil": "^0.3.0",
     "reconnecting-websocket": "^4.4.0",
-    "webchimera.js": "^0.5.1"
+    "webchimera.js": "^0.5.2"
   },
   "cmake-js": {
     "runtime": "electron",

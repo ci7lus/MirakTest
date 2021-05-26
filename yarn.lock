@@ -8016,10 +8016,10 @@ watchpack@^2.0.0:
     glob-to-regexp "^0.4.1"
     graceful-fs "^4.1.2"
 
-webchimera.js@^0.5.1:
-  version "0.5.1"
-  resolved "https://registry.yarnpkg.com/webchimera.js/-/webchimera.js-0.5.1.tgz#135eb2a43ab4b0a4573d0e80681528f4c44c5e65"
-  integrity sha512-orMhdNL/DSRP+1YkqShLgpRYco7WvQmlRh88NwyDoMacSu4rJ4kHo8SinZCKUOkhuyJFVo+FYQ7MGdkKxT7bfg==
+webchimera.js@^0.5.2:
+  version "0.5.2"
+  resolved "https://registry.yarnpkg.com/webchimera.js/-/webchimera.js-0.5.2.tgz#5a39555d4a40d67bed77c7e99d8e466dce98485a"
+  integrity sha512-EGa2Bm0n2UF9D4+Yu6J5321HQJPlHnqSyakPTUOdMkWA/1pfktJvtzCmWxJQASy1tvgftdAAdiZXarbMY4o4jA==
   dependencies:
     bindings "~1.2.1"
     cmake-js "*"
