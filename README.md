@@ -44,7 +44,7 @@ AppImage に実行権限をつけ `--no-sandbox` をつけて実行するか、�
 
 ## 開発
 
-メイン機能の依存として [WebChimera.js](https://github.com/RSATom/WebChimera.js) を利用しています。[Build PreRequests](https://github.com/RSATom/WebChimera.js#build-prerequisites) の導入が必要です。
+メイン機能の依存として [WebChimera.js](https://github.com/RSATom/WebChimera.js) を利用しています。[Build PreRequests](https://github.com/RSATom/WebChimera.js#build-prerequisites) の導入が必要です。<br>
 
 ### macOS
 
@@ -57,6 +57,8 @@ yarn
 ./setup_wcjs.sh
 yarn build
 ```
+
+[vlc-miraktest](https://github.com/vivid-lapin/vlc-miraktest) の [Releases](https://github.com/vivid-lapin/vlc-miraktest/releases) にある dmg から `VLC.app` を抽出し MirakTest ディレクトリに配置することで、ビルドが aribb24.js を用いるようになります。
 
 ### Linux (debian)
 
