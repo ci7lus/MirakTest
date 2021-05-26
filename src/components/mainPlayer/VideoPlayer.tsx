@@ -113,30 +113,42 @@ export const CoiledVideoPlayer: React.VFC<{}> = memo(() => {
   // スクリーンショットフォルダ初期設定
   const screenshotTrigger = useRecoilValue(mainPlayerScreenshotTrigger)
   useEffect(() => {
-    if (!screenshotTrigger || !canvasRef.current) return
+    const canvas = canvasRef.current
+    if (!screenshotTrigger || !canvas) return
     ;(async () => {
       try {
-        const glCanvas = canvasRef.current!
-        const canvas = document.createElement("canvas")
-        canvas.height = glCanvas.height
-        canvas.width = Math.ceil(glCanvas.height / aspect)
-        const context = canvas.getContext("2d", { alpha: false })
+        const contentCanvas = document.createElement("canvas")
+        contentCanvas.height = canvas.height
+        contentCanvas.width = Math.ceil(canvas.height / aspect)
+        const context = contentCanvas.getContext("2d", { alpha: false })
         if (!context) throw new Error("ctx")
-        context.drawImage(glCanvas, 0, 0, canvas.width, canvas.height)
+        context.drawImage(
+          canvas,
+          0,
+          0,
+          contentCanvas.width,
+          contentCanvas.height
+        )
         if (displayingAribSubtitleData && screenshot.includeSubtitle === true) {
           const subtitleCanvas = document.createElement("canvas")
-          subtitleCanvas.height = canvas.height
-          subtitleCanvas.width = canvas.width
+          subtitleCanvas.height = contentCanvas.height
+          subtitleCanvas.width = contentCanvas.width
           const provider = new CanvasProvider(displayingAribSubtitleData, 0)
           provider.render({
             canvas: subtitleCanvas,
-            width: canvas.width,
-            height: canvas.height,
+            useStrokeText: true,
+            keepAspectRatio: true,
           })
-          context.drawImage(subtitleCanvas, 0, 0, canvas.width, canvas.height)
+          context.drawImage(
+            subtitleCanvas,
+            0,
+            0,
+            contentCanvas.width,
+            contentCanvas.height
+          )
         }
         const blob = await new Promise<Blob | null>((res) =>
-          canvas.toBlob((blob) => res(blob), "image/png", 1)
+          contentCanvas.toBlob((blob) => res(blob), "image/png", 1)
         )
         if (!blob) throw new Error("blob")
         try {

@@ -45,7 +45,7 @@ export const CoiledSubtitleRenderer: React.VFC<{}> = memo(({}) => {
     }
   }, [])
 
-  // 字幕ペイロード更新時にパースしたデータをタイムラインにプッシュする
+  // 字幕ペイロード更新時にパースしたデータをレンダリングする
   const aribSubtitleData = useRecoilValue(mainPlayerAribSubtitleData)
   const tsPts = useRecoilValue(mainPlayerTsPts)
   const playingTime = useRecoilValue(mainPlayerPlayingTime)
@@ -70,12 +70,10 @@ export const CoiledSubtitleRenderer: React.VFC<{}> = memo(({}) => {
     const ctx = canvas.getContext("2d")
     if (!ctx) return
     setTimeout(() => {
-      ctx.clearRect(0, 0, canvas.width, canvas.height)
       provider.render({
         canvas,
-        width: 1920,
-        height: 1080,
         useStrokeText: true,
+        keepAspectRatio: true,
       })
       setDisplayingAribSubtitleData(decoded)
       displayingSubtitle.current = aribSubtitleData.data
@@ -93,7 +91,7 @@ export const CoiledSubtitleRenderer: React.VFC<{}> = memo(({}) => {
     <canvas
       width={1920}
       height={1080}
-      className="absolute top-0 left-0 pointer-events-none w-full"
+      className="pointer-events-none w-full"
       style={{ height }}
       ref={canvasRef}
     ></canvas>
