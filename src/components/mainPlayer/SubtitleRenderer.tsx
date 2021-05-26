@@ -10,6 +10,7 @@ import {
 } from "../../atoms/mainPlayer"
 import { CanvasProvider } from "aribb24.js"
 import { tryBase64ToUint8Array } from "../../utils/string"
+import { useRefFromState } from "../../hooks/ref"
 
 export const CoiledSubtitleRenderer: React.VFC<{}> = memo(({}) => {
   const canvasRef = useRef<HTMLCanvasElement>(null)
@@ -19,12 +20,16 @@ export const CoiledSubtitleRenderer: React.VFC<{}> = memo(({}) => {
   const setDisplayingAribSubtitleData = useSetRecoilState(
     mainPlayerDisplayingAribSubtitleData
   )
+  const subtitleEnabledRef = useRefFromState(subtitleEnabled)
+  const isPlayingRef = useRefFromState(isPlaying)
   useEffect(() => {
     const canvas = canvasRef.current
     if (!canvas) return
+    const context = canvas.getContext("2d")
+    if (!context) return
     if (subtitleEnabled === false || isPlaying === false) {
       // 字幕オフでキャンバスをクリアする
-      canvas.getContext("2d")?.clearRect(0, 0, canvas.width, canvas.height)
+      context.clearRect(0, 0, canvas.width, canvas.height)
       setDisplayingAribSubtitleData(null)
     }
   }, [subtitleEnabled, isPlaying])
@@ -52,14 +57,7 @@ export const CoiledSubtitleRenderer: React.VFC<{}> = memo(({}) => {
   const displayingSubtitle = useRef("")
   useEffect(() => {
     const canvas = canvasRef.current
-    if (
-      !aribSubtitleData ||
-      !canvas ||
-      !tsPts ||
-      subtitleEnabled === false ||
-      isPlaying === false
-    )
-      return
+    if (!aribSubtitleData || !canvas || !tsPts) return
     const decoded = tryBase64ToUint8Array(aribSubtitleData.data)
     if (!decoded) return
     const fromZero = ((aribSubtitleData.pts * 9) / 100 - tsPts[1]) / 90_000
@@ -70,6 +68,11 @@ export const CoiledSubtitleRenderer: React.VFC<{}> = memo(({}) => {
     const ctx = canvas.getContext("2d")
     if (!ctx) return
     setTimeout(() => {
+      if (
+        subtitleEnabledRef.current === false ||
+        isPlayingRef.current === false
+      )
+        return
       provider.render({
         canvas,
         useStrokeText: true,
