@@ -2,7 +2,8 @@ export const VLCLogFilter = (s: string) => {
   if (
     s.startsWith("picture is too late to be displayed") ||
     s.startsWith("picture might be displayed late") ||
-    s.startsWith("More than")
+    s.startsWith("More than") ||
+    s.startsWith("buffer too late")
   ) {
     return { category: "picture_late_warn" } as const
   } else if (s.startsWith("libdvbpsi error")) {
@@ -52,7 +53,7 @@ export const VLCLogFilter = (s: string) => {
     return { category: "arib_parser_was_destroyed" } as const
   } else if (s.startsWith("VLC is unable to open the MRL")) {
     return { category: "unable_to_open" } as const
-  } else if (s.includes("successfully opened")) {
+  } else if (s.includes("successfully opened") && s.includes("http")) {
     return { category: "successfully_opened" } as const
   } else if (s.startsWith("Received first picture")) {
     return { category: "received_first_picture" } as const
