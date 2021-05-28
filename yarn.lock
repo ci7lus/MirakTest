@@ -2075,10 +2075,10 @@ argparse@^2.0.1:
   resolved "https://registry.yarnpkg.com/argparse/-/argparse-2.0.1.tgz#246f50f3ca78a3240f6c997e8a9bd1eac49e4b38"
   integrity sha512-8+9WqebbFzpX9OR+Wa6O29asIogeRMzcGtAINdpMHHyAg10f05aSFVBbcEqGf/PXw1EjAZ+q2/bEBg3DvurK3Q==
 
-aribb24.js@^1.6.9:
-  version "1.6.9"
-  resolved "https://registry.yarnpkg.com/aribb24.js/-/aribb24.js-1.6.9.tgz#8d8647bb04bb8f5639ad31d2e9c11805c21e5f67"
-  integrity sha512-zdqY/Gq78VLe0+pn0A9b/jl7Iig2v7W9QHPugfvTpruncEHJmCbOEO0anKYRwwzr4RMli9Frm7VNrl6VxQ7xsg==
+aribb24.js@^1.6.10:
+  version "1.6.10"
+  resolved "https://registry.yarnpkg.com/aribb24.js/-/aribb24.js-1.6.10.tgz#edcf9f8c2567f6d7bcdc04ad29db4966bcf34b53"
+  integrity sha512-uUm7rw6HzpqdIfKLNg+m1Ks3axV8U/aQniNmKP+nS6iWz7b9cuPOzoZsyqbfYMNlHPXHltC1mpRIox40WER+Uw==
   dependencies:
     spark-md5 "^3.0.1"
 
