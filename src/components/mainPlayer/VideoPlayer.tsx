@@ -138,6 +138,8 @@ export const CoiledVideoPlayer: React.VFC<{}> = memo(() => {
             canvas: subtitleCanvas,
             useStrokeText: true,
             keepAspectRatio: true,
+            normalFont: "'Rounded M+ 1m for ARIB'",
+            gaijiFont: "'Rounded M+ 1m for ARIB'",
           })
           context.drawImage(
             subtitleCanvas,
