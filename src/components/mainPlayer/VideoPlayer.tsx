@@ -220,13 +220,17 @@ export const CoiledVideoPlayer: React.VFC<{}> = memo(() => {
           setSubtitleEnabled(false)
           break
         case "arib_data":
+          console.log(message)
           setPlayingTime(player.time)
-          parsed.data &&
+          if (parsed.data) {
             setAribSubtitleData({ data: parsed.data, pts: parsed.pts })
+          }
           break
         case "i_pcr":
           setPlayingTime(player.time)
-          parsed.i_pcr && setTsPts([parsed.i_pcr, parsed.pcr_i_first])
+          if (parsed.i_pcr) {
+            setTsPts([parsed.i_pcr, parsed.pcr_i_first])
+          }
           break
         case "received_first_picture":
         case "es_out_program_epg":
