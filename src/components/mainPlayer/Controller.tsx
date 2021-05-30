@@ -32,7 +32,7 @@ export const CoiledController: React.VFC<{}> = () => {
     () => {
       setIsVisible(false)
     },
-    3000,
+    2500,
     [lastCurMoved]
   )
 
@@ -125,7 +125,7 @@ export const CoiledController: React.VFC<{}> = () => {
       className="w-full h-full flex flex-col justify-between"
       onMouseMove={() => {
         setIsVisible(true)
-        setLastCurMoved(performance.now())
+        setLastCurMoved(new Date().getSeconds())
       }}
       onMouseLeave={() => setIsVisible(false)}
       onDoubleClick={() => {
@@ -147,7 +147,7 @@ export const CoiledController: React.VFC<{}> = () => {
       onWheel={(e) => {
         if (e.deltaX !== 0) return
         setIsVisible(true)
-        setLastCurMoved(performance.now())
+        setLastCurMoved(new Date().getSeconds())
         setVolume((volume) => {
           const target = volume + e.deltaY
           if (target < controller.volumeRange[0]) {
