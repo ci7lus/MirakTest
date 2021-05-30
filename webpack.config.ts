@@ -73,6 +73,11 @@ const imageLoaderConfiguration: webpack.RuleSetRule = {
   },
 }
 
+const assetLoaderConfiguration: webpack.RuleSetRule = {
+  test: /\.(ttf)$/,
+  type: "asset/resource",
+}
+
 const factory: MultiConfigurationFactory = (env, args) => [
   {
     entry: path.resolve(__dirname, "./src/index.web.tsx"),
@@ -86,8 +91,9 @@ const factory: MultiConfigurationFactory = (env, args) => [
     module: {
       rules: [
         babelLoaderConfiguration,
-        scssConfiguration,
+        assetLoaderConfiguration,
         imageLoaderConfiguration,
+        scssConfiguration,
         nodeConfiguration,
       ],
     },

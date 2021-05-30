@@ -63,6 +63,7 @@
   "dependencies": {
     "@headlessui/react": "^1.2.0",
     "@neneka/dplayer": "^1.26.0-patch.0",
+    "aribb24.js": "^1.6.10",
     "axios": "^0.21.1",
     "dayjs": "^1.10.4",
     "discord-rpc": "^3.2.0",
@@ -76,7 +77,7 @@
     "react-use": "^17.2.4",
     "recoil": "^0.3.0",
     "reconnecting-websocket": "^4.4.0",
-    "webchimera.js": "^0.5.1"
+    "webchimera.js": "^0.5.2"
   },
   "cmake-js": {
     "runtime": "electron",

@@ -17,6 +17,10 @@ Electron を使用した Mirakurun の映像視聴確認用アプリです。鋭
 
 [![Image from Gyazo](https://i.gyazo.com/582a518d615e042394ade5fe7bcfcf3f.jpg)](https://gyazo.com/582a518d615e042394ade5fe7bcfcf3f)
 
+[aribb24.js](https://github.com/monyone/aribb24.js) による字幕表示にも対応しています。
+
+[![Image from Gyazo](https://i.gyazo.com/2f5f23d3c0e2968724dd2bce018cef86.jpg)](https://gyazo.com/2f5f23d3c0e2968724dd2bce018cef86)
+
 ## 導入方法
 
 ### 安定版
@@ -26,7 +30,8 @@ macOS / Linux / Windows 版ビルドを [Releases](https://github.com/ci7lus/Mir
 #### macOS での実行
 
 dmg をマウントして app を Applications にコピーします。<br />
-Intel / M1 mac (Rosetta 2) 上で動作する macOS Catalina / Big Sur での動作を確認しています。
+Intel / M1 mac (Rosetta 2) 上で動作する macOS Catalina / Big Sur での動作を確認しています。<br />
+必須ではありませんが、字幕の表示に [Rounded M+ 1m for ARIB](https://github.com/xtne6f/TVCaptionMod2/blob/3cc6c1767595e1973473124e892a57c7693c2154/TVCaptionMod2_Readme.txt#L49-L50) を指定しているので、フォントのインストールを推奨します。[ダウンロードはこちら](https://github.com/ci7lus/MirakTest/files/6555741/rounded-mplus-1m-arib.ttf.zip)。
 
 #### Linux (debian) での実行
 
@@ -44,7 +49,7 @@ AppImage に実行権限をつけ `--no-sandbox` をつけて実行するか、�
 
 ## 開発
 
-メイン機能の依存として [WebChimera.js](https://github.com/RSATom/WebChimera.js) を利用しています。[Build PreRequests](https://github.com/RSATom/WebChimera.js#build-prerequisites) の導入が必要です。
+メイン機能の依存として [WebChimera.js](https://github.com/RSATom/WebChimera.js) を利用しています。[Build PreRequests](https://github.com/RSATom/WebChimera.js#build-prerequisites) の導入が必要です。<br>
 
 ### macOS
 
@@ -57,6 +62,8 @@ yarn
 ./setup_wcjs.sh
 yarn build
 ```
+
+[vlc-miraktest](https://github.com/vivid-lapin/vlc-miraktest) の [Releases](https://github.com/vivid-lapin/vlc-miraktest/releases) にある dmg から `VLC.app` を抽出し MirakTest ディレクトリに配置することで、ビルドが aribb24.js を用いるようになります。
 
 ### Linux (debian)
 
@@ -87,6 +94,7 @@ MirakTest は次のプロジェクトを利用/参考にして実装していま
 - [Chinachu/Mirakurun](https://github.com/Chinachu/Mirakurun)
 - [search-future/miyou.tv](https://github.com/search-future/miyou.tv)
 - [SlashNephy/saya](https://github.com/SlashNephy/saya)
+- [monyone/aribb24.js](https://github.com/monyone/aribb24.js)
 
 DTV コミュニティの皆さまに感謝します。
 

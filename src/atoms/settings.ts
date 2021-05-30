@@ -33,6 +33,7 @@ export const screenshotSetting = atom<ScreenshotSetting>({
   key: `${prefix}.screenshot`,
   default: {
     saveAsAFile: true,
+    includeSubtitle: true,
   },
 })
 

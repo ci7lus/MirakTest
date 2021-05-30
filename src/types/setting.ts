@@ -15,6 +15,7 @@ export type ControllerSetting = {
 
 export type ScreenshotSetting = {
   saveAsAFile: boolean
+  includeSubtitle: boolean
   basePath?: string
 }
 

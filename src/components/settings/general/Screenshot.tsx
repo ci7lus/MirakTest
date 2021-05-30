@@ -10,13 +10,16 @@ export const ScreenshotSettingForm: React.VFC<{
   setScreenshotSetting: React.Dispatch<React.SetStateAction<ScreenshotSetting>>
 }> = ({ screenshotSetting, setScreenshotSetting }) => {
   const [saveAsAFile, setSaveAsAFile] = useState(screenshotSetting.saveAsAFile)
+  const [includeSubtitle, setIncludeSubtitle] = useState(
+    screenshotSetting.includeSubtitle
+  )
   const [basePath, setBasePath] = useState(screenshotSetting.basePath)
   useDebounce(
     () => {
-      setScreenshotSetting({ saveAsAFile, basePath })
+      setScreenshotSetting({ saveAsAFile, basePath, includeSubtitle })
     },
     100,
-    [saveAsAFile, basePath]
+    [saveAsAFile, basePath, includeSubtitle]
   )
   return (
     <div>
@@ -28,6 +31,15 @@ export const ScreenshotSettingForm: React.VFC<{
           className="block mt-2 form-checkbox"
           checked={saveAsAFile || false}
           onChange={() => setSaveAsAFile((enabled) => !enabled)}
+        />
+      </label>
+      <label className="block mt-4">
+        <span>スクリーンショットに字幕を含める</span>
+        <input
+          type="checkbox"
+          className="block mt-2 form-checkbox"
+          checked={includeSubtitle || false}
+          onChange={() => setIncludeSubtitle((enabled) => !enabled)}
         />
       </label>
       <label className="mt-4 mb-2 block">

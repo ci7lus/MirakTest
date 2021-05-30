@@ -21,6 +21,7 @@ import { mirakurunServices } from "../atoms/mirakurun"
 import { useRefFromState } from "../hooks/ref"
 import { useRecoilValueRef } from "../utils/recoil"
 import { CoiledProgramTitleManager } from "../components/mainPlayer/ProgramTitleManager"
+import { CoiledSubtitleRenderer } from "../components/mainPlayer/SubtitleRenderer"
 
 export const CoiledMainPlayer: React.VFC<{}> = () => {
   const [route, setRoute] = useRecoilState(mainPlayerRoute)
@@ -199,6 +200,9 @@ export const CoiledMainPlayer: React.VFC<{}> = () => {
           </div>
           <div className="absolute top-0 left-0 w-full h-full">
             <CoiledSayaComments />
+          </div>
+          <div className="absolute top-0 left-0 w-full h-full flex items-center justify-center">
+            <CoiledSubtitleRenderer />
           </div>
           <div className="absolute top-0 left-0 w-full h-full">
             <CoiledController />

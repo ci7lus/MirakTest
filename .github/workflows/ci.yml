@@ -26,6 +26,8 @@ jobs:
       matrix:
         node-version: [12.x]
 
+    if: ${{ github.event_name != 'pull_request' || github.repository_owner != 'ci7lus' }}
+
     steps:
       - uses: actions/checkout@v2
       - name: Use Node.js ${{ matrix.node-version }}
@@ -61,6 +63,8 @@ jobs:
 
     needs: lint
 
+    if: ${{ github.event_name != 'pull_request' || github.repository_owner != 'ci7lus' }}
+
     steps:
       - uses: actions/checkout@v2
       - name: Use Node.js ${{ matrix.node-version }}
@@ -77,7 +81,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-yarn-
       - name: Install deps
-        run: sudo apt-get install build-essential cmake libvlc-dev
+        run: sudo apt-get install cmake=3.16.3-1ubuntu1 libvlc-dev=3.0.9.2-1
       - name: Install
         run: yarn
       - name: Build webchimera.js
@@ -114,6 +118,8 @@ jobs:
 
     needs: lint
 
+    if: ${{ github.event_name != 'pull_request' || github.repository_owner != 'ci7lus' }}
+
     steps:
       - uses: actions/checkout@v2
       - name: Use Node.js ${{ matrix.node-version }}
@@ -129,11 +135,11 @@ jobs:
           key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
             ${{ runner.os }}-yarn-
-      - name: Install VLC
+      - name: Download VLC
         run: |
-          # VLC 3.0.14
-          wget https://raw.githubusercontent.com/Homebrew/homebrew-cask/d2c682daa22954206a6d608dc68e30ce13e5695f/Casks/vlc.rb
-          brew install ./vlc.rb
+          wget https://github.com/vivid-lapin/vlc-miraktest/releases/download/3.0.14.1/vlc-3.0.14.dmg -O /tmp/vlc.dmg
+          hdiutil mount /tmp/vlc.dmg
+          cp -Ra "/Volumes/VLC media player/VLC.app" /Applications
       - name: Install
         run: yarn
       - name: Build webchimera.js
@@ -169,6 +175,8 @@ jobs:
         node-version: [12.x]
 
     needs: lint
+
+    if: ${{ github.event_name != 'pull_request' || github.repository_owner != 'ci7lus' }}
 
     steps:
       - uses: actions/checkout@v2

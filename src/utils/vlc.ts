@@ -2,7 +2,8 @@ export const VLCLogFilter = (s: string) => {
   if (
     s.startsWith("picture is too late to be displayed") ||
     s.startsWith("picture might be displayed late") ||
-    s.startsWith("More than")
+    s.startsWith("More than") ||
+    s.startsWith("buffer too late")
   ) {
     return { category: "picture_late_warn" } as const
   } else if (s.startsWith("libdvbpsi error")) {
@@ -32,16 +33,27 @@ export const VLCLogFilter = (s: string) => {
       width: parseInt(width),
       height: parseInt(height),
     } as const
-  } else if (s.startsWith("psz_subtitle_data")) {
-    const m = s.match(/psz_subtitle_data \[(.*)\s\]/)
-    if (!m) return { category: "psz_subtitle_data" } as const
+  } else if (s.startsWith("arib_data")) {
+    const m = s.match(/^arib_data \[(.+)\]\[(\d+)\]$/)
+    if (!m) return { category: "arib_data" } as const
     return {
-      category: "psz_subtitle_data",
-      array: Uint8Array.from(m[1].split(" ").map((s) => parseInt(`0x${s}`))),
+      category: "arib_data",
+      data: m[1],
+      pts: parseInt(m[2]),
     } as const
+  } else if (s.startsWith("i_pcr")) {
+    const m = s.match(/^i_pcr \[(\d+)\]\[(\d+)\]$/)
+    if (!m) return { category: "i_pcr" }
+    return {
+      category: "i_pcr",
+      i_pcr: parseInt(m[1]),
+      pcr_i_first: parseInt(m[2]),
+    } as const
+  } else if (s.startsWith("arib parser was destroyed")) {
+    return { category: "arib_parser_was_destroyed" } as const
   } else if (s.startsWith("VLC is unable to open the MRL")) {
     return { category: "unable_to_open" } as const
-  } else if (s.includes("successfully opened")) {
+  } else if (s.includes("successfully opened") && s.includes("http")) {
     return { category: "successfully_opened" } as const
   } else if (s.startsWith("Received first picture")) {
     return { category: "received_first_picture" } as const
