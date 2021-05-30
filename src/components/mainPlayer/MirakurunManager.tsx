@@ -57,10 +57,12 @@ export const MirakurunManager: React.VFC<{}> = () => {
         setCompatibility("Mirakc")
         setVersion(version.data)
         message = `Mirakc (${version.data})`
-      } else {
+      } else if (typeof version.data.current === "string") {
         setCompatibility("Mirakurun")
         setVersion(version.data.current || null)
         message = `Mirakurun (${version.data.current})`
+      } else {
+        throw new Error()
       }
       if (!isFirstAppeal) {
         toast.info(message)
