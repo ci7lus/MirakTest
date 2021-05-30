@@ -79,9 +79,9 @@ export const mainPlayerAribSubtitleData = atom<{
   default: null,
 })
 
-export const mainPlayerTsPts = atom<[number, number]>({
-  key: `${prefix}.mainPlayerTsPts`,
-  default: [0, 0],
+export const mainPlayerTsFirstPcr = atom<number>({
+  key: `${prefix}.mainPlayerTsFirstPcr`,
+  default: 0,
 })
 
 export const mainPlayerDisplayingAribSubtitleData = atom<Uint8Array | null>({

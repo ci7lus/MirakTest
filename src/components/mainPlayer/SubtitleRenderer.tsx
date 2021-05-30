@@ -6,7 +6,7 @@ import {
   mainPlayerIsPlaying,
   mainPlayerPlayingTime,
   mainPlayerSubtitleEnabled,
-  mainPlayerTsPts,
+  mainPlayerTsFirstPcr,
 } from "../../atoms/mainPlayer"
 import { CanvasProvider } from "aribb24.js"
 import { tryBase64ToUint8Array } from "../../utils/string"
@@ -53,15 +53,15 @@ export const CoiledSubtitleRenderer: React.VFC<{}> = memo(({}) => {
 
   // 字幕ペイロード更新時にパースしたデータをレンダリングする
   const aribSubtitleData = useRecoilValue(mainPlayerAribSubtitleData)
-  const tsPts = useRecoilValue(mainPlayerTsPts)
+  const firstPcr = useRecoilValue(mainPlayerTsFirstPcr)
   const playingTime = useRecoilValue(mainPlayerPlayingTime)
   const displayingSubtitle = useRef("")
   useEffect(() => {
     const canvas = canvasRef.current
-    if (!aribSubtitleData || !canvas || !tsPts) return
+    if (!aribSubtitleData || !canvas || !firstPcr) return
     const decoded = tryBase64ToUint8Array(aribSubtitleData.data)
     if (!decoded) return
-    const fromZero = ((aribSubtitleData.pts * 9) / 100 - tsPts[1]) / 90_000
+    const fromZero = ((aribSubtitleData.pts * 9) / 100 - firstPcr) / 90_000
     const pts = fromZero - playingTime / 1000
     const provider = new CanvasProvider(decoded, pts)
     const estimate = provider.render()

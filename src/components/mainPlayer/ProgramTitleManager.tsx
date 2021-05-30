@@ -8,7 +8,7 @@ import {
   mainPlayerTitle,
   mainPlayerIsPlaying,
 } from "../../atoms/mainPlayer"
-import { mirakurunPrograms } from "../../atoms/mirakurun"
+import { mirakurunProgramsFamily } from "../../atoms/mirakurun"
 import { useNow } from "../../hooks/date"
 import { Program } from "../../infra/mirakurun/api"
 import { getCurrentProgramOfService } from "../../utils/program"
@@ -19,7 +19,9 @@ import pkg from "../../../package.json"
 export const CoiledProgramTitleManager: React.VFC<{}> = () => {
   const selectedService = useRecoilValue(mainPlayerSelectedService)
   const now = useNow()
-  const programs = useRecoilValue(mirakurunPrograms)
+  const programs = useRecoilValue(
+    mirakurunProgramsFamily(selectedService?.serviceId ?? 0)
+  )
   const setCurrentProgram = useSetRecoilState(mainPlayerCurrentProgram)
   const setTitle = useSetRecoilState(mainPlayerTitle)
   const experimental = useRecoilValue(experimentalSetting)
@@ -35,7 +37,7 @@ export const CoiledProgramTitleManager: React.VFC<{}> = () => {
       return
     }
     const currentProgram = getCurrentProgramOfService({
-      programs: programs || [],
+      programs,
       serviceId: selectedService.serviceId,
       now,
     })

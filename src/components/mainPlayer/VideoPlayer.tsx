@@ -16,7 +16,7 @@ import {
   mainPlayerScreenshotTrigger,
   mainPlayerSelectedService,
   mainPlayerSubtitleEnabled,
-  mainPlayerTsPts,
+  mainPlayerTsFirstPcr,
   mainPlayerUrl,
   mainPlayerVolume,
 } from "../../atoms/mainPlayer"
@@ -25,6 +25,7 @@ import { VLCLogFilter } from "../../utils/vlc"
 import { screenshotSetting } from "../../atoms/settings"
 import dayjs from "dayjs"
 import { CanvasProvider } from "aribb24.js"
+import { useThrottleFn } from "react-use"
 
 export const CoiledVideoPlayer: React.VFC<{}> = memo(() => {
   const canvasRef = useRef<HTMLCanvasElement>(null)
@@ -194,7 +195,16 @@ export const CoiledVideoPlayer: React.VFC<{}> = memo(() => {
   }, [screenshotTrigger])
 
   const setAribSubtitleData = useSetRecoilState(mainPlayerAribSubtitleData)
-  const setTsPts = useSetRecoilState(mainPlayerTsPts)
+  const [firstPcr, setFirstPcr] = useState(0)
+  const [time, setTime] = useState(0)
+  const setTsFirstPcr = useSetRecoilState(mainPlayerTsFirstPcr)
+  useThrottleFn(
+    (tsPts) => {
+      setTsFirstPcr(tsPts)
+    },
+    1000,
+    [firstPcr]
+  )
   const setPlayingTime = useSetRecoilState(mainPlayerPlayingTime)
 
   useEffect(() => {
@@ -221,15 +231,14 @@ export const CoiledVideoPlayer: React.VFC<{}> = memo(() => {
           break
         case "arib_data":
           console.log(message)
-          setPlayingTime(player.time)
           if (parsed.data) {
+            setPlayingTime(player.time)
             setAribSubtitleData({ data: parsed.data, pts: parsed.pts })
           }
           break
         case "i_pcr":
-          setPlayingTime(player.time)
           if (parsed.i_pcr) {
-            setTsPts([parsed.i_pcr, parsed.pcr_i_first])
+            setFirstPcr(parsed.pcr_i_first)
           }
           break
         case "received_first_picture":

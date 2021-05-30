@@ -185,10 +185,8 @@ export const CoiledController: React.VFC<{}> = () => {
           services={services}
           selectedService={selectedService}
           setSelectedService={setSelectedService}
-          programs={
+          isProgramDetailEnabled={
             experimental.isProgramDetailInServiceSelectorEnabled
-              ? programs
-              : null
           }
         />
         <VolumeSlider

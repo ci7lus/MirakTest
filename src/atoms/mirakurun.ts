@@ -1,4 +1,4 @@
-import { atom } from "recoil"
+import { atom, selectorFamily } from "recoil"
 import pkg from "../../package.json"
 import { Program, Service } from "../infra/mirakurun/api"
 
@@ -22,4 +22,15 @@ export const mirakurunServices = atom<Service[] | null>({
 export const mirakurunPrograms = atom<Program[] | null>({
   key: `${prefix}.programs`,
   default: null,
+})
+
+export const mirakurunProgramsFamily = selectorFamily({
+  key: `${prefix}.programsFamily`,
+  get:
+    (serviceId: number) =>
+    ({ get }) => {
+      return (get(mirakurunPrograms) || []).filter(
+        (program) => program.serviceId === serviceId
+      )
+    },
 })
