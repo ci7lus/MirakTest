@@ -5,6 +5,7 @@
 
 import * as yarn from "@yarnpkg/lockfile"
 import fs from "fs"
+import pkg from "./package.json"
 
 type Package = {
   version: string
@@ -13,11 +14,11 @@ type Package = {
   dependencies?: { [key: string]: string }
 }
 
-const targets = [
-  "webchimera.js@^0.3.1",
-  "electron-store@^7.0.2",
-  "discord-rpc@^3.2.0",
-]
+const targets = ["webchimera.js", "electron-store"] as const
+const dependencies = { ...pkg.dependencies, ...pkg.devDependencies }
+const targetWithVersion = targets.map(
+  (depName) => `${depName}@${dependencies[depName]}`
+)
 const file = fs.readFileSync("yarn.lock", "utf8")
 const lock = yarn.parse(file)
 if (lock.type !== "success") throw new Error(lock.type)
@@ -36,7 +37,7 @@ const pickPackage = (dep: Package) => {
     }
   })
 }
-targets.map((target) => {
+targetWithVersion.forEach((target) => {
   deps.push(target.split("@")[0])
   deps_dedupe.push(target)
   packages[target] && pickPackage(packages[target])

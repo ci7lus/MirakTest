@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react"
-import { ipcRenderer } from "electron"
 import type { Presence } from "discord-rpc"
 import { useRecoilValue, useSetRecoilState } from "recoil"
 import {
@@ -13,8 +12,8 @@ import { useNow } from "../../hooks/date"
 import { Program } from "../../infra/mirakurun/api"
 import { getCurrentProgramOfService } from "../../utils/program"
 import { getServiceLogoForPresence } from "../../utils/presence"
-import { experimentalSetting } from "../../atoms/settings"
 import pkg from "../../../package.json"
+import { globalPresence } from "../../atoms/global"
 
 export const CoiledProgramTitleManager: React.VFC<{}> = () => {
   const selectedService = useRecoilValue(mainPlayerSelectedService)
@@ -24,16 +23,17 @@ export const CoiledProgramTitleManager: React.VFC<{}> = () => {
   )
   const setCurrentProgram = useSetRecoilState(mainPlayerCurrentProgram)
   const setTitle = useSetRecoilState(mainPlayerTitle)
-  const experimental = useRecoilValue(experimentalSetting)
 
   const isPlaying = useRecoilValue(mainPlayerIsPlaying)
 
   const [program, setProgram] = useState<Program | null>()
 
+  const setPresence = useSetRecoilState(globalPresence)
+
   useEffect(() => {
     if (!selectedService || !isPlaying) {
       setTitle(null)
-      ipcRenderer.send("rich-presence", null)
+      setPresence(null)
       return
     }
     const currentProgram = getCurrentProgramOfService({
@@ -65,9 +65,7 @@ export const CoiledProgramTitleManager: React.VFC<{}> = () => {
         endTimestamp: (currentProgram.startAt + currentProgram.duration) / 1000,
         instance: false,
       }
-      if (experimental.isRichPresenceEnabled) {
-        ipcRenderer.send("rich-presence", activity)
-      }
+      setPresence(activity)
     } else {
       setCurrentProgram(null)
       const activity: Presence = {
@@ -78,15 +76,10 @@ export const CoiledProgramTitleManager: React.VFC<{}> = () => {
         details: selectedService.name,
         instance: false,
       }
-      if (experimental.isRichPresenceEnabled) {
-        ipcRenderer.send("rich-presence", activity)
-      }
-    }
-    if (experimental.isRichPresenceEnabled === false) {
-      ipcRenderer.send("rich-presence", null)
+      setPresence(activity)
     }
     setTitle(title)
-  }, [programs, selectedService, now, isPlaying, experimental])
+  }, [programs, selectedService, now, isPlaying])
 
   useEffect(() => {
     if (!program) return

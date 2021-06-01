@@ -22,6 +22,7 @@ import { useRefFromState } from "../hooks/ref"
 import { useRecoilValueRef } from "../utils/recoil"
 import { CoiledProgramTitleManager } from "../components/mainPlayer/ProgramTitleManager"
 import { CoiledSubtitleRenderer } from "../components/mainPlayer/SubtitleRenderer"
+import { CoiledRPCManager } from "../components/mainPlayer/RPCManager"
 
 export const CoiledMainPlayer: React.VFC<{}> = () => {
   const [route, setRoute] = useRecoilState(mainPlayerRoute)
@@ -190,6 +191,7 @@ export const CoiledMainPlayer: React.VFC<{}> = () => {
       />
       <MirakurunManager />
       <CoiledProgramTitleManager />
+      <CoiledRPCManager />
       <div className="w-full h-screen bg-gray-900 text-gray-100 flex items-center justify-center">
         <div className="relative w-full h-full overflow-hidden">
           <div className="absolute top-0 left-0 w-full h-full">
