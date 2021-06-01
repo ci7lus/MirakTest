@@ -24,7 +24,7 @@ export const CoiledGeneralSetting: React.VFC<{}> = () => {
       onSubmit={(e) => {
         e.preventDefault()
         setCoiledScreenshotSetting(screenshot)
-        setExperimental(experimental)
+        setCoiledExperimentalSetting(experimental)
       }}
     >
       <div className="flex flex-col space-y-8">
