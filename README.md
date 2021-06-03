@@ -17,7 +17,7 @@ Electron を使用した Mirakurun の映像視聴確認用アプリです。鋭
 
 [![Image from Gyazo](https://i.gyazo.com/582a518d615e042394ade5fe7bcfcf3f.jpg)](https://gyazo.com/582a518d615e042394ade5fe7bcfcf3f)
 
-[aribb24.js](https://github.com/monyone/aribb24.js) による字幕表示にも対応しています。
+macOS 版は [aribb24.js](https://github.com/monyone/aribb24.js) による字幕表示にも対応しています。
 
 [![Image from Gyazo](https://i.gyazo.com/2f5f23d3c0e2968724dd2bce018cef86.jpg)](https://gyazo.com/2f5f23d3c0e2968724dd2bce018cef86)
 
