@@ -41,6 +41,8 @@ const init = () => {
 
 app.on("ready", () => init())
 
+app.allowRendererProcessReuse = false
+
 app.on("window-all-closed", () => app.quit())
 
 const reloadTargetPaths = [
