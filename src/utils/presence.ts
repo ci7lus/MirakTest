@@ -1,5 +1,7 @@
 import type { Service } from "../infra/mirakurun/api"
 
+// Reference: https://github.com/SlashNephy/TvTestRPC
+
 export const PresenceRegisteredGRLogos = [
   1040, 1048, 1056, 1064, 1072, 17424, 17432, 17440, 17448, 2064, 2072, 2080,
   2088, 23608, 24632, 24680, 34840, 37904, 37912, 37920, 38008, 41008, 43056,
@@ -18,6 +20,11 @@ export const PresenceRegisteredCSLogos = [
   343, 349, 351, 353, 354, 363, 55, 800, 801,
 ]
 
+export const PresenceAliases: { [key: number]: number } = {
+  24696: 24680, // イッツコムch11 (CATV)
+  531: 231, // グリーンチャンネル
+}
+
 export const getServiceLogoForPresence = (service: Service) => {
   if (service.name.includes("ＮＨＫ総合") || service.name.includes("NHK総合")) {
     return "gr_nhkg"
@@ -28,9 +35,11 @@ export const getServiceLogoForPresence = (service: Service) => {
   ) {
     return "gr_nhke"
   }
-  for (const sub of [...Array(3).keys()]) {
-    // +3までサブチャンネルとする
-    const serviceId = service.serviceId - sub
+
+  for (const sub of [...Array(4).keys()]) {
+    // +4までサブチャンネルとする
+    const serviceId =
+      PresenceAliases[service.serviceId - sub] ?? service.serviceId - sub
     if (PresenceRegisteredGRLogos.includes(serviceId)) {
       return `gr_${serviceId}`
     }
