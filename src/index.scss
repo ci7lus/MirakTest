@@ -3,6 +3,17 @@
 @tailwind utilities;
 @import "react-toastify/dist/ReactToastify.css";
 
+html {
+  font-size: 14px;
+}
+
+*,
+a,
+button {
+  cursor: default;
+  user-select: none;
+}
+
 .emoji {
   display: inline-block;
   width: auto;
