@@ -22,7 +22,7 @@ export const PresenceRegisteredCSLogos = [
 
 export const PresenceAliases: { [key: number]: number } = {
   24696: 24680, // イッツコムch11 (CATV)
-  531: 231, // グリーンチャンネル
+  531: 231, // 放送大学ラジオ
 }
 
 export const getServiceLogoForPresence = (service: Service) => {
