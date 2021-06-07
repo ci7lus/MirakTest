@@ -125,7 +125,7 @@ export const CoiledVideoPlayer: React.VFC<{}> = memo(() => {
       try {
         const contentCanvas = document.createElement("canvas")
         contentCanvas.height = canvas.height
-        contentCanvas.width = Math.ceil(canvas.height / aspect)
+        contentCanvas.width = Math.ceil(canvas.height * aspect)
         const context = contentCanvas.getContext("2d", { alpha: false })
         if (!context) throw new Error("ctx")
         context.drawImage(
@@ -213,7 +213,9 @@ export const CoiledVideoPlayer: React.VFC<{}> = memo(() => {
   const setPlayingTime = useSetRecoilState(mainPlayerPlayingTime)
 
   useEffect(() => {
-    const renderContext = new VideoRenderer(canvasRef.current!, {
+    const canvas = canvasRef.current
+    if (!canvas) return
+    const renderContext = new VideoRenderer(canvas, {
       preserveDrawingBuffer: true,
     })
     const player = WebChimeraJs.createPlayer()
