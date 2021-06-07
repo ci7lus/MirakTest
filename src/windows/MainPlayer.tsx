@@ -41,8 +41,13 @@ export const CoiledMainPlayer: React.VFC<{}> = () => {
     injectStyle()
     const remoteWindow = remote.getCurrentWindow()
     // 前回のウィンドウサイズが保存されていれば戻す
+    const onResizedOrMoved = () => setBounds(remoteWindow.getContentBounds())
+    remoteWindow.on("resized", onResizedOrMoved)
+    remoteWindow.on("moved", onResizedOrMoved)
     if (bounds) {
       remoteWindow.setContentBounds(bounds, true)
+    } else {
+      onResizedOrMoved()
     }
 
     // メインウィンドウを閉じたら終了する
@@ -145,6 +150,8 @@ export const CoiledMainPlayer: React.VFC<{}> = () => {
       remote.Menu.buildFromTemplate(menu).popup()
     })
     return () => {
+      remoteWindow.off("resized", onResizedOrMoved)
+      remoteWindow.off("moved", onResizedOrMoved)
       remoteWindow.off("closed", onClosed)
     }
   }, [])
