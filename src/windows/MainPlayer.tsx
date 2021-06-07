@@ -4,7 +4,7 @@ import { injectStyle } from "react-toastify/dist/inject-style"
 import { CoiledController } from "../components/mainPlayer/Controller"
 import { CoiledVideoPlayer } from "../components/mainPlayer/VideoPlayer"
 import { CoiledSayaComments } from "../components/mainPlayer/Saya"
-import { remote } from "electron"
+import { MenuItem, MenuItemConstructorOptions, remote } from "electron"
 import { Splash } from "../components/global/Splash"
 import { MirakurunManager } from "../components/mainPlayer/MirakurunManager"
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil"
@@ -71,7 +71,7 @@ export const CoiledMainPlayer: React.VFC<{}> = () => {
     remoteWindow.webContents.on("context-menu", (e, params) => {
       const noParams = typeof params !== "object"
       e.preventDefault()
-      remote.Menu.buildFromTemplate([
+      const menu: (MenuItemConstructorOptions | MenuItem)[] = [
         {
           label: "再生停止",
           type: "checkbox",
@@ -157,7 +157,11 @@ export const CoiledMainPlayer: React.VFC<{}> = () => {
           role: "quit",
           click: () => remote.app.quit(),
         },
-      ]).popup()
+      ].filter((item) => item.visible !== false) as (
+        | MenuItemConstructorOptions
+        | MenuItem
+      )[] // bug: https://github.com/electron/electron/issues/2895
+      remote.Menu.buildFromTemplate(menu).popup()
     })
     return () => {
       remoteWindow.off("resized", onResizedOrMoved)
