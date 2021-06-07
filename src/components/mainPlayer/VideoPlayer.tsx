@@ -31,9 +31,14 @@ export const CoiledVideoPlayer: React.VFC<{}> = memo(() => {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const containerRef = useRef<HTMLDivElement>(null)
 
-  const [aspect, setAspect] = useState(1.777777778)
+  const [aspect, setAspect] = useState(16 / 9)
   const [width, setWidth] = useState(1280)
-  const height = Math.ceil(width * aspect)
+  const height = Math.ceil(width / aspect)
+
+  useEffect(() => {
+    const remoteWindow = remote.getCurrentWindow()
+    remoteWindow.setAspectRatio(aspect)
+  }, [aspect])
 
   const playerRef = useRef<WebChimeraJs.Player | null>(null)
 
@@ -218,8 +223,9 @@ export const CoiledVideoPlayer: React.VFC<{}> = memo(() => {
         case "resize":
           console.log(message)
           if (parsed.width && parsed.height) {
-            setAspect(width / height)
-            console.log(`Aspect: ${width / height}`)
+            const aspect = width / height
+            setAspect(aspect)
+            console.log(`Aspect: ${aspect}(${width} / ${height})`)
           }
           break
         case "successfully_opened":
@@ -295,7 +301,7 @@ export const CoiledVideoPlayer: React.VFC<{}> = memo(() => {
   }, [])
   return (
     <div className="w-full" ref={containerRef}>
-      <canvas style={{ width: width, height: height }} ref={canvasRef}></canvas>
+      <canvas style={{ width, height }} ref={canvasRef}></canvas>
     </div>
   )
 })

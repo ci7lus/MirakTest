@@ -39,29 +39,10 @@ export const CoiledMainPlayer: React.VFC<{}> = () => {
   const setIsPlaying = useSetRecoilState(mainPlayerIsPlaying)
   useEffect(() => {
     injectStyle()
-    // 16:9以下の比率になったら戻す
     const remoteWindow = remote.getCurrentWindow()
-    const onResizedOrMoved = () => {
-      const bounds = remoteWindow.getContentBounds()
-      const min = Math.ceil((bounds.width / 16) * 9)
-      if (bounds.height < min) {
-        const targetBounds = {
-          ...bounds,
-          height: min,
-        }
-        remoteWindow.setContentBounds(targetBounds)
-        setBounds(targetBounds)
-      } else {
-        setBounds(bounds)
-      }
-    }
-    remoteWindow.on("resized", onResizedOrMoved)
-    remoteWindow.on("moved", onResizedOrMoved)
     // 前回のウィンドウサイズが保存されていれば戻す
     if (bounds) {
       remoteWindow.setContentBounds(bounds, true)
-    } else {
-      onResizedOrMoved()
     }
 
     // メインウィンドウを閉じたら終了する
@@ -164,8 +145,6 @@ export const CoiledMainPlayer: React.VFC<{}> = () => {
       remote.Menu.buildFromTemplate(menu).popup()
     })
     return () => {
-      remoteWindow.off("resized", onResizedOrMoved)
-      remoteWindow.off("moved", onResizedOrMoved)
       remoteWindow.off("closed", onClosed)
     }
   }, [])

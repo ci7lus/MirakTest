@@ -33,6 +33,7 @@ const init = () => {
   if (process.env.NODE_ENV === "development") {
     window.webContents.openDevTools()
   }
+  window.setAspectRatio(16 / 9)
 
   window.on("closed", () => {
     window = null
