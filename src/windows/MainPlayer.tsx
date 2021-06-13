@@ -184,22 +184,31 @@ export const CoiledMainPlayer: React.VFC<{}> = () => {
       <CoiledRPCManager />
       <div className="w-full h-screen bg-gray-900 text-gray-100 flex items-center justify-center">
         <div className="relative w-full h-full overflow-hidden">
-          <div className="absolute top-0 left-0 w-full h-full">
+          <div id="Splash" className="absolute top-0 left-0 w-full h-full">
             <Splash />
           </div>
-          <div className="absolute top-0 left-0 w-full h-full flex items-center justify-center">
+          <div
+            id="VideoPlayer"
+            className="absolute top-0 left-0 w-full h-full flex items-center justify-center"
+          >
             <CoiledVideoPlayer />
           </div>
-          <div className="absolute top-0 left-0 w-full h-full">
+          <div id="Saya" className="absolute top-0 left-0 w-full h-full">
             <CoiledSayaComments />
           </div>
-          <div className="absolute top-0 left-0 w-full h-full flex items-center justify-center">
+          <div
+            id="SubtitleRenderer"
+            className="absolute top-0 left-0 w-full h-full flex items-center justify-center"
+          >
             <CoiledSubtitleRenderer />
           </div>
-          <div className="absolute top-0 left-0 w-full h-full">
+          <div id="Controller" className="absolute top-0 left-0 w-full h-full">
             <CoiledController />
           </div>
-          <div className="absolute top-0 left-0 w-full h-full pointer-events-none">
+          <div
+            id="VirtualWindow"
+            className="absolute top-0 left-0 w-full h-full pointer-events-none"
+          >
             <VirtualWindowComponent route={route} setRoute={setRoute} />
           </div>
         </div>
