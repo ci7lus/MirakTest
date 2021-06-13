@@ -49,7 +49,7 @@ export const ScreenshotSettingForm: React.VFC<{
             type="text"
             placeholder="/Users/User/Pictures"
             className={clsx(
-              "block mt-2 form-input rounded-l-md w-full text-gray-900",
+              "block mt-2 form-input rounded-l-md w-full text-gray-900 focus:outline-none cursor-pointer",
               !saveAsAFile && "bg-gray-600"
             )}
             value={basePath || ""}
@@ -59,7 +59,7 @@ export const ScreenshotSettingForm: React.VFC<{
           />
           <button
             className={clsx(
-              `px-4 py-2 mt-2 rounded-r-md flex items-center justify-center bg-gray-100 text-gray-900`,
+              `px-4 py-2 mt-2 rounded-r-md flex items-center justify-center bg-gray-100 text-gray-900 focus:outline-none cursor-pointer`,
               !saveAsAFile && "bg-gray-600"
             )}
             disabled={!saveAsAFile}
@@ -76,7 +76,7 @@ export const ScreenshotSettingForm: React.VFC<{
               setBasePath(path)
             }}
           >
-            <File size={20} />
+            <File className="pointer-events-none" size={20} />
           </button>
         </div>
       </label>

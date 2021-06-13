@@ -25,18 +25,19 @@ export const VolumeSlider: React.VFC<{
     <div className="flex items-center justify-center space-x-1">
       <button
         type="button"
-        className="focus:outline-none"
+        className="focus:outline-none cursor-pointer"
         onClick={() => setRangeVolume((volume) => (0 < volume ? 0 : 100))}
       >
         {rangeVolume === 0 ? (
-          <VolumeX size={22} />
+          <VolumeX className="pointer-events-none" size={22} />
         ) : rangeVolume < 75 ? (
-          <Volume1 size={22} />
+          <Volume1 className="pointer-events-none" size={22} />
         ) : (
-          <Volume2 size={22} />
+          <Volume2 className="pointer-events-none" size={22} />
         )}
       </button>
       <input
+        className="focus:outline-none cursor-pointer"
         aria-label="音量"
         type="range"
         min={min}

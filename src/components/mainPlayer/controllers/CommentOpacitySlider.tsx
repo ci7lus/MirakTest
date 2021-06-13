@@ -23,13 +23,14 @@ export const CommentOpacitySlider: React.VFC<{
     <div className="flex items-center justify-center space-x-1">
       <button
         type="button"
-        className="focus:outline-none"
+        className="focus:outline-none cursor-pointer"
         onClick={() => setCommentOpacity((opacity) => (0 < opacity ? 0 : 0.8))}
       >
-        <MessageSquare size={22} />
+        <MessageSquare className="pointer-events-none" size={22} />
       </button>
       <input
         aria-label="コメント濃度"
+        className="focus:outline-none cursor-pointer"
         type="range"
         min="0"
         max="10"

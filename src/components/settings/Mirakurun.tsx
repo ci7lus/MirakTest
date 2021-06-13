@@ -27,7 +27,7 @@ export const MirakurunSettingForm: React.VFC<{}> = () => {
       </label>
       <button
         type="submit"
-        className="bg-gray-100 text-gray-800 p-2 px-2 my-4 rounded-md"
+        className="bg-gray-100 text-gray-800 p-2 px-2 my-4 rounded-md focus:outline-none cursor-pointer active:bg-gray-200"
       >
         保存
       </button>

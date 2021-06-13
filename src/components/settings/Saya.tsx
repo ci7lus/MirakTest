@@ -42,14 +42,15 @@ export const SayaSettingForm: React.VFC<{}> = () => {
                 {before}→{after}
               </span>
               <span
-                className="flex items-center justify-center bg-gray-200 rounded-md"
+                title="削除する"
+                className="flex items-center justify-center bg-gray-200 rounded-md cursor-pointer"
                 onClick={() => {
                   const copied = Object.assign([], replaces)
                   ;(copied as (string | null)[])[idx] = null
                   setReplaces(copied.filter((s) => !!s))
                 }}
               >
-                <X size={16} />
+                <X className="pointer-events-none" size={16} />
               </span>
             </div>
           ))}
@@ -79,19 +80,19 @@ export const SayaSettingForm: React.VFC<{}> = () => {
           />
           <button
             type="button"
-            className="mt-2 px-4 flex items-center justify-center text-gray-900 bg-gray-200 rounded-md"
+            className="mt-2 px-4 flex items-center justify-center text-gray-900 bg-gray-200 rounded-md focus:outline-none cursor-pointer"
             onClick={() => {
               setReplaces((replaces) => [...replaces, [repl1, repl2]])
             }}
             disabled={!repl1 || !repl2}
           >
-            <Plus size={16} />
+            <Plus className="pointer-events-none" size={16} />
           </button>
         </div>
       </label>
       <button
         type="submit"
-        className="bg-gray-100 text-gray-800 p-2 px-2 my-4 rounded-md"
+        className="bg-gray-100 text-gray-800 p-2 px-2 my-4 rounded-md focus:outline-none cursor-pointer"
       >
         保存
       </button>

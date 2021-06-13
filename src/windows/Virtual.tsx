@@ -26,7 +26,7 @@ export const VirtualWindowComponent: React.VFC<{
         <div className="absolute p-2 right-0 top-0 z-20">
           <button
             type="button"
-            className="rounded-full bg-gray-100 text-gray-900"
+            className="rounded-full bg-gray-100 text-gray-900 focus:outline-none cursor-pointer"
             onClick={() => setRoute(null)}
           >
             <X size={20} />
