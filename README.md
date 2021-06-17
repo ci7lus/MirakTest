@@ -21,6 +21,8 @@ macOS 版は [aribb24.js](https://github.com/monyone/aribb24.js) による字幕
 
 [![Image from Gyazo](https://i.gyazo.com/2f5f23d3c0e2968724dd2bce018cef86.jpg)](https://gyazo.com/2f5f23d3c0e2968724dd2bce018cef86)
 
+> ©2020 プロジェクトラブライブ！虹ヶ咲学園スクールアイドル同好会
+
 ## 導入方法
 
 ### 安定版
