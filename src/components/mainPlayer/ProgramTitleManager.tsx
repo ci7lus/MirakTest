@@ -54,13 +54,20 @@ export const CoiledProgramTitleManager: React.VFC<{}> = () => {
       if (currentProgram.name) {
         title = `${currentProgram.name} - ${selectedService.name}`
       }
+      const isDisplayDescription = logo && currentProgram.description
+      const details = isDisplayDescription
+        ? currentProgram.name
+        : selectedService.name
+      const state = isDisplayDescription
+        ? currentProgram.description
+        : currentProgram.name
       const activity: Presence = {
         largeImageKey,
         largeImageText,
         smallImageKey,
         smallImageText,
-        details: selectedService.name,
-        state: currentProgram.name,
+        details,
+        state,
         startTimestamp: currentProgram.startAt / 1000,
         endTimestamp: (currentProgram.startAt + currentProgram.duration) / 1000,
         instance: false,
