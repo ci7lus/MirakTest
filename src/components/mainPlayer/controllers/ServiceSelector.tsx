@@ -10,11 +10,12 @@ const CoiledServiceOption: React.FC<{
   service: Service
   now: dayjs.Dayjs
   isProgramDetailEnabled: boolean
-}> = memo(({ service, now, isProgramDetailEnabled }) => {
+  isSelecting: boolean
+}> = memo(({ service, now, isProgramDetailEnabled, isSelecting }) => {
   const [programLabel, setProgramLabel] = useState<string | null>(null)
   const programs = useRecoilValue(mirakurunProgramsFamily(service.serviceId))
   useEffect(() => {
-    if (!isProgramDetailEnabled) return
+    if (!isProgramDetailEnabled || isSelecting) return
     const currentProgram = getCurrentProgramOfService({
       programs,
       serviceId: service.serviceId,
@@ -35,7 +36,7 @@ const CoiledServiceOption: React.FC<{
     } else {
       setProgramLabel(null)
     }
-  }, [service, programs, now, isProgramDetailEnabled])
+  }, [service, programs, now, isProgramDetailEnabled, isSelecting])
   return (
     <option value={service.id}>
       {[
@@ -73,14 +74,7 @@ export const ServiceSelector: React.VFC<{
       [services]
     )
     const now = useNow()
-    const [fixedNow, setFixedNow] = useState(now)
     const [isSelecting, setIsSelecting] = useState(false)
-
-    useEffect(() => {
-      if (isSelecting) return
-      setFixedNow(now)
-    }, [now])
-
     const onSelectStart = () => setIsSelecting(true)
     const onSelectEnd = () => setIsSelecting(false)
 
@@ -109,8 +103,9 @@ export const ServiceSelector: React.VFC<{
                 <CoiledServiceOption
                   key={service.id}
                   service={service}
-                  now={fixedNow}
+                  now={now}
                   isProgramDetailEnabled={isProgramDetailEnabled}
+                  isSelecting={isSelecting}
                 />
               ))}
           </optgroup>
