@@ -1,3 +1,4 @@
+import dayjs from "dayjs"
 import React, { useEffect, useRef, useState } from "react"
 import { toast } from "react-toastify"
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil"
@@ -36,10 +37,16 @@ export const MirakurunManager: React.VFC<{}> = () => {
   const programUpdateTimer = useRef<NodeJS.Timeout | null>(null)
 
   const updatePrograms = async (mirakurun: MirakurunAPI) => {
+    const tomorrow = dayjs().add(1, "days")
     try {
       const programs = await mirakurun.programs.getPrograms()
-      setPrograms(programs.data)
-      console.log(`番組情報を更新しました。件数:`, programs.data.length)
+      const filtered = programs.data.filter((program) =>
+        tomorrow.isAfter(program.startAt)
+      ) // 直近1日以内のデータのみ抽出
+      setPrograms(filtered)
+      console.log(
+        `番組情報を更新しました。件数: ${filtered.length.toLocaleString()}/${programs.data.length.toLocaleString()}`
+      )
     } catch (error) {
       console.error(error)
       toast.error("番組情報の取得に失敗しました")
@@ -89,7 +96,7 @@ export const MirakurunManager: React.VFC<{}> = () => {
     }
     programUpdateTimer.current = setInterval(
       () => updatePrograms(mirakurun),
-      1000 * 60 * 60
+      1000 * 60 * 60 // 1時間
     )
     if (lastSelectedServiceId) {
       const service = services.find(
