@@ -44,7 +44,7 @@ export const MirakurunManager: React.VFC<{}> = () => {
         tomorrow.isAfter(program.startAt)
       ) // 直近1日以内のデータのみ抽出
       setPrograms(filtered)
-      console.log(
+      console.info(
         `番組情報を更新しました。件数: ${filtered.length.toLocaleString()}/${programs.data.length.toLocaleString()}`
       )
     } catch (error) {
@@ -152,7 +152,7 @@ export const MirakurunManager: React.VFC<{}> = () => {
 
   useEffect(() => {
     if (selectedService) {
-      console.log(`表示サービスを変更します:`, selectedService)
+      console.info(`表示サービスを変更します:`, selectedService)
       try {
         updateToSelectedService(selectedService)
       } catch (error) {

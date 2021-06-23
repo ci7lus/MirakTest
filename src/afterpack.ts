@@ -25,17 +25,17 @@ const exec = async (command: string) => {
 }
 
 exports.default = async (ctx: AfterPackContext) => {
-  console.log(`${ctx.electronPlatformName} 用の変更を適用します`)
+  console.info(`${ctx.electronPlatformName} 用の変更を適用します`)
   let dest = "./build"
   if (ctx.electronPlatformName === "darwin") {
     const src = path.resolve("./vlc_libs/")
     dest = path.resolve("./build/mac/MirakTest.app/Contents/Frameworks/")
 
     if (!fs.existsSync(src) || !fs.existsSync(dest)) {
-      console.log("ファイルが存在しません、スキップします")
+      console.info("ファイルが存在しません、スキップします")
       return
     }
-    console.log("libVLC を Contents/Frameworks にコピーします")
+    console.info("libVLC を Contents/Frameworks にコピーします")
     const files = await new Promise<string[]>((res, rej) => {
       glob(path.join(src, "*"), (err, files) => {
         if (err) rej(err)
@@ -50,7 +50,7 @@ exports.default = async (ctx: AfterPackContext) => {
     dest = path.resolve("./build/win-unpacked/")
   }
 
-  console.log("libVLC の COPYRING, COPYRING.LIB をコピーします")
+  console.info("libVLC の COPYRING, COPYRING.LIB をコピーします")
   const COPYRING = await axios.get(
     "https://raw.githubusercontent.com/videolan/vlc/master/COPYING",
     { responseType: "text" }

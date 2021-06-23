@@ -47,10 +47,10 @@ export const CoiledVideoPlayer: React.VFC<{}> = memo(() => {
     if (!playerRef.current) return
     if (url) {
       playerRef.current.play(url)
-      console.log("URL再生:", url)
+      console.info("URL再生:", url)
     } else {
       playerRef.current.stop()
-      console.log("再生停止")
+      console.info("再生停止")
     }
   }, [url])
   const [isPlaying, setIsPlaying] = useRecoilState(mainPlayerIsPlaying)
@@ -58,10 +58,10 @@ export const CoiledVideoPlayer: React.VFC<{}> = memo(() => {
     if (!playerRef.current || !url) return
     if (isPlaying && !playerRef.current.playing) {
       playerRef.current.play(url)
-      console.log("再生再開", url)
+      console.info("再生再開", url)
     } else if (!isPlaying) {
       playerRef.current.stop()
-      console.log("再生停止")
+      console.info("再生停止")
     }
   }, [isPlaying])
 
@@ -69,7 +69,7 @@ export const CoiledVideoPlayer: React.VFC<{}> = memo(() => {
   useEffect(() => {
     if (!playerRef.current) return
     playerRef.current.volume = volume
-    console.log("音量変更:", volume)
+    console.info("音量変更:", volume)
   }, [volume])
 
   const [subtitleEnabled, setSubtitleEnabled] = useRecoilState(
@@ -78,21 +78,21 @@ export const CoiledVideoPlayer: React.VFC<{}> = memo(() => {
   useEffect(() => {
     if (!playerRef.current) return
     playerRef.current.subtitles.track = Number(subtitleEnabled)
-    console.log("字幕変更:", Number(subtitleEnabled))
+    console.info("字幕変更:", Number(subtitleEnabled))
   }, [subtitleEnabled])
 
   const audioChannel = useRecoilValue(mainPlayerAudioChannel)
   useEffect(() => {
     if (!playerRef.current) return
     playerRef.current.audio.channel = audioChannel
-    console.log("オーディオチャンネル変更:", audioChannel)
+    console.info("オーディオチャンネル変更:", audioChannel)
   }, [audioChannel])
 
   const audioTrack = useRecoilValue(mainPlayerAudioTrack)
   useEffect(() => {
     if (!playerRef.current) return
     playerRef.current.audio.track = audioTrack
-    console.log("オーディオトラック変更:", audioTrack)
+    console.info("オーディオトラック変更:", audioTrack)
   }, [audioTrack])
   const setAudioTracks = useSetRecoilState(mainPlayerAudioTracks)
 
@@ -106,7 +106,7 @@ export const CoiledVideoPlayer: React.VFC<{}> = memo(() => {
       .stat(pictures)
       .then(() => {
         setScreenshot({ ...screenshot, basePath: pictures })
-        console.log("スクリーンショット用パス:", pictures)
+        console.info("スクリーンショット用パス:", pictures)
       })
       .catch(console.error)
   }, [])
@@ -184,7 +184,7 @@ export const CoiledVideoPlayer: React.VFC<{}> = memo(() => {
             const fileName = `${baseName}.png`
             const filePath = path.join(screenshot.basePath, fileName)
             await fs.promises.writeFile(filePath, buffer)
-            console.log(`キャプチャを保存しました:`, filePath)
+            console.info(`キャプチャを保存しました:`, filePath)
           } catch (error) {
             console.error(error)
           }
@@ -223,11 +223,11 @@ export const CoiledVideoPlayer: React.VFC<{}> = memo(() => {
       const parsed = VLCLogFilter(message)
       switch (parsed.category) {
         case "resize":
-          console.log(message)
+          console.info(message)
           if (parsed.width && parsed.height) {
             const aspect = width / height
             setAspect(aspect)
-            console.log(`Aspect: ${aspect}(${width} / ${height})`)
+            console.info(`Aspect: ${aspect}(${width} / ${height})`)
           }
           break
         case "successfully_opened":
@@ -238,7 +238,7 @@ export const CoiledVideoPlayer: React.VFC<{}> = memo(() => {
           setSubtitleEnabled(false)
           break
         case "arib_data":
-          console.log(message)
+          console.info(message)
           if (parsed.data) {
             setPlayingTime(player.time)
             setAribSubtitleData({ data: parsed.data, pts: parsed.pts })
@@ -271,7 +271,7 @@ export const CoiledVideoPlayer: React.VFC<{}> = memo(() => {
           toast.error("接続が中断されました")
           break
         case "unknown":
-          console.log(message)
+          console.info(message)
           break
         default:
           break

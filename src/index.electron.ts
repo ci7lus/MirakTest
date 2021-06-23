@@ -8,7 +8,7 @@ let window: BrowserWindow | null = null
 const init = () => {
   if (process.platform == "win32" && WebChimeraJs.path) {
     const VLCPluginPath = path.join(WebChimeraJs.path, "plugins")
-    console.log("win32 detected, VLC_PLUGIN_PATH:", VLCPluginPath)
+    console.info("win32 detected, VLC_PLUGIN_PATH:", VLCPluginPath)
     process.env["VLC_PLUGIN_PATH"] = VLCPluginPath
   }
 
@@ -57,7 +57,7 @@ if (!require.main?.filename.includes("app.asar")) {
     require("electron-reload")(reloadTargetPaths, {
       electron: process.execPath,
     })
-    console.log("electron-reload enabled")
+    console.info("electron-reload enabled")
   } catch (e) {
     console.error(e)
   }

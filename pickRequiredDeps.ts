@@ -42,5 +42,5 @@ targetWithVersion.forEach((target) => {
   deps_dedupe.push(target)
   packages[target] && pickPackage(packages[target])
 })
-deps.map((dep) => console.log(`  - "node_modules/${dep}"`))
-console.log(`count: ${deps.length}`)
+deps.map((dep) => console.info(`  - "node_modules/${dep}"`))
+console.info(`count: ${deps.length}`)

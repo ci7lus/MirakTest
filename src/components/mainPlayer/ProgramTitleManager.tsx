@@ -98,7 +98,7 @@ export const CoiledProgramTitleManager: React.VFC<{}> = () => {
 
   useEffect(() => {
     if (!program) return
-    console.log("放送中の番組:", program)
+    console.info("放送中の番組:", program)
   }, [program])
 
   return <></>

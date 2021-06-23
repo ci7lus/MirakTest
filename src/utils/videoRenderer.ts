@@ -193,7 +193,7 @@ void main(void) {
   gl.linkProgram(program)
   gl.useProgram(program)
   if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
-    console.log("Shader link failed.")
+    console.error("Shader link failed.")
   }
   const vertexPositionAttribute = gl.getAttribLocation(
     program,
