@@ -1,6 +1,8 @@
-import React, { useEffect, useState } from "react"
 import type { Presence } from "discord-rpc"
+import React, { useEffect, useState } from "react"
 import { useRecoilValue, useSetRecoilState } from "recoil"
+import pkg from "../../../package.json"
+import { globalPresence } from "../../atoms/global"
 import {
   mainPlayerSelectedService,
   mainPlayerCurrentProgram,
@@ -10,10 +12,8 @@ import {
 import { mirakurunProgramsFamily } from "../../atoms/mirakurun"
 import { useNow } from "../../hooks/date"
 import { Program } from "../../infra/mirakurun/api"
-import { getCurrentProgramOfService } from "../../utils/program"
 import { getServiceLogoForPresence } from "../../utils/presence"
-import pkg from "../../../package.json"
-import { globalPresence } from "../../atoms/global"
+import { getCurrentProgramOfService } from "../../utils/program"
 
 export const CoiledProgramTitleManager: React.VFC<{}> = () => {
   const selectedService = useRecoilValue(mainPlayerSelectedService)

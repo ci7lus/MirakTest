@@ -16,7 +16,7 @@ import { store } from "../../utils/store"
 
 export const RecoilObserver: React.VFC<{}> = () => {
   useRecoilTransactionObserver_UNSTABLE(({ snapshot }) => {
-    for (let atom of snapshot.getNodes_UNSTABLE({ isModified: true })) {
+    for (const atom of snapshot.getNodes_UNSTABLE({ isModified: true })) {
       switch (atom.key) {
         case mirakurunSetting.key:
           try {

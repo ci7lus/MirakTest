@@ -1,12 +1,7 @@
+import { MenuItem, MenuItemConstructorOptions, remote } from "electron"
 import React, { useEffect } from "react"
 import { ToastContainer, Slide } from "react-toastify"
 import { injectStyle } from "react-toastify/dist/inject-style"
-import { CoiledController } from "../components/mainPlayer/Controller"
-import { CoiledVideoPlayer } from "../components/mainPlayer/VideoPlayer"
-import { CoiledSayaComments } from "../components/mainPlayer/Saya"
-import { MenuItem, MenuItemConstructorOptions, remote } from "electron"
-import { Splash } from "../components/global/Splash"
-import { MirakurunManager } from "../components/mainPlayer/MirakurunManager"
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil"
 import {
   mainPlayerBounds,
@@ -16,13 +11,18 @@ import {
   mainPlayerSelectedService,
   mainPlayerTitle,
 } from "../atoms/mainPlayer"
-import { VirtualWindowComponent } from "./Virtual"
 import { mirakurunServices } from "../atoms/mirakurun"
+import { Splash } from "../components/global/Splash"
+import { CoiledController } from "../components/mainPlayer/Controller"
+import { MirakurunManager } from "../components/mainPlayer/MirakurunManager"
+import { CoiledProgramTitleManager } from "../components/mainPlayer/ProgramTitleManager"
+import { CoiledRPCManager } from "../components/mainPlayer/RPCManager"
+import { CoiledSayaComments } from "../components/mainPlayer/Saya"
+import { CoiledSubtitleRenderer } from "../components/mainPlayer/SubtitleRenderer"
+import { CoiledVideoPlayer } from "../components/mainPlayer/VideoPlayer"
 import { useRefFromState } from "../hooks/ref"
 import { useRecoilValueRef } from "../utils/recoil"
-import { CoiledProgramTitleManager } from "../components/mainPlayer/ProgramTitleManager"
-import { CoiledSubtitleRenderer } from "../components/mainPlayer/SubtitleRenderer"
-import { CoiledRPCManager } from "../components/mainPlayer/RPCManager"
+import { VirtualWindowComponent } from "./Virtual"
 
 export const CoiledMainPlayer: React.VFC<{}> = () => {
   const [route, setRoute] = useRecoilState(mainPlayerRoute)

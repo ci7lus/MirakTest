@@ -1,10 +1,13 @@
-import React, { memo, useEffect, useRef, useState } from "react"
 import fs from "fs"
 import path from "path"
+import { CanvasProvider } from "aribb24.js"
+import dayjs from "dayjs"
 import { remote } from "electron"
+import React, { memo, useEffect, useRef, useState } from "react"
+import { toast } from "react-toastify"
+import { useThrottleFn } from "react-use"
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil"
 import WebChimeraJs from "webchimera.js"
-import { toast } from "react-toastify"
 import {
   mainPlayerAribSubtitleData,
   mainPlayerAudioChannel,
@@ -20,12 +23,9 @@ import {
   mainPlayerUrl,
   mainPlayerVolume,
 } from "../../atoms/mainPlayer"
+import { screenshotSetting } from "../../atoms/settings"
 import { VideoRenderer } from "../../utils/videoRenderer"
 import { VLCLogFilter } from "../../utils/vlc"
-import { screenshotSetting } from "../../atoms/settings"
-import dayjs from "dayjs"
-import { CanvasProvider } from "aribb24.js"
-import { useThrottleFn } from "react-use"
 
 export const CoiledVideoPlayer: React.VFC<{}> = memo(() => {
   const canvasRef = useRef<HTMLCanvasElement>(null)
@@ -201,7 +201,6 @@ export const CoiledVideoPlayer: React.VFC<{}> = memo(() => {
 
   const setAribSubtitleData = useSetRecoilState(mainPlayerAribSubtitleData)
   const [firstPcr, setFirstPcr] = useState(0)
-  const [time, setTime] = useState(0)
   const setTsFirstPcr = useSetRecoilState(mainPlayerTsFirstPcr)
   useThrottleFn(
     (tsPts) => {
@@ -219,7 +218,7 @@ export const CoiledVideoPlayer: React.VFC<{}> = memo(() => {
       preserveDrawingBuffer: true,
     })
     const player = WebChimeraJs.createPlayer()
-    player.onLogMessage = (level, message, format) => {
+    player.onLogMessage = (_level, message) => {
       const parsed = VLCLogFilter(message)
       switch (parsed.category) {
         case "resize":
@@ -287,6 +286,7 @@ export const CoiledVideoPlayer: React.VFC<{}> = memo(() => {
       )
     }
     player.volume = volume
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     window.player = player
     playerRef.current = player

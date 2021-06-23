@@ -1,9 +1,10 @@
-import React, { memo, useEffect, useRef } from "react"
+// eslint-disable-next-line import/no-unresolved
 import DPlayer, { DPlayerEvents } from "dplayer"
-import { CommentPayload } from "../../types/struct"
-import { trimCommentForFlow } from "../../utils/comment"
+import React, { memo, useEffect, useRef } from "react"
 import { useRecoilValue } from "recoil"
 import { mainPlayerCommentOpacity } from "../../atoms/mainPlayer"
+import { CommentPayload } from "../../types/struct"
+import { trimCommentForFlow } from "../../utils/comment"
 
 export const CoiledDPlayerWrapper: React.VFC<{
   comment: CommentPayload | null
@@ -52,7 +53,7 @@ export const CoiledDPlayerWrapper: React.VFC<{
         color: "#fff",
         bottom: "40px",
         // TODO: Typing correctly
-      } as any,
+      } as never,
       apiBackend: {
         read: (option) => {
           option.success([{}])
@@ -75,6 +76,7 @@ export const CoiledDPlayerWrapper: React.VFC<{
     })
 
     player.current = playerInstance
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     window.dplayer = playerInstance
 

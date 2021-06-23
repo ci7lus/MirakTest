@@ -13,7 +13,7 @@ export const VLCLogFilter = (s: string) => {
   } else if (s.startsWith("Decoder wait done")) {
     return { category: "decoder_wait_done" } as const
   } else if (s.startsWith("size ") && s.includes("fps=")) {
-    const m = s.match(/(\d+)x(\d+)\/(\d+)x(\d+)\sfps\=([\d.]+)/)
+    const m = s.match(/(\d+)x(\d+)\/(\d+)x(\d+)\sfps=([\d.]+)/)
     if (!m) return { category: "size" } as const
     const [, displayWidth, displayHeight, width, height, fps] = m
     return {

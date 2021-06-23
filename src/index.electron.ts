@@ -1,5 +1,5 @@
-import { app, BrowserWindow, screen } from "electron"
 import path from "path"
+import { app, BrowserWindow, screen } from "electron"
 import Store from "electron-store"
 import WebChimeraJs from "webchimera.js"
 
@@ -54,6 +54,7 @@ const reloadTargetPaths = [
 
 if (!require.main?.filename.includes("app.asar")) {
   try {
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
     require("electron-reload")(reloadTargetPaths, {
       electron: process.execPath,
     })

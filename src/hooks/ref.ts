@@ -1,5 +1,4 @@
-import { useEffect } from "react"
-import { useRef } from "react"
+import { useEffect, useRef } from "react"
 
 export const useRefFromState = <T>(i: T) => {
   const ref = useRef(i)

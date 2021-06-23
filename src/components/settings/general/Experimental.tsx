@@ -1,6 +1,6 @@
 import React, { useState } from "react"
-import { ExperimentalSetting } from "../../../types/setting"
 import { useDebounce } from "react-use"
+import { ExperimentalSetting } from "../../../types/setting"
 
 export const ExperimentalSettingForm: React.VFC<{
   experimentalSetting: ExperimentalSetting

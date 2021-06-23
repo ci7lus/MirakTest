@@ -1,3 +1,5 @@
+import { CanvasProvider } from "aribb24.js"
+import clsx from "clsx"
 import React, { memo, useEffect, useRef, useState } from "react"
 import { useRecoilValue, useSetRecoilState } from "recoil"
 import {
@@ -8,12 +10,10 @@ import {
   mainPlayerSubtitleEnabled,
   mainPlayerTsFirstPcr,
 } from "../../atoms/mainPlayer"
-import { CanvasProvider } from "aribb24.js"
-import { tryBase64ToUint8Array } from "../../utils/string"
 import { useRefFromState } from "../../hooks/ref"
-import clsx from "clsx"
+import { tryBase64ToUint8Array } from "../../utils/string"
 
-export const CoiledSubtitleRenderer: React.VFC<{}> = memo(({}) => {
+export const CoiledSubtitleRenderer: React.VFC<{}> = memo(() => {
   const canvasRef = useRef<HTMLCanvasElement>(null)
 
   const subtitleEnabled = useRecoilValue(mainPlayerSubtitleEnabled)

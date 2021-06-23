@@ -1,9 +1,9 @@
-import path from "path"
-import fs from "fs"
 import child from "child_process"
-import glob from "glob"
+import fs from "fs"
+import path from "path"
 import axios from "axios"
 import type { Arch, Target, Packager } from "electron-builder"
+import glob from "glob"
 
 // https://www.electron.build/configuration/configuration#afterpack
 interface AfterPackContext {

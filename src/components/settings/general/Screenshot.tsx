@@ -1,9 +1,9 @@
+import clsx from "clsx"
+import { remote } from "electron"
 import React, { useState } from "react"
 import { File } from "react-feather"
-import clsx from "clsx"
-import { ScreenshotSetting } from "../../../types/setting"
 import { useDebounce } from "react-use"
-import { remote } from "electron"
+import { ScreenshotSetting } from "../../../types/setting"
 
 export const ScreenshotSettingForm: React.VFC<{
   screenshotSetting: ScreenshotSetting

@@ -1,8 +1,7 @@
-import React, { useEffect, useRef, useState } from "react"
 import { remote } from "electron"
-import { CommentOpacitySlider } from "./controllers/CommentOpacitySlider"
+import React, { useEffect, useRef, useState } from "react"
+import { useDebounce } from "react-use"
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil"
-import { mirakurunPrograms, mirakurunServices } from "../../atoms/mirakurun"
 import {
   mainPlayerAudioChannel,
   mainPlayerAudioTrack,
@@ -14,15 +13,16 @@ import {
   mainPlayerSubtitleEnabled,
   mainPlayerVolume,
 } from "../../atoms/mainPlayer"
-import { useDebounce } from "react-use"
-import { CoiledScreenshotButton } from "./controllers/ScreenshotButton"
-import { ServiceSelector } from "./controllers/ServiceSelector"
-import { VolumeSlider } from "./controllers/VolumeSlider"
+import { mirakurunServices } from "../../atoms/mirakurun"
+import { controllerSetting, experimentalSetting } from "../../atoms/settings"
+import { useRefFromState } from "../../hooks/ref"
 import { AudioChannelSelector } from "./controllers/AudioChannelSelector"
 import { AudioTrackSelector } from "./controllers/AudioTrackSelector"
+import { CommentOpacitySlider } from "./controllers/CommentOpacitySlider"
+import { CoiledScreenshotButton } from "./controllers/ScreenshotButton"
+import { ServiceSelector } from "./controllers/ServiceSelector"
 import { SubtitleToggleButton } from "./controllers/SubtitleToggleButton"
-import { useRefFromState } from "../../hooks/ref"
-import { controllerSetting, experimentalSetting } from "../../atoms/settings"
+import { VolumeSlider } from "./controllers/VolumeSlider"
 
 export const CoiledController: React.VFC<{}> = () => {
   const [isVisible, setIsVisible] = useState(false)
@@ -36,7 +36,6 @@ export const CoiledController: React.VFC<{}> = () => {
     [lastCurMoved]
   )
 
-  const programs = useRecoilValue(mirakurunPrograms)
   const services = useRecoilValue(mirakurunServices)
   const [selectedService, setSelectedService] = useRecoilState(
     mainPlayerSelectedService

@@ -48,7 +48,8 @@ jobs:
           yarn --ignore-scripts
       - name: Lint
         run: |
-          yarn lint
+          yarn lint:prettier
+          yarn lint:eslint
       - name: Typecheck
         run: |
           yarn tsc

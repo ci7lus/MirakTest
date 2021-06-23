@@ -1,7 +1,7 @@
 import React, { useState } from "react"
-import { CoiledGeneralSetting } from "../components/settings/general"
 import { MirakurunSettingForm } from "../components/settings/Mirakurun"
 import { SayaSettingForm } from "../components/settings/Saya"
+import { CoiledGeneralSetting } from "../components/settings/general"
 import { store } from "../utils/store"
 
 type Routes = "General" | "Mirakurun" | "Saya"

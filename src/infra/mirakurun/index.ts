@@ -7,6 +7,7 @@
  * このディレクトリの index.ts 以外のファイルは https://openapi-generator.tech で生成されています
  */
 
+import { MirakurunSetting } from "../../types/setting"
 import {
   ChannelsApi,
   ConfigApi,
@@ -21,7 +22,6 @@ import {
   VersionApi,
 } from "./api"
 import { Configuration } from "./configuration"
-import { MirakurunSetting } from "../../types/setting"
 
 export class MirakurunAPI {
   baseUrl: string

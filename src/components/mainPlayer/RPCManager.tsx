@@ -1,7 +1,7 @@
+import RPC from "discord-rpc"
 import React, { useEffect, useRef, useState } from "react"
 import { useRecoilValue } from "recoil"
 import { globalPresence } from "../../atoms/global"
-import RPC from "discord-rpc"
 import { experimentalSetting } from "../../atoms/settings"
 
 export const CoiledRPCManager: React.VFC<{}> = () => {
