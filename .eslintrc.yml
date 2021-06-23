@@ -30,6 +30,12 @@ rules:
         order: asc
   "@typescript-eslint/no-misused-new": off
   "no-empty": off
+  "no-console":
+    - error
+    - allow:
+        - "error"
+        - "warn"
+        - "info"
 settings:
   "import/resolver":
     node:
