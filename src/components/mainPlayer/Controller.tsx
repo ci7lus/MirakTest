@@ -10,6 +10,7 @@ import {
   mainPlayerLastSelectedServiceId,
   mainPlayerScreenshotTrigger,
   mainPlayerSelectedService,
+  mainPlayerSelectedServiceLogoUrl,
   mainPlayerSubtitleEnabled,
   mainPlayerVolume,
 } from "../../atoms/mainPlayer"
@@ -40,6 +41,7 @@ export const CoiledController: React.VFC<{}> = () => {
   const [selectedService, setSelectedService] = useRecoilState(
     mainPlayerSelectedService
   )
+  const serviceLogoUrl = useRecoilValue(mainPlayerSelectedServiceLogoUrl)
 
   const [subtitleEnabled, setSubtitleEnabled] = useRecoilState(
     mainPlayerSubtitleEnabled
@@ -164,13 +166,21 @@ export const CoiledController: React.VFC<{}> = () => {
           isServiceNameShowing ? "opacity-100" : "opacity-0"
         }`}
       >
-        <div className="text-4xl text-green-400 serviceNameOutline">
-          {[
-            selectedService?.remoteControlKeyId || selectedService?.serviceId,
-            selectedService?.name,
-          ]
-            .filter((s) => s !== undefined)
-            .join(" ")}
+        <div className="text-4xl text-green-400 flex items-center space-x-2 serviceNameOutline">
+          {serviceLogoUrl && (
+            <img
+              className="h-6 rounded-md overflow-hidden"
+              src={serviceLogoUrl}
+            />
+          )}
+          <span>
+            {[
+              selectedService?.remoteControlKeyId || selectedService?.serviceId,
+              selectedService?.name,
+            ]
+              .filter((s) => s !== undefined)
+              .join(" ")}
+          </span>
         </div>
       </div>
       <div

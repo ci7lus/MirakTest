@@ -66,6 +66,11 @@ export const mainPlayerLastSelectedServiceId = atom<number | null>({
   default: null,
 })
 
+export const mainPlayerSelectedServiceLogoUrl = atom<string | null>({
+  key: `${prefix}.selectedServiceLogoUrl`,
+  default: null,
+})
+
 export const mainPlayerPlayingTime = atom<number>({
   key: `${prefix}.playingTime`,
   default: 0,

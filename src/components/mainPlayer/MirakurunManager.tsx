@@ -5,6 +5,7 @@ import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil"
 import {
   mainPlayerLastSelectedServiceId,
   mainPlayerSelectedService,
+  mainPlayerSelectedServiceLogoUrl,
   mainPlayerUrl,
 } from "../../atoms/mainPlayer"
 import {
@@ -32,6 +33,12 @@ export const MirakurunManager: React.VFC<{}> = () => {
   const [url, setUrl] = useRecoilState(mainPlayerUrl)
   const [lastSelectedServiceId, setLastSelectedServiceId] = useRecoilState(
     mainPlayerLastSelectedServiceId
+  )
+  const setSelectedServiceLogoUrl = useSetRecoilState(
+    mainPlayerSelectedServiceLogoUrl
+  )
+  const [serviceLogos, setServiceLogos] = useState<{ [key: number]: string }>(
+    {}
   )
 
   const programUpdateTimer = useRef<NodeJS.Timeout | null>(null)
@@ -134,12 +141,47 @@ export const MirakurunManager: React.VFC<{}> = () => {
     }
   }, [mirakurunSettingValue])
 
+  const collectServiceLogo = async (
+    mirakurun: MirakurunAPI,
+    service: Service
+  ) => {
+    if (serviceLogos[service.id]) {
+      setSelectedServiceLogoUrl(serviceLogos[service.id])
+      return
+    }
+    try {
+      const logoData = await mirakurun.services.getLogoImage(service.id, {
+        responseType: "arraybuffer",
+      })
+      const objUrl = URL.createObjectURL(
+        // 自動生成されたクライアントの帰り型がvoidになってしまっている
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        new Blob([logoData.data as any], {
+          type: logoData.headers?.["content-type"] || "image/png",
+        })
+      )
+      setSelectedServiceLogoUrl(objUrl)
+      const copied = Object.assign({}, serviceLogos)
+      copied[service.id] = objUrl
+      setServiceLogos(copied)
+    } catch (error) {
+      console.error("ロゴの取得に失敗しました", service, error)
+    }
+  }
+
   const updateToSelectedService = async (selectedService: Service) => {
     const mirakurun = new MirakurunAPI(mirakurunSettingValue)
-    const req = await ServicesApiAxiosParamCreator(
+    if (selectedService && selectedService.hasLogoData) {
+      collectServiceLogo(mirakurun, selectedService)
+    } else {
+      setSelectedServiceLogoUrl(null)
+    }
+
+    const getServiceStreamRequest = await ServicesApiAxiosParamCreator(
       mirakurun.getConfigure()
     ).getServiceStream(selectedService.id)
-    const requestUrl = mirakurunSettingValue.baseUrl + req.url
+    const requestUrl =
+      mirakurunSettingValue.baseUrl + getServiceStreamRequest.url
     setUrl(null)
     setTimeout(
       () => {
