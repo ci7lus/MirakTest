@@ -28,7 +28,6 @@ export const CoiledSubtitleRenderer: React.VFC<{}> = memo(() => {
     const context = canvas.getContext("2d")
     if (!context) return
     if (isPlaying === false) {
-      // 字幕オフでキャンバスをクリアする
       context.clearRect(0, 0, canvas.width, canvas.height)
       setDisplayingAribSubtitleData(null)
     }
@@ -57,7 +56,14 @@ export const CoiledSubtitleRenderer: React.VFC<{}> = memo(() => {
   const displayingSubtitle = useRef("")
   useEffect(() => {
     const canvas = canvasRef.current
-    if (!aribSubtitleData || !canvas || !firstPcr) return
+    if (!canvas || !firstPcr) return
+    const context = canvas.getContext("2d")
+    if (!context) return
+    if (!aribSubtitleData) {
+      context.clearRect(0, 0, canvas.width, canvas.height)
+      setDisplayingAribSubtitleData(null)
+      return
+    }
     const decoded = tryBase64ToUint8Array(aribSubtitleData.data)
     if (!decoded) return
     const fromZero = ((aribSubtitleData.pts * 9) / 100 - firstPcr) / 90_000

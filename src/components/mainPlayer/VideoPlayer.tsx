@@ -239,6 +239,7 @@ export const CoiledVideoPlayer: React.VFC<{}> = memo(() => {
           if (firstPcrRef.current === 0) {
             setIsSubtitleEnabled(false)
           }
+          setAribSubtitleData(null)
           break
         case "arib_parser_was_destroyed":
           if (firstPcrRef.current === 0) {
