@@ -24,6 +24,7 @@ import {
   mainPlayerVolume,
 } from "../../atoms/mainPlayer"
 import { screenshotSetting } from "../../atoms/settings"
+import { useRefFromState } from "../../hooks/ref"
 import { VideoRenderer } from "../../utils/videoRenderer"
 import { VLCLogFilter } from "../../utils/vlc"
 
@@ -72,15 +73,14 @@ export const CoiledVideoPlayer: React.VFC<{}> = memo(() => {
     console.info("音量変更:", volume)
   }, [volume])
 
-  const [subtitleEnabled, setSubtitleEnabled] = useRecoilState(
+  const [isSubtitleEnabled, setIsSubtitleEnabled] = useRecoilState(
     mainPlayerSubtitleEnabled
   )
   useEffect(() => {
-    if (!playerRef.current) return
-    playerRef.current.subtitles.track = Number(subtitleEnabled)
-    console.info("字幕変更:", Number(subtitleEnabled))
-  }, [subtitleEnabled])
-
+    if (!playerRef.current || firstPcr !== 0) return
+    playerRef.current.subtitles.track = Number(isSubtitleEnabled)
+    console.info("字幕変更:", Number(isSubtitleEnabled))
+  }, [isSubtitleEnabled])
   const audioChannel = useRecoilValue(mainPlayerAudioChannel)
   useEffect(() => {
     if (!playerRef.current) return
@@ -135,7 +135,11 @@ export const CoiledVideoPlayer: React.VFC<{}> = memo(() => {
           contentCanvas.width,
           contentCanvas.height
         )
-        if (displayingAribSubtitleData && screenshot.includeSubtitle === true) {
+        if (
+          displayingAribSubtitleData &&
+          screenshot.includeSubtitle === true &&
+          isSubtitleEnabled === true
+        ) {
           const subtitleCanvas = document.createElement("canvas")
           subtitleCanvas.height = contentCanvas.height
           subtitleCanvas.width = contentCanvas.width
@@ -201,6 +205,7 @@ export const CoiledVideoPlayer: React.VFC<{}> = memo(() => {
 
   const setAribSubtitleData = useSetRecoilState(mainPlayerAribSubtitleData)
   const [firstPcr, setFirstPcr] = useState(0)
+  const firstPcrRef = useRefFromState(firstPcr)
   const setTsFirstPcr = useSetRecoilState(mainPlayerTsFirstPcr)
   useThrottleFn(
     (tsPts) => {
@@ -231,10 +236,16 @@ export const CoiledVideoPlayer: React.VFC<{}> = memo(() => {
           break
         case "successfully_opened":
           setIsPlaying(true)
-          setSubtitleEnabled(false)
+          if (firstPcrRef.current === 0) {
+            setIsSubtitleEnabled(false)
+          }
           break
         case "arib_parser_was_destroyed":
-          setSubtitleEnabled(false)
+          if (firstPcrRef.current === 0) {
+            setIsSubtitleEnabled(false)
+          } else {
+            player.subtitles.track = 1
+          }
           break
         case "arib_data":
           console.info(message)
@@ -255,6 +266,9 @@ export const CoiledVideoPlayer: React.VFC<{}> = memo(() => {
               (trackId) => player.audio[trackId]
             )
           )
+          if (firstPcrRef.current !== 0 && player.subtitles.track !== 1) {
+            player.subtitles.track = 1
+          }
           break
         case "unable_to_open":
           toast.error("映像の受信に失敗しました")

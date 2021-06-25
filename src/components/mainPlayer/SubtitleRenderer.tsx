@@ -16,24 +16,23 @@ import { tryBase64ToUint8Array } from "../../utils/string"
 export const CoiledSubtitleRenderer: React.VFC<{}> = memo(() => {
   const canvasRef = useRef<HTMLCanvasElement>(null)
 
-  const subtitleEnabled = useRecoilValue(mainPlayerSubtitleEnabled)
+  const isSubtitleEnabled = useRecoilValue(mainPlayerSubtitleEnabled)
   const isPlaying = useRecoilValue(mainPlayerIsPlaying)
   const setDisplayingAribSubtitleData = useSetRecoilState(
     mainPlayerDisplayingAribSubtitleData
   )
-  const subtitleEnabledRef = useRefFromState(subtitleEnabled)
   const isPlayingRef = useRefFromState(isPlaying)
   useEffect(() => {
     const canvas = canvasRef.current
     if (!canvas) return
     const context = canvas.getContext("2d")
     if (!context) return
-    if (subtitleEnabled === false || isPlaying === false) {
+    if (isPlaying === false) {
       // 字幕オフでキャンバスをクリアする
       context.clearRect(0, 0, canvas.width, canvas.height)
       setDisplayingAribSubtitleData(null)
     }
-  }, [subtitleEnabled, isPlaying])
+  }, [isPlaying])
 
   const [height, setHeight] = useState("100%")
   // 画面リサイズ時にキャンバスも追従させる
@@ -69,11 +68,7 @@ export const CoiledSubtitleRenderer: React.VFC<{}> = memo(() => {
     const ctx = canvas.getContext("2d")
     if (!ctx) return
     setTimeout(() => {
-      if (
-        subtitleEnabledRef.current === false ||
-        isPlayingRef.current === false
-      )
-        return
+      if (isPlayingRef.current === false) return
       provider.render({
         canvas,
         useStrokeText: true,
@@ -100,7 +95,7 @@ export const CoiledSubtitleRenderer: React.VFC<{}> = memo(() => {
       className={clsx(
         "pointer-events-none",
         "w-full",
-        !subtitleEnabled && "opacity-0"
+        !isSubtitleEnabled && "opacity-0"
       )}
       style={{ height }}
       ref={canvasRef}
