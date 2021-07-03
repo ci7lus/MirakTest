@@ -84,7 +84,7 @@ export const CoiledSubtitleRenderer: React.VFC<{}> = memo(() => {
       })
       setDisplayingAribSubtitleData(decoded)
       displayingSubtitle.current = aribSubtitleData.data
-      if (estimate.endTime === Number.MAX_SAFE_INTEGER) return
+      if (estimate.endTime === Number.POSITIVE_INFINITY) return
       setTimeout(() => {
         if (displayingSubtitle.current !== aribSubtitleData.data) return
         ctx.clearRect(0, 0, canvas.width, canvas.height)

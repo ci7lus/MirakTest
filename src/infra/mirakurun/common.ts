@@ -15,7 +15,6 @@
 import { Configuration } from "./configuration"
 import { RequiredError, RequestArgs } from "./base"
 import { AxiosInstance } from "axios"
-import { Base64 } from "js-base64"
 
 /**
  *
@@ -178,7 +177,7 @@ export const createRequestFunction = function (
     const url = new URL(configuration?.basePath || basePath)
     const headers: { [key: string]: string } = {}
     if (url.username || url.password) {
-      headers["Authorization"] = `Basic ${Base64.encode(
+      headers["Authorization"] = `Basic ${btoa(
         [url.username, url.password].filter((s) => s).join(":")
       )}`
     }
