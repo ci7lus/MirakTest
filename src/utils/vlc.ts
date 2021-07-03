@@ -59,6 +59,10 @@ export const VLCLogFilter = (s: string) => {
     return { category: "received_first_picture" } as const
   } else if (s.startsWith("EsOutProgramEpg")) {
     return { category: "es_out_program_epg" } as const
+  } else if (s.startsWith("PMTCallBack called for program")) {
+    return { category: "PMTCallBack_called_for_program" } as const
+  } else if (s.startsWith("discontinuity received 0")) {
+    return { category: "discontinuity_received_0" } as const
   } else if (s.startsWith("end of stream")) {
     return { category: "end_of_stream" } as const
   } else if (s.startsWith("EOF reached")) {

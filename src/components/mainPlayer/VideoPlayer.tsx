@@ -262,6 +262,8 @@ export const CoiledVideoPlayer: React.VFC<{}> = memo(() => {
           break
         case "received_first_picture":
         case "es_out_program_epg":
+        case "PMTCallBack_called_for_program":
+        case "discontinuity_received_0":
           setAudioTracks(
             [...Array(player.audio.count).keys()].map(
               (trackId) => player.audio[trackId]
