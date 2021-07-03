@@ -1,9 +1,9 @@
 $ARCH = "x64"
 $OS_NAME = "win"
 $RUNTIME = "electron"
-$RUNTIME_VER = "12.0.7"
+$RUNTIME_VER = "12.0.9"
 $VLC_VER = "3.0.11"
-$WCJS_VER = "0.5.1"
+$WCJS_VER = "0.5.2"
 
 function InsertAfter ([string]$file, [string]$needle, [string]$text, [string]$encoding = "utf8NoBOM") {
     $data = Get-Content "$file"

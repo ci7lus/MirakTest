@@ -1,11 +1,11 @@
 import path from "path"
-import webpack from "webpack"
 import MiniCSSExtractPlugin from "mini-css-extract-plugin"
+import webpack from "webpack"
 
 type MultiConfigurationFactory = (
   env: string | Record<string, boolean | number | string> | undefined,
   args: webpack.WebpackOptionsNormalized
-) => webpack.Configuration[] | Promise<webpack.Configuration[]>
+) => webpack.Configuration[]
 
 const nodeConfiguration: webpack.RuleSetRule = {
   test: /\.node$/,
@@ -118,7 +118,8 @@ const factory: MultiConfigurationFactory = (env, args) => [
       new webpack.DefinePlugin({
         __DEV__: args.mode !== "production",
       }),
-      new MiniCSSExtractPlugin(),
+      // TODO: FIX TYPE (型 'DefinePlugin' と 'MiniCssExtractPlugin' を比較するスタックが深すぎます。ts(2321))
+      new MiniCSSExtractPlugin() as never,
     ],
 
     externals: {
