@@ -47,6 +47,7 @@ declare module "webchimera.js" {
     ) => void
     audio: VLCAudio
     subtitles: VLCSubtitle
+    position: number
   }
   export const createPlayer: (args?: string[]) => Player
   export const path: string | undefined

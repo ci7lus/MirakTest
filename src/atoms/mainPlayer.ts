@@ -76,6 +76,16 @@ export const mainPlayerPlayingTime = atom<number>({
   default: 0,
 })
 
+export const mainPlayerPlayingPosition = atom<number>({
+  key: `${prefix}.playingPosition`,
+  default: 0,
+})
+
+export const mainPlayerPositionUpdateTrigger = atom<number>({
+  key: `${prefix}.positionUpdateTrigger`,
+  default: 0,
+})
+
 export const mainPlayerAribSubtitleData = atom<{
   data: string
   pts: number

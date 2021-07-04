@@ -15,7 +15,9 @@ import {
   mainPlayerAudioTracks,
   mainPlayerDisplayingAribSubtitleData,
   mainPlayerIsPlaying,
+  mainPlayerPlayingPosition,
   mainPlayerPlayingTime,
+  mainPlayerPositionUpdateTrigger,
   mainPlayerScreenshotTrigger,
   mainPlayerSelectedService,
   mainPlayerSubtitleEnabled,
@@ -56,13 +58,19 @@ export const CoiledVideoPlayer: React.VFC<{}> = memo(() => {
   }, [url])
   const [isPlaying, setIsPlaying] = useRecoilState(mainPlayerIsPlaying)
   useEffect(() => {
-    if (!playerRef.current || !url) return
-    if (isPlaying && !playerRef.current.playing) {
-      playerRef.current.play(url)
-      console.info("再生再開", url)
-    } else if (!isPlaying) {
-      playerRef.current.stop()
-      console.info("再生停止")
+    const player = playerRef.current
+    if (!player || !url) return
+    if (0 < position) {
+      console.info("ポーズ切り替え")
+      player.togglePause()
+    } else {
+      if (isPlaying && !player.playing) {
+        player.play(url)
+        console.info("再生開始", url)
+      } else if (!isPlaying) {
+        player.stop()
+        console.info("再生停止")
+      }
     }
   }, [isPlaying])
 
@@ -215,7 +223,16 @@ export const CoiledVideoPlayer: React.VFC<{}> = memo(() => {
     [firstPcr]
   )
   const setPlayingTime = useSetRecoilState(mainPlayerPlayingTime)
-
+  const [position, setPosition] = useState(0)
+  const setPlayingPosition = useSetRecoilState(mainPlayerPlayingPosition)
+  const positionUpdate = useRecoilValue(mainPlayerPositionUpdateTrigger)
+  useEffect(() => setPlayingPosition(position), [position])
+  useEffect(() => {
+    const player = playerRef.current
+    if (!player) return
+    player.position = positionUpdate
+    console.info(`ユーザー位置更新:`, positionUpdate)
+  }, [positionUpdate])
   useEffect(() => {
     const canvas = canvasRef.current
     if (!canvas) return
@@ -313,8 +330,11 @@ export const CoiledVideoPlayer: React.VFC<{}> = memo(() => {
     }
     window.addEventListener("resize", onResize)
     onResize()
+    const positionUpdate = () => setPosition(player.position)
+    const positionUpdateTimer = setInterval(positionUpdate, 1000)
     return () => {
       window.removeEventListener("resize", onResize)
+      clearInterval(positionUpdateTimer)
       player.close()
     }
   }, [])

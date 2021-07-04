@@ -5,33 +5,31 @@ import { useRecoilValue, useSetRecoilState } from "recoil"
 import {
   mainPlayerAribSubtitleData,
   mainPlayerDisplayingAribSubtitleData,
-  mainPlayerIsPlaying,
   mainPlayerPlayingTime,
+  mainPlayerPositionUpdateTrigger,
+  mainPlayerSelectedService,
   mainPlayerSubtitleEnabled,
   mainPlayerTsFirstPcr,
 } from "../../atoms/mainPlayer"
-import { useRefFromState } from "../../hooks/ref"
 import { tryBase64ToUint8Array } from "../../utils/string"
 
 export const CoiledSubtitleRenderer: React.VFC<{}> = memo(() => {
   const canvasRef = useRef<HTMLCanvasElement>(null)
 
   const isSubtitleEnabled = useRecoilValue(mainPlayerSubtitleEnabled)
-  const isPlaying = useRecoilValue(mainPlayerIsPlaying)
   const setDisplayingAribSubtitleData = useSetRecoilState(
     mainPlayerDisplayingAribSubtitleData
   )
-  const isPlayingRef = useRefFromState(isPlaying)
+  const selectedService = useRecoilValue(mainPlayerSelectedService)
+  const positionUpdateTrigger = useRecoilValue(mainPlayerPositionUpdateTrigger)
   useEffect(() => {
     const canvas = canvasRef.current
     if (!canvas) return
     const context = canvas.getContext("2d")
     if (!context) return
-    if (isPlaying === false) {
-      context.clearRect(0, 0, canvas.width, canvas.height)
-      setDisplayingAribSubtitleData(null)
-    }
-  }, [isPlaying])
+    context.clearRect(0, 0, canvas.width, canvas.height)
+    setDisplayingAribSubtitleData(null)
+  }, [selectedService, positionUpdateTrigger])
 
   const [height, setHeight] = useState("100%")
   // 画面リサイズ時にキャンバスも追従させる
@@ -74,7 +72,6 @@ export const CoiledSubtitleRenderer: React.VFC<{}> = memo(() => {
     const ctx = canvas.getContext("2d")
     if (!ctx) return
     setTimeout(() => {
-      if (isPlayingRef.current === false) return
       provider.render({
         canvas,
         useStrokeText: true,

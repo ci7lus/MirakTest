@@ -24,14 +24,12 @@ export const CoiledProgramTitleManager: React.VFC<{}> = () => {
   const setCurrentProgram = useSetRecoilState(mainPlayerCurrentProgram)
   const setTitle = useSetRecoilState(mainPlayerTitle)
 
-  const isPlaying = useRecoilValue(mainPlayerIsPlaying)
-
   const [program, setProgram] = useState<Program | null>()
 
   const setPresence = useSetRecoilState(globalPresence)
 
   useEffect(() => {
-    if (!selectedService || !isPlaying) {
+    if (!selectedService) {
       setTitle(null)
       setPresence(null)
       return
@@ -94,7 +92,7 @@ export const CoiledProgramTitleManager: React.VFC<{}> = () => {
       setPresence(activity)
     }
     setTitle(title)
-  }, [programs, selectedService, now, isPlaying])
+  }, [programs, selectedService, now])
 
   useEffect(() => {
     if (!program) return
