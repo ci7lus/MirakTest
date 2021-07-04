@@ -28,12 +28,23 @@ export const CoiledDPlayerWrapper: React.VFC<{
   }, [commentOpacity])
 
   useEffect(() => {
-    if (!player.current || !comment || player.current.video.paused === true)
+    const playerRef = player.current
+    if (
+      !playerRef ||
+      !comment ||
+      playerRef.video.paused === true ||
+      comment.text.startsWith("RT ")
+    ) {
       return
+    }
     const commentText = trimCommentForFlow(comment.text)
     if (commentText.trim().length === 0) return
     const payload = { ...comment, text: commentText }
-    player.current.danmaku.draw(payload)
+    if (comment.source.startsWith("5ch")) {
+      setTimeout(() => playerRef.danmaku.draw(payload), comment.timeMs || 0)
+    } else {
+      playerRef.danmaku.draw(payload)
+    }
   }, [comment])
 
   useEffect(() => {
