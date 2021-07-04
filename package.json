@@ -19,11 +19,11 @@
     "build": "yarn build:webpack && yarn build:tsc && yarn build:electron",
     "lint:prettier": "prettier --check './src/**/*.{js,ts,tsx}'",
     "format:prettier": "prettier --write './src/**/*.{js,ts,tsx}'",
-    "lint:eslint": "eslint --cache './src/**/*.{js,ts,tsx}'",
+    "lint:eslint": "eslint --max-warnings 0 --cache './src/**/*.{js,ts,tsx}'",
     "format:eslint": "eslint './src/**/*.{js,ts,tsx}' --cache --fix"
   },
   "lint-staged": {
-    "*.{js,ts,tsx}": "eslint --cache --fix",
+    "*.{js,ts,tsx}": "eslint --max-warnings 0 --cache --fix",
     "*.{js,ts,tsx,md}": "prettier --write"
   },
   "devDependencies": {

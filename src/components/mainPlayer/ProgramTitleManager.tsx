@@ -7,7 +7,6 @@ import {
   mainPlayerSelectedService,
   mainPlayerCurrentProgram,
   mainPlayerTitle,
-  mainPlayerIsPlaying,
 } from "../../atoms/mainPlayer"
 import { mirakurunProgramsFamily } from "../../atoms/mirakurun"
 import { useNow } from "../../hooks/date"
