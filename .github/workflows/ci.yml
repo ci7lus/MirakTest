@@ -26,8 +26,6 @@ jobs:
       matrix:
         node-version: [12.x]
 
-    if: ${{ github.event_name != 'pull_request' || github.repository_owner != 'ci7lus' }}
-
     steps:
       - uses: actions/checkout@v2
       - name: Use Node.js ${{ matrix.node-version }}
@@ -63,8 +61,6 @@ jobs:
         node-version: [12.x]
 
     needs: lint
-
-    if: ${{ github.event_name != 'pull_request' || github.repository_owner != 'ci7lus' }}
 
     steps:
       - uses: actions/checkout@v2
@@ -118,8 +114,6 @@ jobs:
         node-version: [12.x]
 
     needs: lint
-
-    if: ${{ github.event_name != 'pull_request' || github.repository_owner != 'ci7lus' }}
 
     steps:
       - uses: actions/checkout@v2
@@ -176,8 +170,6 @@ jobs:
         node-version: [12.x]
 
     needs: lint
-
-    if: ${{ github.event_name != 'pull_request' || github.repository_owner != 'ci7lus' }}
 
     steps:
       - uses: actions/checkout@v2
