@@ -196,8 +196,10 @@ jobs:
             ${{ runner.os }}-yarn-
       - name: Install
         run: yarn --ignore-scripts
-      - name: Setup for windows
+      - name: Setup WebChiemra.js
         run: pwsh ./setup_wcjs.ps1
+      - name: Setup libvlc
+        run: pwsh ./setup_libvlc.ps1
       - name: Build
         run: yarn build
       - name: Pack build artifact
