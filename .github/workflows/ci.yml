@@ -15,6 +15,8 @@ on:
       - .gitignore
       - LICENSE
       - "**.md"
+  release:
+    types: [published]
 
 jobs:
   lint:
@@ -83,6 +85,15 @@ jobs:
         run: yarn
       - name: Build webchimera.js
         run: ./setup_wcjs.sh
+      - name: Set nightly version
+        if: ${{ github.event_name != 'release' }}
+        run: yarn ts-node setPackageVersion.ts
+        env:
+          SHA1: ${{ github.sha }}
+      - name: Set buildVersion
+        run: yarn ts-node setBuildVersion.ts
+        env:
+          SHA1: ${{ github.sha }}
       - name: Build
         run: yarn build
       - name: Pack build artifact
@@ -141,6 +152,15 @@ jobs:
         run: ./setup_wcjs.sh
       - name: VLC related libs are licensed under LGPL and GPLv2
         run: ./setup_vlclib_mac.sh
+      - name: Set nightly version
+        if: ${{ github.event_name != 'release' }}
+        run: yarn ts-node setPackageVersion.ts
+        env:
+          SHA1: ${{ github.sha }}
+      - name: Set buildVersion
+        run: yarn ts-node setBuildVersion.ts
+        env:
+          SHA1: ${{ github.sha }}
       - name: Build
         run: yarn build
       - name: Pack build artifact
@@ -192,6 +212,15 @@ jobs:
         run: pwsh ./setup_wcjs.ps1
       - name: Setup libvlc
         run: pwsh ./setup_libvlc.ps1
+      - name: Set nightly version
+        if: ${{ github.event_name != 'release' }}
+        run: yarn ts-node setPackageVersion.ts
+        env:
+          SHA1: ${{ github.sha }}
+      - name: Set buildVersion
+        run: yarn ts-node setBuildVersion.ts
+        env:
+          SHA1: ${{ github.sha }}
       - name: Build
         run: yarn build
       - name: Pack build artifact
