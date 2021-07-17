@@ -22,13 +22,14 @@ export const CoiledSubtitleRenderer: React.VFC<{}> = memo(() => {
   )
   const selectedService = useRecoilValue(mainPlayerSelectedService)
   const positionUpdateTrigger = useRecoilValue(mainPlayerPositionUpdateTrigger)
+  const latestTimer = useRef<NodeJS.Timer>()
   useEffect(() => {
+    // リセット処理
+    setDisplayingAribSubtitleData(null)
+    latestTimer.current && clearTimeout(latestTimer.current)
     const canvas = canvasRef.current
     if (!canvas) return
-    const context = canvas.getContext("2d")
-    if (!context) return
-    context.clearRect(0, 0, canvas.width, canvas.height)
-    setDisplayingAribSubtitleData(null)
+    canvas.getContext("2d")?.clearRect(0, 0, canvas.width, canvas.height)
   }, [selectedService, positionUpdateTrigger])
 
   const [height, setHeight] = useState("100%")
@@ -71,7 +72,7 @@ export const CoiledSubtitleRenderer: React.VFC<{}> = memo(() => {
     if (!estimate) return
     const ctx = canvas.getContext("2d")
     if (!ctx) return
-    setTimeout(() => {
+    latestTimer.current = setTimeout(() => {
       provider.render({
         canvas,
         useStrokeText: true,
