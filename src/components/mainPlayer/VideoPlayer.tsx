@@ -2,7 +2,7 @@ import fs from "fs"
 import path from "path"
 import { CanvasProvider } from "aribb24.js"
 import dayjs from "dayjs"
-import { remote } from "electron"
+import { nativeImage, remote } from "electron"
 import React, { memo, useEffect, useRef, useState } from "react"
 import { toast } from "react-toastify"
 import { useThrottleFn } from "react-use"
@@ -172,10 +172,10 @@ export const CoiledVideoPlayer: React.VFC<{}> = memo(() => {
           contentCanvas.toBlob((blob) => res(blob), "image/png", 1)
         )
         if (!blob) throw new Error("blob")
+        const buffer = Buffer.from(await blob.arrayBuffer())
         try {
-          await navigator.clipboard.write([
-            new window.ClipboardItem({ [blob.type]: blob }),
-          ])
+          const image = nativeImage.createFromBuffer(buffer)
+          remote.clipboard.writeImage(image, "clipboard")
           toast.info("キャプチャしました", {
             autoClose: 2000,
             pauseOnFocusLoss: false,
@@ -186,7 +186,6 @@ export const CoiledVideoPlayer: React.VFC<{}> = memo(() => {
 
         if (screenshot.saveAsAFile && screenshot.basePath) {
           try {
-            const buffer = Buffer.from(await blob.arrayBuffer())
             const baseName = [
               "mirak",
               dayjs().format("YYYY-MM-DD-HH-mm-ss-SSS"),
