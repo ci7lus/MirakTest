@@ -221,6 +221,7 @@ jobs:
         run: yarn ts-node setBuildVersion.ts
         env:
           SHA1: ${{ github.sha }}
+          IS_WINDOWS: 1
       - name: Build
         run: yarn build
       - name: Pack build artifact
