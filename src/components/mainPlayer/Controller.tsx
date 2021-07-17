@@ -8,6 +8,7 @@ import {
   mainPlayerAudioTracks,
   mainPlayerCommentOpacity,
   mainPlayerIsPlaying,
+  mainPlayerIsSeekable,
   mainPlayerLastSelectedServiceId,
   mainPlayerPlayingPosition,
   mainPlayerPositionUpdateTrigger,
@@ -45,6 +46,7 @@ export const CoiledController: React.VFC<{}> = () => {
   const [isPlaying, setIsPlaying] = useRecoilState(mainPlayerIsPlaying)
   const position = useRecoilValue(mainPlayerPlayingPosition)
   const setPosition = useSetRecoilState(mainPlayerPositionUpdateTrigger)
+  const isSeekable = useRecoilValue(mainPlayerIsSeekable)
 
   const services = useRecoilValue(mirakurunServices)
   const [selectedService, setSelectedService] = useRecoilState(
@@ -199,7 +201,7 @@ export const CoiledController: React.VFC<{}> = () => {
         onDoubleClick={(e) => e.stopPropagation()}
         onMouseDown={(e) => e.stopPropagation()}
       >
-        {0 < position && (
+        {isSeekable && (
           <div className="flex space-x-4 px-2 pr-4">
             <PlayToggleButton
               isPlaying={isPlaying}

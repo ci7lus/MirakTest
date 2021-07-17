@@ -81,6 +81,11 @@ export const mainPlayerPlayingPosition = atom<number>({
   default: 0,
 })
 
+export const mainPlayerIsSeekable = atom<boolean>({
+  key: `${prefix}.isSeekable`,
+  default: false,
+})
+
 export const mainPlayerPositionUpdateTrigger = atom<number>({
   key: `${prefix}.positionUpdateTrigger`,
   default: 0,

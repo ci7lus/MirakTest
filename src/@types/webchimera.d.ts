@@ -36,6 +36,17 @@ declare module "webchimera.js" {
     stop: () => void
     toggleMute: () => void
     close: () => void
+    onBuffering: (percents: number) => void
+    onPlaying: () => void
+    onPaused: () => void
+    onEncounteredError: () => void
+    onEndReached: () => void
+    onStopped: () => void
+    onTimeChanged: (time: number) => void
+    onPositionChanged: (time: number) => void
+    onSeekableChanged: (seekable: boolean) => void
+    onPausableChanged: (pausable: boolean) => void
+    onLengthChanged: (length: number) => void
     onLogMessage: (level: string, message: string, format: string) => void
     onFrameReady: (
       frame: {

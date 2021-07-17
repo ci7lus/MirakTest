@@ -15,6 +15,7 @@ import {
   mainPlayerAudioTracks,
   mainPlayerDisplayingAribSubtitleData,
   mainPlayerIsPlaying,
+  mainPlayerIsSeekable,
   mainPlayerPlayingPosition,
   mainPlayerPlayingTime,
   mainPlayerPositionUpdateTrigger,
@@ -226,6 +227,7 @@ export const CoiledVideoPlayer: React.VFC<{}> = memo(() => {
   const [position, setPosition] = useState(0)
   const setPlayingPosition = useSetRecoilState(mainPlayerPlayingPosition)
   const positionUpdate = useRecoilValue(mainPlayerPositionUpdateTrigger)
+  const setIsSeekable = useSetRecoilState(mainPlayerIsSeekable)
   useEffect(() => setPlayingPosition(position), [position])
   useEffect(() => {
     const player = playerRef.current
@@ -290,19 +292,6 @@ export const CoiledVideoPlayer: React.VFC<{}> = memo(() => {
             player.subtitles.track = 1
           }
           break
-        case "unable_to_open":
-          toast.error("映像の受信に失敗しました")
-          setIsPlaying(false)
-          break
-        case "eof_reached":
-          setIsPlaying(false)
-          break
-        case "end_of_stream":
-          renderContext.fillTransparent()
-          break
-        case "waiting_decoder_fifos_to_empty":
-          toast.error("接続が中断されました")
-          break
         case "unknown":
           console.info(message)
           break
@@ -319,6 +308,28 @@ export const CoiledVideoPlayer: React.VFC<{}> = memo(() => {
         frame.vOffset
       )
     }
+    player.onEncounteredError = () => {
+      toast.error("映像の受信に失敗しました")
+      renderContext.fillTransparent()
+    }
+    player.onStopped = () => {
+      setIsPlaying(false)
+    }
+    player.onEndReached = () => {
+      setIsPlaying(false)
+    }
+    player.onPaused = () => {
+      setIsPlaying(false)
+    }
+    player.onPlaying = () => {
+      setIsPlaying(true)
+    }
+    player.onSeekableChanged = (seekable) => {
+      setIsSeekable(seekable)
+    }
+    player.onPositionChanged = (position) => {
+      setPosition(position)
+    }
     player.volume = volume
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
@@ -330,11 +341,8 @@ export const CoiledVideoPlayer: React.VFC<{}> = memo(() => {
     }
     window.addEventListener("resize", onResize)
     onResize()
-    const positionUpdate = () => setPosition(player.position)
-    const positionUpdateTimer = setInterval(positionUpdate, 1000)
     return () => {
       window.removeEventListener("resize", onResize)
-      clearInterval(positionUpdateTimer)
       player.close()
     }
   }, [])
