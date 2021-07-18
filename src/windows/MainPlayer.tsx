@@ -105,6 +105,32 @@ export const CoiledMainPlayer: React.VFC<{}> = () => {
           type: "separator",
         },
         {
+          label: "ウィンドウを複製する",
+          click: () => {
+            // 筋が悪い
+            const currentWindow = remote.getCurrentWindow()
+            const { width, height } = currentWindow.getContentBounds()
+            const [minWidth, minHeight] = currentWindow.getMinimumSize()
+            const window = new remote.BrowserWindow({
+              width,
+              height,
+              minWidth,
+              minHeight,
+              webPreferences: {
+                contextIsolation: false,
+                nodeIntegration: true,
+                enableRemoteModule: true,
+              },
+              backgroundColor: "#111827",
+            })
+            window.loadFile("index.html", { hash: "MainPlayer" })
+            window.setAspectRatio(16 / 9)
+          },
+        },
+        {
+          type: "separator",
+        },
+        {
           label: "切り取り",
           role: "cut",
           visible: noParams || params.editFlags.canCut,
@@ -139,9 +165,12 @@ export const CoiledMainPlayer: React.VFC<{}> = () => {
           click: () => remoteWindow.webContents.reload(),
         },
         {
+          label: "ウィンドウを閉じる",
+          click: () => remoteWindow.destroy(),
+        },
+        {
           label: "終了",
           role: "quit",
-          click: () => remote.app.quit(),
         },
       ].filter((item) => item.visible !== false) as (
         | MenuItemConstructorOptions
