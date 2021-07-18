@@ -199,7 +199,7 @@ files:
 publish: null
 npmRebuild: false
 npmArgs: "--runtime=node "
-afterPack: "./dist/afterpack.js"
+afterPack: "dist/src/afterpack.js"
 mac:
   icon: "assets/miraktest.icns"
   entitlements: "entitlements.plist"

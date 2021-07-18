@@ -1,6 +1,6 @@
 import { atom } from "recoil"
 import pkg from "../../package.json"
-import {
+import type {
   ControllerSetting,
   ExperimentalSetting,
   MirakurunSetting,

@@ -1,7 +1,8 @@
 import path from "path"
-import { app, BrowserWindow, screen } from "electron"
+import { Rectangle, app, BrowserWindow, screen } from "electron"
 import Store from "electron-store"
 import WebChimeraJs from "webchimera.js"
+import pkg from "../package.json"
 
 let window: BrowserWindow | null = null
 
@@ -14,13 +15,21 @@ const init = () => {
 
   Store.initRenderer()
   const display = screen.getPrimaryDisplay()
+  // store/bounds定義を引っ張ってくると目に見えて容量が増えるので決め打ち
+  const store = new Store<{}>({
+    // workaround for conf's Project name could not be inferred. Please specify the `projectName` option.
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    projectName: pkg.name,
+  })
+  const bounds: Rectangle | null = store.get(`${pkg.name}.mainPlayer.bounds`)
+  const width = bounds?.width || Math.ceil(1280 / display.scaleFactor)
+  const height = bounds?.height || Math.ceil(720 / display.scaleFactor)
   window = new BrowserWindow({
-    width: Math.ceil(1280 / display.scaleFactor),
-    height: Math.ceil(720 / display.scaleFactor),
-    minWidth: Math.ceil(640 / display.scaleFactor),
-    minHeight:
-      Math.ceil(360 / display.scaleFactor) +
-      Math.ceil(22 / display.scaleFactor),
+    width,
+    height,
+    x: bounds?.x,
+    y: bounds?.y,
     webPreferences: {
       contextIsolation: false,
       nodeIntegration: true,
@@ -34,6 +43,16 @@ const init = () => {
     window.webContents.openDevTools()
   }
   window.setAspectRatio(16 / 9)
+  const [, contentHeight] = window.getContentSize()
+  const headerSize = height - contentHeight
+  const minWidth = Math.ceil(640 / display.scaleFactor)
+  const minHeight =
+    Math.ceil(360 / display.scaleFactor) +
+    Math.ceil(headerSize / display.scaleFactor)
+  window.setMinimumSize(minWidth, minHeight)
+  window.setSize(width, height + headerSize)
+  const [xPos, yPos] = window.getPosition()
+  window.setPosition(xPos, yPos - headerSize)
 
   window.on("closed", () => {
     window = null
@@ -48,7 +67,7 @@ app.on("window-all-closed", () => app.quit())
 
 const reloadTargetPaths = [
   path.resolve(__dirname, "../index.html"),
-  path.resolve(__dirname, "index.electron.js"),
+  path.resolve(__dirname, "dist/src/index.electron.js"),
   path.resolve(__dirname, "main.js"),
 ]
 

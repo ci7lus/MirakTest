@@ -9,7 +9,7 @@
     "type": "git",
     "url": "https://github.com/ci7lus/miraktest.git"
   },
-  "main": "dist/index.electron.js",
+  "main": "dist/src/index.electron.js",
   "scripts": {
     "dev:electron": "cross-env NODE_ENV=development electron .",
     "dev:webpack": "webpack --mode development --color -w",

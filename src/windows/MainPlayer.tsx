@@ -26,7 +26,7 @@ import { VirtualWindowComponent } from "./Virtual"
 
 export const CoiledMainPlayer: React.VFC<{}> = () => {
   const [route, setRoute] = useRecoilState(mainPlayerRoute)
-  const [bounds, setBounds] = useRecoilState(mainPlayerBounds)
+  const setBounds = useSetRecoilState(mainPlayerBounds)
   const [selectedService, setSelectedService] = useRecoilState(
     mainPlayerSelectedService
   )
@@ -40,19 +40,11 @@ export const CoiledMainPlayer: React.VFC<{}> = () => {
   useEffect(() => {
     injectStyle()
     const remoteWindow = remote.getCurrentWindow()
-    // 前回のウィンドウサイズが保存されていれば戻す
+    // ウィンドウサイズを保存する
     const onResizedOrMoved = () => setBounds(remoteWindow.getContentBounds())
     remoteWindow.on("resized", onResizedOrMoved)
     remoteWindow.on("moved", onResizedOrMoved)
-    if (bounds) {
-      remoteWindow.setContentBounds(bounds, true)
-    } else {
-      onResizedOrMoved()
-    }
-
-    // メインウィンドウを閉じたら終了する
-    const onClosed = () => remote.app.quit()
-    remoteWindow.on("closed", onClosed)
+    onResizedOrMoved()
     // コンテキストメニュー
     remoteWindow.webContents.on("context-menu", (e, params) => {
       const noParams = typeof params !== "object"
@@ -181,7 +173,6 @@ export const CoiledMainPlayer: React.VFC<{}> = () => {
     return () => {
       remoteWindow.off("resized", onResizedOrMoved)
       remoteWindow.off("moved", onResizedOrMoved)
-      remoteWindow.off("closed", onClosed)
     }
   }, [])
   // タイトル

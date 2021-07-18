@@ -3,8 +3,8 @@
  * Copyright 2021 ci7lus
  */
 
-import * as yarn from "@yarnpkg/lockfile"
 import fs from "fs"
+import * as yarn from "@yarnpkg/lockfile"
 import pkg from "./package.json"
 
 type Package = {
