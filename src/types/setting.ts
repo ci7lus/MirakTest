@@ -11,6 +11,7 @@ export type SayaSetting = {
 
 export type ControllerSetting = {
   volumeRange: [number, number]
+  isEnableWaitForSingleTuner: boolean
 }
 
 export type ScreenshotSetting = {

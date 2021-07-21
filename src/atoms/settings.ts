@@ -26,6 +26,7 @@ export const controllerSetting = atom<ControllerSetting>({
   key: `${prefix}.controller`,
   default: {
     volumeRange: [0, 150],
+    isEnableWaitForSingleTuner: true,
   },
 })
 

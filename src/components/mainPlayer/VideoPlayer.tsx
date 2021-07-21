@@ -61,7 +61,7 @@ export const CoiledVideoPlayer: React.VFC<{}> = memo(() => {
   useEffect(() => {
     const player = playerRef.current
     if (!player || !url) return
-    if (0 < position) {
+    if (isSeekable) {
       console.info("ポーズ切り替え")
       player.togglePause()
     } else {
@@ -226,7 +226,7 @@ export const CoiledVideoPlayer: React.VFC<{}> = memo(() => {
   const [position, setPosition] = useState(0)
   const setPlayingPosition = useSetRecoilState(mainPlayerPlayingPosition)
   const positionUpdate = useRecoilValue(mainPlayerPositionUpdateTrigger)
-  const setIsSeekable = useSetRecoilState(mainPlayerIsSeekable)
+  const [isSeekable, setIsSeekable] = useRecoilState(mainPlayerIsSeekable)
   useEffect(() => setPlayingPosition(position), [position])
   useEffect(() => {
     const player = playerRef.current
