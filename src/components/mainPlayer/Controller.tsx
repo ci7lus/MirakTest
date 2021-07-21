@@ -105,7 +105,7 @@ export const CoiledController: React.VFC<{}> = () => {
   const setScreenshotTrigger = useSetRecoilState(mainPlayerScreenshotTrigger)
   useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "s" && e.metaKey === true) {
+      if (e.key === "s" && (e.metaKey === true || e.ctrlKey === true)) {
         setScreenshotTrigger(performance.now())
       } else if (e.key === "ArrowUp") {
         // 音量+10
