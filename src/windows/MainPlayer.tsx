@@ -101,7 +101,7 @@ export const CoiledMainPlayer: React.VFC<{}> = () => {
           click: () => {
             // 筋が悪い
             const currentWindow = remote.getCurrentWindow()
-            const { width, height } = currentWindow.getContentBounds()
+            const { width, height } = currentWindow.getBounds()
             const [minWidth, minHeight] = currentWindow.getMinimumSize()
             const window = new remote.BrowserWindow({
               width,
