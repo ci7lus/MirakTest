@@ -14,7 +14,7 @@ export const VolumeSlider: React.VFC<{
     () => {
       setVolume(rangeVolume)
     },
-    100,
+    10,
     [rangeVolume]
   )
   useEffect(() => {

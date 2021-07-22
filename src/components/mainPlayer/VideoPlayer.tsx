@@ -76,6 +76,7 @@ export const CoiledVideoPlayer: React.VFC<{}> = memo(() => {
   }, [isPlaying])
 
   const volume = useRecoilValue(mainPlayerVolume)
+  const volumeRef = useRefFromState(volume)
   useEffect(() => {
     if (!playerRef.current) return
     playerRef.current.volume = volume
@@ -290,6 +291,7 @@ export const CoiledVideoPlayer: React.VFC<{}> = memo(() => {
           if (firstPcrRef.current !== 0 && player.subtitles.track !== 1) {
             player.subtitles.track = 1
           }
+          player.volume = volumeRef.current
           break
         case "unknown":
           console.info(message)
