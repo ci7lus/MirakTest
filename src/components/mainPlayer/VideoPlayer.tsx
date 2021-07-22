@@ -316,6 +316,9 @@ export const CoiledVideoPlayer: React.VFC<{}> = memo(() => {
     }
     player.onEndReached = () => {
       setIsPlaying(false)
+      if (!isSeekable) {
+        toast.error("映像の受信が中断されました")
+      }
     }
     player.onPaused = () => {
       setIsPlaying(false)
