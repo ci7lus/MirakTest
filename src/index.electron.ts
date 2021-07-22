@@ -67,8 +67,8 @@ app.on("window-all-closed", () => app.quit())
 
 const reloadTargetPaths = [
   path.resolve(__dirname, "../index.html"),
-  path.resolve(__dirname, "dist/src/index.electron.js"),
-  path.resolve(__dirname, "main.js"),
+  path.resolve(__dirname, "index.electron.js"),
+  path.resolve(__dirname, "../main.js"),
 ]
 
 if (!require.main?.filename.includes("app.asar")) {
