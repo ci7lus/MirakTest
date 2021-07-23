@@ -1,7 +1,6 @@
 export type MirakurunSetting = {
-  username?: string
-  password?: string
   baseUrl?: string
+  isEnableWaitForSingleTuner: boolean
 }
 
 export type SayaSetting = {
@@ -11,7 +10,6 @@ export type SayaSetting = {
 
 export type ControllerSetting = {
   volumeRange: [number, number]
-  isEnableWaitForSingleTuner: boolean
 }
 
 export type ScreenshotSetting = {

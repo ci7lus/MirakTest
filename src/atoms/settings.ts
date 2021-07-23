@@ -12,7 +12,9 @@ const prefix = `${pkg.name}.settings`
 
 export const mirakurunSetting = atom<MirakurunSetting>({
   key: `${prefix}.mirakurun`,
-  default: {},
+  default: {
+    isEnableWaitForSingleTuner: false,
+  },
 })
 
 export const sayaSetting = atom<SayaSetting>({
@@ -26,7 +28,6 @@ export const controllerSetting = atom<ControllerSetting>({
   key: `${prefix}.controller`,
   default: {
     volumeRange: [0, 150],
-    isEnableWaitForSingleTuner: true,
   },
 })
 

@@ -14,7 +14,7 @@ import {
   mirakurunServices,
   mirakurunVersion,
 } from "../../atoms/mirakurun"
-import { controllerSetting, mirakurunSetting } from "../../atoms/settings"
+import { mirakurunSetting } from "../../atoms/settings"
 import { MirakurunAPI } from "../../infra/mirakurun"
 import {
   Service,
@@ -40,7 +40,6 @@ export const MirakurunManager: React.VFC<{}> = () => {
   const [serviceLogos, setServiceLogos] = useState<{ [key: number]: string }>(
     {}
   )
-  const controller = useRecoilValue(controllerSetting)
 
   const programUpdateTimer = useRef<NodeJS.Timeout | null>(null)
 
@@ -183,14 +182,16 @@ export const MirakurunManager: React.VFC<{}> = () => {
     ).getServiceStream(selectedService.id)
     const requestUrl =
       mirakurunSettingValue.baseUrl + getServiceStreamRequest.url
-    setUrl(null)
-    setTimeout(
-      () => {
-        setUrl(requestUrl)
-        setLastSelectedServiceId(selectedService.id)
-      },
-      url && controller.isEnableWaitForSingleTuner === true ? 1000 : 0
-    )
+    const update = () => {
+      setUrl(requestUrl)
+      setLastSelectedServiceId(selectedService.id)
+    }
+    if (url && mirakurunSettingValue.isEnableWaitForSingleTuner) {
+      setUrl(null)
+      setTimeout(update, 1000)
+    } else {
+      update()
+    }
   }
 
   useEffect(() => {

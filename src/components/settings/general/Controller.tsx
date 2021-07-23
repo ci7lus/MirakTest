@@ -8,18 +8,14 @@ export const ControllerSettingForm: React.VFC<{
 }> = ({ controllerSetting, setControllerSetting }) => {
   const [min, setMin] = useState(controllerSetting.volumeRange[0])
   const [max, setMax] = useState(controllerSetting.volumeRange[1])
-  const [isEnableWaitForSingleTuner, setIsEnableWaitForSingleTuner] = useState(
-    controllerSetting.isEnableWaitForSingleTuner
-  )
   useDebounce(
     () => {
       setControllerSetting({
         volumeRange: [min, max],
-        isEnableWaitForSingleTuner,
       })
     },
     100,
-    [min, max, isEnableWaitForSingleTuner]
+    [min, max]
   )
   return (
     <div>
@@ -58,15 +54,6 @@ export const ControllerSettingForm: React.VFC<{
             max={200}
           />
         </div>
-      </label>
-      <label className="block mt-4">
-        <span>チューナー切り替え前に待機する（シングルチューナー向け）</span>
-        <input
-          type="checkbox"
-          className="block mt-2 form-checkbox"
-          checked={isEnableWaitForSingleTuner || false}
-          onChange={() => setIsEnableWaitForSingleTuner((enabled) => !enabled)}
-        />
       </label>
     </div>
   )
