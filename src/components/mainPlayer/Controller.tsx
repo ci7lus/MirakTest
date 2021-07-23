@@ -1,5 +1,7 @@
+import clsx from "clsx"
 import { remote } from "electron"
 import React, { useEffect, useRef, useState } from "react"
+import { PauseCircle, PlayCircle } from "react-feather"
 import { useDebounce } from "react-use"
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil"
 import {
@@ -131,10 +133,22 @@ export const CoiledController: React.VFC<{}> = () => {
     }
   }, [])
 
+  const [isPlayButtonShowing, setIsPlayButtonShowing] = useState(false)
+  const isPlayingUpdateTimeout = useRef<NodeJS.Timeout>()
+  useEffect(() => {
+    setIsPlayButtonShowing(true)
+    isPlayingUpdateTimeout.current &&
+      clearTimeout(isPlayingUpdateTimeout.current)
+    isPlayingUpdateTimeout.current = setTimeout(
+      () => setIsPlayButtonShowing(false),
+      1000
+    )
+  }, [isPlaying])
+
   return (
     <div
       ref={componentRef}
-      className="w-full h-full flex flex-col justify-between"
+      className="w-full h-full relative"
       onMouseMove={() => {
         setIsVisible(true)
         setLastCurMoved(new Date().getSeconds())
@@ -172,80 +186,101 @@ export const CoiledController: React.VFC<{}> = () => {
         })
       }}
     >
-      <div
-        className={`select-none transition-opacity duration-150 ease-in-out p-4 ${
-          isServiceNameShowing ? "opacity-100" : "opacity-0"
-        }`}
-      >
-        <div className="text-4xl text-green-400 flex items-center space-x-2 serviceNameOutline">
-          {serviceLogoUrl && (
-            <img
-              className="h-6 rounded-md overflow-hidden"
-              src={serviceLogoUrl}
-            />
-          )}
-          <span>
-            {[
-              selectedService?.remoteControlKeyId || selectedService?.serviceId,
-              selectedService?.name,
-            ]
-              .filter((s) => s !== undefined)
-              .join(" ")}
-          </span>
-        </div>
-      </div>
-      <div
-        className={`flex flex-col space-y-2 text-gray-100 select-none transition-opacity duration-150 ease-in-out w-full p-2 bg-black bg-opacity-50 ${
-          isVisible ? "opacity-100" : "opacity-0"
-        }`}
-        onDoubleClick={(e) => e.stopPropagation()}
-        onMouseDown={(e) => e.stopPropagation()}
-      >
-        {isSeekable && (
-          <div className="flex space-x-4 px-2 pr-4">
-            <PlayToggleButton
-              isPlaying={isPlaying}
-              setIsPlaying={setIsPlaying}
-            />
-            <PositionSlider position={position} setPosition={setPosition} />
+      <div className="absolute w-full h-full flex flex-col justify-between">
+        <div
+          className={`select-none transition-opacity duration-150 ease-in-out p-4 ${
+            isServiceNameShowing ? "opacity-100" : "opacity-0"
+          }`}
+        >
+          <div className="text-4xl text-green-400 flex items-center space-x-2 serviceNameOutline">
+            {serviceLogoUrl && (
+              <img
+                className="h-6 rounded-md overflow-hidden"
+                src={serviceLogoUrl}
+              />
+            )}
+            <span>
+              {[
+                selectedService?.remoteControlKeyId ||
+                  selectedService?.serviceId,
+                selectedService?.name,
+              ]
+                .filter((s) => s !== undefined)
+                .join(" ")}
+            </span>
           </div>
-        )}
-        <div className="flex space-x-2 px-2 pr-4 overflow-auto">
-          <ServiceSelector
-            services={services}
-            selectedService={selectedService}
-            setSelectedService={setSelectedService}
-            isProgramDetailEnabled={
-              experimental.isProgramDetailInServiceSelectorEnabled
-            }
-          />
-          <VolumeSlider
-            volume={volume}
-            setVolume={setVolume}
-            min={controller.volumeRange[0]}
-            max={controller.volumeRange[1]}
-          />
-          <AudioChannelSelector
-            audioChannel={audioChannel}
-            setAudioChannel={setAudioChannel}
-          />
-          {3 <= audioTracks.length && (
-            <AudioTrackSelector
-              audioTrack={audioTrack}
-              setAudioTrack={setAudioTrack}
-              audioTracks={audioTracks}
-            />
+        </div>
+        <div
+          className={`flex flex-col space-y-2 text-gray-100 select-none transition-opacity duration-150 ease-in-out w-full p-2 bg-black bg-opacity-50 ${
+            isVisible ? "opacity-100" : "opacity-0"
+          }`}
+          onDoubleClick={(e) => e.stopPropagation()}
+          onMouseDown={(e) => e.stopPropagation()}
+        >
+          {isSeekable && (
+            <div className="flex space-x-4 px-2 pr-4">
+              <PlayToggleButton
+                isPlaying={isPlaying}
+                setIsPlaying={setIsPlaying}
+              />
+              <PositionSlider position={position} setPosition={setPosition} />
+            </div>
           )}
-          <SubtitleToggleButton
-            subtitleEnabled={subtitleEnabled}
-            setSubtitleEnabled={setSubtitleEnabled}
-          />
-          <CoiledScreenshotButton />
-          <CommentOpacitySlider
-            commentOpacity={commentOpacity}
-            setCommentOpacity={setCommentOpacity}
-          />
-          <div className="pr-2" />
+          <div className="flex space-x-2 px-2 pr-4 overflow-auto">
+            <ServiceSelector
+              services={services}
+              selectedService={selectedService}
+              setSelectedService={setSelectedService}
+              isProgramDetailEnabled={
+                experimental.isProgramDetailInServiceSelectorEnabled
+              }
+            />
+            <VolumeSlider
+              volume={volume}
+              setVolume={setVolume}
+              min={controller.volumeRange[0]}
+              max={controller.volumeRange[1]}
+            />
+            <AudioChannelSelector
+              audioChannel={audioChannel}
+              setAudioChannel={setAudioChannel}
+            />
+            {3 <= audioTracks.length && (
+              <AudioTrackSelector
+                audioTrack={audioTrack}
+                setAudioTrack={setAudioTrack}
+                audioTracks={audioTracks}
+              />
+            )}
+            <SubtitleToggleButton
+              subtitleEnabled={subtitleEnabled}
+              setSubtitleEnabled={setSubtitleEnabled}
+            />
+            <CoiledScreenshotButton />
+            <CommentOpacitySlider
+              commentOpacity={commentOpacity}
+              setCommentOpacity={setCommentOpacity}
+            />
+            <div className="pr-2" />
+          </div>
+        </div>
+        <div className="absolute w-full h-full flex items-center justify-center pointer-events-none">
+          <button
+            type="button"
+            className={clsx(
+              "focus:outline-none cursor-pointer pointer-events-auto transition-opacity duration-150 ease-in-out",
+              isPlayButtonShowing || !isPlaying ? "opacity-80" : "opacity-0",
+              isPlaying && "animate-ping-once"
+            )}
+            onClick={() => setIsPlaying((isPlaying) => !isPlaying)}
+            onDoubleClick={(e) => e.stopPropagation()}
+          >
+            {isPlaying ? (
+              <PauseCircle className="pointer-events-none" size={46} />
+            ) : (
+              <PlayCircle className="pointer-events-none" size={46} />
+            )}
+          </button>
         </div>
       </div>
     </div>

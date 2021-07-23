@@ -25,3 +25,14 @@ button {
     -2px -2px 1px #000000, 2px 0px 1px #000000, 0px 2px 1px #000000,
     -2px 0px 1px #000000, 0px -2px 1px #000000;
 }
+
+.animate-ping-once {
+  animation: ping 1s cubic-bezier(0, 0, 0.2, 1), hidden 1s linear 1s infinite;
+}
+
+@keyframes hidden {
+  0%,
+  100% {
+    opacity: 0;
+  }
+}
