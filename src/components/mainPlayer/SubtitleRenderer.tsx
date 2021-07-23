@@ -79,6 +79,7 @@ export const CoiledSubtitleRenderer: React.VFC<{}> = memo(() => {
         keepAspectRatio: true,
         normalFont: "'Rounded M+ 1m for ARIB'",
         gaijiFont: "'Rounded M+ 1m for ARIB'",
+        drcsReplacement: true,
       })
       setDisplayingAribSubtitleData(decoded)
       displayingSubtitle.current = aribSubtitleData.data
