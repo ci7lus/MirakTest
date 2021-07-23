@@ -268,8 +268,10 @@ export const CoiledController: React.VFC<{}> = () => {
           <button
             type="button"
             className={clsx(
-              "focus:outline-none cursor-pointer pointer-events-auto transition-opacity duration-150 ease-in-out",
-              isPlayButtonShowing || !isPlaying ? "opacity-80" : "opacity-0",
+              "focus:outline-none transition-opacity duration-150 ease-in-out",
+              isPlayButtonShowing || !isPlaying
+                ? "opacity-80 cursor-pointer pointer-events-auto"
+                : "opacity-0",
               isPlaying && "animate-ping-once"
             )}
             onClick={() => setIsPlaying((isPlaying) => !isPlaying)}
