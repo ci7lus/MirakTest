@@ -17,7 +17,7 @@ Electron を使用した Mirakurun の映像視聴確認用アプリです。鋭
 
 [![Image from Gyazo](https://i.gyazo.com/582a518d615e042394ade5fe7bcfcf3f.jpg)](https://gyazo.com/582a518d615e042394ade5fe7bcfcf3f)
 
-macOS 版は [aribb24.js](https://github.com/monyone/aribb24.js) による字幕表示にも対応しています。
+macOS / Windows 版は [aribb24.js](https://github.com/monyone/aribb24.js) による字幕表示にも対応しています。
 
 [![Image from Gyazo](https://i.gyazo.com/2f5f23d3c0e2968724dd2bce018cef86.jpg)](https://gyazo.com/2f5f23d3c0e2968724dd2bce018cef86)
 
@@ -102,4 +102,4 @@ DTV コミュニティの皆さまに感謝します。
 
 ## ライセンス
 
-MirakTest のソースコードは MIT ライセンスの下で提供されますが、ビルド済みパッケージは libVLC を含んでいる場合があり、その場合は LGPL または GPLv2 でライセンスされます（[詳細](https://wiki.videolan.org/Frequently_Asked_Questions/)）。ビルド済みパッケージを Releases や Artifacts にて配布する場合は可能な限り周辺情報としてその旨を表示し、パッケージにはライセンス情報を同梱します。
+MirakTest のソースコードは MIT ライセンスの下で提供されますが、ビルド済みパッケージは libVLC を含んでいる場合があり、その場合は LGPLv2.1 または GPLv2 でライセンスされます（[詳細](https://wiki.videolan.org/Frequently_Asked_Questions/)）。ビルド済みパッケージを Releases や Artifacts にて配布する場合は可能な限り周辺情報としてその旨を表示し、パッケージにはライセンス情報を同梱します。
