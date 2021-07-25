@@ -186,7 +186,12 @@ export const CoiledController: React.VFC<{}> = () => {
         })
       }}
     >
-      <div className="absolute w-full h-full flex flex-col justify-between">
+      <div
+        className={clsx(
+          "absolute w-full h-full flex flex-col justify-between",
+          !isVisible && "cursor-none"
+        )}
+      >
         <div
           className={`select-none transition-opacity duration-150 ease-in-out p-4 ${
             isServiceNameShowing ? "opacity-100" : "opacity-0"

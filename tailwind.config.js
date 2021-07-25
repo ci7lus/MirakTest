@@ -19,4 +19,22 @@ module.exports = {
     require("tailwindcss-textshadow"),
     require("@tailwindcss/custom-forms"),
   ],
+  theme: {
+    cursor: {
+      none: "none",
+    },
+    extend: {
+      animation: {
+        "ping-once":
+          "ping 1s cubic-bezier(0, 0, 0.2, 1), hidden 1s linear 1s infinite",
+      },
+      keyframes: {
+        hidden: {
+          "0%, 100%": {
+            opacity: 0,
+          },
+        },
+      },
+    },
+  },
 }
