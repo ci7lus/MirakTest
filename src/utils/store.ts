@@ -1,10 +1,10 @@
 import Store from "electron-store"
 import pkg from "../../package.json"
 import {
-  mainPlayerBounds,
-  mainPlayerLastSelectedServiceId,
-  mainPlayerVolume,
-} from "../atoms/mainPlayer"
+  contentPlayerBounds,
+  contentPlayerLastSelectedServiceId,
+  contentPlayerVolume,
+} from "../atoms/contentPlayer"
 import { mirakurunSetting, sayaSetting } from "../atoms/settings"
 
 const store = new Store<{}>({
@@ -19,14 +19,14 @@ const store = new Store<{}>({
     baseUrl: { type: "string" },
     replaces: { type: "array" },
   },
-  [mainPlayerVolume.key]: { type: "number" },
-  [mainPlayerBounds.key]: {
+  [contentPlayerVolume.key]: { type: "number" },
+  [contentPlayerBounds.key]: {
     width: { type: "number" },
     height: { type: "number" },
     x: { type: "number" },
     y: { type: "number" },
   },
-  [mainPlayerLastSelectedServiceId.key]: { type: "number" },
+  [contentPlayerLastSelectedServiceId.key]: { type: "number" },
 })
 
 export { store }

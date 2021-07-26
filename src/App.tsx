@@ -4,11 +4,11 @@ import { RecoilRoot } from "recoil"
 import { RecoilObserver } from "./components/global/RecoilObserver"
 import { Splash } from "./components/global/Splash"
 import { initializeState } from "./utils/recoil"
-import { CoiledMainPlayer } from "./windows/MainPlayer"
+import { CoiledContentPlayer } from "./windows/ContentPlayer"
 import { Settings } from "./windows/Settings"
 
 const Router: React.VFC<{}> = () => {
-  const hash = window.location.hash as "#MainPlayer" | "#Settings" | "#EPG"
+  const hash = window.location.hash as "#ContentPlayer" | "#Settings" | "#EPG"
   const [unmounted, setUnmounted] = useState(false)
   useEffect(() => {
     const app = document.getElementById("app")
@@ -24,8 +24,8 @@ const Router: React.VFC<{}> = () => {
   }, [])
   if (unmounted) {
     return <Splash />
-  } else if (hash === "#MainPlayer") {
-    return <CoiledMainPlayer />
+  } else if (hash === "#ContentPlayer") {
+    return <CoiledContentPlayer />
   } else if (hash === "#Settings") {
     return <Settings />
   } else {

@@ -2,7 +2,7 @@
 import DPlayer, { DPlayerEvents } from "dplayer"
 import React, { memo, useEffect, useRef } from "react"
 import { useRecoilValue } from "recoil"
-import { mainPlayerCommentOpacity } from "../../atoms/mainPlayer"
+import { contentPlayerCommentOpacity } from "../../atoms/contentPlayer"
 import { CommentPayload } from "../../types/struct"
 import { trimCommentForFlow } from "../../utils/comment"
 
@@ -20,7 +20,7 @@ export const CoiledDPlayerWrapper: React.VFC<{
     unlimited: true,
   }
 
-  const commentOpacity = useRecoilValue(mainPlayerCommentOpacity)
+  const commentOpacity = useRecoilValue(contentPlayerCommentOpacity)
 
   useEffect(() => {
     if (!player.current) return

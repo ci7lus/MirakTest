@@ -1,10 +1,10 @@
 import React from "react"
 import { useRecoilTransactionObserver_UNSTABLE } from "recoil"
 import {
-  mainPlayerBounds,
-  mainPlayerLastSelectedServiceId,
-  mainPlayerVolume,
-} from "../../atoms/mainPlayer"
+  contentPlayerBounds,
+  contentPlayerLastSelectedServiceId,
+  contentPlayerVolume,
+} from "../../atoms/contentPlayer"
 import {
   controllerSetting,
   experimentalSetting,
@@ -58,28 +58,28 @@ export const RecoilObserver: React.VFC<{}> = () => {
             console.error(e)
           }
           break
-        case mainPlayerVolume.key:
+        case contentPlayerVolume.key:
           try {
-            const snap = snapshot.getLoadable(mainPlayerVolume).getValue()
-            store.set(mainPlayerVolume.key, snap)
+            const snap = snapshot.getLoadable(contentPlayerVolume).getValue()
+            store.set(contentPlayerVolume.key, snap)
           } catch (e) {
             console.error(e)
           }
           break
-        case mainPlayerBounds.key:
+        case contentPlayerBounds.key:
           try {
-            const snap = snapshot.getLoadable(mainPlayerBounds).getValue()
-            store.set(mainPlayerBounds.key, snap)
+            const snap = snapshot.getLoadable(contentPlayerBounds).getValue()
+            store.set(contentPlayerBounds.key, snap)
           } catch (e) {
             console.error(e)
           }
           break
-        case mainPlayerLastSelectedServiceId.key:
+        case contentPlayerLastSelectedServiceId.key:
           try {
             const snap = snapshot
-              .getLoadable(mainPlayerLastSelectedServiceId)
+              .getLoadable(contentPlayerLastSelectedServiceId)
               .getValue()
-            store.set(mainPlayerLastSelectedServiceId.key, snap)
+            store.set(contentPlayerLastSelectedServiceId.key, snap)
           } catch (e) {
             console.error(e)
           }

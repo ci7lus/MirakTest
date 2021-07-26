@@ -3,11 +3,11 @@ import React, { useEffect, useRef, useState } from "react"
 import { toast } from "react-toastify"
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil"
 import {
-  mainPlayerLastSelectedServiceId,
-  mainPlayerSelectedService,
-  mainPlayerSelectedServiceLogoUrl,
-  mainPlayerUrl,
-} from "../../atoms/mainPlayer"
+  contentPlayerLastSelectedServiceId,
+  contentPlayerSelectedService,
+  contentPlayerSelectedServiceLogoUrl,
+  contentPlayerUrl,
+} from "../../atoms/contentPlayer"
 import {
   mirakurunCompatibility,
   mirakurunPrograms,
@@ -28,14 +28,14 @@ export const MirakurunManager: React.VFC<{}> = () => {
   const setServices = useSetRecoilState(mirakurunServices)
   const setPrograms = useSetRecoilState(mirakurunPrograms)
   const [selectedService, setSelectedService] = useRecoilState(
-    mainPlayerSelectedService
+    contentPlayerSelectedService
   )
-  const [url, setUrl] = useRecoilState(mainPlayerUrl)
+  const [url, setUrl] = useRecoilState(contentPlayerUrl)
   const [lastSelectedServiceId, setLastSelectedServiceId] = useRecoilState(
-    mainPlayerLastSelectedServiceId
+    contentPlayerLastSelectedServiceId
   )
   const setSelectedServiceLogoUrl = useSetRecoilState(
-    mainPlayerSelectedServiceLogoUrl
+    contentPlayerSelectedServiceLogoUrl
   )
   const [serviceLogos, setServiceLogos] = useState<{ [key: number]: string }>(
     {}

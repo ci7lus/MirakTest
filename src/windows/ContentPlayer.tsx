@@ -4,39 +4,41 @@ import { ToastContainer, Slide } from "react-toastify"
 import { injectStyle } from "react-toastify/dist/inject-style"
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil"
 import {
-  mainPlayerBounds,
-  mainPlayerIsPlaying,
-  mainPlayerLastSelectedServiceId,
-  mainPlayerRoute,
-  mainPlayerSelectedService,
-  mainPlayerTitle,
-} from "../atoms/mainPlayer"
+  contentPlayerBounds,
+  contentPlayerIsPlaying,
+  contentPlayerLastSelectedServiceId,
+  contentPlayerRoute,
+  contentPlayerSelectedService,
+  contentPlayerTitle,
+} from "../atoms/contentPlayer"
 import { mirakurunServices } from "../atoms/mirakurun"
+import { CoiledController } from "../components/contentPlayer/Controller"
+import { MirakurunManager } from "../components/contentPlayer/MirakurunManager"
+import { CoiledProgramTitleManager } from "../components/contentPlayer/ProgramTitleManager"
+import { CoiledRPCManager } from "../components/contentPlayer/RPCManager"
+import { CoiledSayaComments } from "../components/contentPlayer/Saya"
+import { CoiledSubtitleRenderer } from "../components/contentPlayer/SubtitleRenderer"
+import { CoiledVideoPlayer } from "../components/contentPlayer/VideoPlayer"
 import { Splash } from "../components/global/Splash"
-import { CoiledController } from "../components/mainPlayer/Controller"
-import { MirakurunManager } from "../components/mainPlayer/MirakurunManager"
-import { CoiledProgramTitleManager } from "../components/mainPlayer/ProgramTitleManager"
-import { CoiledRPCManager } from "../components/mainPlayer/RPCManager"
-import { CoiledSayaComments } from "../components/mainPlayer/Saya"
-import { CoiledSubtitleRenderer } from "../components/mainPlayer/SubtitleRenderer"
-import { CoiledVideoPlayer } from "../components/mainPlayer/VideoPlayer"
 import { useRefFromState } from "../hooks/ref"
 import { useRecoilValueRef } from "../utils/recoil"
 import { VirtualWindowComponent } from "./Virtual"
 
-export const CoiledMainPlayer: React.VFC<{}> = () => {
-  const [route, setRoute] = useRecoilState(mainPlayerRoute)
-  const setBounds = useSetRecoilState(mainPlayerBounds)
+export const CoiledContentPlayer: React.VFC<{}> = () => {
+  const [route, setRoute] = useRecoilState(contentPlayerRoute)
+  const setBounds = useSetRecoilState(contentPlayerBounds)
   const [selectedService, setSelectedService] = useRecoilState(
-    mainPlayerSelectedService
+    contentPlayerSelectedService
   )
   const selectedServiceRef = useRefFromState(selectedService)
-  const lastSelectedServiceId = useRecoilValue(mainPlayerLastSelectedServiceId)
+  const lastSelectedServiceId = useRecoilValue(
+    contentPlayerLastSelectedServiceId
+  )
   const lastSelectedServiceIdRef = useRefFromState(lastSelectedServiceId)
   const services = useRecoilValue(mirakurunServices)
   const servicesRef = useRefFromState(services)
-  const [, isPlayingRef] = useRecoilValueRef(mainPlayerIsPlaying)
-  const setIsPlaying = useSetRecoilState(mainPlayerIsPlaying)
+  const [, isPlayingRef] = useRecoilValueRef(contentPlayerIsPlaying)
+  const setIsPlaying = useSetRecoilState(contentPlayerIsPlaying)
   useEffect(() => {
     injectStyle()
     const remoteWindow = remote.getCurrentWindow()
@@ -115,7 +117,7 @@ export const CoiledMainPlayer: React.VFC<{}> = () => {
               },
               backgroundColor: "#111827",
             })
-            window.loadFile("index.html", { hash: "MainPlayer" })
+            window.loadFile("index.html", { hash: "ContentPlayer" })
             window.setAspectRatio(16 / 9)
           },
         },
@@ -176,7 +178,7 @@ export const CoiledMainPlayer: React.VFC<{}> = () => {
     }
   }, [])
   // タイトル
-  const title = useRecoilValue(mainPlayerTitle)
+  const title = useRecoilValue(contentPlayerTitle)
   useEffect(() => {
     const window = remote.getCurrentWindow()
     if (title) {

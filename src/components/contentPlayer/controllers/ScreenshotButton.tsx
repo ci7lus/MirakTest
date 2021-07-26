@@ -1,10 +1,10 @@
 import React, { memo } from "react"
 import { Camera } from "react-feather"
 import { useSetRecoilState } from "recoil"
-import { mainPlayerScreenshotTrigger } from "../../../atoms/mainPlayer"
+import { contentPlayerScreenshotTrigger } from "../../../atoms/contentPlayer"
 
 export const CoiledScreenshotButton: React.VFC<{}> = memo(() => {
-  const setScreenshotTrigger = useSetRecoilState(mainPlayerScreenshotTrigger)
+  const setScreenshotTrigger = useSetRecoilState(contentPlayerScreenshotTrigger)
 
   return (
     <button

@@ -2,12 +2,12 @@ import type { Presence } from "discord-rpc"
 import React, { useEffect, useState } from "react"
 import { useRecoilValue, useSetRecoilState } from "recoil"
 import pkg from "../../../package.json"
-import { globalPresence } from "../../atoms/global"
 import {
-  mainPlayerSelectedService,
-  mainPlayerCurrentProgram,
-  mainPlayerTitle,
-} from "../../atoms/mainPlayer"
+  contentPlayerSelectedService,
+  contentPlayerCurrentProgram,
+  contentPlayerTitle,
+} from "../../atoms/contentPlayer"
+import { globalPresence } from "../../atoms/global"
 import { mirakurunProgramsFamily } from "../../atoms/mirakurun"
 import { useNow } from "../../hooks/date"
 import { Program } from "../../infra/mirakurun/api"
@@ -15,13 +15,13 @@ import { getServiceLogoForPresence } from "../../utils/presence"
 import { getCurrentProgramOfService } from "../../utils/program"
 
 export const CoiledProgramTitleManager: React.VFC<{}> = () => {
-  const selectedService = useRecoilValue(mainPlayerSelectedService)
+  const selectedService = useRecoilValue(contentPlayerSelectedService)
   const now = useNow()
   const programs = useRecoilValue(
     mirakurunProgramsFamily(selectedService?.serviceId ?? 0)
   )
-  const setCurrentProgram = useSetRecoilState(mainPlayerCurrentProgram)
-  const setTitle = useSetRecoilState(mainPlayerTitle)
+  const setCurrentProgram = useSetRecoilState(contentPlayerCurrentProgram)
+  const setTitle = useSetRecoilState(contentPlayerTitle)
 
   const [program, setProgram] = useState<Program | null>()
 

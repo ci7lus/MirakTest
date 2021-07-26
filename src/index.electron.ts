@@ -22,7 +22,7 @@ const init = () => {
     // @ts-ignore
     projectName: pkg.name,
   })
-  const bounds: Rectangle | null = store.get(`${pkg.name}.mainPlayer.bounds`)
+  const bounds: Rectangle | null = store.get(`${pkg.name}.contentPlayer.bounds`)
   const width = bounds?.width || Math.ceil(1280 / display.scaleFactor)
   const height = bounds?.height || Math.ceil(720 / display.scaleFactor)
   window = new BrowserWindow({
@@ -38,7 +38,7 @@ const init = () => {
     backgroundColor: "#111827",
   })
 
-  window.loadFile("index.html", { hash: "MainPlayer" })
+  window.loadFile("index.html", { hash: "ContentPlayer" })
   if (process.env.NODE_ENV === "development") {
     window.webContents.openDevTools()
   }

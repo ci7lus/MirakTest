@@ -5,21 +5,21 @@ import { PauseCircle, PlayCircle } from "react-feather"
 import { useDebounce } from "react-use"
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil"
 import {
-  mainPlayerAudioChannel,
-  mainPlayerAudioTrack,
-  mainPlayerAudioTracks,
-  mainPlayerCommentOpacity,
-  mainPlayerIsPlaying,
-  mainPlayerIsSeekable,
-  mainPlayerLastSelectedServiceId,
-  mainPlayerPlayingPosition,
-  mainPlayerPositionUpdateTrigger,
-  mainPlayerScreenshotTrigger,
-  mainPlayerSelectedService,
-  mainPlayerSelectedServiceLogoUrl,
-  mainPlayerSubtitleEnabled,
-  mainPlayerVolume,
-} from "../../atoms/mainPlayer"
+  contentPlayerAudioChannel,
+  contentPlayerAudioTrack,
+  contentPlayerAudioTracks,
+  contentPlayerCommentOpacity,
+  contentPlayerIsPlaying,
+  contentPlayerIsSeekable,
+  contentPlayerLastSelectedServiceId,
+  contentPlayerPlayingPosition,
+  contentPlayerPositionUpdateTrigger,
+  contentPlayerScreenshotTrigger,
+  contentPlayerSelectedService,
+  contentPlayerSelectedServiceLogoUrl,
+  contentPlayerSubtitleEnabled,
+  contentPlayerVolume,
+} from "../../atoms/contentPlayer"
 import { mirakurunServices } from "../../atoms/mirakurun"
 import { controllerSetting, experimentalSetting } from "../../atoms/settings"
 import { useRefFromState } from "../../hooks/ref"
@@ -45,37 +45,39 @@ export const CoiledController: React.VFC<{}> = () => {
     [lastCurMoved]
   )
 
-  const [isPlaying, setIsPlaying] = useRecoilState(mainPlayerIsPlaying)
-  const position = useRecoilValue(mainPlayerPlayingPosition)
-  const setPosition = useSetRecoilState(mainPlayerPositionUpdateTrigger)
-  const isSeekable = useRecoilValue(mainPlayerIsSeekable)
+  const [isPlaying, setIsPlaying] = useRecoilState(contentPlayerIsPlaying)
+  const position = useRecoilValue(contentPlayerPlayingPosition)
+  const setPosition = useSetRecoilState(contentPlayerPositionUpdateTrigger)
+  const isSeekable = useRecoilValue(contentPlayerIsSeekable)
 
   const services = useRecoilValue(mirakurunServices)
   const [selectedService, setSelectedService] = useRecoilState(
-    mainPlayerSelectedService
+    contentPlayerSelectedService
   )
-  const serviceLogoUrl = useRecoilValue(mainPlayerSelectedServiceLogoUrl)
+  const serviceLogoUrl = useRecoilValue(contentPlayerSelectedServiceLogoUrl)
 
   const [subtitleEnabled, setSubtitleEnabled] = useRecoilState(
-    mainPlayerSubtitleEnabled
+    contentPlayerSubtitleEnabled
   )
-  const [volume, setVolume] = useRecoilState(mainPlayerVolume)
+  const [volume, setVolume] = useRecoilState(contentPlayerVolume)
   const [commentOpacity, setCommentOpacity] = useRecoilState(
-    mainPlayerCommentOpacity
+    contentPlayerCommentOpacity
   )
 
-  const [audioTrack, setAudioTrack] = useRecoilState(mainPlayerAudioTrack)
-  const audioTracks = useRecoilValue(mainPlayerAudioTracks)
+  const [audioTrack, setAudioTrack] = useRecoilState(contentPlayerAudioTrack)
+  const audioTracks = useRecoilValue(contentPlayerAudioTracks)
 
   const [isServiceNameShowing, setIsServiceNameShowing] = useState(false)
-  const lastServiceId = useRecoilValue(mainPlayerLastSelectedServiceId)
+  const lastServiceId = useRecoilValue(contentPlayerLastSelectedServiceId)
   useEffect(() => {
     if (!lastServiceId) return
     setIsServiceNameShowing(true)
     const timer = setTimeout(() => setIsServiceNameShowing(false), 5 * 1000)
     return () => clearInterval(timer)
   }, [lastServiceId])
-  const [audioChannel, setAudioChannel] = useRecoilState(mainPlayerAudioChannel)
+  const [audioChannel, setAudioChannel] = useRecoilState(
+    contentPlayerAudioChannel
+  )
 
   const componentRef = useRef<HTMLDivElement>(null)
 
@@ -104,7 +106,7 @@ export const CoiledController: React.VFC<{}> = () => {
   const controller = useRecoilValue(controllerSetting)
 
   // キーボードショートカット
-  const setScreenshotTrigger = useSetRecoilState(mainPlayerScreenshotTrigger)
+  const setScreenshotTrigger = useSetRecoilState(contentPlayerScreenshotTrigger)
   useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {
       if (e.key === "s" && (e.metaKey === true || e.ctrlKey === true)) {

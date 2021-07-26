@@ -1,12 +1,12 @@
 import { Transition } from "@headlessui/react"
 import React from "react"
 import { X } from "react-feather"
-import { MainPlayerRoute } from "../types/mainPlayer"
+import { ContentPlayerRoute } from "../types/contentPlayer"
 import { Settings } from "./Settings"
 
 export const VirtualWindowComponent: React.VFC<{
-  route: MainPlayerRoute
-  setRoute: (r: MainPlayerRoute) => unknown
+  route: ContentPlayerRoute
+  setRoute: (r: ContentPlayerRoute) => unknown
 }> = ({ route, setRoute }) => {
   return (
     <Transition
@@ -40,7 +40,7 @@ export const VirtualWindowComponent: React.VFC<{
   )
 }
 
-const VirtualWindowRouter: React.VFC<{ route: MainPlayerRoute }> = ({
+const VirtualWindowRouter: React.VFC<{ route: ContentPlayerRoute }> = ({
   route,
 }) => {
   if (route === "settings") {

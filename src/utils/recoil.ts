@@ -1,10 +1,10 @@
 import { useEffect, useRef } from "react"
 import { MutableSnapshot, RecoilState, useRecoilValue } from "recoil"
 import {
-  mainPlayerBounds,
-  mainPlayerLastSelectedServiceId,
-  mainPlayerVolume,
-} from "../atoms/mainPlayer"
+  contentPlayerBounds,
+  contentPlayerLastSelectedServiceId,
+  contentPlayerVolume,
+} from "../atoms/contentPlayer"
 import {
   controllerSetting,
   experimentalSetting,
@@ -35,22 +35,22 @@ export const initializeState = (mutableSnapShot: MutableSnapshot) => {
   if (savedExperimentalSetting) {
     mutableSnapShot.set(experimentalSetting, savedExperimentalSetting)
   }
-  const savedMainPlayerVolume = store.get(mainPlayerVolume.key, null)
-  if (savedMainPlayerVolume !== null) {
-    mutableSnapShot.set(mainPlayerVolume, savedMainPlayerVolume)
+  const savedContentPlayerVolume = store.get(contentPlayerVolume.key, null)
+  if (savedContentPlayerVolume !== null) {
+    mutableSnapShot.set(contentPlayerVolume, savedContentPlayerVolume)
   }
-  const savedMainPlayerBounds = store.get(mainPlayerBounds.key, null)
-  if (savedMainPlayerBounds) {
-    mutableSnapShot.set(mainPlayerBounds, savedMainPlayerBounds)
+  const savedContentPlayerBounds = store.get(contentPlayerBounds.key, null)
+  if (savedContentPlayerBounds) {
+    mutableSnapShot.set(contentPlayerBounds, savedContentPlayerBounds)
   }
-  const savedMainPlayerLastSelectedServiceId = store.get(
-    mainPlayerLastSelectedServiceId.key,
+  const savedContentPlayerLastSelectedServiceId = store.get(
+    contentPlayerLastSelectedServiceId.key,
     null
   )
-  if (savedMainPlayerLastSelectedServiceId) {
+  if (savedContentPlayerLastSelectedServiceId) {
     mutableSnapShot.set(
-      mainPlayerLastSelectedServiceId,
-      savedMainPlayerLastSelectedServiceId
+      contentPlayerLastSelectedServiceId,
+      savedContentPlayerLastSelectedServiceId
     )
   }
 }
