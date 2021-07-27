@@ -20,10 +20,10 @@ module.exports = {
     require("@tailwindcss/custom-forms"),
   ],
   theme: {
-    cursor: {
-      none: "none",
-    },
     extend: {
+      cursor: {
+        none: "none",
+      },
       animation: {
         "ping-once":
           "ping 1s cubic-bezier(0, 0, 0.2, 1), hidden 1s linear 1s infinite",
