@@ -32,7 +32,7 @@ rules:
   "@typescript-eslint/no-misused-new": off
   "no-empty": off
   "no-console":
-    - error
+    - warn
     - allow:
         - "error"
         - "warn"
