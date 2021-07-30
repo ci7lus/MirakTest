@@ -151,7 +151,7 @@ jobs:
       - name: Build webchimera.js
         run: ./setup_wcjs.sh
       - name: VLC related libs are licensed under LGPL and GPLv2
-        run: ./setup_vlclib_mac.sh
+        run: ./setup_libvlc_mac.sh
       - name: Set nightly version
         if: ${{ github.event_name != 'release' }}
         run: yarn ts-node setPackageVersion.ts
