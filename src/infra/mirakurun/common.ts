@@ -15,6 +15,7 @@
 import { Configuration } from "./configuration"
 import { RequiredError, RequestArgs } from "./base"
 import { AxiosInstance } from "axios"
+import { ObjectLiteral } from "../../types/struct"
 
 /**
  *
@@ -175,7 +176,7 @@ export const createRequestFunction = function (
     }
     // openapi 認証部書き換え
     const url = new URL(configuration?.basePath || basePath)
-    const headers: { [key: string]: string } = {}
+    const headers: ObjectLiteral<string> = {}
     if (url.username || url.password) {
       headers["Authorization"] = `Basic ${btoa(
         [url.username, url.password].filter((s) => s).join(":")

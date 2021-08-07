@@ -11,7 +11,7 @@ import {
   contentPlayerCommentOpacity,
   contentPlayerIsPlaying,
   contentPlayerIsSeekable,
-  contentPlayerLastSelectedServiceId,
+  contentPlayerKeyForRestoration,
   contentPlayerPlayingPosition,
   contentPlayerPositionUpdateTrigger,
   contentPlayerScreenshotTrigger,
@@ -68,13 +68,13 @@ export const CoiledController: React.VFC<{}> = () => {
   const audioTracks = useRecoilValue(contentPlayerAudioTracks)
 
   const [isServiceNameShowing, setIsServiceNameShowing] = useState(false)
-  const lastServiceId = useRecoilValue(contentPlayerLastSelectedServiceId)
+  const keyForRestoration = useRecoilValue(contentPlayerKeyForRestoration)
   useEffect(() => {
-    if (!lastServiceId) return
+    if (!keyForRestoration) return
     setIsServiceNameShowing(true)
     const timer = setTimeout(() => setIsServiceNameShowing(false), 5 * 1000)
     return () => clearInterval(timer)
-  }, [lastServiceId])
+  }, [keyForRestoration])
   const [audioChannel, setAudioChannel] = useRecoilState(
     contentPlayerAudioChannel
   )

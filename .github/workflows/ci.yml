@@ -180,6 +180,13 @@ jobs:
         with:
           name: mac-build-image
           path: build/*.dmg
+      - name: Build dts for plugin
+        run: yarn build:dts-plugin
+      - name: Upload plugin.d.ts
+        uses: actions/upload-artifact@v2
+        with:
+          name: plugin-dts
+          path: dist/plugin.d.ts
   build-windows:
     runs-on: windows-latest
 

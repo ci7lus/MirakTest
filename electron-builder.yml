@@ -194,6 +194,8 @@ files:
   - "node_modules/lru-cache"
   - "node_modules/yallist"
   - "node_modules/type-fest"
+  - "node_modules/object-hash"
+  - "node_modules/esm"
   - from: node_modules/webchimera.js
     to: node_modules/webchimera.js
 publish: null
@@ -205,7 +207,7 @@ mac:
   entitlements: "entitlements.plist"
   entitlementsInherit: "entitlements.plist"
   extendInfo:
-    NSHumanReadableCopyright: "Copyright © 2021 ci7lus\n\nこのアプリは libVLC を同梱しています。このアプリイメージには LGPLv2.1 または GPLv2 が適用されます。"
+    NSHumanReadableCopyright: "Copyright © 2021 ci7lus\nこのアプリは libVLC を同梱しています。このアプリイメージには LGPLv2.1 または GPLv2 が適用されます。"
 win:
   icon: "assets/miraktest.ico"
   target:

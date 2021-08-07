@@ -20,7 +20,8 @@
     "lint:prettier": "prettier --check './src/**/*.{js,ts,tsx}'",
     "format:prettier": "prettier --write './src/**/*.{js,ts,tsx}'",
     "lint:eslint": "eslint --max-warnings 0 --cache './src/**/*.{js,ts,tsx}'",
-    "format:eslint": "eslint './src/**/*.{js,ts,tsx}' --cache --fix"
+    "format:eslint": "eslint './src/**/*.{js,ts,tsx}' --cache --fix",
+    "build:dts-plugin": "yarn dts-bundle-generator --export-referenced-types=false --external-inlines=electron -o dist/plugin.d.ts --no-check src/types/plugin.ts && ts-node setLicenseInDts.ts"
   },
   "lint-staged": {
     "*.{js,ts,tsx}": "eslint --max-warnings 0 --cache --fix",
@@ -40,7 +41,9 @@
     "@tailwindcss/custom-forms": "^0.2.1",
     "@types/discord-rpc": "^3.0.5",
     "@types/dplayer": "^1.25.1",
+    "@types/esm": "^3.2.0",
     "@types/mini-css-extract-plugin": "^1.4.3",
+    "@types/object-hash": "^2.1.1",
     "@types/react": "^17.0.13",
     "@types/react-dom": "^17.0.8",
     "@types/yarnpkg__lockfile": "^1.1.5",
@@ -51,7 +54,8 @@
     "babel-loader": "^8.2.2",
     "cross-env": "^7.0.3",
     "css-loader": "^5.2.6",
-    "electron": "^12.0.13",
+    "dts-bundle-generator": "^5.9.0",
+    "electron": "^12.0.15",
     "electron-builder": "^22.10.5",
     "eslint": "^7.30.0",
     "eslint-config-prettier": "^8.3.0",
@@ -82,6 +86,8 @@
     "discord-rpc": "^4.0.1",
     "electron-reload": "^1.5.0",
     "electron-store": "^8.0.0",
+    "esm": "^3.2.25",
+    "object-hash": "^2.2.0",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-feather": "^2.0.9",
@@ -89,11 +95,12 @@
     "react-use": "^17.2.4",
     "recoil": "^0.3.1",
     "reconnecting-websocket": "^4.4.0",
-    "webchimera.js": "^0.5.2"
+    "webchimera.js": "^0.5.2",
+    "zod": "^3.5.1"
   },
   "cmake-js": {
     "runtime": "electron",
-    "runtimeVersion": "12.0.13"
+    "runtimeVersion": "12.0.15"
   },
-  "browserslist": "electron 12.0.13"
+  "browserslist": "electron 12.0.15"
 }

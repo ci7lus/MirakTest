@@ -2,7 +2,7 @@ import Store from "electron-store"
 import pkg from "../../package.json"
 import {
   contentPlayerBounds,
-  contentPlayerLastSelectedServiceId,
+  contentPlayerKeyForRestoration,
   contentPlayerVolume,
 } from "../atoms/contentPlayer"
 import { mirakurunSetting, sayaSetting } from "../atoms/settings"
@@ -26,7 +26,7 @@ const store = new Store<{}>({
     x: { type: "number" },
     y: { type: "number" },
   },
-  [contentPlayerLastSelectedServiceId.key]: { type: "number" },
+  [contentPlayerKeyForRestoration.key]: { type: "number" },
 })
 
 export { store }

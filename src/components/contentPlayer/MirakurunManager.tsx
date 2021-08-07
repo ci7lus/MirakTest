@@ -3,7 +3,8 @@ import React, { useEffect, useRef, useState } from "react"
 import { toast } from "react-toastify"
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil"
 import {
-  contentPlayerLastSelectedServiceId,
+  contentPlayerKeyForRestoration,
+  contentPlayerPlayingContent,
   contentPlayerSelectedService,
   contentPlayerSelectedServiceLogoUrl,
   contentPlayerUrl,
@@ -30,9 +31,10 @@ export const MirakurunManager: React.VFC<{}> = () => {
   const [selectedService, setSelectedService] = useRecoilState(
     contentPlayerSelectedService
   )
-  const [url, setUrl] = useRecoilState(contentPlayerUrl)
+  const setPlayingContent = useSetRecoilState(contentPlayerPlayingContent)
+  const url = useRecoilValue(contentPlayerUrl)
   const [lastSelectedServiceId, setLastSelectedServiceId] = useRecoilState(
-    contentPlayerLastSelectedServiceId
+    contentPlayerKeyForRestoration
   )
   const setSelectedServiceLogoUrl = useSetRecoilState(
     contentPlayerSelectedServiceLogoUrl
@@ -107,7 +109,7 @@ export const MirakurunManager: React.VFC<{}> = () => {
     )
     if (lastSelectedServiceId) {
       const service = services.find(
-        (service) => service.id === lastSelectedServiceId
+        (service) => service.id === lastSelectedServiceId.serviceId
       )
       if (service) {
         setSelectedService(service)
@@ -183,11 +185,18 @@ export const MirakurunManager: React.VFC<{}> = () => {
     const requestUrl =
       mirakurunSettingValue.baseUrl + getServiceStreamRequest.url
     const update = () => {
-      setUrl(requestUrl)
-      setLastSelectedServiceId(selectedService.id)
+      setPlayingContent({
+        contentType: "Mirakurun",
+        isLive: true,
+        url: requestUrl,
+      })
+      setLastSelectedServiceId({
+        contentType: "Mirakurun",
+        serviceId: selectedService.id,
+      })
     }
     if (url && mirakurunSettingValue.isEnableWaitForSingleTuner) {
-      setUrl(null)
+      setPlayingContent(null)
       setTimeout(update, 1000)
     } else {
       update()
@@ -203,7 +212,7 @@ export const MirakurunManager: React.VFC<{}> = () => {
         console.error(error)
       }
     } else {
-      setUrl(null)
+      setPlayingContent(null)
     }
   }, [selectedService])
   return <></>
