@@ -24,8 +24,8 @@
     "build:dts-plugin": "yarn dts-bundle-generator --export-referenced-types=false --external-inlines=electron -o dist/plugin.d.ts --no-check src/types/plugin.ts && ts-node setLicenseInDts.ts"
   },
   "lint-staged": {
-    "*.{js,ts,tsx}": "eslint --max-warnings 0 --cache --fix",
-    "*.{js,ts,tsx,md}": "prettier --write"
+    "*.{js,ts,tsx}": "eslint --max-warnings 0 --cache",
+    "*.{js,ts,tsx,md}": "prettier"
   },
   "devDependencies": {
     "@babel/core": "^7.14.6",
