@@ -247,7 +247,7 @@ export const CoiledVideoPlayer: React.VFC<{}> = memo(() => {
       const parsed = VLCLogFilter(message)
       switch (parsed.category) {
         case "resize":
-          console.info(message)
+          console.debug(message)
           if (parsed.width && parsed.height) {
             const aspect = width / height
             setAspect(aspect)
@@ -269,7 +269,7 @@ export const CoiledVideoPlayer: React.VFC<{}> = memo(() => {
           }
           break
         case "arib_data":
-          console.info(message)
+          console.debug(message)
           if (parsed.data) {
             setPlayingTime(player.time)
             setAribSubtitleData({ data: parsed.data, pts: parsed.pts })
@@ -295,7 +295,7 @@ export const CoiledVideoPlayer: React.VFC<{}> = memo(() => {
           player.volume = volumeRef.current
           break
         case "unknown":
-          console.info(message)
+          console.debug(message)
           break
         default:
           break
