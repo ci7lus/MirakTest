@@ -38,6 +38,7 @@
     "@babel/preset-react": "^7.14.5",
     "@babel/preset-typescript": "^7.14.5",
     "@babel/runtime": "^7.14.6",
+    "@ci7lus/eslint-config": "^1.0.1",
     "@tailwindcss/custom-forms": "^0.2.1",
     "@types/discord-rpc": "^3.0.5",
     "@types/dplayer": "^1.25.1",
@@ -47,8 +48,6 @@
     "@types/react": "^17.0.13",
     "@types/react-dom": "^17.0.8",
     "@types/yarnpkg__lockfile": "^1.1.5",
-    "@typescript-eslint/eslint-plugin": "^4.28.1",
-    "@typescript-eslint/parser": "^4.28.1",
     "@yarnpkg/lockfile": "^1.1.0",
     "autoprefixer": "^10.2.6",
     "babel-loader": "^8.2.2",
@@ -57,9 +56,6 @@
     "dts-bundle-generator": "^5.9.0",
     "electron": "^12.0.15",
     "electron-builder": "^22.10.5",
-    "eslint": "^7.30.0",
-    "eslint-config-prettier": "^8.3.0",
-    "eslint-plugin-import": "^2.23.4",
     "husky": "^7.0.0",
     "jest": "^27.0.6",
     "lint-staged": "^11.0.0",
@@ -97,6 +93,9 @@
     "reconnecting-websocket": "^4.4.0",
     "webchimera.js": "^0.5.2",
     "zod": "^3.5.1"
+  },
+  "peerDependencies": {
+    "eslint": "^7.32.0"
   },
   "cmake-js": {
     "runtime": "electron",
