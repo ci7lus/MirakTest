@@ -254,7 +254,7 @@ const loadPlugins = async () => {
         esmRequire(pluginPath)
       const load = "default" in module ? module.default : module
       if (load.main) {
-        const plugin = load.main(args)
+        const plugin = await load.main(args)
         console.info(
           `[Plugin] 読込中: ${plugin.name} (${plugin.id}, ${plugin.version})`
         )

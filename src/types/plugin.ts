@@ -36,7 +36,7 @@ export type ComponentWithPosition =
 
 export type InitPlugin = {
   main?: InitPluginInMain
-  renderer: InitPluginInRenderer
+  renderer?: InitPluginInRenderer
 }
 
 export type PluginInRendererArgs = {
@@ -55,7 +55,7 @@ export type PluginInRendererArgs = {
 
 export type InitPluginInRenderer = (
   args: PluginInRendererArgs
-) => PluginDefineInRenderer
+) => PluginDefineInRenderer | Promise<PluginDefineInRenderer>
 
 export type PluginInMainArgs = {
   appInfo: AppInfo
@@ -72,7 +72,9 @@ export type PluginInMainArgs = {
   }
 }
 
-export type InitPluginInMain = (args: PluginInMainArgs) => PluginDefineInMain
+export type InitPluginInMain = (
+  args: PluginInMainArgs
+) => PluginDefineInMain | Promise<PluginDefineInMain>
 
 export type PluginMeta = {
   // 推奨 id フォーマット: `plugins.${authorNamespace}.${pluginNamespace}` or `io.github.c..`(java 形式)

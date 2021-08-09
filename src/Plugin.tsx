@@ -58,26 +58,26 @@ export const PluginLoader: React.VFC<{
           console.info("[Plugin] 取り込み中:", filePath)
           const module: { default: InitPlugin } | InitPlugin =
             await nativeImport(filePath)
-          const plugin =
-            "default" in module
-              ? module.default.renderer(args)
-              : module.renderer(args)
-          pluginValidator.parse(plugin)
-          console.info(
-            `[Plugin] 読込中: ${plugin.name} (${plugin.id}, ${plugin.version})`
-          )
-          if (
-            ![
-              ...plugin.storedAtoms,
-              ...plugin.sharedAtoms,
-              ...plugin.exposedAtoms,
-            ].every((atom) => atom.key.startsWith("plugins."))
-          ) {
-            throw new Error(
-              `すべての露出した atom のキーは \`plugins.\` から開始する必要があります: ${plugin.id}`
+          const load = "default" in module ? module.default : module
+          if (load.renderer) {
+            const plugin = await load.renderer(args)
+            pluginValidator.parse(plugin)
+            console.info(
+              `[Plugin] 読込中: ${plugin.name} (${plugin.id}, ${plugin.version})`
             )
+            if (
+              ![
+                ...plugin.storedAtoms,
+                ...plugin.sharedAtoms,
+                ...plugin.exposedAtoms,
+              ].every((atom) => atom.key.startsWith("plugins."))
+            ) {
+              throw new Error(
+                `すべての露出した atom のキーは \`plugins.\` から開始する必要があります: ${plugin.id}`
+              )
+            }
+            openedPlugins.push(plugin)
           }
-          openedPlugins.push(plugin)
         } catch (error) {
           console.error("[Plugin] 読み込みエラー:", error)
         }
