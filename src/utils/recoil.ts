@@ -20,7 +20,9 @@ export const initializeState =
     mutableSnapShot.set(globalStoredAtoms, storedAtoms)
     storedAtoms.forEach((key) => {
       const savedValue = store.get(key, null)
-      const atom = ALL_ATOMS.find((atom) => "key" in atom && atom.key === key)
+      const atom =
+        ALL_ATOMS.find((atom) => "key" in atom && atom.key === key) ||
+        window.atoms?.find((atom) => "key" in atom && atom.key === key)
       if (savedValue !== null && atom) {
         mutableSnapShot.set(atom as never, savedValue)
       } else {
@@ -28,7 +30,9 @@ export const initializeState =
       }
     })
     Object.entries(states).map(([key, value]) => {
-      const atom = ALL_ATOMS.find((atom) => "key" in atom && atom.key === key)
+      const atom =
+        ALL_ATOMS.find((atom) => "key" in atom && atom.key === key) ||
+        window.atoms?.find((atom) => "key" in atom && atom.key === key)
       if (atom) {
         mutableSnapShot.set(atom as never, value)
       } else {
