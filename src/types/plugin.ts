@@ -1,6 +1,7 @@
 import Axios from "axios"
 import { remote } from "electron"
 import React from "react"
+import type ReactUse from "react-use"
 import * as Recoil from "recoil"
 import { ContentPlayerPlayingContent } from "./contentPlayer"
 import { OpenWindowArg } from "./ipc"
@@ -46,6 +47,7 @@ export type PluginInRendererArgs = {
     Recoil: typeof Recoil
     Electron: typeof remote
     Axios: typeof Axios
+    ReactUse: typeof ReactUse
     IpcRenderer: Electron.IpcRenderer
   }
   functions: {

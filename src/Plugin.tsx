@@ -1,6 +1,7 @@
 import Axios from "axios"
 import { ipcRenderer, remote } from "electron"
 import React, { useEffect, useState } from "react"
+import * as ReactUse from "react-use"
 import Recoil, { RecoilState } from "recoil"
 import pkg from "../package.json"
 import { StateRoot } from "./State"
@@ -42,6 +43,7 @@ export const PluginLoader: React.VFC<{
         Axios,
         Electron: remote,
         IpcRenderer: ipcRenderer,
+        ReactUse,
       },
       appInfo: { version: pkg.version },
       functions: {
