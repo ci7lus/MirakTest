@@ -18,7 +18,6 @@ import {
   PluginInRendererArgs,
 } from "./types/plugin"
 import { ObjectLiteral } from "./types/struct"
-import { nativeImport } from "./utils/nativeImport"
 import { pluginValidator } from "./utils/plugin"
 
 export const PluginLoader: React.VFC<{
@@ -56,10 +55,22 @@ export const PluginLoader: React.VFC<{
       console.info("pluginPaths:", pluginPaths)
       const openedPlugins: PluginDefineInRenderer[] = []
       for (const filePath of pluginPaths) {
+        const iframe = document.createElement("iframe")
+        iframe.style.display = "none"
+        document.body.appendChild(iframe)
         try {
-          console.info("[Plugin] 取り込み中:", filePath)
-          const module: { default: InitPlugin } | InitPlugin =
-            await nativeImport(filePath)
+          if (filePath.includes("`")) {
+            throw new Error(`[Plugin] 不適な文字列を含んでいます: ${filePath}`)
+          }
+          console.info(
+            "[Plugin] 取り込み中:",
+            filePath,
+            `import(\`${filePath}\`)`
+          )
+          if (!iframe.contentWindow) throw new Error("iframe.contentWindow")
+          const module = await iframe.contentWindow.eval<
+            Promise<{ default: InitPlugin } | InitPlugin>
+          >(`import(\`${filePath}\`)`)
           const load = "default" in module ? module.default : module
           if (load.renderer) {
             const plugin = await load.renderer(args)
@@ -67,6 +78,7 @@ export const PluginLoader: React.VFC<{
             console.info(
               `[Plugin] 読込中: ${plugin.name} (${plugin.id}, ${plugin.version})`
             )
+            iframe.id = plugin.id + ".iframe"
             if (
               ![
                 ...plugin.storedAtoms,
@@ -79,9 +91,12 @@ export const PluginLoader: React.VFC<{
               )
             }
             openedPlugins.push(plugin)
+          } else {
+            document.body.removeChild(iframe)
           }
         } catch (error) {
           console.error("[Plugin] 読み込みエラー:", error)
+          document.body.removeChild(iframe)
         }
       }
       for (const plugin of openedPlugins) {
@@ -111,6 +126,7 @@ export const PluginLoader: React.VFC<{
             }
           })
           plugins.push(plugin)
+          console.info("[Plugin] 読み込み完了:", plugin.id)
         } catch (error) {
           console.error(
             "[Plugin] setup 中にエラーが発生しました:",
