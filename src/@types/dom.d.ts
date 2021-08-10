@@ -6,6 +6,5 @@ export declare global {
     atoms?: RecoilState<unknown>[]
     plugins?: PluginDefineInRenderer[]
     contextMenus?: { [key: string]: Electron.MenuItemConstructorOptions }
-    eval: <T = unknown>(s: string) => T
   }
 }

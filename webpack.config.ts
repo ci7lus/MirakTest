@@ -96,6 +96,7 @@ const factory: MultiConfigurationFactory = (env, args) => [
         scssConfiguration,
         nodeConfiguration,
       ],
+      noParse: /\/nativeImport.ts$/,
     },
 
     resolve: {
