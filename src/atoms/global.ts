@@ -11,17 +11,17 @@ const prefix = `${pkg.name}.global`
 /**
  * @deprecated
  */
-export const globalPresence = atom<Presence | null>({
+export const globalPresenceAtom = atom<Presence | null>({
   key: `${prefix}.presence`,
   default: null,
 })
 
-export const globalSharedAtoms = atom<string[]>({
+export const globalSharedAtomsAtom = atom<string[]>({
   key: `${prefix}.sharedAtoms`,
   default: RECOIL_SHARED_ATOM_KEYS,
 })
 
-export const globalStoredAtoms = atom<string[]>({
+export const globalStoredAtomsAtom = atom<string[]>({
   key: `${prefix}.storedAtoms`,
   default: RECOIL_STORED_ATOM_KEYS,
 })

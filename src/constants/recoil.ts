@@ -1,7 +1,7 @@
 import {
-  contentPlayerBounds,
-  contentPlayerKeyForRestoration,
-  contentPlayerVolume,
+  contentPlayerBoundsAtom,
+  contentPlayerKeyForRestorationAtom,
+  contentPlayerVolumeAtom,
 } from "../atoms/contentPlayer"
 import { mirakurunServices } from "../atoms/mirakurun"
 import {
@@ -27,7 +27,7 @@ export const RECOIL_STORED_ATOM_KEYS = [
   controllerSetting.key,
   screenshotSetting.key,
   experimentalSetting.key,
-  contentPlayerVolume.key,
-  contentPlayerKeyForRestoration.key,
-  contentPlayerBounds.key,
+  contentPlayerVolumeAtom.key,
+  contentPlayerKeyForRestorationAtom.key,
+  contentPlayerBoundsAtom.key,
 ]

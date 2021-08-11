@@ -1,13 +1,16 @@
 import { ipcRenderer } from "electron"
 import React from "react"
 import { useRecoilTransactionObserver_UNSTABLE, useRecoilValue } from "recoil"
-import { globalSharedAtoms, globalStoredAtoms } from "../../atoms/global"
+import {
+  globalSharedAtomsAtom,
+  globalStoredAtomsAtom,
+} from "../../atoms/global"
 import { RECOIL_STATE_UPDATE } from "../../constants/ipc"
 import { store } from "../../utils/store"
 
 export const RecoilObserver: React.VFC<{}> = () => {
-  const sharedAtoms = useRecoilValue(globalSharedAtoms)
-  const storedAtoms = useRecoilValue(globalStoredAtoms)
+  const sharedAtoms = useRecoilValue(globalSharedAtomsAtom)
+  const storedAtoms = useRecoilValue(globalStoredAtomsAtom)
   useRecoilTransactionObserver_UNSTABLE(({ snapshot }) => {
     for (const atom of snapshot.getNodes_UNSTABLE({ isModified: true })) {
       if (sharedAtoms.includes(atom.key)) {

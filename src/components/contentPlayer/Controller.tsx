@@ -5,20 +5,20 @@ import { PauseCircle, PlayCircle } from "react-feather"
 import { useDebounce } from "react-use"
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil"
 import {
-  contentPlayerAudioChannel,
-  contentPlayerAudioTrack,
-  contentPlayerAudioTracks,
-  contentPlayerCommentOpacity,
-  contentPlayerIsPlaying,
-  contentPlayerIsSeekable,
-  contentPlayerKeyForRestoration,
-  contentPlayerPlayingPosition,
-  contentPlayerPositionUpdateTrigger,
-  contentPlayerScreenshotTrigger,
-  contentPlayerSelectedService,
-  contentPlayerSelectedServiceLogoUrl,
-  contentPlayerSubtitleEnabled,
-  contentPlayerVolume,
+  contentPlayerAudioChannelAtom,
+  contentPlayerAudioTrackAtom,
+  contentPlayerAudioTracksAtom,
+  contentPlayerCommentOpacityAtom,
+  contentPlayerIsPlayingAtom,
+  contentPlayerIsSeekableAtom,
+  contentPlayerKeyForRestorationAtom,
+  contentPlayerPlayingPositionAtom,
+  contentPlayerPositionUpdateTriggerAtom,
+  contentPlayerScreenshotTriggerAtom,
+  contentPlayerSelectedServiceAtom,
+  contentPlayerSelectedServiceLogoUrlAtom,
+  contentPlayerSubtitleEnabledAtom,
+  contentPlayerVolumeAtom,
 } from "../../atoms/contentPlayer"
 import { mirakurunServices } from "../../atoms/mirakurun"
 import { controllerSetting, experimentalSetting } from "../../atoms/settings"
@@ -45,30 +45,32 @@ export const CoiledController: React.VFC<{}> = () => {
     [lastCurMoved]
   )
 
-  const [isPlaying, setIsPlaying] = useRecoilState(contentPlayerIsPlaying)
-  const position = useRecoilValue(contentPlayerPlayingPosition)
-  const setPosition = useSetRecoilState(contentPlayerPositionUpdateTrigger)
-  const isSeekable = useRecoilValue(contentPlayerIsSeekable)
+  const [isPlaying, setIsPlaying] = useRecoilState(contentPlayerIsPlayingAtom)
+  const position = useRecoilValue(contentPlayerPlayingPositionAtom)
+  const setPosition = useSetRecoilState(contentPlayerPositionUpdateTriggerAtom)
+  const isSeekable = useRecoilValue(contentPlayerIsSeekableAtom)
 
   const services = useRecoilValue(mirakurunServices)
   const [selectedService, setSelectedService] = useRecoilState(
-    contentPlayerSelectedService
+    contentPlayerSelectedServiceAtom
   )
-  const serviceLogoUrl = useRecoilValue(contentPlayerSelectedServiceLogoUrl)
+  const serviceLogoUrl = useRecoilValue(contentPlayerSelectedServiceLogoUrlAtom)
 
   const [subtitleEnabled, setSubtitleEnabled] = useRecoilState(
-    contentPlayerSubtitleEnabled
+    contentPlayerSubtitleEnabledAtom
   )
-  const [volume, setVolume] = useRecoilState(contentPlayerVolume)
+  const [volume, setVolume] = useRecoilState(contentPlayerVolumeAtom)
   const [commentOpacity, setCommentOpacity] = useRecoilState(
-    contentPlayerCommentOpacity
+    contentPlayerCommentOpacityAtom
   )
 
-  const [audioTrack, setAudioTrack] = useRecoilState(contentPlayerAudioTrack)
-  const audioTracks = useRecoilValue(contentPlayerAudioTracks)
+  const [audioTrack, setAudioTrack] = useRecoilState(
+    contentPlayerAudioTrackAtom
+  )
+  const audioTracks = useRecoilValue(contentPlayerAudioTracksAtom)
 
   const [isServiceNameShowing, setIsServiceNameShowing] = useState(false)
-  const keyForRestoration = useRecoilValue(contentPlayerKeyForRestoration)
+  const keyForRestoration = useRecoilValue(contentPlayerKeyForRestorationAtom)
   useEffect(() => {
     if (!keyForRestoration) return
     setIsServiceNameShowing(true)
@@ -76,7 +78,7 @@ export const CoiledController: React.VFC<{}> = () => {
     return () => clearInterval(timer)
   }, [keyForRestoration])
   const [audioChannel, setAudioChannel] = useRecoilState(
-    contentPlayerAudioChannel
+    contentPlayerAudioChannelAtom
   )
 
   const componentRef = useRef<HTMLDivElement>(null)
@@ -106,7 +108,9 @@ export const CoiledController: React.VFC<{}> = () => {
   const controller = useRecoilValue(controllerSetting)
 
   // キーボードショートカット
-  const setScreenshotTrigger = useSetRecoilState(contentPlayerScreenshotTrigger)
+  const setScreenshotTrigger = useSetRecoilState(
+    contentPlayerScreenshotTriggerAtom
+  )
   useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {
       if (e.key === "s" && (e.metaKey === true || e.ctrlKey === true)) {

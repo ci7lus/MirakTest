@@ -1,11 +1,11 @@
 import RPC from "discord-rpc"
 import React, { useEffect, useRef, useState } from "react"
 import { useRecoilValue } from "recoil"
-import { globalPresence } from "../../atoms/global"
+import { globalPresenceAtom } from "../../atoms/global"
 import { experimentalSetting } from "../../atoms/settings"
 
 export const CoiledRPCManager: React.VFC<{}> = () => {
-  const presence = useRecoilValue(globalPresence)
+  const presence = useRecoilValue(globalPresenceAtom)
   const clientId = "828277784396824596"
   const rpcRef = useRef<RPC.Client | null>(null)
   const [isReady, setIsReady] = useState(false)

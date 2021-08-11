@@ -5,9 +5,9 @@ import { ALL_ATOMS } from "../../atoms"
 import { RECOIL_STATE_UPDATE } from "../../constants/ipc"
 
 export const RecoilApplier: React.VFC<{}> = () => {
-  const setters = [...ALL_ATOMS, ...(window.atoms || [])]
-    .filter((atom) => "key" in atom)
-    .map((atom) => [atom.key, useSetRecoilState(atom as never)] as const)
+  const setters = [...ALL_ATOMS, ...(window.atoms || [])].map(
+    (atom) => [atom.key, useSetRecoilState(atom)] as const
+  )
   useEffect(() => {
     const fn = (
       _ev: Electron.IpcRendererEvent,

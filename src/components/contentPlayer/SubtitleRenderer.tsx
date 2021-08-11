@@ -3,26 +3,26 @@ import clsx from "clsx"
 import React, { memo, useEffect, useRef, useState } from "react"
 import { useRecoilValue, useSetRecoilState } from "recoil"
 import {
-  contentPlayerAribSubtitleData,
-  contentPlayerDisplayingAribSubtitleData,
-  contentPlayerPlayingTime,
-  contentPlayerPositionUpdateTrigger,
-  contentPlayerSelectedService,
-  contentPlayerSubtitleEnabled,
-  contentPlayerTsFirstPcr,
+  contentPlayerAribSubtitleDataAtom,
+  contentPlayerDisplayingAribSubtitleDataAtom,
+  contentPlayerPlayingTimeAtom,
+  contentPlayerPositionUpdateTriggerAtom,
+  contentPlayerSelectedServiceAtom,
+  contentPlayerSubtitleEnabledAtom,
+  contentPlayerTsFirstPcrAtom,
 } from "../../atoms/contentPlayer"
 import { tryBase64ToUint8Array } from "../../utils/string"
 
 export const CoiledSubtitleRenderer: React.VFC<{}> = memo(() => {
   const canvasRef = useRef<HTMLCanvasElement>(null)
 
-  const isSubtitleEnabled = useRecoilValue(contentPlayerSubtitleEnabled)
+  const isSubtitleEnabled = useRecoilValue(contentPlayerSubtitleEnabledAtom)
   const setDisplayingAribSubtitleData = useSetRecoilState(
-    contentPlayerDisplayingAribSubtitleData
+    contentPlayerDisplayingAribSubtitleDataAtom
   )
-  const selectedService = useRecoilValue(contentPlayerSelectedService)
+  const selectedService = useRecoilValue(contentPlayerSelectedServiceAtom)
   const positionUpdateTrigger = useRecoilValue(
-    contentPlayerPositionUpdateTrigger
+    contentPlayerPositionUpdateTriggerAtom
   )
   const latestTimer = useRef<NodeJS.Timer>()
   useEffect(() => {
@@ -51,9 +51,9 @@ export const CoiledSubtitleRenderer: React.VFC<{}> = memo(() => {
   }, [])
 
   // 字幕ペイロード更新時にパースしたデータをレンダリングする
-  const aribSubtitleData = useRecoilValue(contentPlayerAribSubtitleData)
-  const firstPcr = useRecoilValue(contentPlayerTsFirstPcr)
-  const playingTime = useRecoilValue(contentPlayerPlayingTime)
+  const aribSubtitleData = useRecoilValue(contentPlayerAribSubtitleDataAtom)
+  const firstPcr = useRecoilValue(contentPlayerTsFirstPcrAtom)
+  const playingTime = useRecoilValue(contentPlayerPlayingTimeAtom)
   const displayingSubtitle = useRef("")
   useEffect(() => {
     const canvas = canvasRef.current

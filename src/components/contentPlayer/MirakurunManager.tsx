@@ -3,12 +3,12 @@ import React, { useEffect, useRef, useState } from "react"
 import { toast } from "react-toastify"
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil"
 import {
-  contentPlayerKeyForRestoration,
-  contentPlayerPlayingContent,
-  contentPlayerSelectedService,
-  contentPlayerSelectedServiceLogoUrl,
-  contentPlayerUrl,
+  contentPlayerKeyForRestorationAtom,
+  contentPlayerPlayingContentAtom,
+  contentPlayerSelectedServiceAtom,
+  contentPlayerSelectedServiceLogoUrlAtom,
 } from "../../atoms/contentPlayer"
+import { contentPlayerUrlSelector } from "../../atoms/contentPlayerSelectors"
 import {
   mirakurunCompatibility,
   mirakurunPrograms,
@@ -29,15 +29,15 @@ export const MirakurunManager: React.VFC<{}> = () => {
   const setServices = useSetRecoilState(mirakurunServices)
   const setPrograms = useSetRecoilState(mirakurunPrograms)
   const [selectedService, setSelectedService] = useRecoilState(
-    contentPlayerSelectedService
+    contentPlayerSelectedServiceAtom
   )
-  const setPlayingContent = useSetRecoilState(contentPlayerPlayingContent)
-  const url = useRecoilValue(contentPlayerUrl)
+  const setPlayingContent = useSetRecoilState(contentPlayerPlayingContentAtom)
+  const url = useRecoilValue(contentPlayerUrlSelector)
   const [lastSelectedServiceId, setLastSelectedServiceId] = useRecoilState(
-    contentPlayerKeyForRestoration
+    contentPlayerKeyForRestorationAtom
   )
   const setSelectedServiceLogoUrl = useSetRecoilState(
-    contentPlayerSelectedServiceLogoUrl
+    contentPlayerSelectedServiceLogoUrlAtom
   )
   const [serviceLogos, setServiceLogos] = useState<{ [key: number]: string }>(
     {}

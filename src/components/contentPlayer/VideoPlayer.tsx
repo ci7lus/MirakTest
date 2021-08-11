@@ -9,23 +9,23 @@ import { useThrottleFn } from "react-use"
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil"
 import WebChimeraJs from "webchimera.js"
 import {
-  contentPlayerAribSubtitleData,
-  contentPlayerAudioChannel,
-  contentPlayerAudioTrack,
-  contentPlayerAudioTracks,
-  contentPlayerDisplayingAribSubtitleData,
-  contentPlayerIsPlaying,
-  contentPlayerIsSeekable,
-  contentPlayerPlayingPosition,
-  contentPlayerPlayingTime,
-  contentPlayerPositionUpdateTrigger,
-  contentPlayerScreenshotTrigger,
-  contentPlayerSelectedService,
-  contentPlayerSubtitleEnabled,
-  contentPlayerTsFirstPcr,
-  contentPlayerUrl,
-  contentPlayerVolume,
+  contentPlayerAribSubtitleDataAtom,
+  contentPlayerAudioChannelAtom,
+  contentPlayerAudioTrackAtom,
+  contentPlayerAudioTracksAtom,
+  contentPlayerDisplayingAribSubtitleDataAtom,
+  contentPlayerIsPlayingAtom,
+  contentPlayerIsSeekableAtom,
+  contentPlayerPlayingPositionAtom,
+  contentPlayerPlayingTimeAtom,
+  contentPlayerPositionUpdateTriggerAtom,
+  contentPlayerScreenshotTriggerAtom,
+  contentPlayerSelectedServiceAtom,
+  contentPlayerSubtitleEnabledAtom,
+  contentPlayerTsFirstPcrAtom,
+  contentPlayerVolumeAtom,
 } from "../../atoms/contentPlayer"
+import { contentPlayerUrlSelector } from "../../atoms/contentPlayerSelectors"
 import { screenshotSetting } from "../../atoms/settings"
 import { useRefFromState } from "../../hooks/ref"
 import { VideoRenderer } from "../../utils/videoRenderer"
@@ -46,7 +46,7 @@ export const CoiledVideoPlayer: React.VFC<{}> = memo(() => {
 
   const playerRef = useRef<WebChimeraJs.Player | null>(null)
 
-  const url = useRecoilValue(contentPlayerUrl)
+  const url = useRecoilValue(contentPlayerUrlSelector)
   useEffect(() => {
     if (!playerRef.current) return
     if (url) {
@@ -57,7 +57,7 @@ export const CoiledVideoPlayer: React.VFC<{}> = memo(() => {
       console.info("再生停止")
     }
   }, [url])
-  const [isPlaying, setIsPlaying] = useRecoilState(contentPlayerIsPlaying)
+  const [isPlaying, setIsPlaying] = useRecoilState(contentPlayerIsPlayingAtom)
   useEffect(() => {
     const player = playerRef.current
     if (!player || !url) return
@@ -75,7 +75,7 @@ export const CoiledVideoPlayer: React.VFC<{}> = memo(() => {
     }
   }, [isPlaying])
 
-  const volume = useRecoilValue(contentPlayerVolume)
+  const volume = useRecoilValue(contentPlayerVolumeAtom)
   const volumeRef = useRefFromState(volume)
   useEffect(() => {
     if (!playerRef.current) return
@@ -84,27 +84,27 @@ export const CoiledVideoPlayer: React.VFC<{}> = memo(() => {
   }, [volume])
 
   const [isSubtitleEnabled, setIsSubtitleEnabled] = useRecoilState(
-    contentPlayerSubtitleEnabled
+    contentPlayerSubtitleEnabledAtom
   )
   useEffect(() => {
     if (!playerRef.current || firstPcr !== 0) return
     playerRef.current.subtitles.track = Number(isSubtitleEnabled)
     console.info("字幕変更:", Number(isSubtitleEnabled))
   }, [isSubtitleEnabled])
-  const audioChannel = useRecoilValue(contentPlayerAudioChannel)
+  const audioChannel = useRecoilValue(contentPlayerAudioChannelAtom)
   useEffect(() => {
     if (!playerRef.current) return
     playerRef.current.audio.channel = audioChannel
     console.info("オーディオチャンネル変更:", audioChannel)
   }, [audioChannel])
 
-  const audioTrack = useRecoilValue(contentPlayerAudioTrack)
+  const audioTrack = useRecoilValue(contentPlayerAudioTrackAtom)
   useEffect(() => {
     if (!playerRef.current) return
     playerRef.current.audio.track = audioTrack
     console.info("オーディオトラック変更:", audioTrack)
   }, [audioTrack])
-  const setAudioTracks = useSetRecoilState(contentPlayerAudioTracks)
+  const setAudioTracks = useSetRecoilState(contentPlayerAudioTracksAtom)
 
   // スクリーンショットフォルダ初期設定
   const [screenshot, setScreenshot] = useRecoilState(screenshotSetting)
@@ -120,14 +120,14 @@ export const CoiledVideoPlayer: React.VFC<{}> = memo(() => {
       })
       .catch(console.error)
   }, [])
-  const selectedService = useRecoilValue(contentPlayerSelectedService)
+  const selectedService = useRecoilValue(contentPlayerSelectedServiceAtom)
 
   const displayingAribSubtitleData = useRecoilValue(
-    contentPlayerDisplayingAribSubtitleData
+    contentPlayerDisplayingAribSubtitleDataAtom
   )
 
   // スクリーンショットフォルダ初期設定
-  const screenshotTrigger = useRecoilValue(contentPlayerScreenshotTrigger)
+  const screenshotTrigger = useRecoilValue(contentPlayerScreenshotTriggerAtom)
   useEffect(() => {
     const canvas = canvasRef.current
     if (!screenshotTrigger || !canvas) return
@@ -213,10 +213,12 @@ export const CoiledVideoPlayer: React.VFC<{}> = memo(() => {
     })()
   }, [screenshotTrigger])
 
-  const setAribSubtitleData = useSetRecoilState(contentPlayerAribSubtitleData)
+  const setAribSubtitleData = useSetRecoilState(
+    contentPlayerAribSubtitleDataAtom
+  )
   const [firstPcr, setFirstPcr] = useState(0)
   const firstPcrRef = useRefFromState(firstPcr)
-  const setTsFirstPcr = useSetRecoilState(contentPlayerTsFirstPcr)
+  const setTsFirstPcr = useSetRecoilState(contentPlayerTsFirstPcrAtom)
   useThrottleFn(
     (tsPts) => {
       setTsFirstPcr(tsPts)
@@ -224,11 +226,13 @@ export const CoiledVideoPlayer: React.VFC<{}> = memo(() => {
     1000,
     [firstPcr]
   )
-  const setPlayingTime = useSetRecoilState(contentPlayerPlayingTime)
+  const setPlayingTime = useSetRecoilState(contentPlayerPlayingTimeAtom)
   const [position, setPosition] = useState(0)
-  const setPlayingPosition = useSetRecoilState(contentPlayerPlayingPosition)
-  const positionUpdate = useRecoilValue(contentPlayerPositionUpdateTrigger)
-  const [isSeekable, setIsSeekable] = useRecoilState(contentPlayerIsSeekable)
+  const setPlayingPosition = useSetRecoilState(contentPlayerPlayingPositionAtom)
+  const positionUpdate = useRecoilValue(contentPlayerPositionUpdateTriggerAtom)
+  const [isSeekable, setIsSeekable] = useRecoilState(
+    contentPlayerIsSeekableAtom
+  )
   useEffect(() => setPlayingPosition(position), [position])
   useEffect(() => {
     const player = playerRef.current

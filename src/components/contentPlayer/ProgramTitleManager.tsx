@@ -3,29 +3,29 @@ import React, { useEffect, useState } from "react"
 import { useRecoilValue, useSetRecoilState } from "recoil"
 import pkg from "../../../package.json"
 import {
-  contentPlayerSelectedService,
-  contentPlayerCurrentProgram,
-  contentPlayerTitle,
+  contentPlayerSelectedServiceAtom,
+  contentPlayerCurrentProgramAtom,
+  contentPlayerTitleAtom,
 } from "../../atoms/contentPlayer"
-import { globalPresence } from "../../atoms/global"
-import { mirakurunProgramsFamily } from "../../atoms/mirakurun"
+import { globalPresenceAtom } from "../../atoms/global"
+import { mirakurunProgramsFamily } from "../../atoms/mirakurunSelectorFamilies"
 import { useNow } from "../../hooks/date"
 import { Program } from "../../infra/mirakurun/api"
 import { getServiceLogoForPresence } from "../../utils/presence"
 import { getCurrentProgramOfService } from "../../utils/program"
 
 export const CoiledProgramTitleManager: React.VFC<{}> = () => {
-  const selectedService = useRecoilValue(contentPlayerSelectedService)
+  const selectedService = useRecoilValue(contentPlayerSelectedServiceAtom)
   const now = useNow()
   const programs = useRecoilValue(
     mirakurunProgramsFamily(selectedService?.serviceId ?? 0)
   )
-  const setCurrentProgram = useSetRecoilState(contentPlayerCurrentProgram)
-  const setTitle = useSetRecoilState(contentPlayerTitle)
+  const setCurrentProgram = useSetRecoilState(contentPlayerCurrentProgramAtom)
+  const setTitle = useSetRecoilState(contentPlayerTitleAtom)
 
   const [program, setProgram] = useState<Program | null>()
 
-  const setPresence = useSetRecoilState(globalPresence)
+  const setPresence = useSetRecoilState(globalPresenceAtom)
 
   useEffect(() => {
     if (!selectedService) {

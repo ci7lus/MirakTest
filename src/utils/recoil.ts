@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react"
 import { MutableSnapshot, RecoilState, useRecoilValue } from "recoil"
 import { ALL_ATOMS } from "../atoms"
-import { globalSharedAtoms, globalStoredAtoms } from "../atoms/global"
+import { globalSharedAtomsAtom, globalStoredAtomsAtom } from "../atoms/global"
 import { ObjectLiteral } from "../types/struct"
 import { store } from "./store"
 
@@ -16,8 +16,8 @@ export const initializeState =
     sharedAtoms: string[]
   }) =>
   (mutableSnapShot: MutableSnapshot) => {
-    mutableSnapShot.set(globalSharedAtoms, sharedAtoms)
-    mutableSnapShot.set(globalStoredAtoms, storedAtoms)
+    mutableSnapShot.set(globalSharedAtomsAtom, sharedAtoms)
+    mutableSnapShot.set(globalStoredAtomsAtom, storedAtoms)
     storedAtoms.forEach((key) => {
       const savedValue = store.get(key, null)
       const atom =

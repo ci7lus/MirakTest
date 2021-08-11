@@ -1,7 +1,7 @@
 import dayjs from "dayjs"
 import React, { memo, useEffect, useMemo, useState } from "react"
 import { useRecoilValue } from "recoil"
-import { mirakurunProgramsFamily } from "../../../atoms/mirakurun"
+import { mirakurunProgramsFamily } from "../../../atoms/mirakurunSelectorFamilies"
 import { useNow } from "../../../hooks/date"
 import { Service } from "../../../infra/mirakurun/api"
 import { getCurrentProgramOfService } from "../../../utils/program"

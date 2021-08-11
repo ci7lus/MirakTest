@@ -1,9 +1,9 @@
 import Store from "electron-store"
 import pkg from "../../package.json"
 import {
-  contentPlayerBounds,
-  contentPlayerKeyForRestoration,
-  contentPlayerVolume,
+  contentPlayerBoundsAtom,
+  contentPlayerKeyForRestorationAtom,
+  contentPlayerVolumeAtom,
 } from "../atoms/contentPlayer"
 import { mirakurunSetting, sayaSetting } from "../atoms/settings"
 
@@ -19,14 +19,14 @@ const store = new Store<{}>({
     baseUrl: { type: "string" },
     replaces: { type: "array" },
   },
-  [contentPlayerVolume.key]: { type: "number" },
-  [contentPlayerBounds.key]: {
+  [contentPlayerVolumeAtom.key]: { type: "number" },
+  [contentPlayerBoundsAtom.key]: {
     width: { type: "number" },
     height: { type: "number" },
     x: { type: "number" },
     y: { type: "number" },
   },
-  [contentPlayerKeyForRestoration.key]: { type: "number" },
+  [contentPlayerKeyForRestorationAtom.key]: { type: "number" },
 })
 
 export { store }

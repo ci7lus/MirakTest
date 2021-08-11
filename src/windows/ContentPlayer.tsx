@@ -3,7 +3,10 @@ import React, { useEffect } from "react"
 import { ToastContainer, Slide } from "react-toastify"
 import { injectStyle } from "react-toastify/dist/inject-style"
 import { useRecoilValue, useSetRecoilState } from "recoil"
-import { contentPlayerBounds, contentPlayerTitle } from "../atoms/contentPlayer"
+import {
+  contentPlayerBoundsAtom,
+  contentPlayerTitleAtom,
+} from "../atoms/contentPlayer"
 import { PluginPositionComponents } from "../components/common/PluginPositionComponents"
 import { CoiledController } from "../components/contentPlayer/Controller"
 import { MirakurunManager } from "../components/contentPlayer/MirakurunManager"
@@ -16,7 +19,7 @@ import { Splash } from "../components/global/Splash"
 import { useContentPlayerContextMenu } from "../utils/contextmenu"
 
 export const CoiledContentPlayer: React.VFC<{}> = () => {
-  const setBounds = useSetRecoilState(contentPlayerBounds)
+  const setBounds = useSetRecoilState(contentPlayerBoundsAtom)
   const onContextMenu = useContentPlayerContextMenu()
 
   useEffect(() => {
@@ -36,7 +39,7 @@ export const CoiledContentPlayer: React.VFC<{}> = () => {
     }
   }, [])
   // タイトル
-  const title = useRecoilValue(contentPlayerTitle)
+  const title = useRecoilValue(contentPlayerTitleAtom)
   useEffect(() => {
     const window = remote.getCurrentWindow()
     if (title) {

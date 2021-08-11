@@ -1,22 +1,22 @@
 import { ipcRenderer, remote } from "electron"
 import { useRecoilState, useRecoilValue } from "recoil"
 import {
-  contentPlayerIsPlaying,
-  contentPlayerKeyForRestoration,
-  contentPlayerSelectedService,
+  contentPlayerIsPlayingAtom,
+  contentPlayerKeyForRestorationAtom,
+  contentPlayerSelectedServiceAtom,
 } from "../atoms/contentPlayer"
 import { mirakurunServices } from "../atoms/mirakurun"
 import { REQUEST_OPEN_PLAYER, REQUEST_OPEN_SETTINGS } from "../constants/ipc"
 import { useRefFromState } from "../hooks/ref"
 
 export const useContentPlayerContextMenu = () => {
-  const [isPlaying, setIsPlaying] = useRecoilState(contentPlayerIsPlaying)
+  const [isPlaying, setIsPlaying] = useRecoilState(contentPlayerIsPlayingAtom)
   const isPlayingRef = useRefFromState(isPlaying)
   const [selectedService, setSelectedService] = useRecoilState(
-    contentPlayerSelectedService
+    contentPlayerSelectedServiceAtom
   )
   const selectedServiceRef = useRefFromState(selectedService)
-  const keyForRestoration = useRecoilValue(contentPlayerKeyForRestoration)
+  const keyForRestoration = useRecoilValue(contentPlayerKeyForRestorationAtom)
   const keyForRestorationRef = useRefFromState(keyForRestoration)
   const services = useRecoilValue(mirakurunServices)
   const servicesRef = useRefFromState(services)

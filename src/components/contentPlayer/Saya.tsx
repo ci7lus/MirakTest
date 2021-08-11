@@ -1,14 +1,14 @@
 import React, { memo, useEffect, useState } from "react"
 import { useRecoilValue } from "recoil"
 import ReconnectingWebSocket from "reconnecting-websocket"
-import { contentPlayerSelectedService } from "../../atoms/contentPlayer"
+import { contentPlayerSelectedServiceAtom } from "../../atoms/contentPlayer"
 import { sayaSetting } from "../../atoms/settings"
 import { CommentPayload } from "../../types/struct"
 import { CoiledDPlayerWrapper } from "./DPlayer"
 
 export const CoiledSayaComments: React.VFC<{}> = memo(() => {
   const saya = useRecoilValue(sayaSetting)
-  const service = useRecoilValue(contentPlayerSelectedService)
+  const service = useRecoilValue(contentPlayerSelectedServiceAtom)
   const [comment, setComment] = useState<CommentPayload | null>(null)
   useEffect(() => {
     if (!service || !saya || !saya.baseUrl) return
