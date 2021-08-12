@@ -13,9 +13,11 @@ export const RecoilObserver: React.VFC<{}> = () => {
   const storedAtoms = useRecoilValue(globalStoredAtomsAtom)
   useRecoilTransactionObserver_UNSTABLE(({ snapshot }) => {
     for (const atom of snapshot.getNodes_UNSTABLE({ isModified: true })) {
-      if (sharedAtoms.includes(atom.key)) {
+      const key = atom.key.split("__").shift()
+      if (!key) throw new Error("key error: " + atom.key)
+      if (sharedAtoms.includes(key)) {
         const value = snapshot.getLoadable(atom).getValue()
-        ipcRenderer.send(RECOIL_STATE_UPDATE, {
+        ipcRenderer.invoke(RECOIL_STATE_UPDATE, {
           key: atom.key,
           value,
         })

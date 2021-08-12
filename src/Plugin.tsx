@@ -2,7 +2,7 @@ import Axios from "axios"
 import { ipcRenderer, remote } from "electron"
 import React, { useEffect, useState } from "react"
 import * as ReactUse from "react-use"
-import Recoil, { RecoilState } from "recoil"
+import Recoil from "recoil"
 import pkg from "../package.json"
 import { StateRoot } from "./State"
 import { Splash } from "./components/global/Splash"
@@ -16,6 +16,7 @@ import {
   InitPlugin,
   PluginDefineInRenderer,
   PluginInRendererArgs,
+  InternalDefineAtom,
 } from "./types/plugin"
 import { ObjectLiteral } from "./types/struct"
 import { nativeImport } from "./utils/nativeImport"
@@ -51,7 +52,7 @@ export const PluginLoader: React.VFC<{
       },
     }
     ;(async () => {
-      const atoms: RecoilState<unknown>[] = []
+      const atoms: InternalDefineAtom[] = []
       const plugins: PluginDefineInRenderer[] = []
       console.info("pluginPaths:", pluginPaths)
       const openedPlugins: PluginDefineInRenderer[] = []
@@ -72,7 +73,13 @@ export const PluginLoader: React.VFC<{
                 ...plugin.storedAtoms,
                 ...plugin.sharedAtoms,
                 ...plugin.exposedAtoms,
-              ].every((atom) => atom.key.startsWith("plugins."))
+              ].every(
+                (atomDef) =>
+                  (atomDef.type === "atom" &&
+                    atomDef.atom.key.startsWith("plugins.")) ||
+                  (atomDef.type === "family" &&
+                    atomDef.atom(atomDef.arg).key.startsWith("plugins."))
+              )
             ) {
               throw new Error(
                 `すべての露出した atom のキーは \`plugins.\` から開始する必要があります: ${plugin.id}`
@@ -90,26 +97,38 @@ export const PluginLoader: React.VFC<{
           if (plugin.contextMenu) {
             contextMenus[plugin.id] = plugin.contextMenu
           }
-          plugin.sharedAtoms.forEach((atom) => {
-            const mached = atoms.find((_atom) => _atom.key === atom.key)
-            if (!mached) {
-              atoms.push(atom)
-            }
-            setSharedAtoms((atoms) => [...atoms, atom.key])
-          })
-          plugin.storedAtoms.forEach((atom) => {
-            const mached = atoms.find((_atom) => _atom.key === atom.key)
-            if (!mached) {
-              atoms.push(atom)
-            }
-            setStoredAtoms((atoms) => [...atoms, atom.key])
-          })
-          plugin.exposedAtoms.forEach((atom) => {
-            const mached = atoms.find((_atom) => _atom.key === atom.key)
-            if (!mached) {
-              atoms.push(atom)
-            }
-          })
+          plugin.sharedAtoms
+            .map((atomDef) =>
+              "key" in atomDef ? atomDef : { ...atomDef, key: atomDef.atom.key }
+            )
+            .forEach((atom) => {
+              const mached = atoms.find((_atom) => _atom.key === atom.key)
+              if (!mached) {
+                atoms.push(atom)
+              }
+              setSharedAtoms((atoms) => [...atoms, atom.key])
+            })
+          plugin.storedAtoms
+            .map((atomDef) =>
+              "key" in atomDef ? atomDef : { ...atomDef, key: atomDef.atom.key }
+            )
+            .forEach((atom) => {
+              const mached = atoms.find((_atom) => _atom.key === atom.key)
+              if (!mached) {
+                atoms.push(atom)
+              }
+              setStoredAtoms((atoms) => [...atoms, atom.key])
+            })
+          plugin.exposedAtoms
+            .map((atomDef) =>
+              "key" in atomDef ? atomDef : { ...atomDef, key: atomDef.atom.key }
+            )
+            .forEach((atom) => {
+              const mached = atoms.find((_atom) => _atom.key === atom.key)
+              if (!mached) {
+                atoms.push(atom)
+              }
+            })
           plugins.push(plugin)
         } catch (error) {
           console.error(

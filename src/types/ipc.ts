@@ -5,3 +5,5 @@ export type OpenWindowArg = {
   isSingletone?: boolean
   args?: BrowserWindowConstructorOptions
 }
+
+export type RecoilStateUpdateArg = { key: string; value: object }

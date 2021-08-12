@@ -22,7 +22,7 @@ import {
   REQUEST_OPEN_SETTINGS,
   REUQEST_OPEN_WINDOW,
 } from "./constants/ipc"
-import { OpenWindowArg } from "./types/ipc"
+import { OpenWindowArg, RecoilStateUpdateArg } from "./types/ipc"
 import {
   AppInfo,
   InitPlugin,
@@ -306,16 +306,16 @@ ipcMain.handle(REQUEST_INITIAL_DATA, () => {
 const states: ObjectLiteral<unknown> = {}
 const statesHash: ObjectLiteral<string> = {}
 
-ipcMain.on(RECOIL_STATE_UPDATE, (event, arg) => {
-  const { key, value } = arg
+ipcMain.handle(RECOIL_STATE_UPDATE, (event, payload: RecoilStateUpdateArg) => {
+  const { key, value } = payload
   if (!key) return
   const hash = objectHash(value)
   if (hash !== statesHash[key]) {
     statesHash[key] = hash
     states[key] = value
     for (const window of BrowserWindow.getAllWindows()) {
-      if (window.id == event.sender.id) continue
-      window.webContents.send(RECOIL_STATE_UPDATE, arg)
+      if (window.webContents.id === event.sender.id) continue
+      window.webContents.send(RECOIL_STATE_UPDATE, payload)
     }
   }
 })

@@ -1,9 +1,8 @@
-import { RecoilState } from "recoil"
-import { PluginDefineInRenderer } from "../types/plugin"
+import { PluginDefineInRenderer, InternalDefineAtom } from "../types/plugin"
 
 export declare global {
   interface Window {
-    atoms?: RecoilState<unknown>[]
+    atoms?: InternalDefineAtom[]
     plugins?: PluginDefineInRenderer[]
     contextMenus?: { [key: string]: Electron.MenuItemConstructorOptions }
   }
