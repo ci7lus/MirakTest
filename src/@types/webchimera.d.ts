@@ -36,6 +36,7 @@ declare module "webchimera.js" {
     stop: () => void
     toggleMute: () => void
     close: () => void
+    onMediaChanged: () => void
     onBuffering: (percents: number) => void
     onPlaying: () => void
     onPaused: () => void

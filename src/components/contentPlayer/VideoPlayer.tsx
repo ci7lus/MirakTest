@@ -91,14 +91,18 @@ export const CoiledVideoPlayer: React.VFC<{}> = memo(() => {
     playerRef.current.subtitles.track = Number(isSubtitleEnabled)
     console.info("字幕変更:", Number(isSubtitleEnabled))
   }, [isSubtitleEnabled])
-  const audioChannel = useRecoilValue(contentPlayerAudioChannelAtom)
+  const [audioChannel, setAudioChannel] = useRecoilState(
+    contentPlayerAudioChannelAtom
+  )
   useEffect(() => {
     if (!playerRef.current) return
     playerRef.current.audio.channel = audioChannel
     console.info("オーディオチャンネル変更:", audioChannel)
   }, [audioChannel])
 
-  const audioTrack = useRecoilValue(contentPlayerAudioTrackAtom)
+  const [audioTrack, setAudioTrack] = useRecoilState(
+    contentPlayerAudioTrackAtom
+  )
   useEffect(() => {
     if (!playerRef.current) return
     playerRef.current.audio.track = audioTrack
@@ -258,13 +262,6 @@ export const CoiledVideoPlayer: React.VFC<{}> = memo(() => {
             console.info(`Aspect: ${aspect}(${width} / ${height})`)
           }
           break
-        case "successfully_opened":
-          setIsPlaying(true)
-          if (firstPcrRef.current === 0) {
-            setIsSubtitleEnabled(false)
-          }
-          setAribSubtitleData(null)
-          break
         case "arib_parser_was_destroyed":
           if (firstPcrRef.current === 0) {
             setIsSubtitleEnabled(false)
@@ -313,6 +310,15 @@ export const CoiledVideoPlayer: React.VFC<{}> = memo(() => {
         frame.uOffset,
         frame.vOffset
       )
+    }
+    player.onMediaChanged = () => {
+      setIsPlaying(true)
+      if (firstPcrRef.current === 0) {
+        setIsSubtitleEnabled(false)
+      }
+      setAribSubtitleData(null)
+      setAudioChannel(0)
+      setAudioTrack(1)
     }
     player.onEncounteredError = () => {
       toast.error("映像の受信に失敗しました")
