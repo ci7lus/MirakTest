@@ -17,6 +17,6 @@ export const ComponentShadowWrapper: React.VFC<{
       root = div.attachShadow({ mode: "open" })
     }
     ReactDOM.render(<Component />, root)
-  }, [ref.current, Component])
+  }, [ref, _id])
   return <div ref={ref} id={_id} className={className} />
 }
