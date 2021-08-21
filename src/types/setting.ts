@@ -1,6 +1,7 @@
 export type MirakurunSetting = {
   baseUrl?: string
   isEnableWaitForSingleTuner: boolean
+  isEnableServiceTypeFilter: boolean
 }
 
 export type SayaSetting = {

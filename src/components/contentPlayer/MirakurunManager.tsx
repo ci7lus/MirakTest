@@ -49,9 +49,9 @@ export const MirakurunManager: React.VFC<{}> = () => {
     const tomorrow = dayjs().add(1, "days")
     try {
       const programs = await mirakurun.programs.getPrograms()
-      const filtered = programs.data.filter((program) =>
-        tomorrow.isAfter(program.startAt)
-      ) // 直近1日以内のデータのみ抽出
+      const filtered = programs.data.filter(
+        (program) => tomorrow.isAfter(program.startAt) // 直近1日以内のデータのみ抽出
+      )
       setPrograms(filtered)
       console.info(
         `番組情報を更新しました。件数: ${filtered.length.toLocaleString()}/${programs.data.length.toLocaleString()}`
@@ -92,7 +92,13 @@ export const MirakurunManager: React.VFC<{}> = () => {
     let services: Service[]
     try {
       const servicesReq = await mirakurun.services.getServices()
-      setServices(servicesReq.data)
+      setServices(
+        servicesReq.data.filter(
+          (service) =>
+            !mirakurunSettingValue.isEnableServiceTypeFilter ||
+            service.type === 0x01 // デジタルTVサービス https://github.com/DBCTRADO/LibISDB/blob/ae14668bfc601d1b94851e666c82fe409afd8f31/LibISDB/LibISDBConsts.hpp#L122
+        )
+      )
       services = servicesReq.data
     } catch (error) {
       console.error(error)

@@ -8,6 +8,9 @@ export const MirakurunSettingForm: React.VFC<{}> = () => {
   const [isEnableWaitForSingleTuner, setIsEnableWaitForSingleTuner] = useState(
     mirakurun.isEnableWaitForSingleTuner
   )
+  const [isEnableServiceTypeFilter, setIsEnableServiceTypeFilter] = useState(
+    mirakurun.isEnableServiceTypeFilter
+  )
   return (
     <form
       className="m-4"
@@ -16,6 +19,7 @@ export const MirakurunSettingForm: React.VFC<{}> = () => {
         setMirakurun({
           baseUrl: url || undefined,
           isEnableWaitForSingleTuner,
+          isEnableServiceTypeFilter,
         })
       }}
     >
@@ -27,6 +31,15 @@ export const MirakurunSettingForm: React.VFC<{}> = () => {
           className="block mt-2 form-input rounded-md w-full text-gray-900"
           value={url || ""}
           onChange={(e) => setUrl(e.target.value)}
+        />
+      </label>
+      <label className="block my-4">
+        <span>データサービス（ワンセグ / G ガイド）を除外する</span>
+        <input
+          type="checkbox"
+          className="block mt-2 form-checkbox"
+          checked={isEnableServiceTypeFilter || false}
+          onChange={() => setIsEnableServiceTypeFilter((enabled) => !enabled)}
         />
       </label>
       <label className="block my-4">
