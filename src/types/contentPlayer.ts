@@ -4,7 +4,6 @@ export type ContentPlayerContentType = "Mirakurun" | (string & {})
 
 export type ContentPlayerPlayingContent = {
   contentType: ContentPlayerContentType
-  isLive: boolean
   url: string
   program?: Program
   service?: Service

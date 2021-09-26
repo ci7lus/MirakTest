@@ -4,10 +4,10 @@ import { toast } from "react-toastify"
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil"
 import {
   contentPlayerKeyForRestorationAtom,
-  contentPlayerPlayingContentAtom,
   contentPlayerSelectedServiceAtom,
   contentPlayerSelectedServiceLogoUrlAtom,
 } from "../../atoms/contentPlayer"
+import { contentPlayerPlayingContentAtom } from "../../atoms/contentPlayerResolvedFamilies"
 import { contentPlayerUrlSelector } from "../../atoms/contentPlayerSelectors"
 import {
   mirakurunCompatibility,
@@ -28,10 +28,10 @@ export const MirakurunManager: React.VFC<{}> = () => {
   const setVersion = useSetRecoilState(mirakurunVersion)
   const setServices = useSetRecoilState(mirakurunServices)
   const setPrograms = useSetRecoilState(mirakurunPrograms)
+  const setPlayingContent = useSetRecoilState(contentPlayerPlayingContentAtom)
   const [selectedService, setSelectedService] = useRecoilState(
     contentPlayerSelectedServiceAtom
   )
-  const setPlayingContent = useSetRecoilState(contentPlayerPlayingContentAtom)
   const url = useRecoilValue(contentPlayerUrlSelector)
   const [lastSelectedServiceId, setLastSelectedServiceId] = useRecoilState(
     contentPlayerKeyForRestorationAtom
@@ -177,28 +177,32 @@ export const MirakurunManager: React.VFC<{}> = () => {
     }
   }
 
-  const updateToSelectedService = async (selectedService: Service) => {
+  const updateService = async (service: Service | null) => {
+    if (!service) {
+      setPlayingContent(null)
+      return
+    }
     const mirakurun = new MirakurunAPI(mirakurunSettingValue)
-    if (selectedService && selectedService.hasLogoData) {
-      collectServiceLogo(mirakurun, selectedService)
+    if (service && service.hasLogoData) {
+      collectServiceLogo(mirakurun, service)
     } else {
       setSelectedServiceLogoUrl(null)
     }
 
     const getServiceStreamRequest = await ServicesApiAxiosParamCreator(
       mirakurun.getConfigure()
-    ).getServiceStream(selectedService.id)
+    ).getServiceStream(service.id)
     const requestUrl =
       mirakurunSettingValue.baseUrl + getServiceStreamRequest.url
     const update = () => {
       setPlayingContent({
         contentType: "Mirakurun",
-        isLive: true,
         url: requestUrl,
+        service: service,
       })
       setLastSelectedServiceId({
         contentType: "Mirakurun",
-        serviceId: selectedService.id,
+        serviceId: service.id,
       })
     }
     if (url && mirakurunSettingValue.isEnableWaitForSingleTuner) {
@@ -210,16 +214,8 @@ export const MirakurunManager: React.VFC<{}> = () => {
   }
 
   useEffect(() => {
-    if (selectedService) {
-      console.info(`表示サービスを変更します:`, selectedService)
-      try {
-        updateToSelectedService(selectedService)
-      } catch (error) {
-        console.error(error)
-      }
-    } else {
-      setPlayingContent(null)
-    }
+    console.info(`表示サービスを変更します:`, selectedService)
+    updateService(selectedService).catch(console.error)
   }, [selectedService])
   return <></>
 }

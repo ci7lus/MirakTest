@@ -7,10 +7,10 @@ import {
   contentPlayerDisplayingAribSubtitleDataAtom,
   contentPlayerPlayingTimeAtom,
   contentPlayerPositionUpdateTriggerAtom,
-  contentPlayerSelectedServiceAtom,
   contentPlayerSubtitleEnabledAtom,
   contentPlayerTsFirstPcrAtom,
 } from "../../atoms/contentPlayer"
+import { contentPlayerServiceSelector } from "../../atoms/contentPlayerSelectors"
 import { tryBase64ToUint8Array } from "../../utils/string"
 
 export const CoiledSubtitleRenderer: React.VFC<{}> = memo(() => {
@@ -20,7 +20,7 @@ export const CoiledSubtitleRenderer: React.VFC<{}> = memo(() => {
   const setDisplayingAribSubtitleData = useSetRecoilState(
     contentPlayerDisplayingAribSubtitleDataAtom
   )
-  const selectedService = useRecoilValue(contentPlayerSelectedServiceAtom)
+  const selectedService = useRecoilValue(contentPlayerServiceSelector)
   const positionUpdateTrigger = useRecoilValue(
     contentPlayerPositionUpdateTriggerAtom
   )

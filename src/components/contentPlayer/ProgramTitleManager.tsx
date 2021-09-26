@@ -2,11 +2,8 @@ import type { Presence } from "discord-rpc"
 import React, { useEffect, useState } from "react"
 import { useRecoilValue, useSetRecoilState } from "recoil"
 import pkg from "../../../package.json"
-import {
-  contentPlayerSelectedServiceAtom,
-  contentPlayerCurrentProgramAtom,
-  contentPlayerTitleAtom,
-} from "../../atoms/contentPlayer"
+import { contentPlayerTitleAtom } from "../../atoms/contentPlayer"
+import { contentPlayerServiceSelector } from "../../atoms/contentPlayerSelectors"
 import { globalPresenceAtom } from "../../atoms/global"
 import { mirakurunProgramsFamily } from "../../atoms/mirakurunSelectorFamilies"
 import { useNow } from "../../hooks/date"
@@ -15,12 +12,12 @@ import { getServiceLogoForPresence } from "../../utils/presence"
 import { getCurrentProgramOfService } from "../../utils/program"
 
 export const CoiledProgramTitleManager: React.VFC<{}> = () => {
-  const selectedService = useRecoilValue(contentPlayerSelectedServiceAtom)
+  const selectedService = useRecoilValue(contentPlayerServiceSelector)
   const now = useNow()
   const programs = useRecoilValue(
     mirakurunProgramsFamily(selectedService?.serviceId ?? 0)
   )
-  const setCurrentProgram = useSetRecoilState(contentPlayerCurrentProgramAtom)
+  // const setCurrentProgram = useSetRecoilState(contentPlayerCurrentProgramAtom)
   const setTitle = useSetRecoilState(contentPlayerTitleAtom)
 
   const [program, setProgram] = useState<Program | null>()
@@ -47,7 +44,7 @@ export const CoiledProgramTitleManager: React.VFC<{}> = () => {
     const largeImageText = logo ? selectedService.name : version
     const smallImageText = logo ? version : undefined
     if (currentProgram) {
-      setCurrentProgram(currentProgram)
+      // setCurrentProgram(currentProgram)
       if (currentProgram.name) {
         title = `${currentProgram.name} - ${selectedService.name}`
       }
@@ -79,7 +76,7 @@ export const CoiledProgramTitleManager: React.VFC<{}> = () => {
       }
       setPresence(activity)
     } else {
-      setCurrentProgram(null)
+      // setCurrentProgram(null)
       const activity: Presence = {
         largeImageKey,
         largeImageText,

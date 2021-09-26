@@ -78,19 +78,18 @@ export type InitPluginInMain = (
   args: PluginInMainArgs
 ) => PluginDefineInMain | Promise<PluginDefineInMain>
 
-export type Atom = {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type Atom<T = any> = {
   type: "atom"
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  atom: Recoil.RecoilState<any>
+  atom: Recoil.RecoilState<T>
 }
 
-export type AtomFamily = {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type AtomFamily<A = any, T = any> = {
   type: "family"
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  atom: (arg: any) => Recoil.RecoilState<any>
+  atom: (arg: A) => Recoil.RecoilState<T>
   key: string
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  arg: any
+  arg: A
 }
 
 export type DefineAtom = Atom | AtomFamily
@@ -116,11 +115,8 @@ export type PluginDefineInRenderer = PluginMeta & {
     plugins: PluginDefineInRenderer[]
   }) => void | Promise<void>
   // 重要: atom の key は `plugins.${authorNamespace}.${pluginNamespace}.` から開始、大きくルールに反する atom （`plugins.`から開始しない）を露出したプラグインはロードされない
-
   exposedAtoms: DefineAtom[] // 他のプラグインと連携するとか
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   sharedAtoms: DefineAtom[] // ウィンドウ間で共有する（シリアライズ可能にすること）
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   storedAtoms: DefineAtom[] // 保存する（シリアライズ可能にすること）
   // コンポーネントとウィンドウは shadowRoot に展開されるので、各自独自に CSS をバンドルしないとスタイリングが初期化される点に注意する
   components: ComponentWithPosition[]

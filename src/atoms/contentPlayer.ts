@@ -1,25 +1,13 @@
 import { atom } from "recoil"
 import pkg from "../../package.json"
-import type { Program, Service } from "../infra/mirakurun/api"
+import { Service } from "../infra/mirakurun/api"
 import type {
   AribSubtitleData,
   ContentPlayerKeyForRestoration,
-  ContentPlayerPlayingContent,
 } from "../types/contentPlayer"
 import { VLCAudioChannel } from "../utils/vlc"
 
 const prefix = `${pkg.name}.contentPlayer`
-
-export const contentPlayerPlayingContentAtom =
-  atom<ContentPlayerPlayingContent | null>({
-    key: `${prefix}.playingContent`,
-    default: null,
-  })
-
-export const contentPlayerCurrentProgramAtom = atom<Program | null>({
-  key: `${prefix}.currentProgram`,
-  default: null,
-})
 
 export const contentPlayerSelectedServiceAtom = atom<Service | null>({
   key: `${prefix}.selectedService`,
@@ -67,7 +55,7 @@ export const contentPlayerAudioTracksAtom = atom<string[]>({
 })
 
 export const contentPlayerSelectedServiceLogoUrlAtom = atom<string | null>({
-  key: `${prefix}.serviceLogoUrl`,
+  key: `${prefix}.selectedServiceLogoUrl`,
   default: null,
 })
 

@@ -4,7 +4,7 @@ import { ContentPlayerPlayingContent } from "../types/contentPlayer"
 
 const prefix = `${pkg.name}.global`
 
-export const contentPlayerPlayingContentAtom = atomFamily<
+export const globalContentPlayerPlayingContentFamily = atomFamily<
   ContentPlayerPlayingContent | null,
   number
 >({

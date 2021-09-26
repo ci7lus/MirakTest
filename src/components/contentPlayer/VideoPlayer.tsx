@@ -20,12 +20,14 @@ import {
   contentPlayerPlayingTimeAtom,
   contentPlayerPositionUpdateTriggerAtom,
   contentPlayerScreenshotTriggerAtom,
-  contentPlayerSelectedServiceAtom,
   contentPlayerSubtitleEnabledAtom,
   contentPlayerTsFirstPcrAtom,
   contentPlayerVolumeAtom,
 } from "../../atoms/contentPlayer"
-import { contentPlayerUrlSelector } from "../../atoms/contentPlayerSelectors"
+import {
+  contentPlayerServiceSelector,
+  contentPlayerUrlSelector,
+} from "../../atoms/contentPlayerSelectors"
 import { screenshotSetting } from "../../atoms/settings"
 import { useRefFromState } from "../../hooks/ref"
 import { VideoRenderer } from "../../utils/videoRenderer"
@@ -124,7 +126,7 @@ export const CoiledVideoPlayer: React.VFC<{}> = memo(() => {
       })
       .catch(console.error)
   }, [])
-  const selectedService = useRecoilValue(contentPlayerSelectedServiceAtom)
+  const service = useRecoilValue(contentPlayerServiceSelector)
 
   const displayingAribSubtitleData = useRecoilValue(
     contentPlayerDisplayingAribSubtitleDataAtom
@@ -195,7 +197,7 @@ export const CoiledVideoPlayer: React.VFC<{}> = memo(() => {
             const baseName = [
               "mirak",
               dayjs().format("YYYY-MM-DD-HH-mm-ss-SSS"),
-              selectedService?.name,
+              service?.name,
             ]
               .filter((s) => s)
               .join("_")
