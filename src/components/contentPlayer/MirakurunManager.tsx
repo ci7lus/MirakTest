@@ -8,27 +8,36 @@ import {
   contentPlayerSelectedServiceLogoUrlAtom,
 } from "../../atoms/contentPlayer"
 import { contentPlayerPlayingContentAtom } from "../../atoms/contentPlayerResolvedFamilies"
-import { contentPlayerUrlSelector } from "../../atoms/contentPlayerSelectors"
+import {
+  contentPlayerServiceSelector,
+  contentPlayerUrlSelector,
+} from "../../atoms/contentPlayerSelectors"
 import {
   mirakurunCompatibility,
   mirakurunPrograms,
   mirakurunServices,
   mirakurunVersion,
 } from "../../atoms/mirakurun"
+import { mirakurunProgramsFamily } from "../../atoms/mirakurunSelectorFamilies"
 import { mirakurunSetting } from "../../atoms/settings"
+import { useNow } from "../../hooks/date"
 import { MirakurunAPI } from "../../infra/mirakurun"
 import {
   Service,
   ServicesApiAxiosParamCreator,
 } from "../../infra/mirakurun/api"
+import { getCurrentProgramOfService } from "../../utils/program"
 
 export const MirakurunManager: React.VFC<{}> = () => {
   const mirakurunSettingValue = useRecoilValue(mirakurunSetting)
   const setCompatibility = useSetRecoilState(mirakurunCompatibility)
   const setVersion = useSetRecoilState(mirakurunVersion)
   const setServices = useSetRecoilState(mirakurunServices)
-  const setPrograms = useSetRecoilState(mirakurunPrograms)
-  const setPlayingContent = useSetRecoilState(contentPlayerPlayingContentAtom)
+  const [programs, setPrograms] = useRecoilState(mirakurunPrograms)
+  const [playingContent, setPlayingContent] = useRecoilState(
+    contentPlayerPlayingContentAtom
+  )
+  const service = useRecoilValue(contentPlayerServiceSelector)
   const [selectedService, setSelectedService] = useRecoilState(
     contentPlayerSelectedServiceAtom
   )
@@ -213,9 +222,28 @@ export const MirakurunManager: React.VFC<{}> = () => {
     }
   }
 
+  // selectedService（切り替え先サービス）->serviceへの反映発火
   useEffect(() => {
     console.info(`表示サービスを変更します:`, selectedService)
     updateService(selectedService).catch(console.error)
   }, [selectedService])
+
+  const now = useNow()
+  const programsByService = useRecoilValue(
+    mirakurunProgramsFamily(playingContent?.service?.serviceId ?? 0)
+  )
+
+  // programs/playingContent.service->playingContent.programの反映
+  useEffect(() => {
+    if (playingContent?.contentType !== "Mirakurun" || !service) {
+      return
+    }
+    const program = getCurrentProgramOfService({
+      programs: programsByService,
+      serviceId: service.serviceId,
+      now,
+    })
+    setPlayingContent((prev) => (prev ? { ...prev, program } : null))
+  }, [service, programs, now])
   return <></>
 }
