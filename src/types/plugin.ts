@@ -53,6 +53,12 @@ export type PluginInRendererArgs = {
   functions: {
     openWindow: (args: OpenWindowArg) => Promise<number>
   }
+  atoms: {
+    contentPlayerPlayingContentFamily: (
+      n: number
+    ) => Recoil.RecoilState<ContentPlayerPlayingContent | null>
+    activeContentPlayerId: Recoil.RecoilState<number | null>
+  }
 }
 
 export type InitPluginInRenderer = (
@@ -129,7 +135,10 @@ export type PluginDefineInRenderer = PluginMeta & {
     contentType: string
     restoreByKey: (
       arg: unknown
-    ) => ContentPlayerPlayingContent | Promise<ContentPlayerPlayingContent>
+    ) =>
+      | ContentPlayerPlayingContent
+      | null
+      | Promise<ContentPlayerPlayingContent | null>
   }
 }
 

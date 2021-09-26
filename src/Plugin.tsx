@@ -5,6 +5,8 @@ import * as ReactUse from "react-use"
 import Recoil from "recoil"
 import pkg from "../package.json"
 import { StateRoot } from "./State"
+import { globalActiveContentPlayerIdAtom } from "./atoms/global"
+import { globalContentPlayerPlayingContentFamily } from "./atoms/globalFamilies"
 import { Splash } from "./components/global/Splash"
 import { REUQEST_OPEN_WINDOW } from "./constants/ipc"
 import {
@@ -49,6 +51,11 @@ export const PluginLoader: React.VFC<{
       appInfo: { version: pkg.version },
       functions: {
         openWindow,
+      },
+      atoms: {
+        contentPlayerPlayingContentFamily:
+          globalContentPlayerPlayingContentFamily,
+        activeContentPlayerId: globalActiveContentPlayerIdAtom,
       },
     }
     ;(async () => {

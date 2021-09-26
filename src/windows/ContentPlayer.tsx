@@ -7,6 +7,7 @@ import {
   contentPlayerBoundsAtom,
   contentPlayerTitleAtom,
 } from "../atoms/contentPlayer"
+import { globalActiveContentPlayerIdAtom } from "../atoms/global"
 import { PluginPositionComponents } from "../components/common/PluginPositionComponents"
 import { CoiledController } from "../components/contentPlayer/Controller"
 import { MirakurunManager } from "../components/contentPlayer/MirakurunManager"
@@ -21,6 +22,9 @@ import { useContentPlayerContextMenu } from "../utils/contextmenu"
 export const CoiledContentPlayer: React.VFC<{}> = () => {
   const setBounds = useSetRecoilState(contentPlayerBoundsAtom)
   const onContextMenu = useContentPlayerContextMenu()
+  const setActiveContentPlayerId = useSetRecoilState(
+    globalActiveContentPlayerIdAtom
+  )
 
   useEffect(() => {
     injectStyle()
@@ -31,11 +35,16 @@ export const CoiledContentPlayer: React.VFC<{}> = () => {
     remoteWindow.on("moved", onResizedOrMoved)
     onResizedOrMoved()
     // コンテキストメニュー
-
     remoteWindow.webContents.on("context-menu", onContextMenu)
+    const onFocus = () => {
+      setActiveContentPlayerId(remoteWindow.id)
+    }
+    onFocus()
+    remoteWindow.on("focus", onFocus)
     return () => {
       remoteWindow.off("resized", onResizedOrMoved)
       remoteWindow.off("moved", onResizedOrMoved)
+      remoteWindow.off("focus", onFocus)
     }
   }, [])
   // タイトル

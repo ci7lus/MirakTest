@@ -1,13 +1,12 @@
 import { atomFamily } from "recoil"
-import pkg from "../../package.json"
-import { ContentPlayerPlayingContent } from "../types/contentPlayer"
 
-const prefix = `${pkg.name}.global`
+import { ContentPlayerPlayingContent } from "../types/contentPlayer"
+import { globalContentPlayerPlayingContentFamilyKey } from "./globalFamilyKeys"
 
 export const globalContentPlayerPlayingContentFamily = atomFamily<
   ContentPlayerPlayingContent | null,
   number
 >({
-  key: `${prefix}.playingContent`,
+  key: globalContentPlayerPlayingContentFamilyKey,
   default: null,
 })
