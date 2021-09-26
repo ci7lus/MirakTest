@@ -12,7 +12,7 @@ const main = async () => {
     )
     licenses.push(`${lib}: ${license}`)
   }
-  const rewrited = `/** plugin.d.ts - Type definitions for creating plug-ins for MirakTest.\n---\n${licenses.join(
+  const rewrited = `/* eslint-disable */\n/** plugin.d.ts - Type definitions for creating plug-ins for MirakTest.\n---\n${licenses.join(
     "\n---\n"
   )}\n*/\n${dts}`
   await fs.promises.writeFile("./dist/plugin.d.ts", rewrited)
