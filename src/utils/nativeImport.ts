@@ -1,1 +1,1 @@
-export const nativeImport = (s: string) => import(s)
+export const nativeImport = (s: string) => import(/* webpackIgnore: true */ s)
