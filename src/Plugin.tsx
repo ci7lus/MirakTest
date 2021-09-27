@@ -5,8 +5,28 @@ import * as ReactUse from "react-use"
 import Recoil from "recoil"
 import pkg from "../package.json"
 import { StateRoot } from "./State"
-import { globalActiveContentPlayerIdAtom } from "./atoms/global"
+import {
+  contentPlayerAudioChannelAtom,
+  contentPlayerAudioTrackAtom,
+  contentPlayerIsPlayingAtom,
+  contentPlayerPositionUpdateTriggerAtom,
+  contentPlayerRelativeMoveTriggerAtom,
+  contentPlayerScreenshotTriggerAtom,
+  contentPlayerVolumeAtom,
+} from "./atoms/contentPlayer"
+import { contentPlayerPlayingContentAtom } from "./atoms/contentPlayerResolvedFamilies"
+import {
+  contentPlayerAribSubtitleDataSelector,
+  contentPlayerAudioTracksSelector,
+  contentPlayerIsSeekableSelector,
+  contentPlayerPlayingPositionSelector,
+  contentPlayerPlayingTimeSelector,
+  contentPlayerProgramSelector,
+  contentPlayerServiceSelector,
+  contentPlayerTsFirstPcrSelector,
+} from "./atoms/contentPlayerSelectors"
 import { globalContentPlayerPlayingContentFamily } from "./atoms/globalFamilies"
+import { globalActiveContentPlayerIdSelector } from "./atoms/globalSelectors"
 import { Splash } from "./components/global/Splash"
 import { REUQEST_OPEN_WINDOW } from "./constants/ipc"
 import {
@@ -53,9 +73,24 @@ export const PluginLoader: React.VFC<{
         openWindow,
       },
       atoms: {
-        contentPlayerPlayingContentFamily:
-          globalContentPlayerPlayingContentFamily,
-        activeContentPlayerId: globalActiveContentPlayerIdAtom,
+        globalContentPlayerPlayingContentFamily,
+        globalActiveContentPlayerIdSelector,
+        contentPlayerPlayingContentAtom,
+        contentPlayerServiceSelector,
+        contentPlayerProgramSelector,
+        contentPlayerIsPlayingAtom,
+        contentPlayerVolumeAtom,
+        contentPlayerAudioChannelAtom,
+        contentPlayerAudioTrackAtom,
+        contentPlayerAudioTracksSelector,
+        contentPlayerIsSeekableSelector,
+        contentPlayerPlayingPositionSelector,
+        contentPlayerPlayingTimeSelector,
+        contentPlayerAribSubtitleDataSelector,
+        contentPlayerTsFirstPcrSelector,
+        contentPlayerPositionUpdateTriggerAtom,
+        contentPlayerRelativeMoveTriggerAtom,
+        contentPlayerScreenshotTriggerAtom,
       },
     }
     ;(async () => {

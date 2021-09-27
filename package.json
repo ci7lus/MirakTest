@@ -21,7 +21,7 @@
     "format:prettier": "prettier --write './src/**/*.{js,ts,tsx}'",
     "lint:eslint": "eslint --max-warnings 0 --cache './src/**/*.{js,ts,tsx}'",
     "format:eslint": "eslint './src/**/*.{js,ts,tsx}' --cache --fix",
-    "build:dts-plugin": "yarn dts-bundle-generator --export-referenced-types=false --external-inlines=electron -o dist/plugin.d.ts --no-check src/types/plugin.ts && ts-node setLicenseInDts.ts"
+    "build:dts-plugin": "yarn dts-bundle-generator --export-referenced-types=false --external-inlines=electron -o dist/plugin.d.ts --no-check src/types/plugin.ts && ts-node setLicenseInDts.ts && prettier --write dist/plugin.d.ts"
   },
   "lint-staged": {
     "*.{js,ts,tsx}": "eslint --max-warnings 0 --cache",

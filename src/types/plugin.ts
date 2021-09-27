@@ -3,6 +3,7 @@ import { remote } from "electron"
 import React from "react"
 import type ReactUse from "react-use"
 import * as Recoil from "recoil"
+import { Program, Service } from "../infra/mirakurun/api"
 export type { Channel, Service, Program } from "../infra/mirakurun/api"
 import { ContentPlayerPlayingContent } from "./contentPlayer"
 import { OpenWindowArg } from "./ipc"
@@ -56,10 +57,28 @@ export type PluginInRendererArgs = {
     openWindow: (args: OpenWindowArg) => Promise<number>
   }
   atoms: {
-    contentPlayerPlayingContentFamily: (
+    globalContentPlayerPlayingContentFamily: (
       n: number
     ) => Recoil.RecoilState<ContentPlayerPlayingContent | null>
-    activeContentPlayerId: Recoil.RecoilState<number | null>
+    globalActiveContentPlayerIdSelector: Recoil.RecoilValueReadOnly<
+      number | null
+    >
+    contentPlayerPlayingContentAtom: Recoil.RecoilState<ContentPlayerPlayingContent | null>
+    contentPlayerServiceSelector: Recoil.RecoilValueReadOnly<Service | null>
+    contentPlayerProgramSelector: Recoil.RecoilValueReadOnly<Program | null>
+    contentPlayerIsPlayingAtom: Recoil.RecoilState<boolean>
+    contentPlayerVolumeAtom: Recoil.RecoilState<number>
+    contentPlayerAudioChannelAtom: Recoil.RecoilState<number>
+    contentPlayerAudioTrackAtom: Recoil.RecoilState<number>
+    contentPlayerAudioTracksSelector: Recoil.RecoilValueReadOnly<string[]>
+    contentPlayerIsSeekableSelector: Recoil.RecoilValueReadOnly<boolean>
+    contentPlayerPlayingPositionSelector: Recoil.RecoilValueReadOnly<number>
+    contentPlayerPlayingTimeSelector: Recoil.RecoilValueReadOnly<number>
+    contentPlayerAribSubtitleDataSelector: Recoil.RecoilValueReadOnly<number>
+    contentPlayerTsFirstPcrSelector: Recoil.RecoilValueReadOnly<number>
+    contentPlayerPositionUpdateTriggerAtom: Recoil.RecoilState<number>
+    contentPlayerRelativeMoveTriggerAtom: Recoil.RecoilState<number>
+    contentPlayerScreenshotTriggerAtom: Recoil.RecoilState<number>
   }
 }
 

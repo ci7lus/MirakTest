@@ -80,7 +80,7 @@ export const contentPlayerAribSubtitleDataAtom = atom<AribSubtitleData | null>({
 })
 
 export const contentPlayerTsFirstPcrAtom = atom<number>({
-  key: `${prefix}.contentPlayerTsFirstPcr`,
+  key: `${prefix}.tsFirstPcr`,
   default: 0,
 })
 

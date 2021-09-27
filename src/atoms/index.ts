@@ -3,6 +3,7 @@ import * as contentPlayer from "./contentPlayer"
 import * as contentPlayerSelectors from "./contentPlayerSelectors"
 import * as global from "./global"
 import * as globalFamilies from "./globalFamilies"
+import * as globalSelectors from "./globalSelectors"
 import * as mirakurun from "./mirakurun"
 import * as mirakurunSelectorFamilies from "./mirakurunSelectorFamilies"
 import * as settings from "./settings"
@@ -18,6 +19,7 @@ export const ALL_ATOMS: RecoilState<any>[] = [
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const ALL_SELECTORS: RecoilValueReadOnly<any>[] = [
   ...Object.values(contentPlayerSelectors),
+  ...Object.values(globalSelectors),
 ]
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
