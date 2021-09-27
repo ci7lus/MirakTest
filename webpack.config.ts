@@ -102,7 +102,6 @@ const factory: MultiConfigurationFactory = (env, args) => [
     resolve: {
       alias: {
         "react-native": "react-native-web",
-        dplayer: "@neneka/dplayer",
       },
       extensions: [
         ".webpack.js",

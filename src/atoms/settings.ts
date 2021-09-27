@@ -4,7 +4,6 @@ import type {
   ControllerSetting,
   ExperimentalSetting,
   MirakurunSetting,
-  SayaSetting,
   ScreenshotSetting,
 } from "../types/setting"
 
@@ -15,13 +14,6 @@ export const mirakurunSetting = atom<MirakurunSetting>({
   default: {
     isEnableWaitForSingleTuner: false,
     isEnableServiceTypeFilter: true,
-  },
-})
-
-export const sayaSetting = atom<SayaSetting>({
-  key: `${prefix}.saya`,
-  default: {
-    replaces: [],
   },
 })
 

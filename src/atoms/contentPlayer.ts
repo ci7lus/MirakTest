@@ -110,8 +110,3 @@ export const contentPlayerKeyForRestorationAtom =
     key: `${prefix}.keyForRestoration`,
     default: null,
   })
-
-export const contentPlayerCommentOpacityAtom = atom<number>({
-  key: `${prefix}.commentOpacity`,
-  default: 0.8,
-})

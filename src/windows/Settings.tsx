@@ -4,12 +4,11 @@ import React, { useEffect, useState } from "react"
 import { useRecoilBridgeAcrossReactRoots_UNSTABLE } from "recoil"
 import { ComponentShadowWrapper } from "../components/common/ComponentShadowWrapper"
 import { MirakurunSettingForm } from "../components/settings/Mirakurun"
-import { SayaSettingForm } from "../components/settings/Saya"
 import { CoiledGeneralSetting } from "../components/settings/general"
 import { OnSettingComponent } from "../types/plugin"
 import { store } from "../utils/store"
 
-type Routes = "General" | "Mirakurun" | "Saya" | (string & {})
+type Routes = "General" | "Mirakurun" | (string & {})
 
 const Right: React.FC = ({ children }) => (
   <div className="h-full w-2/3 my-4p-4 text-gray-100 overflow-auto">
@@ -29,12 +28,6 @@ const Router: React.VFC<{ route: Routes }> = ({ route }) => {
     return (
       <Right>
         <MirakurunSettingForm />
-      </Right>
-    )
-  } else if (route === "Saya") {
-    return (
-      <Right>
-        <SayaSettingForm />
       </Right>
     )
   } else {
@@ -94,7 +87,6 @@ export const Settings: React.VFC<{}> = () => {
         {[
           ["General", "一般設定"],
           ["Mirakurun", "Mirakurun"],
-          ["Saya", "Saya"],
         ].map(([key, displayName]) => (
           <button
             key={key}

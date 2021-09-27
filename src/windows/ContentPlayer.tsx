@@ -12,7 +12,6 @@ import { PluginPositionComponents } from "../components/common/PluginPositionCom
 import { CoiledController } from "../components/contentPlayer/Controller"
 import { MirakurunManager } from "../components/contentPlayer/MirakurunManager"
 import { CoiledProgramTitleManager } from "../components/contentPlayer/ProgramTitleManager"
-import { CoiledSayaComments } from "../components/contentPlayer/Saya"
 import { CoiledSubtitleRenderer } from "../components/contentPlayer/SubtitleRenderer"
 import { CoiledVideoPlayer } from "../components/contentPlayer/VideoPlayer"
 import { Splash } from "../components/global/Splash"
@@ -88,9 +87,6 @@ export const CoiledContentPlayer: React.VFC<{}> = () => {
             className="absolute top-0 left-0 w-full h-full flex items-center justify-center"
           >
             <CoiledVideoPlayer />
-          </div>
-          <div id="Saya" className="absolute top-0 left-0 w-full h-full">
-            <CoiledSayaComments />
           </div>
           <div
             id="OnPlayerComponents"

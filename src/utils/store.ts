@@ -5,7 +5,7 @@ import {
   contentPlayerKeyForRestorationAtom,
   contentPlayerVolumeAtom,
 } from "../atoms/contentPlayer"
-import { mirakurunSetting, sayaSetting } from "../atoms/settings"
+import { mirakurunSetting } from "../atoms/settings"
 
 const store = new Store<{}>({
   // workaround for conf's Project name could not be inferred. Please specify the `projectName` option.
@@ -14,10 +14,6 @@ const store = new Store<{}>({
   projectName: pkg.name,
   [mirakurunSetting.key]: {
     baseUrl: { type: "string" },
-  },
-  [sayaSetting.key]: {
-    baseUrl: { type: "string" },
-    replaces: { type: "array" },
   },
   [contentPlayerVolumeAtom.key]: { type: "number" },
   [contentPlayerBoundsAtom.key]: {

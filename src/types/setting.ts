@@ -4,11 +4,6 @@ export type MirakurunSetting = {
   isEnableServiceTypeFilter: boolean
 }
 
-export type SayaSetting = {
-  baseUrl?: string
-  replaces: [string, string][]
-}
-
 export type ControllerSetting = {
   volumeRange: [number, number]
 }

@@ -8,7 +8,6 @@ import {
   contentPlayerAudioChannelAtom,
   contentPlayerAudioTrackAtom,
   contentPlayerAudioTracksAtom,
-  contentPlayerCommentOpacityAtom,
   contentPlayerIsPlayingAtom,
   contentPlayerIsSeekableAtom,
   contentPlayerKeyForRestorationAtom,
@@ -25,7 +24,6 @@ import { controllerSetting, experimentalSetting } from "../../atoms/settings"
 import { useRefFromState } from "../../hooks/ref"
 import { AudioChannelSelector } from "./controllers/AudioChannelSelector"
 import { AudioTrackSelector } from "./controllers/AudioTrackSelector"
-import { CommentOpacitySlider } from "./controllers/CommentOpacitySlider"
 import { PlayToggleButton } from "./controllers/PlayToggleButton"
 import { PositionSlider } from "./controllers/PositionSlider"
 import { CoiledScreenshotButton } from "./controllers/ScreenshotButton"
@@ -60,9 +58,6 @@ export const CoiledController: React.VFC<{}> = () => {
     contentPlayerSubtitleEnabledAtom
   )
   const [volume, setVolume] = useRecoilState(contentPlayerVolumeAtom)
-  const [commentOpacity, setCommentOpacity] = useRecoilState(
-    contentPlayerCommentOpacityAtom
-  )
 
   const [audioTrack, setAudioTrack] = useRecoilState(
     contentPlayerAudioTrackAtom
@@ -268,10 +263,6 @@ export const CoiledController: React.VFC<{}> = () => {
               setSubtitleEnabled={setSubtitleEnabled}
             />
             <CoiledScreenshotButton />
-            <CommentOpacitySlider
-              commentOpacity={commentOpacity}
-              setCommentOpacity={setCommentOpacity}
-            />
             <div className="pr-2" />
           </div>
         </div>
