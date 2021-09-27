@@ -14,12 +14,7 @@ type Package = {
   dependencies?: { [key: string]: string }
 }
 
-const targets = [
-  "webchimera.js",
-  "electron-store",
-  "object-hash",
-  "esm",
-] as const
+const targets = ["webchimera.js", "electron-store", "esm"] as const
 const dependencies = { ...pkg.dependencies, ...pkg.devDependencies }
 const targetWithVersion = targets.map(
   (depName) => `${depName}@${dependencies[depName]}`

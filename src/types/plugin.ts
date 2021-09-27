@@ -57,6 +57,7 @@ export type PluginInRendererArgs = {
     openWindow: (args: OpenWindowArg) => Promise<number>
   }
   atoms: {
+    globalContentPlayerIdsSelector: Recoil.RecoilValueReadOnly<number[]>
     globalContentPlayerPlayingContentFamily: (
       n: number
     ) => Recoil.RecoilState<ContentPlayerPlayingContent | null>
@@ -120,8 +121,6 @@ export type AtomFamily<A = any, T = any> = {
 }
 
 export type DefineAtom = Atom | AtomFamily
-
-export type InternalDefineAtom = (Atom & { key: string }) | AtomFamily
 
 export type PluginMeta = {
   // 推奨 id フォーマット: `plugins.${authorNamespace}.${pluginNamespace}` or `io.github.c..`(java 形式)

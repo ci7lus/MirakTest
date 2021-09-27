@@ -26,7 +26,10 @@ import {
   contentPlayerTsFirstPcrSelector,
 } from "./atoms/contentPlayerSelectors"
 import { globalContentPlayerPlayingContentFamily } from "./atoms/globalFamilies"
-import { globalActiveContentPlayerIdSelector } from "./atoms/globalSelectors"
+import {
+  globalActiveContentPlayerIdSelector,
+  globalContentPlayerIdsSelector,
+} from "./atoms/globalSelectors"
 import { Splash } from "./components/global/Splash"
 import { REUQEST_OPEN_WINDOW } from "./constants/ipc"
 import {
@@ -38,7 +41,7 @@ import {
   InitPlugin,
   PluginDefineInRenderer,
   PluginInRendererArgs,
-  InternalDefineAtom,
+  DefineAtom,
 } from "./types/plugin"
 import { ObjectLiteral } from "./types/struct"
 import { nativeImport } from "./utils/nativeImport"
@@ -73,6 +76,7 @@ export const PluginLoader: React.VFC<{
         openWindow,
       },
       atoms: {
+        globalContentPlayerIdsSelector,
         globalContentPlayerPlayingContentFamily,
         globalActiveContentPlayerIdSelector,
         contentPlayerPlayingContentAtom,
@@ -94,7 +98,7 @@ export const PluginLoader: React.VFC<{
       },
     }
     ;(async () => {
-      const atoms: InternalDefineAtom[] = []
+      const atoms: DefineAtom[] = []
       const plugins: PluginDefineInRenderer[] = []
       console.info("pluginPaths:", pluginPaths)
       const openedPlugins: PluginDefineInRenderer[] = []
@@ -144,7 +148,11 @@ export const PluginLoader: React.VFC<{
               "key" in atomDef ? atomDef : { ...atomDef, key: atomDef.atom.key }
             )
             .forEach((atom) => {
-              const mached = atoms.find((_atom) => _atom.key === atom.key)
+              const mached = atoms.find((_atom) =>
+                _atom.type === "atom"
+                  ? _atom.atom.key === atom.key
+                  : _atom.key === atom.key
+              )
               if (!mached) {
                 atoms.push(atom)
               }
@@ -155,7 +163,11 @@ export const PluginLoader: React.VFC<{
               "key" in atomDef ? atomDef : { ...atomDef, key: atomDef.atom.key }
             )
             .forEach((atom) => {
-              const mached = atoms.find((_atom) => _atom.key === atom.key)
+              const mached = atoms.find((_atom) =>
+                _atom.type === "atom"
+                  ? _atom.atom.key === atom.key
+                  : _atom.key === atom.key
+              )
               if (!mached) {
                 atoms.push(atom)
               }
@@ -166,7 +178,11 @@ export const PluginLoader: React.VFC<{
               "key" in atomDef ? atomDef : { ...atomDef, key: atomDef.atom.key }
             )
             .forEach((atom) => {
-              const mached = atoms.find((_atom) => _atom.key === atom.key)
+              const mached = atoms.find((_atom) =>
+                _atom.type === "atom"
+                  ? _atom.atom.key === atom.key
+                  : _atom.key === atom.key
+              )
               if (!mached) {
                 atoms.push(atom)
               }

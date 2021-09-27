@@ -4,7 +4,10 @@ import {
   RECOIL_SHARED_ATOM_KEYS,
   RECOIL_STORED_ATOM_KEYS,
 } from "../constants/recoil"
-import { globalActiveContentPlayerIdAtomKey } from "./globalKeys"
+import {
+  globalActiveContentPlayerIdAtomKey,
+  globalContentPlayerIdsAtomKey,
+} from "./globalKeys"
 
 const prefix = `${pkg.name}.global`
 
@@ -21,4 +24,9 @@ export const globalStoredAtomsAtom = atom<string[]>({
 export const globalActiveContentPlayerIdAtom = atom<number | null>({
   key: globalActiveContentPlayerIdAtomKey,
   default: null,
+})
+
+export const globalContentPlayerIdsAtom = atom<number[]>({
+  key: globalContentPlayerIdsAtomKey,
+  default: [],
 })

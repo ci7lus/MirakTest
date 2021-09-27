@@ -1,7 +1,8 @@
 import { useEffect, useRef } from "react"
 import { MutableSnapshot, RecoilState, useRecoilValue } from "recoil"
-import { ALL_ATOMS } from "../atoms"
+import { ALL_ATOMS, ALL_FAMILIES } from "../atoms"
 import { globalSharedAtomsAtom, globalStoredAtomsAtom } from "../atoms/global"
+import { AtomFamily } from "../types/plugin"
 import { ObjectLiteral } from "../types/struct"
 import { store } from "./store"
 
@@ -30,9 +31,23 @@ export const initializeState =
       }
     })
     Object.entries(states).map(([key, value]) => {
+      let arg: unknown
+      try {
+        arg = JSON.parse(key.split("__").pop() || "")
+      } catch (error) {
+        arg = null
+      }
       const atom =
         ALL_ATOMS.find((atom) => "key" in atom && atom.key === key) ||
-        window.atoms?.find((atom) => "key" in atom && atom.key === key)
+        window.atoms?.find((atom) => "key" in atom && atom.key === key) ||
+        (arg &&
+          ALL_FAMILIES.find((family) => family(arg).key === key)?.(arg)) ||
+        window.atoms
+          ?.find(
+            (atom): atom is AtomFamily =>
+              atom.type === "family" && atom.atom(arg).key === key
+          )
+          ?.atom?.(arg)
       if (atom) {
         mutableSnapShot.set(atom as never, value)
       } else {

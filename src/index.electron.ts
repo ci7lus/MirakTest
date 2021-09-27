@@ -12,7 +12,6 @@ import {
 } from "electron"
 import Store from "electron-store"
 import esm from "esm"
-import objectHash from "object-hash"
 import WebChimeraJs from "webchimera.js"
 import pkg from "../package.json"
 import {
@@ -39,6 +38,9 @@ let primaryWindow: BrowserWindow | null = null
 const contentPlayerWindows: BrowserWindow[] = []
 let settingsWindow: BrowserWindow | null = null
 
+const CONTENT_PLAYER_BOUNDS = `${pkg.name}.contentPlayer.bounds`
+const GLOBAL_CONTENT_PLAYER_IDS = `${pkg.name}.global.contentPlayerIds`
+
 const init = () => {
   if (process.platform == "win32" && WebChimeraJs.path) {
     const VLCPluginPath = path.join(WebChimeraJs.path, "plugins")
@@ -57,7 +59,7 @@ const init = () => {
     // @ts-ignore
     projectName: pkg.name,
   })
-  const bounds: Rectangle | null = store.get(`${pkg.name}.contentPlayer.bounds`)
+  const bounds: Rectangle | null = store.get(CONTENT_PLAYER_BOUNDS)
   const width = bounds?.width || Math.ceil(1280 / display.scaleFactor)
   const height = bounds?.height || Math.ceil(720 / display.scaleFactor)
   primaryWindow = new BrowserWindow({
@@ -73,6 +75,7 @@ const init = () => {
     backgroundColor,
   })
   contentPlayerWindows.push(primaryWindow)
+  updateContentPlayerIds()
 
   primaryWindow.loadFile("index.html", { hash: "ContentPlayer" })
   if (process.env.NODE_ENV === "development") {
@@ -97,6 +100,7 @@ const init = () => {
       primaryWindow = contentPlayerWindows[0]
       console.info("primaryWindow を更新しました", contentPlayerWindows[0].id)
     }
+    updateContentPlayerIds()
   })
 }
 
@@ -306,17 +310,29 @@ ipcMain.handle(REQUEST_INITIAL_DATA, () => {
 const states: ObjectLiteral<unknown> = {}
 const statesHash: ObjectLiteral<string> = {}
 
+const recoilStateUpdate = (source: number, payload: RecoilStateUpdateArg) => {
+  for (const window of BrowserWindow.getAllWindows()) {
+    if (window.webContents.id === source) continue
+    window.webContents.send(RECOIL_STATE_UPDATE, payload)
+  }
+}
+
+const updateContentPlayerIds = () => {
+  recoilStateUpdate(-1, {
+    key: GLOBAL_CONTENT_PLAYER_IDS,
+    value: contentPlayerWindows.map((w) => w.id),
+  })
+  states[GLOBAL_CONTENT_PLAYER_IDS] = contentPlayerWindows.map((w) => w.id)
+}
+
 ipcMain.handle(RECOIL_STATE_UPDATE, (event, payload: RecoilStateUpdateArg) => {
   const { key, value } = payload
   if (!key) return
-  const hash = objectHash(value)
+  const hash = JSON.stringify(value)
   if (hash !== statesHash[key]) {
     statesHash[key] = hash
     states[key] = value
-    for (const window of BrowserWindow.getAllWindows()) {
-      if (window.webContents.id === event.sender.id) continue
-      window.webContents.send(RECOIL_STATE_UPDATE, payload)
-    }
+    recoilStateUpdate(event.sender.id, payload)
   }
 })
 
@@ -366,6 +382,7 @@ const openPlayer = () => {
   window.loadFile("index.html", { hash: "ContentPlayer" })
   window.setAspectRatio(16 / 9)
   contentPlayerWindows.push(window)
+  updateContentPlayerIds()
   if (primaryWindow === null) {
     primaryWindow = window
     console.info("primaryWindow を更新しました", window.id)
@@ -378,6 +395,7 @@ const openPlayer = () => {
       primaryWindow = contentPlayerWindows[0]
       console.info("primaryWindow を更新しました", contentPlayerWindows[0].id)
     }
+    updateContentPlayerIds()
   })
 }
 

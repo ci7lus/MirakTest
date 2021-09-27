@@ -1,8 +1,8 @@
-import { PluginDefineInRenderer, InternalDefineAtom } from "../types/plugin"
+import { PluginDefineInRenderer, DefineAtom } from "../types/plugin"
 
 export declare global {
   interface Window {
-    atoms?: InternalDefineAtom[]
+    atoms?: DefineAtom[]
     plugins?: PluginDefineInRenderer[]
     contextMenus?: { [key: string]: Electron.MenuItemConstructorOptions }
   }
