@@ -12,7 +12,6 @@ import { PluginPositionComponents } from "../components/common/PluginPositionCom
 import { CoiledController } from "../components/contentPlayer/Controller"
 import { MirakurunManager } from "../components/contentPlayer/MirakurunManager"
 import { CoiledProgramTitleManager } from "../components/contentPlayer/ProgramTitleManager"
-import { CoiledRPCManager } from "../components/contentPlayer/RPCManager"
 import { CoiledSayaComments } from "../components/contentPlayer/Saya"
 import { CoiledSubtitleRenderer } from "../components/contentPlayer/SubtitleRenderer"
 import { CoiledVideoPlayer } from "../components/contentPlayer/VideoPlayer"
@@ -73,7 +72,6 @@ export const CoiledContentPlayer: React.VFC<{}> = () => {
       />
       <MirakurunManager />
       <CoiledProgramTitleManager />
-      <CoiledRPCManager />
       <div className="w-full h-screen bg-gray-900 text-gray-100 flex items-center justify-center">
         <div className="relative w-full h-full overflow-hidden">
           <div id="Splash" className="absolute top-0 left-0 w-full h-full">

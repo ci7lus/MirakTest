@@ -1,4 +1,3 @@
-import type { Presence } from "discord-rpc"
 import { atom } from "recoil"
 import pkg from "../../package.json"
 import {
@@ -8,14 +7,6 @@ import {
 import { globalActiveContentPlayerIdAtomKey } from "./globalKeys"
 
 const prefix = `${pkg.name}.global`
-
-/**
- * @deprecated
- */
-export const globalPresenceAtom = atom<Presence | null>({
-  key: `${prefix}.presence`,
-  default: null,
-})
 
 export const globalSharedAtomsAtom = atom<string[]>({
   key: `${prefix}.sharedAtoms`,
