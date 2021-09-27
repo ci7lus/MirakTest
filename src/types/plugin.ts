@@ -3,10 +3,12 @@ import { remote } from "electron"
 import React from "react"
 import type ReactUse from "react-use"
 import * as Recoil from "recoil"
+export type { Channel, Service, Program } from "../infra/mirakurun/api"
 import { ContentPlayerPlayingContent } from "./contentPlayer"
 import { OpenWindowArg } from "./ipc"
 
 export type AppInfo = {
+  name: string
   version: string
 }
 

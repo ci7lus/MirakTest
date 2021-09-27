@@ -1,4 +1,6 @@
 import fs from "fs"
+import axios from "axios"
+import pkg from "./package.json"
 
 const main = async () => {
   const dts = await fs.promises.readFile("./dist/plugin.d.ts", "utf8")
@@ -12,9 +14,14 @@ const main = async () => {
     )
     licenses.push(`${lib}: ${license}`)
   }
-  const rewrited = `/* eslint-disable */\n/** plugin.d.ts - Type definitions for creating plug-ins for MirakTest.\n---\n${licenses.join(
-    "\n---\n"
-  )}\n*/\n${dts}`
+  const mirakurunLicense = await axios.get(
+    "https://raw.githubusercontent.com/Chinachu/Mirakurun/0f7290b017bd6c80904dc8c253801f2556733377/LICENSE",
+    { responseType: "text" }
+  )
+  licenses.push(`Mirakurun: ${mirakurunLicense.data}`)
+  const rewrited = `/* eslint-disable */\n/** plugin.d.ts - Type definitions for creating plug-ins for ${
+    pkg.productName
+  }.\n---\n${licenses.join("\n---\n")}\n*/\n${dts}`
   await fs.promises.writeFile("./dist/plugin.d.ts", rewrited)
 }
 main()

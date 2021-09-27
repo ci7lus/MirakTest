@@ -237,7 +237,7 @@ const loadPlugins = async () => {
     .filter((filePath) => filePath.endsWith(".plugin.js"))
     .map((filePath) => path.join(pluginsDir, filePath))
   console.info("plugins paths:", pluginPaths)
-  const appInfo: AppInfo = { version: pkg.version }
+  const appInfo: AppInfo = { name: pkg.productName, version: pkg.version }
   const args: PluginInMainArgs = {
     appInfo,
     packages: {

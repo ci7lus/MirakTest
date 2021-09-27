@@ -48,7 +48,7 @@ export const PluginLoader: React.VFC<{
         IpcRenderer: ipcRenderer,
         ReactUse,
       },
-      appInfo: { version: pkg.version },
+      appInfo: { name: pkg.productName, version: pkg.version },
       functions: {
         openWindow,
       },
