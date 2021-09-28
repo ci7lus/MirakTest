@@ -19,7 +19,7 @@ import {
   contentPlayerSubtitleEnabledAtom,
   contentPlayerVolumeAtom,
 } from "../../atoms/contentPlayer"
-import { mirakurunServices } from "../../atoms/mirakurun"
+import { mirakurunServicesAtom } from "../../atoms/mirakurun"
 import { controllerSetting, experimentalSetting } from "../../atoms/settings"
 import { useRefFromState } from "../../hooks/ref"
 import { AudioChannelSelector } from "./controllers/AudioChannelSelector"
@@ -48,7 +48,7 @@ export const CoiledController: React.VFC<{}> = () => {
   const setPosition = useSetRecoilState(contentPlayerPositionUpdateTriggerAtom)
   const isSeekable = useRecoilValue(contentPlayerIsSeekableAtom)
 
-  const services = useRecoilValue(mirakurunServices)
+  const services = useRecoilValue(mirakurunServicesAtom)
   const [selectedService, setSelectedService] = useRecoilState(
     contentPlayerSelectedServiceAtom
   )

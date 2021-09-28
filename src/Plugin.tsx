@@ -30,6 +30,12 @@ import {
   globalActiveContentPlayerIdSelector,
   globalContentPlayerIdsSelector,
 } from "./atoms/globalSelectors"
+import {
+  mirakurunCompatibilitySelector,
+  mirakurunProgramsSelector,
+  mirakurunServicesSelector,
+  mirakurunVersionSelector,
+} from "./atoms/mirakurunSelectors"
 import { Splash } from "./components/global/Splash"
 import { REUQEST_OPEN_WINDOW } from "./constants/ipc"
 import {
@@ -95,6 +101,10 @@ export const PluginLoader: React.VFC<{
         contentPlayerPositionUpdateTriggerAtom,
         contentPlayerRelativeMoveTriggerAtom,
         contentPlayerScreenshotTriggerAtom,
+        mirakurunCompatibilitySelector,
+        mirakurunVersionSelector,
+        mirakurunServicesSelector,
+        mirakurunProgramsSelector,
       },
     }
     ;(async () => {

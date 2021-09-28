@@ -5,7 +5,7 @@ import {
 } from "../atoms/contentPlayer"
 import { globalContentPlayerPlayingContentFamilyKey } from "../atoms/globalFamilyKeys"
 import { globalActiveContentPlayerIdAtomKey } from "../atoms/globalKeys"
-import { mirakurunServices } from "../atoms/mirakurun"
+import { mirakurunServicesAtom } from "../atoms/mirakurun"
 import {
   controllerSetting,
   experimentalSetting,
@@ -18,7 +18,7 @@ export const RECOIL_SHARED_ATOM_KEYS = [
   controllerSetting.key,
   screenshotSetting.key,
   experimentalSetting.key,
-  mirakurunServices.key,
+  mirakurunServicesAtom.key,
   globalActiveContentPlayerIdAtomKey,
   globalContentPlayerPlayingContentFamilyKey,
 ]

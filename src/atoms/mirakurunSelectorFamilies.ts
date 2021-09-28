@@ -1,6 +1,6 @@
 import { selectorFamily } from "recoil"
 import pkg from "../../package.json"
-import { mirakurunPrograms } from "./mirakurun"
+import { mirakurunProgramsAtom } from "./mirakurun"
 
 const prefix = `${pkg.name}.mirakurun`
 
@@ -9,7 +9,7 @@ export const mirakurunProgramsFamily = selectorFamily({
   get:
     (serviceId: number) =>
     ({ get }) => {
-      return (get(mirakurunPrograms) || []).filter(
+      return (get(mirakurunProgramsAtom) || []).filter(
         (program) => program.serviceId === serviceId
       )
     },

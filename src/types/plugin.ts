@@ -7,6 +7,8 @@ import { Program, Service } from "../infra/mirakurun/api"
 export type { Channel, Service, Program } from "../infra/mirakurun/api"
 import { ContentPlayerPlayingContent } from "./contentPlayer"
 import { OpenWindowArg } from "./ipc"
+import { MirakurunCompatibilityTypes } from "./mirakurun"
+export type { ContentPlayerPlayingContent } from "./contentPlayer"
 
 export type AppInfo = {
   name: string
@@ -80,6 +82,10 @@ export type PluginInRendererArgs = {
     contentPlayerPositionUpdateTriggerAtom: Recoil.RecoilState<number>
     contentPlayerRelativeMoveTriggerAtom: Recoil.RecoilState<number>
     contentPlayerScreenshotTriggerAtom: Recoil.RecoilState<number>
+    mirakurunCompatibilitySelector: Recoil.RecoilValueReadOnly<MirakurunCompatibilityTypes | null>
+    mirakurunVersionSelector: Recoil.RecoilValueReadOnly<string | null>
+    mirakurunServicesSelector: Recoil.RecoilValueReadOnly<Service[] | null>
+    mirakurunProgramsSelector: Recoil.RecoilValueReadOnly<Program[] | null>
   }
 }
 

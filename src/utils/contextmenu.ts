@@ -5,7 +5,7 @@ import {
   contentPlayerKeyForRestorationAtom,
   contentPlayerSelectedServiceAtom,
 } from "../atoms/contentPlayer"
-import { mirakurunServices } from "../atoms/mirakurun"
+import { mirakurunServicesAtom } from "../atoms/mirakurun"
 import { REQUEST_OPEN_PLAYER, REQUEST_OPEN_SETTINGS } from "../constants/ipc"
 import { useRefFromState } from "../hooks/ref"
 
@@ -18,7 +18,7 @@ export const useContentPlayerContextMenu = () => {
   const selectedServiceRef = useRefFromState(selectedService)
   const keyForRestoration = useRecoilValue(contentPlayerKeyForRestorationAtom)
   const keyForRestorationRef = useRefFromState(keyForRestoration)
-  const services = useRecoilValue(mirakurunServices)
+  const services = useRecoilValue(mirakurunServicesAtom)
   const servicesRef = useRefFromState(services)
 
   return (e: Electron.Event, params: Electron.ContextMenuParams) => {

@@ -13,10 +13,10 @@ import {
   contentPlayerUrlSelector,
 } from "../../atoms/contentPlayerSelectors"
 import {
-  mirakurunCompatibility,
-  mirakurunPrograms,
-  mirakurunServices,
-  mirakurunVersion,
+  mirakurunCompatibilityAtom,
+  mirakurunProgramsAtom,
+  mirakurunServicesAtom,
+  mirakurunVersionAtom,
 } from "../../atoms/mirakurun"
 import { mirakurunProgramsFamily } from "../../atoms/mirakurunSelectorFamilies"
 import { mirakurunSetting } from "../../atoms/settings"
@@ -30,10 +30,10 @@ import { getCurrentProgramOfService } from "../../utils/program"
 
 export const MirakurunManager: React.VFC<{}> = () => {
   const mirakurunSettingValue = useRecoilValue(mirakurunSetting)
-  const setCompatibility = useSetRecoilState(mirakurunCompatibility)
-  const setVersion = useSetRecoilState(mirakurunVersion)
-  const setServices = useSetRecoilState(mirakurunServices)
-  const [programs, setPrograms] = useRecoilState(mirakurunPrograms)
+  const setCompatibility = useSetRecoilState(mirakurunCompatibilityAtom)
+  const setVersion = useSetRecoilState(mirakurunVersionAtom)
+  const setServices = useSetRecoilState(mirakurunServicesAtom)
+  const [programs, setPrograms] = useRecoilState(mirakurunProgramsAtom)
   const [playingContent, setPlayingContent] = useRecoilState(
     contentPlayerPlayingContentAtom
   )
