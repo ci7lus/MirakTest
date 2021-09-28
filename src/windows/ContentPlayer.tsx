@@ -68,6 +68,7 @@ export const CoiledContentPlayer: React.VFC<{}> = () => {
         rtl={false}
         draggable
         pauseOnHover
+        theme="dark"
       />
       <MirakurunManager />
       <CoiledProgramTitleManager />
