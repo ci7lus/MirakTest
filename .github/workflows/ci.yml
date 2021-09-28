@@ -116,7 +116,7 @@ jobs:
             build/*.AppImage
             build/*.tar.gz
   build-macos:
-    runs-on: macos-latest
+    runs-on: macOS-10.15
 
     timeout-minutes: 30
 
