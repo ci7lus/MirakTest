@@ -279,11 +279,13 @@ export const CoiledController: React.VFC<{}> = () => {
             onClick={() => setIsPlaying((isPlaying) => !isPlaying)}
             onDoubleClick={(e) => e.stopPropagation()}
           >
-            {isPlaying ? (
-              <PauseCircle className="pointer-events-none" size={46} />
-            ) : (
-              <PlayCircle className="pointer-events-none" size={46} />
-            )}
+            <div className="p-4 rounded-full bg-opacity-50 bg-gray-800">
+              {isPlaying ? (
+                <PauseCircle className="pointer-events-none" size={46} />
+              ) : (
+                <PlayCircle className="pointer-events-none" size={46} />
+              )}
+            </div>
           </button>
         </div>
       </div>
