@@ -22,6 +22,15 @@ declare module "webchimera.js" {
     track: number
     delay: number
   }
+  export type VLCInput = {
+    readonly length: number
+    readonly fps: number
+    readonly state: number
+    readonly hasVout: boolean
+    position: number
+    time: number
+    rate: number
+  }
   export interface Player {
     readonly vlcVersion: string
     readonly playing: boolean
@@ -60,6 +69,7 @@ declare module "webchimera.js" {
     audio: VLCAudio
     subtitles: VLCSubtitle
     position: number
+    input: VLCInput
   }
   export const createPlayer: (args?: string[]) => Player
   export const path: string | undefined

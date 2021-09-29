@@ -63,11 +63,11 @@ export const CoiledVideoPlayer: React.VFC<{}> = memo(() => {
   useEffect(() => {
     const player = playerRef.current
     if (!player || !url) return
-    if (isSeekable) {
+    if (isSeekable && player.input.hasVout) {
       console.info("ポーズ切り替え")
       player.togglePause()
     } else {
-      if (isPlaying && !player.playing) {
+      if ((isPlaying && !player.playing) || !player.input.hasVout) {
         player.play(url)
         console.info("再生開始", url)
       } else if (!isPlaying) {
@@ -239,6 +239,7 @@ export const CoiledVideoPlayer: React.VFC<{}> = memo(() => {
   const [isSeekable, setIsSeekable] = useRecoilState(
     contentPlayerIsSeekableAtom
   )
+  const isSeekableRef = useRefFromState(isSeekable)
   useEffect(() => setPlayingPosition(position), [position])
   useEffect(() => {
     const player = playerRef.current
@@ -331,7 +332,7 @@ export const CoiledVideoPlayer: React.VFC<{}> = memo(() => {
     }
     player.onEndReached = () => {
       setIsPlaying(false)
-      if (!isSeekable) {
+      if (isSeekableRef.current === false) {
         toast.error("映像の受信が中断されました")
       }
     }
