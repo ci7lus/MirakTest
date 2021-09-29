@@ -125,6 +125,7 @@ const factory: MultiConfigurationFactory = (env, args) => [
       "webchimera.js": "commonjs webchimera.js",
       react: "commonjs react",
       recoil: "commonjs recoil",
+      "react-dom": "commonjs react-dom",
     },
   },
 ]

@@ -20,6 +20,7 @@ const targets = [
   "esm",
   "react",
   "recoil",
+  "react-dom",
 ] as const
 const dependencies = { ...pkg.dependencies, ...pkg.devDependencies }
 const targetWithVersion = targets.map(

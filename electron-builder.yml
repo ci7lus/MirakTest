@@ -201,6 +201,8 @@ files:
   - "node_modules/object-assign"
   - "node_modules/recoil"
   - "node_modules/hamt_plus"
+  - "node_modules/react-dom"
+  - "node_modules/scheduler"
   - from: node_modules/webchimera.js
     to: node_modules/webchimera.js
 publish: null
