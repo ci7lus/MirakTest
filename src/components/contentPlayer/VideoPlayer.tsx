@@ -60,6 +60,7 @@ export const CoiledVideoPlayer: React.VFC<{}> = memo(() => {
     }
   }, [url])
   const [isPlaying, setIsPlaying] = useRecoilState(contentPlayerIsPlayingAtom)
+  const [isErrorEncounted, setIsErrorEncounted] = useState(false)
   useEffect(() => {
     const player = playerRef.current
     if (!player || !url) return
@@ -67,7 +68,10 @@ export const CoiledVideoPlayer: React.VFC<{}> = memo(() => {
       console.info("ポーズ切り替え")
       player.togglePause()
     } else {
-      if ((isPlaying && !player.playing) || !player.input.hasVout) {
+      if (
+        (isPlaying && !player.playing) ||
+        (!player.input.hasVout && !isErrorEncounted)
+      ) {
         player.play(url)
         console.info("再生開始", url)
       } else if (!isPlaying) {
@@ -322,10 +326,12 @@ export const CoiledVideoPlayer: React.VFC<{}> = memo(() => {
       setAribSubtitleData(null)
       setAudioChannel(0)
       setAudioTrack(1)
+      setIsErrorEncounted(false)
     }
     player.onEncounteredError = () => {
       toast.error("映像の受信に失敗しました")
       renderContext.fillTransparent()
+      setIsErrorEncounted(true)
     }
     player.onStopped = () => {
       setIsPlaying(false)
