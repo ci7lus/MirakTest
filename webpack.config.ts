@@ -121,9 +121,10 @@ const factory: MultiConfigurationFactory = (env, args) => [
       // TODO: 型 'import("node_modules/tapable/tapable").SyncBailHook<[import("node_modules/webpack/types").Compilation], boolean, import("node_modules/tapable/tapable").UnsetAdditionalOptions>' を型 'import("node_modules/tapable/tapable").SyncBailHook<[import("node_modules/@types/mini-css-extract-plugin/node_modules/webpack/types").Compilation], boolean, import("node_modules/tapable/tapab...' に割り当てることはできません。ts(2322)
       new MiniCSSExtractPlugin() as never,
     ],
-
     externals: {
       "webchimera.js": "commonjs webchimera.js",
+      react: "commonjs react",
+      recoil: "commonjs recoil",
     },
   },
 ]

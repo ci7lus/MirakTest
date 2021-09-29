@@ -1,11 +1,15 @@
 import { ipcRenderer } from "electron"
 import React, { useEffect, useState } from "react"
 import ReactDOM from "react-dom"
+import Recoil from "recoil"
 import { PluginLoader } from "./Plugin"
 import { Splash } from "./components/global/Splash"
 import { REQUEST_INITIAL_DATA } from "./constants/ipc"
 import { InitialData } from "./types/struct"
 import "./index.scss"
+
+global.React = React
+global.Recoil = Recoil
 
 const WebRoot: React.VFC<{}> = () => {
   const [unmounted, setUnmounted] = useState(false)

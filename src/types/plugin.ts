@@ -1,7 +1,5 @@
-import Axios from "axios"
 import { remote } from "electron"
 import React from "react"
-import type ReactUse from "react-use"
 import * as Recoil from "recoil"
 import { Program, Service } from "../infra/mirakurun/api"
 export type { Channel, Service, Program } from "../infra/mirakurun/api"
@@ -48,11 +46,7 @@ export type InitPlugin = {
 export type PluginInRendererArgs = {
   appInfo: AppInfo
   packages: {
-    React: typeof React
-    Recoil: typeof Recoil
     Electron: typeof remote
-    Axios: typeof Axios
-    ReactUse: typeof ReactUse
     IpcRenderer: Electron.IpcRenderer
   }
   functions: {

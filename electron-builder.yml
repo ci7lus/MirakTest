@@ -195,6 +195,12 @@ files:
   - "node_modules/yallist"
   - "node_modules/type-fest"
   - "node_modules/esm"
+  - "node_modules/react"
+  - "node_modules/loose-envify"
+  - "node_modules/js-tokens"
+  - "node_modules/object-assign"
+  - "node_modules/recoil"
+  - "node_modules/hamt_plus"
   - from: node_modules/webchimera.js
     to: node_modules/webchimera.js
 publish: null

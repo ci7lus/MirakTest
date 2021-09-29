@@ -12,6 +12,8 @@ import {
 } from "electron"
 import Store from "electron-store"
 import esm from "esm"
+import React from "react"
+import Recoil from "recoil"
 import WebChimeraJs from "webchimera.js"
 import pkg from "../package.json"
 import {
@@ -29,6 +31,10 @@ import {
   PluginInMainArgs,
 } from "./types/plugin"
 import { InitialData, ObjectLiteral } from "./types/struct"
+
+// プラグイン側で対策するのが面倒すぎるのでこちら側でモックを用意
+global.React = React
+global.Recoil = Recoil
 
 const esmRequire = esm(module)
 
