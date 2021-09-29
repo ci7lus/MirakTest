@@ -69,8 +69,8 @@ export const CoiledVideoPlayer: React.VFC<{}> = memo(() => {
       player.togglePause()
     } else {
       if (
-        (isPlaying && !player.playing) ||
-        (!player.input.hasVout && !isErrorEncounted)
+        isPlaying &&
+        (!player.playing || (!player.input.hasVout && !isErrorEncounted))
       ) {
         player.play(url)
         console.info("再生開始", url)
