@@ -1,7 +1,8 @@
 import clsx from "clsx"
+import dayjs from "dayjs"
 import { remote } from "electron"
 import React, { useEffect, useRef, useState } from "react"
-import { PauseCircle, PlayCircle } from "react-feather"
+import { ChevronDown, PauseCircle, PlayCircle } from "react-feather"
 import { useDebounce } from "react-use"
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil"
 import {
@@ -10,15 +11,18 @@ import {
   contentPlayerAudioTracksAtom,
   contentPlayerIsPlayingAtom,
   contentPlayerIsSeekableAtom,
-  contentPlayerKeyForRestorationAtom,
   contentPlayerPlayingPositionAtom,
   contentPlayerPositionUpdateTriggerAtom,
   contentPlayerScreenshotTriggerAtom,
   contentPlayerSelectedServiceAtom,
-  contentPlayerSelectedServiceLogoUrlAtom,
+  contentPlayerServiceLogoUrlAtom,
   contentPlayerSubtitleEnabledAtom,
   contentPlayerVolumeAtom,
 } from "../../atoms/contentPlayer"
+import {
+  contentPlayerProgramSelector,
+  contentPlayerServiceSelector,
+} from "../../atoms/contentPlayerSelectors"
 import { mirakurunServicesAtom } from "../../atoms/mirakurun"
 import { controllerSetting, experimentalSetting } from "../../atoms/settings"
 import { useRefFromState } from "../../hooks/ref"
@@ -30,6 +34,9 @@ import { CoiledScreenshotButton } from "./controllers/ScreenshotButton"
 import { ServiceSelector } from "./controllers/ServiceSelector"
 import { SubtitleToggleButton } from "./controllers/SubtitleToggleButton"
 import { VolumeSlider } from "./controllers/VolumeSlider"
+import "dayjs/locale/ja"
+
+dayjs.locale("ja")
 
 export const CoiledController: React.VFC<{}> = () => {
   const [isVisible, setIsVisible] = useState(false)
@@ -52,7 +59,7 @@ export const CoiledController: React.VFC<{}> = () => {
   const [selectedService, setSelectedService] = useRecoilState(
     contentPlayerSelectedServiceAtom
   )
-  const serviceLogoUrl = useRecoilValue(contentPlayerSelectedServiceLogoUrlAtom)
+  const serviceLogoUrl = useRecoilValue(contentPlayerServiceLogoUrlAtom)
 
   const [subtitleEnabled, setSubtitleEnabled] = useRecoilState(
     contentPlayerSubtitleEnabledAtom
@@ -63,15 +70,13 @@ export const CoiledController: React.VFC<{}> = () => {
     contentPlayerAudioTrackAtom
   )
   const audioTracks = useRecoilValue(contentPlayerAudioTracksAtom)
-
-  const [isServiceNameShowing, setIsServiceNameShowing] = useState(false)
-  const keyForRestoration = useRecoilValue(contentPlayerKeyForRestorationAtom)
+  const program = useRecoilValue(contentPlayerProgramSelector)
+  const service = useRecoilValue(contentPlayerServiceSelector)
   useEffect(() => {
-    if (!keyForRestoration) return
-    setIsServiceNameShowing(true)
-    const timer = setTimeout(() => setIsServiceNameShowing(false), 5 * 1000)
+    setIsVisible(true)
+    const timer = setTimeout(() => setIsVisible(false), 5 * 1000)
     return () => clearInterval(timer)
-  }, [keyForRestoration])
+  }, [service])
   const [audioChannel, setAudioChannel] = useRecoilState(
     contentPlayerAudioChannelAtom
   )
@@ -146,6 +151,25 @@ export const CoiledController: React.VFC<{}> = () => {
     )
   }, [isPlaying])
 
+  const startAt = dayjs(program?.startAt).format(
+    isSeekable ? "YYYY/MM/DD(ddd) HH:mm" : "HH:mm"
+  )
+  const endAt = dayjs(program ? program.startAt + program.duration : 0).format(
+    "HH:mm"
+  )
+  const [serviceLabel, setServiceLabel] = useState<string | null>(null)
+  useEffect(() => {
+    if (!service) {
+      setServiceLabel(null)
+      return
+    }
+    setServiceLabel(
+      [service.remoteControlKeyId || service.serviceId, service.name]
+        .filter((s) => s !== undefined)
+        .join(" ")
+    )
+  }, [service])
+
   return (
     <div
       ref={componentRef}
@@ -194,52 +218,69 @@ export const CoiledController: React.VFC<{}> = () => {
         )}
       >
         <div
-          className={`select-none transition-opacity duration-150 ease-in-out p-4 ${
-            isServiceNameShowing ? "opacity-100" : "opacity-0"
+          className={`select-none transition-opacity duration-150 ease-in-out pt-3 p-4 pb-6 bg-gradient-to-b bg-opacity-50 from-black to-transparent ${
+            isVisible ? "opacity-100" : "opacity-0"
           }`}
         >
-          <div className="text-4xl text-green-400 flex items-center space-x-2 serviceNameOutline">
+          <div className="flex items-center space-x-4 pb-2">
             {serviceLogoUrl && (
               <img
-                className="h-6 rounded-md overflow-hidden"
+                className="flex-shrink-0 h-6 rounded-md overflow-hidden"
                 src={serviceLogoUrl}
               />
             )}
-            <span>
-              {[
-                selectedService?.remoteControlKeyId ||
-                  selectedService?.serviceId,
-                selectedService?.name,
-              ]
-                .filter((s) => s !== undefined)
-                .join(" ")}
-            </span>
+            <div className="relative text-gray-200 overflow-hidden">
+              <div className="absolute top-0 opacity-0 w-full h-full">
+                <ServiceSelector
+                  services={services}
+                  selectedService={selectedService}
+                  setSelectedService={setSelectedService}
+                  isProgramDetailEnabled={
+                    experimental.isProgramDetailInServiceSelectorEnabled
+                  }
+                />
+              </div>
+              {program ? (
+                <div className="flex flex-col">
+                  <h2 className="font-semibold text-2xl truncate">
+                    {program.name}
+                  </h2>
+                  <div className="flex space-x-4 font-normal text-lg truncate">
+                    {serviceLabel ? (
+                      <div className="flex items-center space-x-1">
+                        <p>{serviceLabel}</p>
+                        <ChevronDown size={18} />
+                      </div>
+                    ) : (
+                      <></>
+                    )}
+                    <p>
+                      {startAt} 〜 {endAt}
+                    </p>
+                  </div>
+                </div>
+              ) : serviceLabel ? (
+                <div className="font-semibold text-2xl flex items-center space-x-1">
+                  <p>{serviceLabel}</p>
+                  <ChevronDown size={24} />
+                </div>
+              ) : (
+                <></>
+              )}
+            </div>
           </div>
         </div>
         <div
-          className={`flex flex-col space-y-2 text-gray-100 select-none transition-opacity duration-150 ease-in-out w-full p-2 bg-black bg-opacity-50 ${
+          className={`flex flex-col space-y-2 text-gray-100 select-none transition-opacity duration-150 ease-in-out w-full p-2 bg-gradient-to-t from-black to-transparent ${
             isVisible ? "opacity-100" : "opacity-0"
           }`}
           onDoubleClick={(e) => e.stopPropagation()}
           onMouseDown={(e) => e.stopPropagation()}
         >
-          {isSeekable && (
-            <div className="flex space-x-4 px-2 pr-4">
-              <PlayToggleButton
-                isPlaying={isPlaying}
-                setIsPlaying={setIsPlaying}
-              />
-              <PositionSlider position={position} setPosition={setPosition} />
-            </div>
-          )}
-          <div className="flex space-x-2 px-2 pr-4 overflow-auto">
-            <ServiceSelector
-              services={services}
-              selectedService={selectedService}
-              setSelectedService={setSelectedService}
-              isProgramDetailEnabled={
-                experimental.isProgramDetailInServiceSelectorEnabled
-              }
+          <div className="flex space-x-2">
+            <PlayToggleButton
+              isPlaying={isPlaying}
+              setIsPlaying={setIsPlaying}
             />
             <VolumeSlider
               volume={volume}
@@ -247,6 +288,18 @@ export const CoiledController: React.VFC<{}> = () => {
               min={controller.volumeRange[0]}
               max={controller.volumeRange[1]}
             />
+            {isSeekable ? (
+              <div className="w-full flex space-x-4 px-2">
+                <PositionSlider position={position} setPosition={setPosition} />
+              </div>
+            ) : (
+              <div className="w-full"></div>
+            )}
+            <SubtitleToggleButton
+              subtitleEnabled={subtitleEnabled}
+              setSubtitleEnabled={setSubtitleEnabled}
+            />
+            <CoiledScreenshotButton />
             <AudioChannelSelector
               audioChannel={audioChannel}
               setAudioChannel={setAudioChannel}
@@ -258,12 +311,6 @@ export const CoiledController: React.VFC<{}> = () => {
                 audioTracks={audioTracks}
               />
             )}
-            <SubtitleToggleButton
-              subtitleEnabled={subtitleEnabled}
-              setSubtitleEnabled={setSubtitleEnabled}
-            />
-            <CoiledScreenshotButton />
-            <div className="pr-2" />
           </div>
         </div>
         <div className="absolute w-full h-full flex items-center justify-center pointer-events-none">

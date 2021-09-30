@@ -54,8 +54,8 @@ export const contentPlayerAudioTracksAtom = atom<string[]>({
   default: [],
 })
 
-export const contentPlayerSelectedServiceLogoUrlAtom = atom<string | null>({
-  key: `${prefix}.selectedServiceLogoUrl`,
+export const contentPlayerServiceLogoUrlAtom = atom<string | null>({
+  key: `${prefix}.serviceLogoUrl`,
   default: null,
 })
 

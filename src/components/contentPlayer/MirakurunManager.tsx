@@ -5,7 +5,7 @@ import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil"
 import {
   contentPlayerKeyForRestorationAtom,
   contentPlayerSelectedServiceAtom,
-  contentPlayerSelectedServiceLogoUrlAtom,
+  contentPlayerServiceLogoUrlAtom,
 } from "../../atoms/contentPlayer"
 import { contentPlayerPlayingContentAtom } from "../../atoms/contentPlayerResolvedFamilies"
 import {
@@ -32,7 +32,7 @@ export const MirakurunManager: React.VFC<{}> = () => {
   const mirakurunSettingValue = useRecoilValue(mirakurunSetting)
   const setCompatibility = useSetRecoilState(mirakurunCompatibilityAtom)
   const setVersion = useSetRecoilState(mirakurunVersionAtom)
-  const setServices = useSetRecoilState(mirakurunServicesAtom)
+  const [services, setServices] = useRecoilState(mirakurunServicesAtom)
   const [programs, setPrograms] = useRecoilState(mirakurunProgramsAtom)
   const [playingContent, setPlayingContent] = useRecoilState(
     contentPlayerPlayingContentAtom
@@ -46,7 +46,7 @@ export const MirakurunManager: React.VFC<{}> = () => {
     contentPlayerKeyForRestorationAtom
   )
   const setSelectedServiceLogoUrl = useSetRecoilState(
-    contentPlayerSelectedServiceLogoUrlAtom
+    contentPlayerServiceLogoUrlAtom
   )
   const [serviceLogos, setServiceLogos] = useState<{ [key: number]: string }>(
     {}
@@ -244,6 +244,17 @@ export const MirakurunManager: React.VFC<{}> = () => {
   const programsByService = useRecoilValue(
     mirakurunProgramsFamily(playingContent?.service?.serviceId ?? 0)
   )
+
+  useEffect(() => {
+    const mirakurunService = services?.find((s) => s.id === service?.id)
+    if (!mirakurunService) return
+    const mirakurun = new MirakurunAPI(mirakurunSettingValue)
+    if (mirakurunService && mirakurunService.hasLogoData) {
+      collectServiceLogo(mirakurun, mirakurunService)
+    } else {
+      setSelectedServiceLogoUrl(null)
+    }
+  }, [services, service])
 
   // programs/playingContent.service->playingContent.programの反映
   useEffect(() => {
