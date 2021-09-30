@@ -80,7 +80,7 @@ export const ServiceSelector: React.VFC<{
 
     return (
       <select
-        className="h-full w-full focus:appearance-none focus:outline-none text-gray-100 bg-transparent"
+        className="h-full w-full focus:appearance-none focus:outline-none text-gray-900 bg-transparent"
         value={selectedService?.id}
         onChange={(e) => {
           onSelectStart()
