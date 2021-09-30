@@ -1,6 +1,5 @@
 import { remote } from "electron"
 import React from "react"
-import { useToast } from "react-toastify"
 import * as Recoil from "recoil"
 import { Program, Service } from "../infra/mirakurun/api"
 export type { Channel, Service, Program } from "../infra/mirakurun/api"
@@ -53,7 +52,7 @@ export type PluginInRendererArgs = {
   functions: {
     openWindow: (args: OpenWindowArg) => Promise<number>
   }
-  hooks: { useToast: typeof useToast }
+  hooks: {}
   atoms: {
     globalContentPlayerIdsSelector: Recoil.RecoilValueReadOnly<number[]>
     globalContentPlayerPlayingContentFamily: (

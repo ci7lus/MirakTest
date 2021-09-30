@@ -1,7 +1,5 @@
 import { remote } from "electron"
 import React, { useEffect } from "react"
-import { ToastContainer, Slide } from "react-toastify"
-import { injectStyle } from "react-toastify/dist/inject-style"
 import { useRecoilValue, useSetRecoilState } from "recoil"
 import {
   contentPlayerBoundsAtom,
@@ -25,7 +23,6 @@ export const CoiledContentPlayer: React.VFC<{}> = () => {
   )
 
   useEffect(() => {
-    injectStyle()
     const remoteWindow = remote.getCurrentWindow()
     // ウィンドウサイズを保存する
     const onResizedOrMoved = () => setBounds(remoteWindow.getContentBounds())
@@ -58,18 +55,6 @@ export const CoiledContentPlayer: React.VFC<{}> = () => {
 
   return (
     <>
-      <ToastContainer
-        position="top-right"
-        autoClose={3000}
-        closeOnClick
-        transition={Slide}
-        hideProgressBar={false}
-        newestOnTop={false}
-        rtl={false}
-        draggable
-        pauseOnHover
-        theme="dark"
-      />
       <MirakurunManager />
       <CoiledProgramTitleManager />
       <div className="w-full h-screen bg-gray-900 text-gray-100 flex items-center justify-center">

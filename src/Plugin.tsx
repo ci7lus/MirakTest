@@ -1,6 +1,5 @@
 import { ipcRenderer, remote } from "electron"
 import React, { useEffect, useState } from "react"
-import { useToast } from "react-toastify"
 import pkg from "../package.json"
 import { StateRoot } from "./State"
 import {
@@ -75,7 +74,7 @@ export const PluginLoader: React.VFC<{
       functions: {
         openWindow,
       },
-      hooks: { useToast },
+      hooks: {},
       atoms: {
         globalContentPlayerIdsSelector,
         globalContentPlayerPlayingContentFamily,

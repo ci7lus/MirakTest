@@ -4,7 +4,6 @@ import { CanvasProvider } from "aribb24.js"
 import dayjs from "dayjs"
 import { nativeImage, remote } from "electron"
 import React, { memo, useEffect, useRef, useState } from "react"
-import { toast } from "react-toastify"
 import { useThrottleFn } from "react-use"
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil"
 import WebChimeraJs from "webchimera.js"
@@ -188,10 +187,6 @@ export const CoiledVideoPlayer: React.VFC<{}> = memo(() => {
         try {
           const image = nativeImage.createFromBuffer(buffer)
           remote.clipboard.writeImage(image, "clipboard")
-          toast.info("キャプチャしました", {
-            autoClose: 2000,
-            pauseOnFocusLoss: false,
-          })
         } catch (error) {
           console.error(error)
         }
@@ -209,15 +204,27 @@ export const CoiledVideoPlayer: React.VFC<{}> = memo(() => {
             const filePath = path.join(screenshot.basePath, fileName)
             await fs.promises.writeFile(filePath, buffer)
             console.info(`キャプチャを保存しました:`, filePath)
+            const notify = new remote.Notification({
+              title: "スクリーンショットを撮影しました",
+              body: `${fileName} (クリックで開く)`,
+            })
+            notify.show()
+            notify.on("click", () => {
+              remote.shell.openPath(filePath)
+            })
           } catch (error) {
             console.error(error)
           }
+        } else {
+          new remote.Notification({
+            title: "スクリーンショットを撮影しました",
+          }).show()
         }
       } catch (error) {
-        toast.error("キャプチャに失敗しました", {
-          autoClose: 2000,
-          pauseOnFocusLoss: false,
-        })
+        new remote.Notification({
+          title: "スクリーンショットの撮影に失敗しました",
+          body: error instanceof Error ? error.message : undefined,
+        }).show()
         console.error(error)
       }
     })()
@@ -329,7 +336,9 @@ export const CoiledVideoPlayer: React.VFC<{}> = memo(() => {
       setIsErrorEncounted(false)
     }
     player.onEncounteredError = () => {
-      toast.error("映像の受信に失敗しました")
+      new remote.Notification({
+        title: "映像の受信に失敗しました",
+      }).show()
       renderContext.fillTransparent()
       setIsErrorEncounted(true)
     }
@@ -339,7 +348,9 @@ export const CoiledVideoPlayer: React.VFC<{}> = memo(() => {
     player.onEndReached = () => {
       setIsPlaying(false)
       if (isSeekableRef.current === false) {
-        toast.error("映像の受信が中断されました")
+        new remote.Notification({
+          title: "映像の受信が中断されました",
+        }).show()
       }
     }
     player.onPaused = () => {

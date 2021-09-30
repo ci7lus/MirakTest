@@ -1,6 +1,6 @@
 import dayjs from "dayjs"
+import { remote } from "electron"
 import React, { useEffect, useRef, useState } from "react"
-import { toast } from "react-toastify"
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil"
 import {
   contentPlayerKeyForRestorationAtom,
@@ -67,7 +67,10 @@ export const MirakurunManager: React.VFC<{}> = () => {
       )
     } catch (error) {
       console.error(error)
-      toast.error("番組情報の取得に失敗しました")
+      new remote.Notification({
+        title: "取得に失敗しました",
+        body: "Mirakurun からの番組情報の取得に失敗しました",
+      }).show()
       return
     }
   }
@@ -90,12 +93,18 @@ export const MirakurunManager: React.VFC<{}> = () => {
         throw new Error()
       }
       if (!isFirstAppeal) {
-        toast.info(message)
+        new remote.Notification({
+          title: "Mirakurun に接続しました",
+          body: message,
+        }).show()
       }
       setIsFirstAppeal(false)
     } catch (error) {
       console.error(error)
-      toast.error("Mirakurun への接続に失敗しました")
+      new remote.Notification({
+        title: "Mirakurun への接続に失敗しました",
+        body: error instanceof Error ? error.message : undefined,
+      }).show()
       return
     }
     let services: Service[]
@@ -111,7 +120,10 @@ export const MirakurunManager: React.VFC<{}> = () => {
       services = servicesReq.data
     } catch (error) {
       console.error(error)
-      toast.error("サービス情報の取得に失敗しました")
+      new remote.Notification({
+        title: "Mirakurun サービス情報の取得に失敗しました",
+        body: error instanceof Error ? error.message : undefined,
+      }).show()
       return
     }
     updatePrograms(mirakurun)
@@ -144,10 +156,10 @@ export const MirakurunManager: React.VFC<{}> = () => {
         console.error(error)
       }
     } else {
-      toast.info(
-        "Mirakurun の設定が行われていません。設定画面から設定を行ってください。",
-        { autoClose: false }
-      )
+      new remote.Notification({
+        title: "Mirakurun の設定が行われていません",
+        body: "設定画面から設定を行ってください。",
+      }).show()
       setIsFirstAppeal(false)
     }
     return () => {
