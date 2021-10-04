@@ -7,7 +7,7 @@ files:
   - "index.html"
   - "package.json"
   - "dist/**/*"
-  - "assets/**/*"
+  - "assets/*.{png,svg}"
   - "!node_modules"
   - "node_modules/bindings"
   - "node_modules/cmake-js"
