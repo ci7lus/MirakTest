@@ -17,6 +17,7 @@ import React from "react"
 import Recoil from "recoil"
 import WebChimeraJs from "webchimera.js"
 import pkg from "../package.json"
+import { globalActiveContentPlayerIdAtomKey } from "./atoms/globalKeys"
 import {
   RECOIL_STATE_UPDATE,
   REQUEST_INITIAL_DATA,
@@ -118,6 +119,14 @@ const init = () => {
       console.info("primaryWindow を更新しました", contentPlayerWindows[0].id)
     }
     updateContentPlayerIds()
+    if (states[globalActiveContentPlayerIdAtomKey] === _id) {
+      const value = contentPlayerWindows.splice(0).shift()?.id ?? null
+      states[globalActiveContentPlayerIdAtomKey] = value
+      recoilStateUpdate(_id, {
+        key: globalActiveContentPlayerIdAtomKey,
+        value,
+      })
+    }
   })
 }
 
@@ -437,6 +446,14 @@ const openPlayer = () => {
       console.info("primaryWindow を更新しました", contentPlayerWindows[0].id)
     }
     updateContentPlayerIds()
+    if (states[globalActiveContentPlayerIdAtomKey] === _id) {
+      const value = contentPlayerWindows.splice(0).shift()?.id ?? null
+      states[globalActiveContentPlayerIdAtomKey] = value
+      recoilStateUpdate(_id, {
+        key: globalActiveContentPlayerIdAtomKey,
+        value,
+      })
+    }
   })
 }
 

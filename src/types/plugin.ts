@@ -18,6 +18,10 @@ export type CustomComponent = {
   component: React.VFC<{}>
 }
 
+export type OnBackgroundComponent = {
+  position: "onBackground"
+} & CustomComponent // すべてのウィンドウに展開される。見えない。
+
 export type OnSplashComponent = { position: "onSplash" } & CustomComponent // ほぼ見えない。バックグラウンド実行用などに
 
 export type OnSettingComponent = {
@@ -32,6 +36,7 @@ export type OnSubtitleComponent = { position: "onSubtitle" } & CustomComponent /
 export type OnForwardComponent = { position: "onForward" } & CustomComponent // 一番前、pointer-events: noneのため触りたい場合は該当部分だけautoにしておくこと
 
 export type ComponentWithPosition =
+  | OnBackgroundComponent
   | OnSplashComponent
   | OnSettingComponent
   | OnPlayerComponent

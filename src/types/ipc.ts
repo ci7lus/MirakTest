@@ -1,4 +1,5 @@
 import { BrowserWindowConstructorOptions } from "electron"
+import type { SerializableParam } from "recoil"
 
 export type OpenWindowArg = {
   name: string
@@ -6,4 +7,4 @@ export type OpenWindowArg = {
   args?: BrowserWindowConstructorOptions
 }
 
-export type RecoilStateUpdateArg = { key: string; value: object }
+export type RecoilStateUpdateArg = { key: string; value: SerializableParam }
