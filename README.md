@@ -50,7 +50,7 @@ AppImage に実行権限をつけ `--no-sandbox` をつけて実行するか、�
 ## プラグイン
 
 プラグインを導入して機能を拡張することが出来ます。<br />
-サンプルプラグイン集は[こちら](https://github.com/ci7lus/miraktest-plugins)。<br />
+利用できるプラグインの一覧は[こちら](https://github.com/ci7lus/MirakTest/wiki/Userland-Plugin)。<br />
 プラグイン作成ガイドは準備中です。<br />
 API 仕様は[plugin.ts](./src/types/plugin.ts)を参照してください。<br />
 型定義ファイル(`plugin.d.ts`)はリリースにてアプリイメージと一緒に配布しています。
