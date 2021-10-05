@@ -1,6 +1,6 @@
 import clsx from "clsx"
 import dayjs from "dayjs"
-import { remote } from "electron"
+import { ipcRenderer, remote } from "electron"
 import React, { useEffect, useRef, useState } from "react"
 import { ChevronDown, PauseCircle, PlayCircle } from "react-feather"
 import { useDebounce } from "react-use"
@@ -25,6 +25,7 @@ import {
 } from "../../atoms/contentPlayerSelectors"
 import { mirakurunServicesAtom } from "../../atoms/mirakurun"
 import { controllerSetting, experimentalSetting } from "../../atoms/settings"
+import { UPDATE_IS_PLAYING_STATE } from "../../constants/ipc"
 import { useRefFromState } from "../../hooks/ref"
 import { AudioChannelSelector } from "./controllers/AudioChannelSelector"
 import { AudioTrackSelector } from "./controllers/AudioTrackSelector"
@@ -34,6 +35,7 @@ import { CoiledScreenshotButton } from "./controllers/ScreenshotButton"
 import { ServiceSelector } from "./controllers/ServiceSelector"
 import { SubtitleToggleButton } from "./controllers/SubtitleToggleButton"
 import { VolumeSlider } from "./controllers/VolumeSlider"
+
 import "dayjs/locale/ja"
 
 dayjs.locale("ja")
@@ -149,6 +151,15 @@ export const CoiledController: React.VFC<{}> = () => {
       () => setIsPlayButtonShowing(false),
       1000
     )
+  }, [isPlaying])
+
+  useEffect(() => {
+    ipcRenderer
+      .invoke(UPDATE_IS_PLAYING_STATE, {
+        isPlaying,
+        windowId: currentWindow.id,
+      })
+      .catch(console.error)
   }, [isPlaying])
 
   const startAt = dayjs(program?.startAt).format(

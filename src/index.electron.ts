@@ -9,6 +9,7 @@ import {
   Menu,
   shell,
   dialog,
+  powerSaveBlocker,
 } from "electron"
 import Store from "electron-store"
 import esm from "esm"
@@ -22,6 +23,7 @@ import {
   REQUEST_OPEN_PLAYER,
   REQUEST_OPEN_SETTINGS,
   REUQEST_OPEN_WINDOW,
+  UPDATE_IS_PLAYING_STATE,
 } from "./constants/ipc"
 import { OpenWindowArg, RecoilStateUpdateArg } from "./types/ipc"
 import {
@@ -46,6 +48,8 @@ let settingsWindow: BrowserWindow | null = null
 
 const CONTENT_PLAYER_BOUNDS = `${pkg.name}.contentPlayer.bounds`
 const GLOBAL_CONTENT_PLAYER_IDS = `${pkg.name}.global.contentPlayerIds`
+
+const blockerIdBycontentPlayerWindow: { [key: number]: number | null } = {}
 
 const init = () => {
   if (process.platform == "win32" && WebChimeraJs.path) {
@@ -99,8 +103,15 @@ const init = () => {
   const [xPos, yPos] = primaryWindow.getPosition()
   primaryWindow.setPosition(xPos, yPos - headerSize)
 
+  const _id = primaryWindow.id
+
   primaryWindow.on("closed", () => {
     primaryWindow = null
+    const blockerId = blockerIdBycontentPlayerWindow[_id]
+    if (typeof blockerId === "number") {
+      powerSaveBlocker.stop(blockerId)
+      blockerIdBycontentPlayerWindow[_id] = null
+    }
     contentPlayerWindows.shift()
     if (0 < contentPlayerWindows.length) {
       primaryWindow = contentPlayerWindows[0]
@@ -313,6 +324,26 @@ ipcMain.handle(REQUEST_INITIAL_DATA, () => {
   return data
 })
 
+ipcMain.handle(
+  UPDATE_IS_PLAYING_STATE,
+  (_, { isPlaying, windowId }: { isPlaying: boolean; windowId: number }) => {
+    if (isPlaying) {
+      const blockerId = blockerIdBycontentPlayerWindow[windowId]
+      if (typeof blockerId !== "number") {
+        blockerIdBycontentPlayerWindow[windowId] = powerSaveBlocker.start(
+          "prevent-display-sleep"
+        )
+      }
+    } else {
+      const blockerId = blockerIdBycontentPlayerWindow[windowId]
+      if (typeof blockerId === "number") {
+        powerSaveBlocker.stop(blockerId)
+        blockerIdBycontentPlayerWindow[windowId] = null
+      }
+    }
+  }
+)
+
 const states: ObjectLiteral<unknown> = {}
 const statesHash: ObjectLiteral<string> = {}
 
@@ -395,6 +426,10 @@ const openPlayer = () => {
   }
   const _id = window.id
   window.on("closed", () => {
+    const blockerId = blockerIdBycontentPlayerWindow[_id]
+    if (typeof blockerId === "number") {
+      powerSaveBlocker.stop(blockerId)
+    }
     const idx = contentPlayerWindows.indexOf(window)
     contentPlayerWindows.splice(idx, 1)
     if (primaryWindow?.id === _id) {
