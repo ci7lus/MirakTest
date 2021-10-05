@@ -514,21 +514,3 @@ const openWindow = ({
 ipcMain.handle(REUQEST_OPEN_WINDOW, (_, args) => {
   return openWindow(args)?.id
 })
-
-const reloadTargetPaths = [
-  path.resolve(__dirname, "../index.html"),
-  path.resolve(__dirname, "index.electron.js"),
-  path.resolve(__dirname, "../main.js"),
-]
-
-if (!require.main?.filename.includes("app.asar")) {
-  try {
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
-    require("electron-reload")(reloadTargetPaths, {
-      electron: process.execPath,
-    })
-    console.info("electron-reload enabled")
-  } catch (e) {
-    console.error(e)
-  }
-}
