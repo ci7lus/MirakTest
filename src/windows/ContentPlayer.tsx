@@ -24,8 +24,21 @@ export const CoiledContentPlayer: React.VFC<{}> = () => {
 
   useEffect(() => {
     const remoteWindow = remote.getCurrentWindow()
-    // ウィンドウサイズを保存する
-    const onResizedOrMoved = () => setBounds(remoteWindow.getContentBounds())
+    // 16:9以下の比率になったら戻し、ウィンドウサイズを保存する
+    const onResizedOrMoved = () => {
+      const bounds = remoteWindow.getContentBounds()
+      const min = Math.ceil((bounds.width / 16) * 9)
+      if (process.platform === "win32" && bounds.height < min) {
+        const targetBounds = {
+          ...bounds,
+          height: min,
+        }
+        remoteWindow.setContentBounds(targetBounds)
+        setBounds(targetBounds)
+      } else {
+        setBounds(bounds)
+      }
+    }
     remoteWindow.on("resized", onResizedOrMoved)
     remoteWindow.on("moved", onResizedOrMoved)
     onResizedOrMoved()

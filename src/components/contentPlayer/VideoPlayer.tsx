@@ -41,8 +41,10 @@ export const CoiledVideoPlayer: React.VFC<{}> = memo(() => {
   const height = Math.ceil(width / aspect)
 
   useEffect(() => {
-    const remoteWindow = remote.getCurrentWindow()
-    remoteWindow.setAspectRatio(aspect)
+    if (process.platform !== "win32") {
+      const remoteWindow = remote.getCurrentWindow()
+      remoteWindow.setAspectRatio(aspect)
+    }
   }, [aspect])
 
   const playerRef = useRef<WebChimeraJs.Player | null>(null)

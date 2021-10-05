@@ -92,7 +92,10 @@ const init = () => {
   if (process.env.NODE_ENV === "development") {
     primaryWindow.webContents.openDevTools()
   }
-  primaryWindow.setAspectRatio(16 / 9)
+  // Windows は上下が見切れるのでアスペクト比を制限しない
+  if (process.platform !== "win32") {
+    primaryWindow.setAspectRatio(16 / 9)
+  }
   const [, contentHeight] = primaryWindow.getContentSize()
   const headerSize = height - contentHeight
   const minWidth = Math.ceil(640 / display.scaleFactor)
@@ -100,9 +103,12 @@ const init = () => {
     Math.ceil(360 / display.scaleFactor) +
     Math.ceil(headerSize / display.scaleFactor)
   primaryWindow.setMinimumSize(minWidth, minHeight)
-  primaryWindow.setSize(width, height + headerSize)
-  const [xPos, yPos] = primaryWindow.getPosition()
-  primaryWindow.setPosition(xPos, yPos - headerSize)
+  // Windows の計算がめんどくさい
+  if (process.platform !== "win32") {
+    primaryWindow.setSize(width, height + headerSize)
+    const [xPos, yPos] = primaryWindow.getPosition()
+    primaryWindow.setPosition(xPos, yPos - headerSize)
+  }
 
   const _id = primaryWindow.id
 
