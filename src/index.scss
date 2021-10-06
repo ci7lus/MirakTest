@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 html {
-  font-size: 14px;
+  font-size: 2vw;
 }
 
 *,
@@ -11,16 +11,4 @@ a,
 button {
   cursor: default;
   user-select: none;
-}
-
-.emoji {
-  display: inline-block;
-  width: auto;
-  height: 1rem;
-}
-
-.serviceNameOutline {
-  text-shadow: 2px 2px 1px #000000, -2px 2px 1px #000000, 2px -2px 1px #000000,
-    -2px -2px 1px #000000, 2px 0px 1px #000000, 0px 2px 1px #000000,
-    -2px 0px 1px #000000, 0px -2px 1px #000000;
 }
