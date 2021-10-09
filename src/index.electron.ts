@@ -476,7 +476,7 @@ const openPlayer = () => {
   })
 }
 
-ipcMain.on(REQUEST_OPEN_PLAYER, openPlayer)
+ipcMain.handle(REQUEST_OPEN_PLAYER, openPlayer)
 
 const windowMapping: { [key: string]: BrowserWindow[] } = {}
 const openWindow = ({
