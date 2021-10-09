@@ -83,6 +83,7 @@ export const useContentPlayerContextMenu = () => {
           ipcRenderer.invoke(REUQEST_OPEN_WINDOW, {
             name: "Settings",
             isSingletone: true,
+            isHideUntilLoaded: true,
           })
         },
       },

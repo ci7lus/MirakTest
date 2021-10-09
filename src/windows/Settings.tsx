@@ -63,7 +63,6 @@ export const Settings: React.VFC<{}> = () => {
   useEffect(() => {
     const browserWindow = remote.getCurrentWindow()
     browserWindow.setTitle(`設定 - ${remote.app.name}`)
-    browserWindow.show()
     try {
       const plugins: [string, string][] =
         window.plugins

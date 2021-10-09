@@ -299,15 +299,21 @@ const loadPlugins = async () => {
       }: {
         name: Omit<keyof typeof ROUTES, typeof ROUTES["ContentPlayer"]>
       }) => {
-        openWindow({ name: name as string, isSingletone: true })
+        openWindow({
+          name: name as string,
+          isSingletone: true,
+          isHideUntilLoaded: true,
+        })
       },
       openContentPlayerWindow: ({
         playingContent,
+        isHideUntilLoaded,
       }: OpenContentPlayerWindowArgs) => {
         return openWindow({
           name: ROUTES["ContentPlayer"],
           isSingletone: false,
           playingContent,
+          isHideUntilLoaded,
         })
       },
     },
@@ -478,6 +484,7 @@ const openWindow = ({
   isSingletone = false,
   args = {},
   playingContent,
+  isHideUntilLoaded,
 }: OpenWindowArg) => {
   const map = windowMapping[name] || []
   if (0 < map.length && isSingletone) {
@@ -509,6 +516,7 @@ const openWindow = ({
       },
       backgroundColor,
       ...args,
+      show: isHideUntilLoaded !== true,
     })
     if (playingContent) {
       // 生Recoil

@@ -40,13 +40,16 @@ import {
   RECOIL_STORED_ATOM_KEYS,
 } from "./constants/recoil"
 import { ROUTES } from "./constants/routes"
-import { OpenWindowArg } from "./types/ipc"
+import {
+  OpenBuiltinWindowArg,
+  OpenContentPlayerWindowArgs,
+  OpenWindowArg,
+} from "./types/ipc"
 import {
   InitPlugin,
   PluginDefineInRenderer,
   PluginInRendererArgs,
   DefineAtom,
-  ContentPlayerPlayingContent,
 } from "./types/plugin"
 import { ObjectLiteral } from "./types/struct"
 import { nativeImport } from "./utils/nativeImport"
@@ -71,11 +74,7 @@ export const PluginLoader: React.VFC<{
       }
       return ipcRenderer.invoke(REUQEST_OPEN_WINDOW, args)
     }
-    const openBuiltinWindow = async ({
-      name,
-    }: {
-      name: Omit<keyof typeof ROUTES, typeof ROUTES["ContentPlayer"]>
-    }) => {
+    const openBuiltinWindow = async ({ name }: OpenBuiltinWindowArg) => {
       await ipcRenderer.invoke(REUQEST_OPEN_WINDOW, {
         name,
         isSingletone: true,
@@ -83,13 +82,13 @@ export const PluginLoader: React.VFC<{
     }
     const openContentPlayerWindow = async ({
       playingContent,
-    }: {
-      playingContent?: ContentPlayerPlayingContent
-    }) => {
+      isHideUntilLoaded,
+    }: OpenContentPlayerWindowArgs) => {
       return await ipcRenderer.invoke(REUQEST_OPEN_WINDOW, {
         name: ROUTES.ContentPlayer,
         isSingletone: false,
         playingContent,
+        isHideUntilLoaded,
       })
     }
     const args: PluginInRendererArgs = {

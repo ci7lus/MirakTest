@@ -8,6 +8,7 @@ export type OpenWindowArg = {
   isSingletone?: boolean
   args?: BrowserWindowConstructorOptions
   playingContent?: ContentPlayerPlayingContent
+  isHideUntilLoaded?: boolean
 }
 
 export type OpenBuiltinWindowArg = {
@@ -16,6 +17,7 @@ export type OpenBuiltinWindowArg = {
 
 export type OpenContentPlayerWindowArgs = {
   playingContent?: ContentPlayerPlayingContent
+  isHideUntilLoaded?: boolean
 }
 
 export type RecoilStateUpdateArg = { key: string; value: SerializableParam }
