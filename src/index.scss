@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 html {
-  font-size: 2vw;
+  font-size: max(14px, 1.5vw);
 }
 
 *,
