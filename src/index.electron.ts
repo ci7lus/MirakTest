@@ -17,16 +17,21 @@ import React from "react"
 import Recoil from "recoil"
 import WebChimeraJs from "webchimera.js"
 import pkg from "../package.json"
+import { globalContentPlayerPlayingContentFamilyKey } from "./atoms/globalFamilyKeys"
 import { globalActiveContentPlayerIdAtomKey } from "./atoms/globalKeys"
 import {
   RECOIL_STATE_UPDATE,
   REQUEST_INITIAL_DATA,
   REQUEST_OPEN_PLAYER,
-  REQUEST_OPEN_SETTINGS,
   REUQEST_OPEN_WINDOW,
   UPDATE_IS_PLAYING_STATE,
 } from "./constants/ipc"
-import { OpenWindowArg, RecoilStateUpdateArg } from "./types/ipc"
+import { ROUTES } from "./constants/routes"
+import {
+  OpenContentPlayerWindowArgs,
+  OpenWindowArg,
+  RecoilStateUpdateArg,
+} from "./types/ipc"
 import {
   AppInfo,
   InitPlugin,
@@ -45,7 +50,6 @@ const backgroundColor = "#111827"
 
 let primaryWindow: BrowserWindow | null = null
 const contentPlayerWindows: BrowserWindow[] = []
-let settingsWindow: BrowserWindow | null = null
 
 const CONTENT_PLAYER_BOUNDS = `${pkg.name}.contentPlayer.bounds`
 const GLOBAL_CONTENT_PLAYER_IDS = `${pkg.name}.global.contentPlayerIds`
@@ -88,7 +92,7 @@ const init = () => {
   contentPlayerWindows.push(primaryWindow)
   updateContentPlayerIds()
 
-  primaryWindow.loadFile("index.html", { hash: "ContentPlayer" })
+  primaryWindow.loadFile("index.html", { hash: ROUTES["ContentPlayer"] })
   if (process.env.NODE_ENV === "development") {
     primaryWindow.webContents.openDevTools()
   }
@@ -127,6 +131,7 @@ const init = () => {
     updateContentPlayerIds()
     if (states[globalActiveContentPlayerIdAtomKey] === _id) {
       const value = contentPlayerWindows.splice(0).shift()?.id ?? null
+      // 生Recoil
       states[globalActiveContentPlayerIdAtomKey] = value
       recoilStateUpdate(_id, {
         key: globalActiveContentPlayerIdAtomKey,
@@ -161,7 +166,7 @@ const buildAppMenu = ({
       },
       {
         label: "設定",
-        click: () => openSettings(),
+        click: () => openWindow({ name: "Settings", isSingletone: true }),
       },
       {
         type: "separator",
@@ -229,7 +234,7 @@ const buildAppMenu = ({
         {
           label: "設定",
           accelerator: "CmdOrCtrl+,",
-          click: () => openSettings(),
+          click: () => openWindow({ name: "Settings", isSingletone: true }),
         },
         {
           type: "separator",
@@ -280,7 +285,31 @@ const loadPlugins = async () => {
       Electron: { ipcMain, app, browserWindow: BrowserWindow, dialog },
     },
     functions: {
-      openWindow,
+      openWindow: (args: OpenWindowArg) => {
+        const isBuiltin = (Object.values(ROUTES) as string[]).includes(
+          args.name
+        )
+        if (isBuiltin) {
+          throw new Error("ビルトイン画面を開くには専用の関数を用いてください")
+        }
+        return openWindow(args)
+      },
+      openBuiltinWindow: ({
+        name,
+      }: {
+        name: Omit<keyof typeof ROUTES, typeof ROUTES["ContentPlayer"]>
+      }) => {
+        openWindow({ name: name as string, isSingletone: true })
+      },
+      openContentPlayerWindow: ({
+        playingContent,
+      }: OpenContentPlayerWindowArgs) => {
+        return openWindow({
+          name: ROUTES["ContentPlayer"],
+          isSingletone: false,
+          playingContent,
+        })
+      },
     },
   }
   const openedPlugins: PluginDefineInMain[] = []
@@ -374,6 +403,7 @@ const updateContentPlayerIds = () => {
     key: GLOBAL_CONTENT_PLAYER_IDS,
     value: contentPlayerWindows.map((w) => w.id),
   })
+  // 生Recoil
   states[GLOBAL_CONTENT_PLAYER_IDS] = contentPlayerWindows.map((w) => w.id)
 }
 
@@ -387,30 +417,6 @@ ipcMain.handle(RECOIL_STATE_UPDATE, (event, payload: RecoilStateUpdateArg) => {
     recoilStateUpdate(event.sender.id, payload)
   }
 })
-
-const openSettings = () => {
-  if (settingsWindow) {
-    settingsWindow.show()
-  } else {
-    const window = new BrowserWindow({
-      webPreferences: {
-        contextIsolation: false,
-        nodeIntegration: true,
-        enableRemoteModule: true,
-        devTools: true,
-      },
-      backgroundColor,
-      show: false,
-    })
-    window.loadFile("index.html", { hash: "Settings" })
-    settingsWindow = window
-    window.on("closed", () => {
-      settingsWindow = null
-    })
-  }
-}
-
-ipcMain.on(REQUEST_OPEN_SETTINGS, openSettings)
 
 const openPlayer = () => {
   if (!primaryWindow) {
@@ -431,7 +437,7 @@ const openPlayer = () => {
     },
     backgroundColor,
   })
-  window.loadFile("index.html", { hash: "ContentPlayer" })
+  window.loadFile("index.html", { hash: ROUTES["ContentPlayer"] })
   window.setAspectRatio(16 / 9)
   contentPlayerWindows.push(window)
   updateContentPlayerIds()
@@ -454,6 +460,7 @@ const openPlayer = () => {
     updateContentPlayerIds()
     if (states[globalActiveContentPlayerIdAtomKey] === _id) {
       const value = contentPlayerWindows.splice(0).shift()?.id ?? null
+      // 生Recoil
       states[globalActiveContentPlayerIdAtomKey] = value
       recoilStateUpdate(_id, {
         key: globalActiveContentPlayerIdAtomKey,
@@ -470,15 +477,21 @@ const openWindow = ({
   name,
   isSingletone = false,
   args = {},
+  playingContent,
 }: OpenWindowArg) => {
   const map = windowMapping[name] || []
   if (0 < map.length && isSingletone) {
     map[0].show()
     return map[0]
   } else {
-    const { width, height } = primaryWindow?.getBounds() || {
-      width: undefined,
-      height: undefined,
+    let width: number | undefined = undefined
+    let height: number | undefined = undefined
+    if (name === ROUTES["ContentPlayer"]) {
+      const bounds = primaryWindow?.getBounds()
+      if (bounds) {
+        width = bounds.width
+        height = bounds.height
+      }
     }
     const [minWidth, minHeight] = primaryWindow?.getMinimumSize() || [
       undefined,
@@ -497,6 +510,11 @@ const openWindow = ({
       backgroundColor,
       ...args,
     })
+    if (playingContent) {
+      // 生Recoil
+      states[`${globalContentPlayerPlayingContentFamilyKey}__${window.id}`] =
+        playingContent
+    }
     if (0 < windowMapping[name]?.length) {
       windowMapping[name].push(window)
     } else {

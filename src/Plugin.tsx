@@ -39,12 +39,14 @@ import {
   RECOIL_SHARED_ATOM_KEYS,
   RECOIL_STORED_ATOM_KEYS,
 } from "./constants/recoil"
+import { ROUTES } from "./constants/routes"
 import { OpenWindowArg } from "./types/ipc"
 import {
   InitPlugin,
   PluginDefineInRenderer,
   PluginInRendererArgs,
   DefineAtom,
+  ContentPlayerPlayingContent,
 } from "./types/plugin"
 import { ObjectLiteral } from "./types/struct"
 import { nativeImport } from "./utils/nativeImport"
@@ -63,7 +65,32 @@ export const PluginLoader: React.VFC<{
     const contextMenus: { [key: string]: Electron.MenuItemConstructorOptions } =
       {}
     const openWindow = async (args: OpenWindowArg) => {
-      return await ipcRenderer.invoke(REUQEST_OPEN_WINDOW, args)
+      const isBuiltin = (Object.values(ROUTES) as string[]).includes(args.name)
+      if (isBuiltin) {
+        throw new Error("ビルトイン画面を開くには専用の関数を用いてください")
+      }
+      return ipcRenderer.invoke(REUQEST_OPEN_WINDOW, args)
+    }
+    const openBuiltinWindow = async ({
+      name,
+    }: {
+      name: Omit<keyof typeof ROUTES, typeof ROUTES["ContentPlayer"]>
+    }) => {
+      await ipcRenderer.invoke(REUQEST_OPEN_WINDOW, {
+        name,
+        isSingletone: true,
+      })
+    }
+    const openContentPlayerWindow = async ({
+      playingContent,
+    }: {
+      playingContent?: ContentPlayerPlayingContent
+    }) => {
+      return await ipcRenderer.invoke(REUQEST_OPEN_WINDOW, {
+        name: ROUTES.ContentPlayer,
+        isSingletone: false,
+        playingContent,
+      })
     }
     const args: PluginInRendererArgs = {
       packages: {
@@ -73,6 +100,8 @@ export const PluginLoader: React.VFC<{
       appInfo: { name: pkg.productName, version: pkg.version },
       functions: {
         openWindow,
+        openBuiltinWindow,
+        openContentPlayerWindow,
       },
       hooks: {},
       atoms: {

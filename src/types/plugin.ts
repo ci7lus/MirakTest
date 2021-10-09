@@ -4,7 +4,11 @@ import * as Recoil from "recoil"
 import { Program, Service } from "../infra/mirakurun/api"
 export type { Channel, Service, Program } from "../infra/mirakurun/api"
 import { ContentPlayerPlayingContent } from "./contentPlayer"
-import { OpenWindowArg } from "./ipc"
+import {
+  OpenBuiltinWindowArg,
+  OpenContentPlayerWindowArgs,
+  OpenWindowArg,
+} from "./ipc"
 import { MirakurunCompatibilityTypes } from "./mirakurun"
 export type { ContentPlayerPlayingContent } from "./contentPlayer"
 
@@ -56,6 +60,10 @@ export type PluginInRendererArgs = {
   }
   functions: {
     openWindow: (args: OpenWindowArg) => Promise<number>
+    openBuiltinWindow: (args: OpenBuiltinWindowArg) => Promise<void>
+    openContentPlayerWindow: (
+      args: OpenContentPlayerWindowArgs
+    ) => Promise<number>
   }
   hooks: {}
   atoms: {
@@ -105,6 +113,8 @@ export type PluginInMainArgs = {
   }
   functions: {
     openWindow: (args: OpenWindowArg) => Electron.BrowserWindow
+    openBuiltinWindow: (args: OpenBuiltinWindowArg) => void
+    openContentPlayerWindow: (args: OpenContentPlayerWindowArgs) => void
   }
 }
 
