@@ -16,7 +16,7 @@ export const CoiledScreenshotButton: React.VFC<{}> = memo(() => {
       className={`focus:outline-none cursor-pointer p-2 text-gray-100`}
       onClick={() => setScreenshotTrigger(performance.now())}
     >
-      <Camera className="pointer-events-none" size={22} />
+      <Camera className="pointer-events-none" size="1.75rem" />
     </button>
   )
 })

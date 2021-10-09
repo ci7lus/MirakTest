@@ -13,9 +13,9 @@ export const PlayToggleButton: React.VFC<{
     onClick={() => setIsPlaying((value) => !value)}
   >
     {isPlaying ? (
-      <Pause className="pointer-events-none" size={22} />
+      <Pause className="pointer-events-none" size="1.75rem" />
     ) : (
-      <Play className="pointer-events-none" size={22} />
+      <Play className="pointer-events-none" size="1.75rem" />
     )}
   </button>
 ))

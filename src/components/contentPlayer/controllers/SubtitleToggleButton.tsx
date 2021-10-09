@@ -14,6 +14,6 @@ export const SubtitleToggleButton: React.VFC<{
     }`}
     onClick={() => setSubtitleEnabled((value) => !value)}
   >
-    <Type className="pointer-events-none" size={22} />
+    <Type className="pointer-events-none" size="1.75rem" />
   </button>
 ))

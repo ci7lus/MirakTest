@@ -260,7 +260,7 @@ export const CoiledController: React.VFC<{}> = () => {
                     {serviceLabel ? (
                       <div className="flex items-center space-x-1">
                         <p>{serviceLabel}</p>
-                        <ChevronDown size={18} />
+                        <ChevronDown size="1.125rem" />
                       </div>
                     ) : (
                       <></>
@@ -273,7 +273,7 @@ export const CoiledController: React.VFC<{}> = () => {
               ) : serviceLabel ? (
                 <div className="font-semibold text-2xl flex items-center space-x-1">
                   <p>{serviceLabel}</p>
-                  <ChevronDown size={24} />
+                  <ChevronDown size="1.5rem" />
                 </div>
               ) : (
                 <></>
@@ -339,9 +339,9 @@ export const CoiledController: React.VFC<{}> = () => {
           >
             <div className="p-4 rounded-full bg-opacity-50 bg-gray-800">
               {isPlaying ? (
-                <PauseCircle className="pointer-events-none" size={46} />
+                <PauseCircle className="pointer-events-none" size="3rem" />
               ) : (
-                <PlayCircle className="pointer-events-none" size={46} />
+                <PlayCircle className="pointer-events-none" size="3rem" />
               )}
             </div>
           </button>

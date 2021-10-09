@@ -29,11 +29,11 @@ export const VolumeSlider: React.VFC<{
         onClick={() => setRangeVolume((volume) => (0 < volume ? 0 : 100))}
       >
         {rangeVolume === 0 ? (
-          <VolumeX className="pointer-events-none" size={22} />
+          <VolumeX className="pointer-events-none" size="1.75rem" />
         ) : rangeVolume < 75 ? (
-          <Volume1 className="pointer-events-none" size={22} />
+          <Volume1 className="pointer-events-none" size="1.75rem" />
         ) : (
-          <Volume2 className="pointer-events-none" size={22} />
+          <Volume2 className="pointer-events-none" size="1.75rem" />
         )}
       </button>
       <input

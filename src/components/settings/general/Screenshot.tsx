@@ -76,7 +76,7 @@ export const ScreenshotSettingForm: React.VFC<{
               setBasePath(path)
             }}
           >
-            <File className="pointer-events-none" size={20} />
+            <File className="pointer-events-none" size="1.75rem" />
           </button>
         </div>
       </label>
