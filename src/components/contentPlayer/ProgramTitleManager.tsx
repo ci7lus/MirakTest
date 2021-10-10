@@ -12,14 +12,8 @@ export const CoiledProgramTitleManager: React.VFC<{}> = () => {
   const setTitle = useSetRecoilState(contentPlayerTitleAtom)
 
   useEffect(() => {
-    if (!service) {
-      setTitle(null)
-      return
-    }
-    const title = program?.name
-      ? `${program.name} - ${service.name}`
-      : service.name
-    setTitle(title)
+    const title = [program?.name, service?.name].filter((s) => s).join(" - ")
+    setTitle(title.trim() ? title : null)
   }, [program, service])
 
   useEffect(() => {
