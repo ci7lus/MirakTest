@@ -56,6 +56,12 @@ const GLOBAL_CONTENT_PLAYER_IDS = `${pkg.name}.global.contentPlayerIds`
 
 const blockerIdBycontentPlayerWindow: { [key: number]: number | null } = {}
 
+let store: Store<{
+  [key: typeof CONTENT_PLAYER_BOUNDS]: Rectangle
+}> | null = null
+
+let display: Electron.Display | null = null
+
 const init = () => {
   if (process.platform == "win32" && WebChimeraJs.path) {
     const VLCPluginPath = path.join(WebChimeraJs.path, "plugins")
@@ -66,15 +72,17 @@ const init = () => {
   Menu.setApplicationMenu(buildAppMenu({ plugins: appMenus }))
 
   Store.initRenderer()
-  const display = screen.getPrimaryDisplay()
   // store/bounds定義を引っ張ってくると目に見えて容量が増えるので決め打ち
-  const store = new Store<{}>({
+  const _store = new Store<{ [key: typeof CONTENT_PLAYER_BOUNDS]: Rectangle }>({
     // workaround for conf's Project name could not be inferred. Please specify the `projectName` option.
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     projectName: pkg.name,
   })
-  const bounds: Rectangle | null = store.get(CONTENT_PLAYER_BOUNDS)
+  store = _store
+  const _display = screen.getPrimaryDisplay()
+  display = _display
+  const bounds: Rectangle | null = _store.get(CONTENT_PLAYER_BOUNDS)
   const width = bounds?.width || Math.ceil(1280 / display.scaleFactor)
   const height = bounds?.height || Math.ceil(720 / display.scaleFactor)
   primaryWindow = new BrowserWindow({
@@ -498,6 +506,11 @@ const openWindow = ({
       if (bounds) {
         width = bounds.width
         height = bounds.height
+      } else if (display) {
+        const bounds: Rectangle | null =
+          store?.get(CONTENT_PLAYER_BOUNDS) || null
+        width = bounds?.width || Math.ceil(1280 / display.scaleFactor)
+        height = bounds?.height || Math.ceil(720 / display.scaleFactor)
       }
     }
     const [minWidth, minHeight] = primaryWindow?.getMinimumSize() || [
