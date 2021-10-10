@@ -59,7 +59,7 @@ export const CoiledVideoPlayer: React.VFC<{}> = memo(() => {
       playerRef.current.stop()
       console.info("再生停止")
     }
-  }, [url])
+  }, [url, playerRef.current])
   const [isPlaying, setIsPlaying] = useRecoilState(contentPlayerIsPlayingAtom)
   const [isErrorEncounted, setIsErrorEncounted] = useState(false)
   useEffect(() => {

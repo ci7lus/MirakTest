@@ -78,6 +78,7 @@ export const MirakurunManager: React.VFC<{}> = () => {
   const [isFirstAppeal, setIsFirstAppeal] = useState(true)
 
   const init = async (mirakurun: MirakurunAPI) => {
+    const isContentPrepared = isFirstAppeal && playingContent
     try {
       const version = await mirakurun.version.checkVersion()
       let message: string
@@ -105,7 +106,9 @@ export const MirakurunManager: React.VFC<{}> = () => {
         title: "Mirakurun への接続に失敗しました",
         body: error instanceof Error ? error.message : undefined,
       }).show()
-      return
+      if (!isContentPrepared) {
+        return
+      }
     }
     let services: Service[]
     try {
@@ -124,7 +127,10 @@ export const MirakurunManager: React.VFC<{}> = () => {
         title: "Mirakurun サービス情報の取得に失敗しました",
         body: error instanceof Error ? error.message : undefined,
       }).show()
-      return
+      if (!isContentPrepared) {
+        return
+      }
+      services = []
     }
     updatePrograms(mirakurun)
     if (programUpdateTimer.current) {
@@ -134,17 +140,19 @@ export const MirakurunManager: React.VFC<{}> = () => {
       () => updatePrograms(mirakurun),
       1000 * 60 * 60 // 1時間
     )
-    if (lastSelectedServiceId) {
-      const service = services.find(
-        (service) => service.id === lastSelectedServiceId.serviceId
-      )
-      if (service) {
-        setSelectedService(service)
-        return
+    if (!isContentPrepared) {
+      if (lastSelectedServiceId) {
+        const service = services.find(
+          (service) => service.id === lastSelectedServiceId.serviceId
+        )
+        if (service) {
+          setSelectedService(service)
+          return
+        }
       }
-    }
-    if (0 < services.length) {
-      setSelectedService(services[0])
+      if (0 < services.length) {
+        setSelectedService(services[0])
+      }
     }
   }
   useEffect(() => {
@@ -236,6 +244,9 @@ export const MirakurunManager: React.VFC<{}> = () => {
 
   // selectedService（切り替え先サービス）->serviceへの反映発火
   useEffect(() => {
+    if (playingContent?.contentType !== "Mirakurun") {
+      return
+    }
     console.info(`表示サービスを変更します:`, selectedService)
     updateService(selectedService).catch(console.error)
   }, [selectedService])
