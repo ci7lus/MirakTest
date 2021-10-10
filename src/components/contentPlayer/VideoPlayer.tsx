@@ -27,7 +27,7 @@ import {
   contentPlayerServiceSelector,
   contentPlayerUrlSelector,
 } from "../../atoms/contentPlayerSelectors"
-import { screenshotSetting } from "../../atoms/settings"
+import { experimentalSetting, screenshotSetting } from "../../atoms/settings"
 import { useRefFromState } from "../../hooks/ref"
 import { VideoRenderer } from "../../utils/videoRenderer"
 import { VLCLogFilter } from "../../utils/vlc"
@@ -260,13 +260,21 @@ export const CoiledVideoPlayer: React.VFC<{}> = memo(() => {
     player.position = positionUpdate
     console.info(`ユーザー位置更新:`, positionUpdate)
   }, [positionUpdate])
+  const experimental = useRecoilValue(experimentalSetting)
   useEffect(() => {
     const canvas = canvasRef.current
     if (!canvas) return
     const renderContext = new VideoRenderer(canvas, {
       preserveDrawingBuffer: true,
     })
-    const player = WebChimeraJs.createPlayer()
+    const args = [
+      0 < (experimental.vlcNetworkCaching ?? -1)
+        ? `--network-caching=${experimental.vlcNetworkCaching}`
+        : "",
+      "--avcodec-hw=any",
+    ].filter((s) => s)
+    console.info("VLC Args:", args)
+    const player = WebChimeraJs.createPlayer(args)
     player.onLogMessage = (_level, message) => {
       const parsed = VLCLogFilter(message)
       switch (parsed.category) {
@@ -381,6 +389,7 @@ export const CoiledVideoPlayer: React.VFC<{}> = memo(() => {
     return () => {
       window.removeEventListener("resize", onResize)
       player.close()
+      playerRef.current = null
     }
   }, [])
   return (
