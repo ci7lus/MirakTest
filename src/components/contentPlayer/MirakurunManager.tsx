@@ -246,7 +246,12 @@ export const MirakurunManager: React.VFC<{}> = () => {
 
   // selectedService（切り替え先サービス）->serviceへの反映発火
   useEffect(() => {
-    if (playingContent && playingContent.contentType !== "Mirakurun") {
+    if (
+      playingContent &&
+      playingContent.contentType !== "Mirakurun" &&
+      // 新しいウィンドウで特定のサービスを開くがnull上書きされることへの対策、そもそもサービスをnull上書きしなきゃいけないシーンないかも
+      !selectedService // 録画再生からライブサービスへ切り替え出来ないことへの対策
+    ) {
       return
     }
     console.info(`表示サービスを変更します:`, selectedService)
