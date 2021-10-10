@@ -10,6 +10,7 @@ import {
   controllerSetting,
   experimentalSetting,
   mirakurunSetting,
+  mirakurunUrlHistory,
   screenshotSetting,
 } from "../atoms/settings"
 
@@ -25,6 +26,7 @@ export const RECOIL_SHARED_ATOM_KEYS = [
 
 export const RECOIL_STORED_ATOM_KEYS = [
   mirakurunSetting.key,
+  mirakurunUrlHistory.key,
   controllerSetting.key,
   screenshotSetting.key,
   experimentalSetting.key,

@@ -17,6 +17,11 @@ export const mirakurunSetting = atom<MirakurunSetting>({
   },
 })
 
+export const mirakurunUrlHistory = atom<string[]>({
+  key: `${prefix}.mirakurunUrlHistory`,
+  default: [],
+})
+
 export const controllerSetting = atom<ControllerSetting>({
   key: `${prefix}.controller`,
   default: {

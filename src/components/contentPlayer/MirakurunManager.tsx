@@ -3,6 +3,7 @@ import { remote } from "electron"
 import React, { useEffect, useRef, useState } from "react"
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil"
 import {
+  contentPlayerIsPlayingAtom,
   contentPlayerKeyForRestorationAtom,
   contentPlayerSelectedServiceAtom,
   contentPlayerServiceLogoUrlAtom,
@@ -51,6 +52,7 @@ export const MirakurunManager: React.VFC<{}> = () => {
   const [serviceLogos, setServiceLogos] = useState<{ [key: number]: string }>(
     {}
   )
+  const isPlaying = useRecoilValue(contentPlayerIsPlayingAtom)
 
   const programUpdateTimer = useRef<NodeJS.Timeout | null>(null)
 
@@ -78,7 +80,7 @@ export const MirakurunManager: React.VFC<{}> = () => {
   const [isFirstAppeal, setIsFirstAppeal] = useState(true)
 
   const init = async (mirakurun: MirakurunAPI) => {
-    const isContentPrepared = isFirstAppeal && playingContent
+    const isContentPrepared = (isFirstAppeal && playingContent) || isPlaying
     try {
       const version = await mirakurun.version.checkVersion()
       let message: string

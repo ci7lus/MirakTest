@@ -1,6 +1,6 @@
 import React, { useState } from "react"
 import { useRecoilState } from "recoil"
-import { mirakurunSetting } from "../../atoms/settings"
+import { mirakurunSetting, mirakurunUrlHistory } from "../../atoms/settings"
 
 export const MirakurunSettingForm: React.VFC<{}> = () => {
   const [mirakurun, setMirakurun] = useRecoilState(mirakurunSetting)
@@ -11,11 +11,19 @@ export const MirakurunSettingForm: React.VFC<{}> = () => {
   const [isEnableServiceTypeFilter, setIsEnableServiceTypeFilter] = useState(
     mirakurun.isEnableServiceTypeFilter
   )
+  const [urlHistory, setUrlHistory] = useRecoilState(mirakurunUrlHistory)
   return (
     <form
       className="m-4"
       onSubmit={(e) => {
         e.preventDefault()
+        if (url) {
+          setUrlHistory((prev) =>
+            prev.find((_url) => _url === url)
+              ? prev
+              : [url, ...(10 < prev.length ? [...prev].slice(0, 10) : prev)]
+          )
+        }
         setMirakurun({
           baseUrl: url || undefined,
           isEnableWaitForSingleTuner,
@@ -25,12 +33,18 @@ export const MirakurunSettingForm: React.VFC<{}> = () => {
     >
       <label className="block">
         <span>Mirakurun API の URL</span>
+        <datalist id="mirakurunUrlHistory">
+          {urlHistory.map((url) => (
+            <option key={url} value={url} />
+          ))}
+        </datalist>
         <input
           type="text"
           placeholder="http://mirakurun:40772/api"
           className="block mt-2 form-input rounded-md w-full text-gray-900"
           value={url || ""}
           onChange={(e) => setUrl(e.target.value)}
+          list="mirakurunUrlHistory"
         />
       </label>
       <label className="block my-4">
