@@ -7,6 +7,7 @@ import React, { memo, useEffect, useRef, useState } from "react"
 import { useThrottleFn } from "react-use"
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil"
 import WebChimeraJs from "webchimera.js"
+import pkg from "../../../package.json"
 import {
   contentPlayerAribSubtitleDataAtom,
   contentPlayerAudioChannelAtom,
@@ -280,6 +281,8 @@ export const CoiledVideoPlayer: React.VFC<{}> = memo(() => {
         ? `--network-caching=${experimental.vlcNetworkCaching}`
         : "",
       "--avcodec-hw=any",
+      `--http-user-agent=${pkg.productName}/${pkg.version}`,
+      `--http-referrer=${pkg.repository.url}`,
     ].filter((s) => s)
     console.info("VLC Args:", args)
     const player = WebChimeraJs.createPlayer(args)
