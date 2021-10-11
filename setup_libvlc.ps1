@@ -1,4 +1,4 @@
-$LIBVLC_VER = "3.0.14"
+$LIBVLC_VER = "3.0.16"
 $LIBVLC_VER_EXTRA = "2"
 $OS_NAME = "windows"
 
