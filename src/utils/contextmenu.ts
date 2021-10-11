@@ -6,7 +6,8 @@ import {
   contentPlayerSelectedServiceAtom,
 } from "../atoms/contentPlayer"
 import { mirakurunServicesAtom } from "../atoms/mirakurun"
-import { REQUEST_OPEN_PLAYER, REUQEST_OPEN_WINDOW } from "../constants/ipc"
+import { REUQEST_OPEN_WINDOW } from "../constants/ipc"
+import { ROUTES } from "../constants/routes"
 import { useRefFromState } from "../hooks/ref"
 
 export const useContentPlayerContextMenu = () => {
@@ -74,14 +75,17 @@ export const useContentPlayerContextMenu = () => {
       {
         label: "新しいプレイヤーを開く",
         click: () => {
-          ipcRenderer.invoke(REQUEST_OPEN_PLAYER)
+          ipcRenderer.invoke(REUQEST_OPEN_WINDOW, {
+            name: ROUTES["ContentPlayer"],
+            isHideUntilLoaded: true,
+          })
         },
       },
       {
         label: "設定",
         click: () => {
           ipcRenderer.invoke(REUQEST_OPEN_WINDOW, {
-            name: "Settings",
+            name: ROUTES["Settings"],
             isSingletone: true,
             isHideUntilLoaded: true,
           })

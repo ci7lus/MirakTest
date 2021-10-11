@@ -23,7 +23,6 @@ import { globalActiveContentPlayerIdAtomKey } from "./atoms/globalKeys"
 import {
   RECOIL_STATE_UPDATE,
   REQUEST_INITIAL_DATA,
-  REQUEST_OPEN_PLAYER,
   REUQEST_OPEN_WINDOW,
   UPDATE_IS_PLAYING_STATE,
 } from "./constants/ipc"
@@ -49,7 +48,6 @@ const esmRequire = esm(module)
 
 const backgroundColor = "#111827"
 
-let primaryWindow: BrowserWindow | null = null
 const contentPlayerWindows: BrowserWindow[] = []
 
 const CONTENT_PLAYER_BOUNDS = `${pkg.name}.contentPlayer.bounds`
@@ -92,70 +90,9 @@ const init = () => {
   store = _store
   const _display = screen.getPrimaryDisplay()
   display = _display
-  const bounds: Rectangle | null = _store.get(CONTENT_PLAYER_BOUNDS)
-  const width = bounds?.width || Math.ceil(1280 / display.scaleFactor)
-  const height = bounds?.height || Math.ceil(720 / display.scaleFactor)
-  primaryWindow = new BrowserWindow({
-    width,
-    height,
-    x: bounds?.x,
-    y: bounds?.y,
-    webPreferences: {
-      contextIsolation: false,
-      nodeIntegration: true,
-      enableRemoteModule: true,
-    },
-    backgroundColor,
-  })
-  contentPlayerWindows.push(primaryWindow)
-  updateContentPlayerIds()
-
-  primaryWindow.loadFile("index.html", { hash: ROUTES["ContentPlayer"] })
-  if (process.env.NODE_ENV === "development") {
-    primaryWindow.webContents.openDevTools()
-  }
-  // Windows は上下が見切れるのでアスペクト比を制限しない
-  if (process.platform !== "win32") {
-    primaryWindow.setAspectRatio(16 / 9)
-  }
-  const [, contentHeight] = primaryWindow.getContentSize()
-  const headerSize = height - contentHeight
-  const minWidth = Math.ceil(640 / display.scaleFactor)
-  const minHeight =
-    Math.ceil(360 / display.scaleFactor) +
-    Math.ceil(headerSize / display.scaleFactor)
-  primaryWindow.setMinimumSize(minWidth, minHeight)
-  // Windows の計算がめんどくさい
-  if (process.platform !== "win32") {
-    primaryWindow.setSize(width, height + headerSize)
-    const [xPos, yPos] = primaryWindow.getPosition()
-    primaryWindow.setPosition(xPos, yPos - headerSize)
-  }
-
-  const _id = primaryWindow.id
-
-  primaryWindow.on("closed", () => {
-    primaryWindow = null
-    const blockerId = blockerIdBycontentPlayerWindow[_id]
-    if (typeof blockerId === "number") {
-      powerSaveBlocker.stop(blockerId)
-      blockerIdBycontentPlayerWindow[_id] = null
-    }
-    contentPlayerWindows.shift()
-    if (0 < contentPlayerWindows.length) {
-      primaryWindow = contentPlayerWindows[0]
-      console.info("primaryWindow を更新しました", contentPlayerWindows[0].id)
-    }
-    updateContentPlayerIds()
-    if (states[globalActiveContentPlayerIdAtomKey] === _id) {
-      const value = contentPlayerWindows.splice(0).shift()?.id ?? null
-      // 生Recoil
-      states[globalActiveContentPlayerIdAtomKey] = value
-      recoilStateUpdate(_id, {
-        key: globalActiveContentPlayerIdAtomKey,
-        value,
-      })
-    }
+  openWindow({
+    name: ROUTES["ContentPlayer"],
+    isHideUntilLoaded: true,
   })
 }
 
@@ -173,7 +110,8 @@ const buildAppMenu = ({
   const fileSubMenu: Electron.MenuItemConstructorOptions["submenu"] = [
     {
       label: "新しいプレイヤー",
-      click: () => openPlayer(),
+      click: () =>
+        openWindow({ name: ROUTES["ContentPlayer"], isHideUntilLoaded: true }),
       accelerator: "CmdOrCtrl+N",
     },
   ]
@@ -443,60 +381,6 @@ ipcMain.handle(RECOIL_STATE_UPDATE, (event, payload: RecoilStateUpdateArg) => {
   }
 })
 
-const openPlayer = () => {
-  if (!primaryWindow) {
-    init()
-    return
-  }
-  const { width, height } = primaryWindow.getBounds()
-  const [minWidth, minHeight] = primaryWindow.getMinimumSize()
-  const window = new BrowserWindow({
-    width,
-    height,
-    minWidth,
-    minHeight,
-    webPreferences: {
-      contextIsolation: false,
-      nodeIntegration: true,
-      enableRemoteModule: true,
-    },
-    backgroundColor,
-  })
-  window.loadFile("index.html", { hash: ROUTES["ContentPlayer"] })
-  window.setAspectRatio(16 / 9)
-  contentPlayerWindows.push(window)
-  updateContentPlayerIds()
-  if (primaryWindow === null) {
-    primaryWindow = window
-    console.info("primaryWindow を更新しました", window.id)
-  }
-  const _id = window.id
-  window.on("closed", () => {
-    const blockerId = blockerIdBycontentPlayerWindow[_id]
-    if (typeof blockerId === "number") {
-      powerSaveBlocker.stop(blockerId)
-    }
-    const idx = contentPlayerWindows.indexOf(window)
-    contentPlayerWindows.splice(idx, 1)
-    if (primaryWindow?.id === _id) {
-      primaryWindow = contentPlayerWindows[0]
-      console.info("primaryWindow を更新しました", contentPlayerWindows[0].id)
-    }
-    updateContentPlayerIds()
-    if (states[globalActiveContentPlayerIdAtomKey] === _id) {
-      const value = contentPlayerWindows.splice(0).shift()?.id ?? null
-      // 生Recoil
-      states[globalActiveContentPlayerIdAtomKey] = value
-      recoilStateUpdate(_id, {
-        key: globalActiveContentPlayerIdAtomKey,
-        value,
-      })
-    }
-  })
-}
-
-ipcMain.handle(REQUEST_OPEN_PLAYER, openPlayer)
-
 const windowMapping: { [key: string]: BrowserWindow[] } = {}
 const openWindow = ({
   name,
@@ -511,26 +395,40 @@ const openWindow = ({
     return map[0]
   } else {
     let width: number | undefined = undefined
+    let x: number | undefined = undefined
+    let y: number | undefined = undefined
     let height: number | undefined = undefined
+    const sampleWindow = contentPlayerWindows?.[0]
     if (name === ROUTES["ContentPlayer"]) {
-      const bounds = primaryWindow?.getBounds()
+      const bounds = sampleWindow?.getBounds()
       if (bounds) {
         width = bounds.width
         height = bounds.height
+        x = bounds.x + 30
+        y = bounds.y + 30
       } else if (display) {
         const bounds: Rectangle | null =
           store?.get(CONTENT_PLAYER_BOUNDS) || null
         width = bounds?.width || Math.ceil(1280 / display.scaleFactor)
         height = bounds?.height || Math.ceil(720 / display.scaleFactor)
+        x = bounds?.x
+        y = bounds?.y
+        // 2ウィンドウ目以降はかぶらないようにちょっとずらす
+        if (x && y && contentPlayerWindows.length !== 0) {
+          x += 30
+          y += 30
+        }
       }
     }
-    const [minWidth, minHeight] = primaryWindow?.getMinimumSize() || [
+    const [minWidth, minHeight] = sampleWindow?.getMinimumSize() || [
       undefined,
       undefined,
     ]
     const window = new BrowserWindow({
       width,
       height,
+      x,
+      y,
       minWidth,
       minHeight,
       webPreferences: {
@@ -542,20 +440,72 @@ const openWindow = ({
       ...args,
       show: isHideUntilLoaded !== true,
     })
-    if (playingContent) {
-      // 生Recoil
-      states[`${globalContentPlayerPlayingContentFamilyKey}__${window.id}`] =
-        playingContent
+    const [, contentHeight] = window.getContentSize()
+    if (width && height && display && name === ROUTES["ContentPlayer"]) {
+      const headerSize = height - contentHeight
+      if (!sampleWindow) {
+        window.setSize(width, height + headerSize)
+      }
+      const minWidth = Math.ceil(640 / display.scaleFactor)
+      const minHeight =
+        Math.ceil(360 / display.scaleFactor) +
+        Math.ceil(headerSize / display.scaleFactor)
+      window.setMinimumSize(minWidth, minHeight)
+
+      if (process.env.NODE_ENV === "development") {
+        window.webContents.openDevTools()
+      }
+
+      if (playingContent) {
+        // 生Recoil
+        states[`${globalContentPlayerPlayingContentFamilyKey}__${window.id}`] =
+          playingContent
+      }
+
+      // Windows/Linux は上下が見切れるのでアスペクト比を制限しない
+      if (process.platform === "darwin") {
+        window.setAspectRatio(16 / 9)
+        if (contentPlayerWindows.length === 0) {
+          window.setSize(width, height + headerSize)
+          const [xPos, yPos] = window.getPosition()
+          window.setPosition(xPos, yPos - headerSize)
+        }
+      }
+
+      contentPlayerWindows.push(window)
+      updateContentPlayerIds()
     }
+
     if (0 < windowMapping[name]?.length) {
       windowMapping[name].push(window)
     } else {
       windowMapping[name] = [window]
     }
+
     window.loadFile("index.html", { hash: name })
+
+    const _id = window.id
     window.on("closed", () => {
       const idx = windowMapping[name].indexOf(window)
       windowMapping[name].splice(idx, 1)
+      if (name === ROUTES["ContentPlayer"]) {
+        const blockerId = blockerIdBycontentPlayerWindow[_id]
+        if (typeof blockerId === "number") {
+          powerSaveBlocker.stop(blockerId)
+        }
+        const idx = contentPlayerWindows.indexOf(window)
+        contentPlayerWindows.splice(idx, 1)
+        updateContentPlayerIds()
+        if (states[globalActiveContentPlayerIdAtomKey] === _id) {
+          const value = contentPlayerWindows.splice(0).shift()?.id ?? null
+          // 生Recoil
+          states[globalActiveContentPlayerIdAtomKey] = value
+          recoilStateUpdate(_id, {
+            key: globalActiveContentPlayerIdAtomKey,
+            value,
+          })
+        }
+      }
     })
     return window
   }
