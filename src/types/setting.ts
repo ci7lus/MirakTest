@@ -8,6 +8,10 @@ export type ControllerSetting = {
   volumeRange: [number, number]
 }
 
+export type SubtitleSetting = {
+  font: string
+}
+
 export type ScreenshotSetting = {
   saveAsAFile: boolean
   includeSubtitle: boolean

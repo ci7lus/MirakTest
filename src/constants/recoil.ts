@@ -12,11 +12,13 @@ import {
   mirakurunSetting,
   mirakurunUrlHistory,
   screenshotSetting,
+  subtitleSetting,
 } from "../atoms/settings"
 
 export const RECOIL_SHARED_ATOM_KEYS = [
   mirakurunSetting.key,
   controllerSetting.key,
+  subtitleSetting.key,
   screenshotSetting.key,
   experimentalSetting.key,
   mirakurunServicesAtom.key,
@@ -28,6 +30,7 @@ export const RECOIL_STORED_ATOM_KEYS = [
   mirakurunSetting.key,
   mirakurunUrlHistory.key,
   controllerSetting.key,
+  subtitleSetting.key,
   screenshotSetting.key,
   experimentalSetting.key,
   contentPlayerVolumeAtom.key,

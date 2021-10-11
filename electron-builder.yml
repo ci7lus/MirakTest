@@ -203,6 +203,7 @@ files:
   - "node_modules/hamt_plus"
   - "node_modules/react-dom"
   - "node_modules/scheduler"
+  - "node_modules/font-list"
   - from: node_modules/webchimera.js
     to: node_modules/webchimera.js
 publish: null

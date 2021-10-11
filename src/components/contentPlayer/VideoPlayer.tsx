@@ -27,7 +27,12 @@ import {
   contentPlayerServiceSelector,
   contentPlayerUrlSelector,
 } from "../../atoms/contentPlayerSelectors"
-import { experimentalSetting, screenshotSetting } from "../../atoms/settings"
+import {
+  experimentalSetting,
+  screenshotSetting,
+  subtitleSetting,
+} from "../../atoms/settings"
+import { SUBTITLE_DEFAULT_FONT } from "../../constants/font"
 import { useRefFromState } from "../../hooks/ref"
 import { VideoRenderer } from "../../utils/videoRenderer"
 import { VLCLogFilter } from "../../utils/vlc"
@@ -133,6 +138,8 @@ export const CoiledVideoPlayer: React.VFC<{}> = memo(() => {
   }, [])
   const service = useRecoilValue(contentPlayerServiceSelector)
 
+  const setting = useRecoilValue(subtitleSetting)
+
   const displayingAribSubtitleData = useRecoilValue(
     contentPlayerDisplayingAribSubtitleDataAtom
   )
@@ -165,12 +172,13 @@ export const CoiledVideoPlayer: React.VFC<{}> = memo(() => {
           subtitleCanvas.height = contentCanvas.height
           subtitleCanvas.width = contentCanvas.width
           const provider = new CanvasProvider(displayingAribSubtitleData, 0)
+          const font = setting.font || SUBTITLE_DEFAULT_FONT
           provider.render({
             canvas: subtitleCanvas,
             useStrokeText: true,
             keepAspectRatio: true,
-            normalFont: "'Rounded M+ 1m for ARIB'",
-            gaijiFont: "'Rounded M+ 1m for ARIB'",
+            normalFont: font,
+            gaijiFont: font,
             drcsReplacement: true,
           })
           context.drawImage(

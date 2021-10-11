@@ -13,6 +13,7 @@ import {
 } from "electron"
 import Store from "electron-store"
 import esm from "esm"
+import fontList from "font-list"
 import React from "react"
 import Recoil from "recoil"
 import WebChimeraJs from "webchimera.js"
@@ -62,6 +63,8 @@ let store: Store<{
 
 let display: Electron.Display | null = null
 
+let fonts: string[] = []
+
 const init = () => {
   if (process.platform == "win32" && WebChimeraJs.path) {
     const VLCPluginPath = path.join(WebChimeraJs.path, "plugins")
@@ -70,6 +73,13 @@ const init = () => {
   }
 
   Menu.setApplicationMenu(buildAppMenu({ plugins: appMenus }))
+
+  fontList
+    .getFonts()
+    .then((ls) => {
+      fonts = ls
+    })
+    .catch(console.error)
 
   Store.initRenderer()
   // store/bounds定義を引っ張ってくると目に見えて容量が増えるので決め打ち
@@ -378,6 +388,7 @@ ipcMain.handle(REQUEST_INITIAL_DATA, () => {
   const data: InitialData = {
     pluginPaths,
     states,
+    fonts,
   }
   return data
 })

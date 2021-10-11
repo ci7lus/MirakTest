@@ -30,3 +30,8 @@ export const globalContentPlayerIdsAtom = atom<number[]>({
   key: globalContentPlayerIdsAtomKey,
   default: [],
 })
+
+export const globalFontsAtom = atom<string[]>({
+  key: `${prefix}.fonts`,
+  default: [],
+})

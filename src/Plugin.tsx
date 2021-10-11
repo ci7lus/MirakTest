@@ -58,7 +58,8 @@ import { pluginValidator } from "./utils/plugin"
 export const PluginLoader: React.VFC<{
   states: ObjectLiteral
   pluginPaths: string[]
-}> = ({ states, pluginPaths }) => {
+  fonts: string[]
+}> = ({ states, pluginPaths, fonts }) => {
   const [isLoading, setIsLoading] = useState(true)
   const [sharedAtoms, setSharedAtoms] = useState(RECOIL_SHARED_ATOM_KEYS)
   const [storedAtoms, setStoredAtoms] = useState(RECOIL_STORED_ATOM_KEYS)
@@ -251,6 +252,7 @@ export const PluginLoader: React.VFC<{
       states={states}
       sharedAtoms={sharedAtoms}
       storedAtoms={storedAtoms}
+      fonts={fonts}
     />
   )
 }

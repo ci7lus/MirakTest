@@ -1,7 +1,11 @@
 import { useEffect, useRef } from "react"
 import { MutableSnapshot, RecoilState, useRecoilValue } from "recoil"
 import { ALL_ATOMS, ALL_FAMILIES } from "../atoms"
-import { globalSharedAtomsAtom, globalStoredAtomsAtom } from "../atoms/global"
+import {
+  globalFontsAtom,
+  globalSharedAtomsAtom,
+  globalStoredAtomsAtom,
+} from "../atoms/global"
 import { AtomFamily } from "../types/plugin"
 import { ObjectLiteral } from "../types/struct"
 import { store } from "./store"
@@ -11,14 +15,17 @@ export const initializeState =
     states,
     storedAtoms,
     sharedAtoms,
+    fonts,
   }: {
     states: ObjectLiteral
     storedAtoms: string[]
     sharedAtoms: string[]
+    fonts: string[]
   }) =>
   (mutableSnapShot: MutableSnapshot) => {
     mutableSnapShot.set(globalSharedAtomsAtom, sharedAtoms)
     mutableSnapShot.set(globalStoredAtomsAtom, storedAtoms)
+    mutableSnapShot.set(globalFontsAtom, fonts)
     storedAtoms.forEach((key) => {
       const savedValue = store.get(key, null)
       const atom =

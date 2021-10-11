@@ -7,4 +7,5 @@ export type Routes = keyof typeof ROUTES | (string & {})
 export type InitialData = {
   states: ObjectLiteral
   pluginPaths: string[]
+  fonts: string[]
 }

@@ -11,6 +11,8 @@ import {
   contentPlayerTsFirstPcrAtom,
 } from "../../atoms/contentPlayer"
 import { contentPlayerServiceSelector } from "../../atoms/contentPlayerSelectors"
+import { subtitleSetting } from "../../atoms/settings"
+import { SUBTITLE_DEFAULT_FONT } from "../../constants/font"
 import { tryBase64ToUint8Array } from "../../utils/string"
 
 export const CoiledSubtitleRenderer: React.VFC<{}> = memo(() => {
@@ -33,6 +35,7 @@ export const CoiledSubtitleRenderer: React.VFC<{}> = memo(() => {
     if (!canvas) return
     canvas.getContext("2d")?.clearRect(0, 0, canvas.width, canvas.height)
   }, [selectedService, positionUpdateTrigger])
+  const setting = useRecoilValue(subtitleSetting)
 
   const [height, setHeight] = useState("100%")
   // 画面リサイズ時にキャンバスも追従させる
@@ -74,13 +77,14 @@ export const CoiledSubtitleRenderer: React.VFC<{}> = memo(() => {
     if (!estimate) return
     const ctx = canvas.getContext("2d")
     if (!ctx) return
+    const font = setting.font || SUBTITLE_DEFAULT_FONT
     latestTimer.current = setTimeout(() => {
       provider.render({
         canvas,
         useStrokeText: true,
         keepAspectRatio: true,
-        normalFont: "'Rounded M+ 1m for ARIB'",
-        gaijiFont: "'Rounded M+ 1m for ARIB'",
+        normalFont: font,
+        gaijiFont: font,
         drcsReplacement: true,
       })
       setDisplayingAribSubtitleData(decoded)

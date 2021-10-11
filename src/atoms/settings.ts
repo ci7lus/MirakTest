@@ -1,10 +1,12 @@
 import { atom } from "recoil"
 import pkg from "../../package.json"
+import { SUBTITLE_DEFAULT_FONT } from "../constants/font"
 import type {
   ControllerSetting,
   ExperimentalSetting,
   MirakurunSetting,
   ScreenshotSetting,
+  SubtitleSetting,
 } from "../types/setting"
 
 const prefix = `${pkg.name}.settings`
@@ -26,6 +28,13 @@ export const controllerSetting = atom<ControllerSetting>({
   key: `${prefix}.controller`,
   default: {
     volumeRange: [0, 150],
+  },
+})
+
+export const subtitleSetting = atom<SubtitleSetting>({
+  key: `${prefix}.subtitle`,
+  default: {
+    font: SUBTITLE_DEFAULT_FONT,
   },
 })
 

@@ -11,10 +11,16 @@ export const StateRoot: React.VFC<{
   states: ObjectLiteral
   sharedAtoms: string[]
   storedAtoms: string[]
-}> = ({ states, sharedAtoms, storedAtoms }) => {
+  fonts: string[]
+}> = ({ states, sharedAtoms, storedAtoms, fonts }) => {
   return (
     <RecoilRoot
-      initializeState={initializeState({ states, sharedAtoms, storedAtoms })}
+      initializeState={initializeState({
+        states,
+        sharedAtoms,
+        storedAtoms,
+        fonts,
+      })}
     >
       <RecoilObserver />
       <RecoilApplier />
