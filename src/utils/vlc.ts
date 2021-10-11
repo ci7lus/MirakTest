@@ -1,11 +1,15 @@
 export const VLCLogFilter = (s: string) => {
   if (
+    // 表示遅延
     s.startsWith("picture is too late to be displayed") ||
     s.startsWith("picture might be displayed late") ||
     s.startsWith("More than") ||
-    s.startsWith("buffer too late")
+    s.startsWith("buffer too late") ||
+    // gnutls
+    s.startsWith("in DATA (0x00) frame of") ||
+    s.startsWith("out WINDOW_UPDATE (0x08) frame ")
   ) {
-    return { category: "picture_late_warn" } as const
+    return { category: "commonplace" } as const
   } else if (s.startsWith("libdvbpsi error")) {
     return { category: "libdvbpsi_error" } as const
   } else if (s.startsWith("Stream buffering done")) {

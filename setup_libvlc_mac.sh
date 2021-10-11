@@ -9,6 +9,7 @@ echo "Using $BASE_PATH"
 cp -Ra $BASE_PATH/Contents/MacOS/lib vlc_libs
 mkdir vlc_libs/vlc
 cp -Ra $BASE_PATH/Contents/MacOS/{plugins,share} vlc_libs/vlc
+rm vlc_libs/vlc/plugins/libsecuretransport_plugin.dylib
 rm -rf vlc_libs/vlc/share/locale
 rm -rf node_modules/electron/dist/Electron.app/Contents/Frameworks/libvlc*.dylib
 rm -rf node_modules/electron/dist/Electron.app/Contents/Frameworks/vlc
