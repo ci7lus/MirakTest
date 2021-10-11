@@ -80,7 +80,11 @@ export const MirakurunManager: React.VFC<{}> = () => {
   const [isFirstAppeal, setIsFirstAppeal] = useState(true)
 
   const init = async (mirakurun: MirakurunAPI) => {
-    const isContentPrepared = (isFirstAppeal && playingContent) || isPlaying
+    const isContentPrepared =
+      (isFirstAppeal &&
+        playingContent &&
+        playingContent.contentType !== "Mirakurun") ||
+      isPlaying
     try {
       const version = await mirakurun.version.checkVersion()
       let message: string
