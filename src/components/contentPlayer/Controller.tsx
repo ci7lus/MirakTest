@@ -12,6 +12,7 @@ import {
   contentPlayerIsPlayingAtom,
   contentPlayerIsSeekableAtom,
   contentPlayerPlayingPositionAtom,
+  contentPlayerPlayingTimeAtom,
   contentPlayerPositionUpdateTriggerAtom,
   contentPlayerScreenshotTriggerAtom,
   contentPlayerSelectedServiceAtom,
@@ -30,14 +31,13 @@ import { useRefFromState } from "../../hooks/ref"
 import { AudioChannelSelector } from "./controllers/AudioChannelSelector"
 import { AudioTrackSelector } from "./controllers/AudioTrackSelector"
 import { PlayToggleButton } from "./controllers/PlayToggleButton"
-import { PositionSlider } from "./controllers/PositionSlider"
 import { CoiledScreenshotButton } from "./controllers/ScreenshotButton"
+import { SeekableControl } from "./controllers/SeekableControl"
 import { ServiceSelector } from "./controllers/ServiceSelector"
 import { SubtitleToggleButton } from "./controllers/SubtitleToggleButton"
 import { VolumeSlider } from "./controllers/VolumeSlider"
 
 import "dayjs/locale/ja"
-
 dayjs.locale("ja")
 
 export const CoiledController: React.VFC<{}> = () => {
@@ -180,6 +180,7 @@ export const CoiledController: React.VFC<{}> = () => {
         .join(" ")
     )
   }, [service])
+  const time = useRecoilValue(contentPlayerPlayingTimeAtom)
 
   return (
     <div
@@ -282,12 +283,22 @@ export const CoiledController: React.VFC<{}> = () => {
           </div>
         </div>
         <div
-          className={`flex flex-col space-y-2 text-gray-100 select-none transition-opacity duration-150 ease-in-out w-full p-2 bg-gradient-to-t from-black to-transparent ${
+          className={`flex flex-col text-gray-100 select-none transition-opacity duration-150 ease-in-out w-full p-2 bg-gradient-to-t from-black to-transparent ${
             isVisible ? "opacity-100" : "opacity-0"
           }`}
           onDoubleClick={(e) => e.stopPropagation()}
           onMouseDown={(e) => e.stopPropagation()}
         >
+          {isSeekable ? (
+            <SeekableControl
+              time={time}
+              position={position}
+              setPosition={setPosition}
+              duration={program?.duration}
+            />
+          ) : (
+            <></>
+          )}
           <div className="flex space-x-2">
             <PlayToggleButton
               isPlaying={isPlaying}
@@ -299,13 +310,7 @@ export const CoiledController: React.VFC<{}> = () => {
               min={controller.volumeRange[0]}
               max={controller.volumeRange[1]}
             />
-            {isSeekable ? (
-              <div className="w-full flex space-x-4 px-2">
-                <PositionSlider position={position} setPosition={setPosition} />
-              </div>
-            ) : (
-              <div className="w-full"></div>
-            )}
+            <div className="w-full"></div>
             <SubtitleToggleButton
               subtitleEnabled={subtitleEnabled}
               setSubtitleEnabled={setSubtitleEnabled}
