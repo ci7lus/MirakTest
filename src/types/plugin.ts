@@ -88,7 +88,6 @@ export type PluginInRendererArgs = {
     contentPlayerAribSubtitleDataSelector: Recoil.RecoilValueReadOnly<number>
     contentPlayerTsFirstPcrSelector: Recoil.RecoilValueReadOnly<number>
     contentPlayerPositionUpdateTriggerAtom: Recoil.RecoilState<number>
-    contentPlayerRelativeMoveTriggerAtom: Recoil.RecoilState<number>
     contentPlayerScreenshotTriggerAtom: Recoil.RecoilState<number>
     mirakurunCompatibilitySelector: Recoil.RecoilValueReadOnly<MirakurunCompatibilityTypes | null>
     mirakurunVersionSelector: Recoil.RecoilValueReadOnly<string | null>

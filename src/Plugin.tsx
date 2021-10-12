@@ -7,7 +7,6 @@ import {
   contentPlayerAudioTrackAtom,
   contentPlayerIsPlayingAtom,
   contentPlayerPositionUpdateTriggerAtom,
-  contentPlayerRelativeMoveTriggerAtom,
   contentPlayerScreenshotTriggerAtom,
   contentPlayerVolumeAtom,
 } from "./atoms/contentPlayer"
@@ -125,7 +124,6 @@ export const PluginLoader: React.VFC<{
         contentPlayerAribSubtitleDataSelector,
         contentPlayerTsFirstPcrSelector,
         contentPlayerPositionUpdateTriggerAtom,
-        contentPlayerRelativeMoveTriggerAtom,
         contentPlayerScreenshotTriggerAtom,
         mirakurunCompatibilitySelector,
         mirakurunVersionSelector,

@@ -95,11 +95,6 @@ export const contentPlayerPositionUpdateTriggerAtom = atom<number>({
   default: 0,
 })
 
-export const contentPlayerRelativeMoveTriggerAtom = atom<number>({
-  key: `${prefix}.relativeMoveTrigger`,
-  default: 0,
-})
-
 export const contentPlayerScreenshotTriggerAtom = atom<number>({
   key: `${prefix}.screenshotTrigger`,
   default: 0,
