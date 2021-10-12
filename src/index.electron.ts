@@ -275,47 +275,53 @@ const loadPlugins = async () => {
     },
   }
   const openedPlugins: PluginDefineInMain[] = []
-  for (const pluginPath of pluginPaths) {
-    try {
-      const module: { default: InitPlugin } | InitPlugin =
-        esmRequire(pluginPath)
-      const load = "default" in module ? module.default : module
-      if (load.main) {
-        const plugin = await load.main(args)
-        console.info(
-          `[Plugin] 読込中: ${plugin.name} (${plugin.id}, ${plugin.version})`
-        )
-        openedPlugins.push(plugin)
-      }
-    } catch (error) {
-      console.error(error)
-    }
-  }
-  for (const plugin of openedPlugins) {
-    try {
-      await plugin.setup({ plugins: openedPlugins })
-      if (plugin.appMenu) {
-        appMenus[plugin.id] = plugin.appMenu
-        console.info(`[Plugin] ${plugin.name} のアプリメニューを読み込みました`)
-      }
-      plugins.push(plugin)
-    } catch (error) {
-      console.error(
-        "[Plugin] setup 中にエラーが発生しました:",
-        plugin.id,
-        error
-      )
+  await Promise.all(
+    pluginPaths.map(async (pluginPath) => {
       try {
-        await plugin.destroy()
+        const module: { default: InitPlugin } | InitPlugin =
+          esmRequire(pluginPath)
+        const load = "default" in module ? module.default : module
+        if (load.main) {
+          const plugin = await load.main(args)
+          console.info(
+            `[Plugin] 読込中: ${plugin.name} (${plugin.id}, ${plugin.version})`
+          )
+          openedPlugins.push(plugin)
+        }
+      } catch (error) {
+        console.error(error)
+      }
+    })
+  )
+  await Promise.all(
+    openedPlugins.map(async (plugin) => {
+      try {
+        await plugin.setup({ plugins: openedPlugins })
+        if (plugin.appMenu) {
+          appMenus[plugin.id] = plugin.appMenu
+          console.info(
+            `[Plugin] ${plugin.name} のアプリメニューを読み込みました`
+          )
+        }
+        plugins.push(plugin)
       } catch (error) {
         console.error(
-          "[Plugin] destroy 中にエラーが発生しました:",
+          "[Plugin] setup 中にエラーが発生しました:",
           plugin.id,
           error
         )
+        try {
+          await plugin.destroy()
+        } catch (error) {
+          console.error(
+            "[Plugin] destroy 中にエラーが発生しました:",
+            plugin.id,
+            error
+          )
+        }
       }
-    }
-  }
+    })
+  )
   if (0 < Object.keys(appMenus).length) {
     Menu.setApplicationMenu(buildAppMenu({ plugins: appMenus }))
   }
