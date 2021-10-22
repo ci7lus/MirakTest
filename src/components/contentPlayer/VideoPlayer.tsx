@@ -254,7 +254,11 @@ export const CoiledVideoPlayer: React.VFC<{}> = memo(() => {
     1000,
     [firstPcr]
   )
-  const setPlayingTime = useSetRecoilState(contentPlayerPlayingTimeAtom)
+  const setCoiledPlayingTime = useSetRecoilState(contentPlayerPlayingTimeAtom)
+  const [playingTime, setPlayingTime] = useState(0)
+  useThrottleFn((playingTime) => setCoiledPlayingTime(playingTime), 1000, [
+    playingTime,
+  ])
   const [position, setPosition] = useState(0)
   const setPlayingPosition = useSetRecoilState(contentPlayerPlayingPositionAtom)
   const positionUpdate = useRecoilValue(contentPlayerPositionUpdateTriggerAtom)
@@ -320,6 +324,7 @@ export const CoiledVideoPlayer: React.VFC<{}> = memo(() => {
         case "es_out_program_epg":
         case "PMTCallBack_called_for_program":
         case "discontinuity_received_0":
+          console.debug(message)
           setAudioTracks(
             [...Array(player.audio.count).keys()].map(
               (trackId) => player.audio[trackId]
