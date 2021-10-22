@@ -6,6 +6,7 @@ import { ComponentShadowWrapper } from "../components/common/ComponentShadowWrap
 import { MirakurunSettingForm } from "../components/settings/Mirakurun"
 import { CoiledGeneralSetting } from "../components/settings/general"
 import { OnSettingComponent } from "../types/plugin"
+import { remoteWindow } from "../utils/remote"
 import { store } from "../utils/store"
 
 type Routes = "General" | "Mirakurun" | (string & {})
@@ -61,8 +62,7 @@ export const Settings: React.VFC<{}> = () => {
   const [route, setRoute] = useState<Routes>("General")
   const [aditionalRoutes, setAditionalRoutes] = useState<[string, string][]>([])
   useEffect(() => {
-    const browserWindow = remote.getCurrentWindow()
-    browserWindow.setTitle(`設定 - ${remote.app.name}`)
+    remoteWindow.setTitle(`設定 - ${remote.app.name}`)
     try {
       const plugins: [string, string][] =
         window.plugins

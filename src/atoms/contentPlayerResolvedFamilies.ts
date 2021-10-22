@@ -1,7 +1,5 @@
-import { remote } from "electron"
+import { remoteWindow } from "../utils/remote"
 import { globalContentPlayerPlayingContentFamily } from "./globalFamilies"
 
-const window = remote.getCurrentWindow()
-
 export const contentPlayerPlayingContentAtom =
-  globalContentPlayerPlayingContentFamily(window.id)
+  globalContentPlayerPlayingContentFamily(remoteWindow.id)

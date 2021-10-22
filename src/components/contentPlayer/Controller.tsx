@@ -28,6 +28,7 @@ import { mirakurunServicesAtom } from "../../atoms/mirakurun"
 import { controllerSetting, experimentalSetting } from "../../atoms/settings"
 import { UPDATE_IS_PLAYING_STATE } from "../../constants/ipc"
 import { useRefFromState } from "../../hooks/ref"
+import { remoteWindow } from "../../utils/remote"
 import { AudioChannelSelector } from "./controllers/AudioChannelSelector"
 import { AudioTrackSelector } from "./controllers/AudioTrackSelector"
 import { PlayToggleButton } from "./controllers/PlayToggleButton"
@@ -38,6 +39,7 @@ import { SubtitleToggleButton } from "./controllers/SubtitleToggleButton"
 import { VolumeSlider } from "./controllers/VolumeSlider"
 
 import "dayjs/locale/ja"
+
 dayjs.locale("ja")
 
 export const CoiledController: React.VFC<{}> = () => {
@@ -89,15 +91,13 @@ export const CoiledController: React.VFC<{}> = () => {
   const mouseRef = useRefFromState(mouse)
   const animId = useRef<number>(0)
 
-  const currentWindow = remote.getCurrentWindow()
-
   const moveWindow = () => {
     const [mouseX, mouseY] = mouseRef.current
     const { x, y } = remote.screen.getCursorScreenPoint()
     const xPos = x - mouseX
     const yPos = y - mouseY - window.outerHeight + window.innerHeight
     if (0 < xPos && 0 < yPos) {
-      currentWindow.setPosition(xPos, yPos)
+      remoteWindow.setPosition(xPos, yPos)
     }
     animId.current = requestAnimationFrame(moveWindow)
   }
@@ -157,7 +157,7 @@ export const CoiledController: React.VFC<{}> = () => {
     ipcRenderer
       .invoke(UPDATE_IS_PLAYING_STATE, {
         isPlaying,
-        windowId: currentWindow.id,
+        windowId: remoteWindow.id,
       })
       .catch(console.error)
   }, [isPlaying])
@@ -192,8 +192,8 @@ export const CoiledController: React.VFC<{}> = () => {
       }}
       onMouseLeave={() => setIsVisible(false)}
       onDoubleClick={() => {
-        if (!currentWindow.fullScreenable) return
-        currentWindow.setFullScreen(!currentWindow.isFullScreen())
+        if (!remoteWindow.fullScreenable) return
+        remoteWindow.setFullScreen(!remoteWindow.isFullScreen())
       }}
       onMouseDown={(e) => {
         if (

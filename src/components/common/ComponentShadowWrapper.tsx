@@ -1,6 +1,7 @@
 import { remote } from "electron"
 import React, { useEffect, useRef } from "react"
 import ReactDOM from "react-dom"
+import { remoteWindow } from "../../utils/remote"
 
 export const ComponentShadowWrapper: React.VFC<{
   Component: React.VFC<{}>
@@ -9,7 +10,6 @@ export const ComponentShadowWrapper: React.VFC<{
 }> = ({ Component, _id, className }) => {
   const ref = useRef<HTMLDivElement>(null)
   useEffect(() => {
-    const remoteWindow = remote.getCurrentWindow()
     remoteWindow.webContents.setWindowOpenHandler(({ url }) => {
       if (url === "about:blank") {
         return { action: "allow" }

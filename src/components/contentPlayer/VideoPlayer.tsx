@@ -35,6 +35,7 @@ import {
 } from "../../atoms/settings"
 import { SUBTITLE_DEFAULT_FONT } from "../../constants/font"
 import { useRefFromState } from "../../hooks/ref"
+import { remoteWindow } from "../../utils/remote"
 import { VideoRenderer } from "../../utils/videoRenderer"
 import { VLCLogFilter } from "../../utils/vlc"
 
@@ -48,7 +49,6 @@ export const CoiledVideoPlayer: React.VFC<{}> = memo(() => {
 
   useEffect(() => {
     if (process.platform !== "win32") {
-      const remoteWindow = remote.getCurrentWindow()
       remoteWindow.setAspectRatio(aspect)
     }
   }, [aspect])

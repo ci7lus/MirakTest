@@ -14,6 +14,7 @@ import { CoiledSubtitleRenderer } from "../components/contentPlayer/SubtitleRend
 import { CoiledVideoPlayer } from "../components/contentPlayer/VideoPlayer"
 import { Splash } from "../components/global/Splash"
 import { useContentPlayerContextMenu } from "../utils/contextmenu"
+import { remoteWindow } from "../utils/remote"
 
 export const CoiledContentPlayer: React.VFC<{}> = () => {
   const setBounds = useSetRecoilState(contentPlayerBoundsAtom)
@@ -23,7 +24,6 @@ export const CoiledContentPlayer: React.VFC<{}> = () => {
   )
 
   useEffect(() => {
-    const remoteWindow = remote.getCurrentWindow()
     // 16:9以下の比率になったら戻し、ウィンドウサイズを保存する
     const onResizedOrMoved = () => {
       const bounds = remoteWindow.getContentBounds()
@@ -58,7 +58,7 @@ export const CoiledContentPlayer: React.VFC<{}> = () => {
   // タイトル
   const title = useRecoilValue(contentPlayerTitleAtom)
   useEffect(() => {
-    const window = remote.getCurrentWindow()
+    const window = remoteWindow
     if (title) {
       window.setTitle(`${title} - ${remote.app.name}`)
     } else {

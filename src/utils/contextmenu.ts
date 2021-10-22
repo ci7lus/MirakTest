@@ -9,6 +9,7 @@ import { mirakurunServicesAtom } from "../atoms/mirakurun"
 import { REUQEST_OPEN_WINDOW } from "../constants/ipc"
 import { ROUTES } from "../constants/routes"
 import { useRefFromState } from "../hooks/ref"
+import { remoteWindow } from "./remote"
 
 export const useContentPlayerContextMenu = () => {
   const [isPlaying, setIsPlaying] = useRecoilState(contentPlayerIsPlayingAtom)
@@ -23,7 +24,6 @@ export const useContentPlayerContextMenu = () => {
   const servicesRef = useRefFromState(services)
 
   return (e: Electron.Event, params: Electron.ContextMenuParams) => {
-    const remoteWindow = remote.getCurrentWindow()
     const noParams = typeof params !== "object"
     e.preventDefault()
     const pluginContextMenus = Object.values(window.contextMenus || {})

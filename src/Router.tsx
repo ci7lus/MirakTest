@@ -1,10 +1,10 @@
-import { remote } from "electron"
 import React, { useEffect, useState } from "react"
 import { useRecoilBridgeAcrossReactRoots_UNSTABLE } from "recoil"
 import { ComponentShadowWrapper } from "./components/common/ComponentShadowWrapper"
 import { Splash } from "./components/global/Splash"
 import { ROUTES } from "./constants/routes"
 import { Routes } from "./types/struct"
+import { remoteWindow } from "./utils/remote"
 import { CoiledContentPlayer } from "./windows/ContentPlayer"
 import { Settings } from "./windows/Settings"
 
@@ -18,7 +18,7 @@ export const Router: React.VFC<{}> = () => {
     }
     window.addEventListener("hashchange", onHashChange)
     onHashChange()
-    remote.getCurrentWindow().show()
+    remoteWindow.show()
     return () => window.removeEventListener("hashchange", onHashChange)
   }, [])
   if (hash === ROUTES["ContentPlayer"]) {
