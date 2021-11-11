@@ -19,6 +19,7 @@ import {
   contentPlayerPlayingTimeSelector,
   contentPlayerProgramSelector,
   contentPlayerServiceSelector,
+  contentPlayerTotSelector,
   contentPlayerTsFirstPcrSelector,
 } from "./atoms/contentPlayerSelectors"
 import { globalContentPlayerPlayingContentFamily } from "./atoms/globalFamilies"
@@ -121,6 +122,7 @@ export const PluginLoader: React.VFC<{
         contentPlayerIsSeekableSelector,
         contentPlayerPlayingPositionSelector,
         contentPlayerPlayingTimeSelector,
+        contentPlayerTotSelector,
         contentPlayerAribSubtitleDataSelector,
         contentPlayerTsFirstPcrSelector,
         contentPlayerPositionUpdateTriggerAtom,

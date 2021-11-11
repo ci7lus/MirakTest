@@ -85,6 +85,7 @@ export type PluginInRendererArgs = {
     contentPlayerIsSeekableSelector: Recoil.RecoilValueReadOnly<boolean>
     contentPlayerPlayingPositionSelector: Recoil.RecoilValueReadOnly<number>
     contentPlayerPlayingTimeSelector: Recoil.RecoilValueReadOnly<number>
+    contentPlayerTotSelector: Recoil.RecoilValueReadOnly<number>
     contentPlayerAribSubtitleDataSelector: Recoil.RecoilValueReadOnly<number>
     contentPlayerTsFirstPcrSelector: Recoil.RecoilValueReadOnly<number>
     contentPlayerPositionUpdateTriggerAtom: Recoil.RecoilState<number>

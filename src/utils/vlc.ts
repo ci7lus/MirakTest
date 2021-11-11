@@ -37,6 +37,15 @@ export const VLCLogFilter = (s: string) => {
       width: parseInt(width),
       height: parseInt(height),
     } as const
+  } else if (s.startsWith("tot,")) {
+    const tot = parseInt(s.split(",").pop() || "NaN")
+    if (Number.isNaN(tot)) {
+      return { category: "tot" } as const
+    }
+    return {
+      category: "tot",
+      tot: (tot - 3600 * 9 * 2) * 1000,
+    } as const
   } else if (s.startsWith("arib_data")) {
     const m = s.match(/^arib_data \[(.+)\]\[(\d+)\]$/)
     if (!m) return { category: "arib_data" } as const

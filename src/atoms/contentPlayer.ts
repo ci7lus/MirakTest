@@ -74,6 +74,11 @@ export const contentPlayerPlayingTimeAtom = atom<number>({
   default: 0,
 })
 
+export const contentPlayerTotAtom = atom<number>({
+  key: `${prefix}.tot`,
+  default: 0,
+})
+
 export const contentPlayerAribSubtitleDataAtom = atom<AribSubtitleData | null>({
   key: `${prefix}.aribSubtitleData`,
   default: null,

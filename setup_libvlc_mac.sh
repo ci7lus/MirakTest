@@ -11,6 +11,7 @@ mkdir vlc_libs/vlc
 cp -Ra $BASE_PATH/Contents/MacOS/{plugins,share} vlc_libs/vlc
 rm vlc_libs/vlc/plugins/libsecuretransport_plugin.dylib
 rm -rf vlc_libs/vlc/share/locale
+rm -rf vlc_libs/vlc/share/lua/playlist/*.luac
 rm -rf node_modules/electron/dist/Electron.app/Contents/Frameworks/libvlc*.dylib
 rm -rf node_modules/electron/dist/Electron.app/Contents/Frameworks/vlc
 for d in vlc_libs/*; do cp -Ra $d node_modules/electron/dist/Electron.app/Contents/Frameworks; done

@@ -4,7 +4,6 @@ import { CanvasProvider } from "aribb24.js"
 import dayjs from "dayjs"
 import { nativeImage, remote } from "electron"
 import React, { memo, useEffect, useRef, useState } from "react"
-import { useThrottleFn } from "react-use"
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil"
 import WebChimeraJs from "webchimera.js"
 import pkg from "../../../package.json"
@@ -21,6 +20,7 @@ import {
   contentPlayerPositionUpdateTriggerAtom,
   contentPlayerScreenshotTriggerAtom,
   contentPlayerSubtitleEnabledAtom,
+  contentPlayerTotAtom,
   contentPlayerTsFirstPcrAtom,
   contentPlayerVolumeAtom,
 } from "../../atoms/contentPlayer"
@@ -244,21 +244,9 @@ export const CoiledVideoPlayer: React.VFC<{}> = memo(() => {
   const setAribSubtitleData = useSetRecoilState(
     contentPlayerAribSubtitleDataAtom
   )
-  const [firstPcr, setFirstPcr] = useState(0)
-  const firstPcrRef = useRefFromState(firstPcr)
-  const setTsFirstPcr = useSetRecoilState(contentPlayerTsFirstPcrAtom)
-  useThrottleFn(
-    (tsPts) => {
-      setTsFirstPcr(tsPts)
-    },
-    1000,
-    [firstPcr]
-  )
-  const setCoiledPlayingTime = useSetRecoilState(contentPlayerPlayingTimeAtom)
-  const [playingTime, setPlayingTime] = useState(0)
-  useThrottleFn((playingTime) => setCoiledPlayingTime(playingTime), 1000, [
-    playingTime,
-  ])
+  const [firstPcr, setFirstPcr] = useRecoilState(contentPlayerTsFirstPcrAtom)
+  const setPlayingTime = useSetRecoilState(contentPlayerPlayingTimeAtom)
+  const setTot = useSetRecoilState(contentPlayerTotAtom)
   const [position, setPosition] = useState(0)
   const setPlayingPosition = useSetRecoilState(contentPlayerPlayingPositionAtom)
   const positionUpdate = useRecoilValue(contentPlayerPositionUpdateTriggerAtom)
@@ -290,6 +278,11 @@ export const CoiledVideoPlayer: React.VFC<{}> = memo(() => {
     ].filter((s) => s)
     console.info("VLC Args:", args)
     const player = WebChimeraJs.createPlayer(args)
+    let pcr_i_first = 0
+    const timer100ms = setInterval(() => {
+      setPlayingTime(player.time)
+      setFirstPcr(pcr_i_first)
+    }, 500)
     player.onLogMessage = (_level, message) => {
       const parsed = VLCLogFilter(message)
       switch (parsed.category) {
@@ -302,35 +295,43 @@ export const CoiledVideoPlayer: React.VFC<{}> = memo(() => {
           }
           break
         case "arib_parser_was_destroyed":
-          if (firstPcrRef.current === 0) {
+          if (pcr_i_first === 0) {
             setIsSubtitleEnabled(false)
           } else {
             player.subtitles.track = 1
           }
           break
         case "arib_data":
+          // 中頻度
           console.debug(message)
           if (parsed.data) {
             setAribSubtitleData({ data: parsed.data, pts: parsed.pts })
           }
           break
         case "i_pcr":
+          // 超高頻度
           if (parsed.i_pcr) {
-            setPlayingTime(player.time)
-            setFirstPcr(parsed.pcr_i_first)
+            pcr_i_first = parsed.pcr_i_first
+          }
+          break
+        case "tot":
+          // 5sおき
+          if (parsed.tot) {
+            setTot(parsed.tot)
           }
           break
         case "received_first_picture":
         case "es_out_program_epg":
         case "PMTCallBack_called_for_program":
         case "discontinuity_received_0":
+          // ほどほどの頻度
           console.debug(message)
           setAudioTracks(
             [...Array(player.audio.count).keys()].map(
               (trackId) => player.audio[trackId]
             )
           )
-          if (firstPcrRef.current !== 0 && player.subtitles.track !== 1) {
+          if (pcr_i_first !== 0 && player.subtitles.track !== 1) {
             player.subtitles.track = 1
           }
           player.volume = volumeRef.current
@@ -353,7 +354,7 @@ export const CoiledVideoPlayer: React.VFC<{}> = memo(() => {
     }
     player.onMediaChanged = () => {
       setIsPlaying(true)
-      if (firstPcrRef.current === 0) {
+      if (pcr_i_first === 0) {
         setIsSubtitleEnabled(false)
       }
       setAribSubtitleData(null)
@@ -403,6 +404,7 @@ export const CoiledVideoPlayer: React.VFC<{}> = memo(() => {
     window.addEventListener("resize", onResize)
     onResize()
     return () => {
+      clearInterval(timer100ms)
       window.removeEventListener("resize", onResize)
       player.close()
       playerRef.current = null

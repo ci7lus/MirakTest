@@ -153,7 +153,7 @@ jobs:
             ${{ runner.os }}-yarn-
       - name: Download VLC
         run: |
-          wget https://github.com/vivid-lapin/vlc-miraktest/releases/download/3.0.16.2/vlc-3.0.16.dmg -O /tmp/vlc.dmg
+          wget https://github.com/vivid-lapin/vlc-miraktest/releases/download/3.0.16.3/vlc-3.0.16.dmg -O /tmp/vlc.dmg
           hdiutil mount /tmp/vlc.dmg
           cp -Ra "/Volumes/VLC media player/VLC.app" /Applications
       - name: Install

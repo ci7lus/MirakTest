@@ -6,6 +6,7 @@ import {
   contentPlayerIsSeekableAtom,
   contentPlayerPlayingPositionAtom,
   contentPlayerPlayingTimeAtom,
+  contentPlayerTotAtom,
 } from "./contentPlayer"
 import { contentPlayerPlayingContentAtom } from "./contentPlayerResolvedFamilies"
 
@@ -36,6 +37,13 @@ export const contentPlayerPlayingTimeSelector = selector<number>({
   key: `${prefix}.playingTimeSelector`,
   get: ({ get }) => {
     return get(contentPlayerPlayingTimeAtom)
+  },
+})
+
+export const contentPlayerTotSelector = selector<number>({
+  key: `${prefix}.totSelector`,
+  get: ({ get }) => {
+    return get(contentPlayerTotAtom)
   },
 })
 
