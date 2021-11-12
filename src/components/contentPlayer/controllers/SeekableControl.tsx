@@ -1,6 +1,6 @@
 import clsx from "clsx"
 import formatDuration from "format-duration"
-import React, { memo, useCallback, useEffect, useState } from "react"
+import React, { memo, useCallback, useState } from "react"
 import { FastForward, Rewind, SkipBack } from "react-feather"
 import { useDebounce } from "react-use"
 
@@ -12,17 +12,6 @@ export const SeekableControl: React.FC<{
 }> = memo(({ time, position, setPosition, duration }) => {
   const [isPreview, setIsPreview] = useState(false)
   const [previewPosition, setPreviewPosition] = useState(0)
-  const [rangePosition, setRangePosition] = useState(position)
-
-  useEffect(() => {
-    if (position - rangePosition !== 0) {
-      // ユーザー操作による位置更新である
-      setPosition(rangePosition)
-    }
-  }, [rangePosition])
-  useEffect(() => {
-    setRangePosition(position)
-  }, [position])
 
   const relativeMove = useCallback(
     (relativeMs: number) => {
@@ -112,11 +101,13 @@ export const SeekableControl: React.FC<{
         type="range"
         min={0}
         max={100}
-        value={rangePosition * 100}
-        onChange={(e) => {
-          const p = parseInt(e.target.value)
-          if (Number.isNaN(p)) return
-          setRangePosition(p / 100)
+        value={position * 100}
+        readOnly={true}
+        onClick={(event) => {
+          const { left, width } = event.currentTarget.getBoundingClientRect()
+          const pos = event.pageX - left - window.pageXOffset
+          const seekTo = Math.max(pos / width, 0)
+          setPosition(seekTo)
         }}
         onMouseEnter={() => {
           duration && setIsPreview(true)
