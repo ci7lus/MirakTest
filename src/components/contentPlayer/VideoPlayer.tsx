@@ -279,10 +279,13 @@ export const CoiledVideoPlayer: React.VFC<{}> = memo(() => {
     console.info("VLC Args:", args)
     const player = WebChimeraJs.createPlayer(args)
     let pcr_i_first = 0
-    const timer100ms = setInterval(() => {
-      setPlayingTime(player.time)
-      setFirstPcr(pcr_i_first)
-    }, 500)
+    let last = 0
+    player.onTimeChanged = (time) => {
+      if (770 < Math.abs(time - last)) {
+        setPlayingTime(time)
+        last = time
+      }
+    }
     player.onLogMessage = (_level, message) => {
       const parsed = VLCLogFilter(message)
       switch (parsed.category) {
@@ -304,6 +307,7 @@ export const CoiledVideoPlayer: React.VFC<{}> = memo(() => {
         case "arib_data":
           // 中頻度
           console.debug(message)
+          setFirstPcr(pcr_i_first)
           if (parsed.data) {
             setAribSubtitleData({ data: parsed.data, pts: parsed.pts })
           }
@@ -404,7 +408,6 @@ export const CoiledVideoPlayer: React.VFC<{}> = memo(() => {
     window.addEventListener("resize", onResize)
     onResize()
     return () => {
-      clearInterval(timer100ms)
       window.removeEventListener("resize", onResize)
       player.close()
       playerRef.current = null
