@@ -68,6 +68,9 @@ cd MirakTest
 yarn
 ./setup_libvlc_mac.sh
 ./setup_wcjs.sh
+yarn build:tsc
+yarn dev:webpack
+yarn dev:electron
 yarn build
 ```
 
@@ -81,6 +84,9 @@ git clone git@github.com:ci7lus/MirakTest.git
 cd MirakTest
 yarn
 ./setup_wcjs.sh
+yarn build:tsc
+yarn dev:webpack
+yarn dev:electron
 yarn build
 ```
 
@@ -92,6 +98,9 @@ git clone git@github.com:ci7lus/MirakTest.git
 cd MirakTest
 yarn --ignore-scripts
 pwsh ./setup_wcjs.ps1
+yarn build:tsc
+yarn dev:webpack
+yarn dev:electron
 yarn build
 ```
 
