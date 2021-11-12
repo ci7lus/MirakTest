@@ -272,7 +272,7 @@ export const CoiledVideoPlayer: React.VFC<{}> = memo(() => {
       0 <= (experimental.vlcNetworkCaching ?? -1)
         ? `--network-caching=${experimental.vlcNetworkCaching}`
         : "",
-      "--avcodec-hw=any",
+      experimental.isVlcAvCodecHwAny === true ? "--avcodec-hw=any" : "",
       `--http-user-agent=${pkg.productName}/${pkg.version}`,
       `--http-referrer=${pkg.repository.url}`,
     ].filter((s) => s)

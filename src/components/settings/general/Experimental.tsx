@@ -1,5 +1,4 @@
-import React, { useState } from "react"
-import { useDebounce } from "react-use"
+import React, { useEffect, useState } from "react"
 import { ExperimentalSetting } from "../../../types/setting"
 
 export const ExperimentalSettingForm: React.VFC<{
@@ -18,21 +17,22 @@ export const ExperimentalSettingForm: React.VFC<{
   const [vlcNetworkCaching, setVlcNetworkCaching] = useState(
     experimentalSetting.vlcNetworkCaching
   )
-  useDebounce(
-    () => {
-      setExperimentalSetting({
-        isWindowDragMoveEnabled,
-        isProgramDetailInServiceSelectorEnabled,
-        vlcNetworkCaching,
-      })
-    },
-    100,
-    [
+  const [isVlcAvCodecHwAny, setIsVlcAvCodecHwAny] = useState(
+    experimentalSetting.isVlcAvCodecHwAny
+  )
+  useEffect(() => {
+    setExperimentalSetting({
       isWindowDragMoveEnabled,
       isProgramDetailInServiceSelectorEnabled,
       vlcNetworkCaching,
-    ]
-  )
+      isVlcAvCodecHwAny,
+    })
+  }, [
+    isWindowDragMoveEnabled,
+    isProgramDetailInServiceSelectorEnabled,
+    vlcNetworkCaching,
+    isVlcAvCodecHwAny,
+  ])
   return (
     <div>
       <p className="text-lg">試験的な設定</p>
@@ -55,9 +55,9 @@ export const ExperimentalSettingForm: React.VFC<{
           checked={isWindowDragMoveEnabled || false}
           onChange={() => setIsWindowDragMoveEnabled((enabled) => !enabled)}
         />
-        <span className="text-sm text-gray-300 mt-2">
+        <p className="text-sm text-gray-300 mt-2">
           ドラッグでウィンドウを移動できるようになりますが、たまに判定がおかしくなってウィンドウを離せなくなります。ウィンドウのどこかを左クリックで治まります。
-        </span>
+        </p>
       </label>
       <label className="block mt-4">
         <span>VLC network caching</span>
@@ -75,14 +75,28 @@ export const ExperimentalSettingForm: React.VFC<{
           min={-1}
           max={60000}
         />
-        <span className="text-sm text-gray-300 mt-2">
+        <p className="text-sm text-gray-300 mt-2">
           VLCの引数に設定する
           <code className="font-mono bg-gray-500 mx-1">--network-caching</code>
           を指定します。
           <code className="font-mono bg-gray-500 mx-1">-1</code>
           を指定すると引数を渡さないようになります。
           新しいプレイヤーウィンドウから反映されます。
-        </span>
+        </p>
+      </label>
+      <label className="block mt-4">
+        <span>VLC AvCodec Hw</span>
+        <input
+          type="checkbox"
+          className="block mt-2 form-checkbox"
+          checked={isVlcAvCodecHwAny || false}
+          onChange={() => setIsVlcAvCodecHwAny((enabled) => !enabled)}
+        />
+        <p className="text-sm text-gray-300 mt-2">
+          VLCの引数に
+          <code className="font-mono bg-gray-500 mx-1">--avcodec-hw=any</code>
+          を指定します。効果は不明の上に、gstreamerを用いる一部ディストリビューションでは動作が不安定になる可能性があります。
+        </p>
       </label>
     </div>
   )
