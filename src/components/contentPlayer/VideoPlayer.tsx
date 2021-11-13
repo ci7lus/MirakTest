@@ -73,7 +73,11 @@ export const CoiledVideoPlayer: React.VFC<{}> = memo(() => {
     if (!player || !url) return
     if (isSeekable && player.input.hasVout) {
       console.info("ポーズ切り替え")
-      player.togglePause()
+      if (!isPlaying && player.playing) {
+        player.pause()
+      } else {
+        player.togglePause()
+      }
     } else {
       if (
         isPlaying &&
@@ -357,7 +361,6 @@ export const CoiledVideoPlayer: React.VFC<{}> = memo(() => {
       )
     }
     player.onMediaChanged = () => {
-      setIsPlaying(true)
       if (pcr_i_first === 0) {
         setIsSubtitleEnabled(false)
       }
@@ -377,7 +380,6 @@ export const CoiledVideoPlayer: React.VFC<{}> = memo(() => {
       setIsPlaying(false)
     }
     player.onEndReached = () => {
-      setIsPlaying(false)
       if (isSeekableRef.current === false) {
         new remote.Notification({
           title: "映像の受信が中断されました",
