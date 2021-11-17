@@ -1,25 +1,15 @@
-<img src="https://i.gyazo.com/80257305e2201aa84839ab568c60b4cb.png" alt="MirakTest" width="400px" />
-
 # MirakTest
 
-[![GitHub release (latest by date)](https://img.shields.io/github/v/release/ci7lus/MirakTest)](https://github.com/ci7lus/MirakTest/releases)
+[![GitHub release (latest by date including pre-releases)](https://img.shields.io/github/v/release/ci7lus/MirakTest?include_prereleases)](https://github.com/ci7lus/MirakTest/releases)
 [![CI](https://github.com/ci7lus/MirakTest/actions/workflows/ci.yml/badge.svg)](https://github.com/ci7lus/MirakTest/actions/workflows/ci.yml)
 
-[Mirakurun](https://github.com/Chinachu/Mirakurun) 映像視聴確認用アプリ
+[Mirakurun](https://github.com/Chinachu/Mirakurun) 用映像視聴アプリ実装研究資料
 
 ## 概要
 
-Electron を使用した Mirakurun の映像視聴確認用アプリです。鋭意開発中です。<br />
-
-[![Image from Gyazo](https://i.gyazo.com/bddde5c07be29c548ad9a10f16a1d5c2.jpg)](https://gyazo.com/bddde5c07be29c548ad9a10f16a1d5c2)
-
-macOS / Windows 版は [aribb24.js](https://github.com/monyone/aribb24.js) による字幕表示にも対応しています。
-
-[![Image from Gyazo](https://i.gyazo.com/2f5f23d3c0e2968724dd2bce018cef86.jpg)](https://gyazo.com/2f5f23d3c0e2968724dd2bce018cef86)
-
-> ©2020 プロジェクトラブライブ！虹ヶ咲学園スクールアイドル同好会
-
-プラグインを導入して機能を拡張することも出来ます。
+MirakTest は macOS / Linux / Windows 上で Mirakurun を利用しデジタル放送を視聴するアプリの実装を研究する目的で配布される研究資料です。本アプリに CAS 処理は含まれていないため、デコードされていない放送データを視聴することは出来ません。<br />
+macOS / Windows 版ビルドでは [aribb24.js](https://github.com/monyone/aribb24.js) による ARIB-STD-B24 形式の字幕表示に対応しています。<br />
+プラグインを導入して機能を拡張することが出来ます。
 
 ## 導入方法
 
@@ -30,8 +20,8 @@ macOS / Linux / Windows 版ビルドを [Releases](https://github.com/ci7lus/Mir
 #### macOS での実行
 
 dmg をマウントして app を Applications にコピーします。<br />
-Intel / M1 mac (Rosetta 2) 上で動作する macOS Catalina / Big Sur での動作を確認しています。<br />
-必須ではありませんが、字幕の表示に [Rounded M+ 1m for ARIB](https://github.com/xtne6f/TVCaptionMod2/blob/3cc6c1767595e1973473124e892a57c7693c2154/TVCaptionMod2_Readme.txt#L49-L50) を指定しているので、フォントのインストールを推奨します。[ダウンロードはこちら](https://github.com/ci7lus/MirakTest/files/6555741/rounded-mplus-1m-arib.ttf.zip)。
+Intel / M1 mac (Rosetta 2) 上で動作する macOS Catalina / Big Sur / Monterey での動作を確認しています。<br />
+標準では字幕の表示に [Rounded M+ 1m for ARIB](https://github.com/xtne6f/TVCaptionMod2/blob/3cc6c1767595e1973473124e892a57c7693c2154/TVCaptionMod2_Readme.txt#L49-L50) を指定しています。[ダウンロードはこちら](https://github.com/ci7lus/MirakTest/files/6555741/rounded-mplus-1m-arib.ttf.zip)。
 
 #### Linux (debian) での実行
 
@@ -45,19 +35,18 @@ AppImage に実行権限をつけ `--no-sandbox` をつけて実行するか、�
 
 ### 開発版
 
-下記開発手順に沿ってビルドを行うか、CI にてコミット毎にビルドが行われているので、コミットメッセージ右の緑色チェック → Artifacts からダウンロードできます。
+下記開発手順に沿ってビルドを行うか、CI にてコミット毎にビルドが行われているので、コミットメッセージ右の緑色チェック → Artifacts からダウンロードできます（ログインが必要です）。
 
 ## プラグイン
 
 プラグインを導入して機能を拡張することが出来ます。<br />
 利用できるプラグインの一覧は[こちら](https://github.com/ci7lus/MirakTest/wiki/Userland-Plugin)。<br />
-プラグイン作成ガイドは準備中です。<br />
 API 仕様は[plugin.ts](./src/types/plugin.ts)を参照してください。<br />
 型定義ファイル(`plugin.d.ts`)はリリースにてアプリイメージと一緒に配布しています。
 
 ## 開発
 
-メイン機能の依存として [WebChimera.js](https://github.com/RSATom/WebChimera.js) を利用しています。[Build PreRequests](https://github.com/RSATom/WebChimera.js#build-prerequisites) の導入が必要です。<br>
+依存として WebChimera.js を利用しているので、関連依存の導入が必要です（下記手順に含まれています）。
 
 ### macOS
 
@@ -110,8 +99,8 @@ MirakTest は次のプロジェクトを利用/参考にして実装していま
 
 - [Chinachu/Mirakurun](https://github.com/Chinachu/Mirakurun)
 - [search-future/miyou.tv](https://github.com/search-future/miyou.tv)
-- [SlashNephy/saya](https://github.com/SlashNephy/saya)
 - [monyone/aribb24.js](https://github.com/monyone/aribb24.js)
+- [tsukumijima/KonomiTV](https://github.com/tsukumijima/KonomiTV)
 
 DTV コミュニティの皆さまに感謝します。
 
