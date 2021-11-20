@@ -82,6 +82,16 @@ export const useContentPlayerContextMenu = () => {
         },
       },
       {
+        label: "番組表",
+        click: () => {
+          ipcRenderer.invoke(REUQEST_OPEN_WINDOW, {
+            name: ROUTES["ProgramTable"],
+            isSingletone: true,
+            isHideUntilLoaded: true,
+          })
+        },
+      },
+      {
         label: "設定",
         click: () => {
           ipcRenderer.invoke(REUQEST_OPEN_WINDOW, {
@@ -91,7 +101,6 @@ export const useContentPlayerContextMenu = () => {
           })
         },
       },
-
       {
         type: "separator",
       },

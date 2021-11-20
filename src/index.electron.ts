@@ -121,8 +121,15 @@ const buildAppMenu = ({
         type: "separator",
       },
       {
+        label: "番組表",
+        click: () =>
+          openWindow({ name: ROUTES.ProgramTable, isSingletone: true }),
+        accelerator: "CmdOrCtrl+B",
+      },
+      {
         label: "設定",
         click: () => openWindow({ name: "Settings", isSingletone: true }),
+        accelerator: "CmdOrCtrl+P",
       },
       {
         type: "separator",
@@ -186,6 +193,12 @@ const buildAppMenu = ({
         },
         {
           type: "separator",
+        },
+        {
+          label: "番組表",
+          click: () =>
+            openWindow({ name: ROUTES.ProgramTable, isSingletone: true }),
+          accelerator: "CmdOrCtrl+B",
         },
         {
           label: "設定",

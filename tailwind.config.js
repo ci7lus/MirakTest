@@ -14,6 +14,7 @@ module.exports = {
   plugins: [
     require("tailwindcss-textshadow"),
     require("@tailwindcss/custom-forms"),
+    require("tailwind-scrollbar"),
   ],
   theme: {
     extend: {

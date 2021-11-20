@@ -6,6 +6,7 @@ import { ROUTES } from "./constants/routes"
 import { Routes } from "./types/struct"
 import { remoteWindow } from "./utils/remote"
 import { CoiledContentPlayer } from "./windows/ContentPlayer"
+import { CoiledProgramTable } from "./windows/ProgramTable"
 import { Settings } from "./windows/Settings"
 
 export const Router: React.VFC<{}> = () => {
@@ -26,7 +27,7 @@ export const Router: React.VFC<{}> = () => {
   } else if (hash === ROUTES["Settings"]) {
     return <Settings />
   } else if (hash === ROUTES["ProgramTable"]) {
-    return <Settings />
+    return <CoiledProgramTable />
   } else {
     const Component = window.plugins?.find((plugin) => plugin.windows?.[hash])
       ?.windows[hash]

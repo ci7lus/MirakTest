@@ -40,14 +40,7 @@ const babelLoaderConfiguration: webpack.RuleSetRule = {
     options: {
       cacheDirectory: true,
       presets: [
-        [
-          "@babel/preset-env",
-          {
-            targets: {
-              browsers: ["Electron 12.0.0"],
-            },
-          },
-        ],
+        ["@babel/preset-env", { targets: { electron: "12" } }],
         "@babel/preset-typescript",
         "@babel/preset-react",
       ],
@@ -102,6 +95,7 @@ const factory: MultiConfigurationFactory = (env, args) => [
     resolve: {
       alias: {
         "react-native": "react-native-web",
+        "react-query": "react-query/lib",
       },
       extensions: [
         ".webpack.js",
