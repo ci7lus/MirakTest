@@ -165,6 +165,7 @@ export const ScrollArea: React.FC<{
               ) || []
             return (
               <ServiceRoll
+                key={service.id}
                 service={service}
                 programs={filteredPrograms}
                 displayStartTimeInString={displayStartTimeInString}
