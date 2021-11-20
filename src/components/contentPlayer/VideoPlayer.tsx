@@ -19,6 +19,7 @@ import {
   contentPlayerPlayingTimeAtom,
   contentPlayerPositionUpdateTriggerAtom,
   contentPlayerScreenshotTriggerAtom,
+  contentPlayerScreenshotUrlAtom,
   contentPlayerSubtitleEnabledAtom,
   contentPlayerTotAtom,
   contentPlayerTsFirstPcrAtom,
@@ -147,6 +148,7 @@ export const CoiledVideoPlayer: React.VFC<{}> = memo(() => {
 
   // スクリーンショットフォルダ初期設定
   const screenshotTrigger = useRecoilValue(contentPlayerScreenshotTriggerAtom)
+  const setScreenshotUrl = useSetRecoilState(contentPlayerScreenshotUrlAtom)
   useEffect(() => {
     const canvas = canvasRef.current
     if (!screenshotTrigger || !canvas) return
@@ -198,6 +200,13 @@ export const CoiledVideoPlayer: React.VFC<{}> = memo(() => {
         try {
           const image = nativeImage.createFromBuffer(buffer)
           remote.clipboard.writeImage(image, "clipboard")
+        } catch (error) {
+          console.error(error)
+        }
+
+        try {
+          const url = URL.createObjectURL(blob)
+          setScreenshotUrl(url)
         } catch (error) {
           console.error(error)
         }

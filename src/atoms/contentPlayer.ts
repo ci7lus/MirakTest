@@ -99,6 +99,11 @@ export const contentPlayerScreenshotTriggerAtom = atom<number>({
   default: 0,
 })
 
+export const contentPlayerScreenshotUrlAtom = atom<string | null>({
+  key: `${prefix}.screenshotUrl`,
+  default: null,
+})
+
 export const contentPlayerKeyForRestorationAtom =
   atom<ContentPlayerKeyForRestoration | null>({
     key: `${prefix}.keyForRestoration`,

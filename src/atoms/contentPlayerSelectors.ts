@@ -6,6 +6,7 @@ import {
   contentPlayerIsSeekableAtom,
   contentPlayerPlayingPositionAtom,
   contentPlayerPlayingTimeAtom,
+  contentPlayerScreenshotUrlAtom,
   contentPlayerTotAtom,
 } from "./contentPlayer"
 import { contentPlayerPlayingContentAtom } from "./contentPlayerResolvedFamilies"
@@ -82,5 +83,12 @@ export const contentPlayerProgramSelector = selector<Program | null>({
   get: ({ get }) => {
     const content = get(contentPlayerPlayingContentAtom)
     return content?.program || null
+  },
+})
+
+export const contentPlayerScreenshotUrlSelector = selector<string | null>({
+  key: `${prefix}.screenshotUrlSelector`,
+  get: ({ get }) => {
+    return get(contentPlayerScreenshotUrlAtom)
   },
 })

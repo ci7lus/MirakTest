@@ -90,6 +90,9 @@ export type PluginInRendererArgs = {
     contentPlayerTsFirstPcrSelector: Recoil.RecoilValueReadOnly<number>
     contentPlayerPositionUpdateTriggerAtom: Recoil.RecoilState<number>
     contentPlayerScreenshotTriggerAtom: Recoil.RecoilState<number>
+    contentPlayerScreenshotUrlSelector: Recoil.RecoilValueReadOnly<
+      string | null
+    >
     mirakurunCompatibilitySelector: Recoil.RecoilValueReadOnly<MirakurunCompatibilityTypes | null>
     mirakurunVersionSelector: Recoil.RecoilValueReadOnly<string | null>
     mirakurunServicesSelector: Recoil.RecoilValueReadOnly<Service[] | null>
