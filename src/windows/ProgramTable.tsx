@@ -2,7 +2,8 @@ import clsx from "clsx"
 import React, { useEffect, useState } from "react"
 import { useSetRecoilState, useRecoilValue } from "recoil"
 import pkg from "../../package.json"
-import { contentPlayerSelectedServiceAtom } from "../atoms/contentPlayer"
+import { globalContentPlayerSelectedServiceFamily } from "../atoms/globalFamilies"
+import { globalActiveContentPlayerIdSelector } from "../atoms/globalSelectors"
 import { mirakurunServicesAtom } from "../atoms/mirakurun"
 import { mirakurunSetting } from "../atoms/settings"
 import { ScrollArea } from "../components/programTable/ScrollArea"
@@ -13,7 +14,10 @@ import { remoteWindow } from "../utils/remote"
 export const CoiledProgramTable: React.VFC<{}> = () => {
   const now = useNow()
   const [add, setAdd] = useState(0)
-  const setSelectedService = useSetRecoilState(contentPlayerSelectedServiceAtom)
+  const activePlayerId = useRecoilValue(globalActiveContentPlayerIdSelector)
+  const setSelectedService = useSetRecoilState(
+    globalContentPlayerSelectedServiceFamily(activePlayerId ?? 0)
+  )
   const services = useRecoilValue(mirakurunServicesAtom)
   const mirakurunSettingValue = useRecoilValue(mirakurunSetting)
 

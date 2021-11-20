@@ -5,10 +5,12 @@ import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil"
 import {
   contentPlayerIsPlayingAtom,
   contentPlayerKeyForRestorationAtom,
-  contentPlayerSelectedServiceAtom,
   contentPlayerServiceLogoUrlAtom,
 } from "../../atoms/contentPlayer"
-import { contentPlayerPlayingContentAtom } from "../../atoms/contentPlayerResolvedFamilies"
+import {
+  contentPlayerPlayingContentAtom,
+  contentPlayerSelectedServiceAtom,
+} from "../../atoms/contentPlayerResolvedFamilies"
 import {
   contentPlayerServiceSelector,
   contentPlayerUrlSelector,

@@ -3,8 +3,8 @@ import { useRecoilState, useRecoilValue } from "recoil"
 import {
   contentPlayerIsPlayingAtom,
   contentPlayerKeyForRestorationAtom,
-  contentPlayerSelectedServiceAtom,
 } from "../atoms/contentPlayer"
+import { contentPlayerSelectedServiceAtom } from "../atoms/contentPlayerResolvedFamilies"
 import { mirakurunServicesAtom } from "../atoms/mirakurun"
 import { REUQEST_OPEN_WINDOW } from "../constants/ipc"
 import { ROUTES } from "../constants/routes"

@@ -15,11 +15,11 @@ import {
   contentPlayerPlayingTimeAtom,
   contentPlayerPositionUpdateTriggerAtom,
   contentPlayerScreenshotTriggerAtom,
-  contentPlayerSelectedServiceAtom,
   contentPlayerServiceLogoUrlAtom,
   contentPlayerSubtitleEnabledAtom,
   contentPlayerVolumeAtom,
 } from "../../atoms/contentPlayer"
+import { contentPlayerSelectedServiceAtom } from "../../atoms/contentPlayerResolvedFamilies"
 import {
   contentPlayerProgramSelector,
   contentPlayerServiceSelector,

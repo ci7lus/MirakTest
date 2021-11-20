@@ -1,6 +1,5 @@
 import { atom } from "recoil"
 import pkg from "../../package.json"
-import { Service } from "../infra/mirakurun/api"
 import type {
   AribSubtitleData,
   ContentPlayerKeyForRestoration,
@@ -8,11 +7,6 @@ import type {
 import { VLCAudioChannel } from "../utils/vlc"
 
 const prefix = `${pkg.name}.contentPlayer`
-
-export const contentPlayerSelectedServiceAtom = atom<Service | null>({
-  key: `${prefix}.selectedService`,
-  default: null,
-})
 
 export const contentPlayerTitleAtom = atom<string | null>({
   key: `${prefix}.title`,
