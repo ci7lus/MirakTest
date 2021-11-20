@@ -75,7 +75,11 @@ export const SeekableControl: React.FC<{
           onClick={() => relativeMove(-10_000)}
         >
           <Rewind className="pointer-events-none" size="1.5rem" />
-          <span className={clsx("text-xs", "text-center")}>-10</span>
+          <span
+            className={clsx("text-xs", "text-center", "pointer-events-none")}
+          >
+            -10
+          </span>
         </button>
         <button
           type="button"
@@ -92,7 +96,11 @@ export const SeekableControl: React.FC<{
           onClick={() => relativeMove(30_000)}
         >
           <FastForward className="pointer-events-none" size="1.5rem" />
-          <span className={clsx("text-xs", "text-center")}>+30</span>
+          <span
+            className={clsx("text-xs", "text-center", "pointer-events-none")}
+          >
+            +30
+          </span>
         </button>
       </div>
       <input
