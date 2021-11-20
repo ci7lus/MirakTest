@@ -1,6 +1,6 @@
 import clsx from "clsx"
 import dayjs from "dayjs"
-import React, { useEffect, useState } from "react"
+import React, { useEffect, useRef, useState } from "react"
 import { useQuery } from "react-query"
 import { useNow } from "../../hooks/date"
 import { MirakurunAPI } from "../../infra/mirakurun"
@@ -50,8 +50,12 @@ export const ScrollArea: React.FC<{
         programs?.find((program) => program.serviceId === service.serviceId)
       ) || null
     )
-    //setFilteredServices([services![0]])
   }, [data, programs])
+  const [isPushing, setIsPushing] = useState(false)
+  const [isDragging, setIsDragging] = useState(false)
+  const [x, setX] = useState(0)
+  const [y, setY] = useState(0)
+  const timerRef = useRef<NodeJS.Timer>()
 
   if (error) {
     return (
@@ -110,11 +114,41 @@ export const ScrollArea: React.FC<{
           "h-full",
           "scrollbar",
           "scrollbar-thumb-gray-600",
-          "scrollbar-track-gray-200"
+          "scrollbar-track-gray-200",
+          isDragging && "cursor-move"
         )}
         onScroll={(e) => {
           setLeftPosition(e.currentTarget.scrollLeft)
           setTopPosition(e.currentTarget.scrollTop)
+        }}
+        onMouseDown={(e) => {
+          setIsPushing(true)
+          setX(e.clientX)
+          setY(e.clientY)
+        }}
+        onMouseUp={() => {
+          setIsPushing(false)
+        }}
+        onMouseMove={(e) => {
+          // ref: https://github.com/l3tnun/EPGStation/blob/ed9cc6eadc6cfc2adab4ede128b1edeb09c30328/client/src/components/guide/GuideScroller.vue#L56
+          if (!isPushing) {
+            return
+          }
+          setIsDragging(true)
+          const clientX = e.clientX
+          const clientY = e.clientY
+          e.currentTarget.scrollLeft += x - clientX
+          e.currentTarget.scrollTop += y - clientY
+          setX(clientX)
+          setY(clientY)
+          const timer = timerRef.current
+          if (timer) {
+            clearTimeout(timer)
+          }
+          timerRef.current = setTimeout(() => {
+            setIsDragging(false)
+            timerRef.current = undefined
+          }, 100)
         }}
       >
         <div
