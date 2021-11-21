@@ -11,7 +11,6 @@ import { ServiceRoll } from "./ServiceRoll"
 import { ScrollServices } from "./Services"
 
 const HOUR_HEIGHT = 180
-const FULL_HEIGHT = HOUR_HEIGHT * 24
 
 export const ScrollArea: React.FC<{
   mirakurunSetting: MirakurunSetting
@@ -28,8 +27,6 @@ export const ScrollArea: React.FC<{
     () => mirakurun.programs.getPrograms().then((res) => res.data),
     { refetchInterval: false }
   )
-  const [leftPosition, setLeftPosition] = useState(0)
-  const [topPosition, setTopPosition] = useState(0)
   const [filteredServices, setFilteredServices] = useState(services)
   const [programs, setPrograms] = useState(data)
   useEffect(() => {
@@ -100,13 +97,6 @@ export const ScrollArea: React.FC<{
         "relative"
       )}
     >
-      <div className={clsx("overflow-hidden", "ml-4", "flex-shrink-0")}>
-        <div
-          style={{
-            transform: `translateX(-${leftPosition}px)`,
-          }}
-        ></div>
-      </div>
       <div
         className={clsx(
           "w-full",
@@ -117,10 +107,6 @@ export const ScrollArea: React.FC<{
           "scrollbar-track-gray-200",
           isDragging && "cursor-move"
         )}
-        onScroll={(e) => {
-          setLeftPosition(e.currentTarget.scrollLeft)
-          setTopPosition(e.currentTarget.scrollTop)
-        }}
         onMouseDown={(e) => {
           setIsPushing(true)
           setX(e.clientX)
@@ -151,56 +137,29 @@ export const ScrollArea: React.FC<{
           }, 100)
         }}
       >
-        <div
-          className={clsx("relative", "flex", "text-gray-900", "pl-4", "mt-11")}
-          style={{
-            width: `${(filteredServices || []).length * 10}rem`,
-            height: `${FULL_HEIGHT}px`,
-          }}
-        >
-          {filteredServices?.map((service) => {
-            const filteredPrograms =
-              programs?.filter(
-                (program) => program.serviceId === service.serviceId
-              ) || []
-            return (
-              <ServiceRoll
-                key={service.id}
-                service={service}
-                programs={filteredPrograms}
-                displayStartTimeInString={displayStartTimeInString}
-                hourHeight={HOUR_HEIGHT}
-              />
-            )
-          })}
-          {filteredServices && (
-            <div
-              className={clsx(
-                "flex",
-                "pl-4",
-                "absolute",
-                "left-0",
-                "flex-shrink-0",
-                "text-gray-100"
-              )}
-              style={{
-                transform: `translateY(${topPosition}px)`,
-                top: "-2.75rem",
-              }}
-            >
-              <ScrollServices
-                services={filteredServices}
-                setService={setService}
-              />
-            </div>
-          )}
+        {filteredServices && (
+          <div
+            className={clsx(
+              "flex",
+              "pl-4",
+              "sticky",
+              "flex-shrink-0",
+              "text-gray-100",
+              "top-0",
+              "z-20"
+            )}
+          >
+            <ScrollServices
+              services={filteredServices}
+              setService={setService}
+            />
+          </div>
+        )}
+        <div className={clsx("flex", "w-max")}>
           <div
             className={
-              "absolute left-0 h-full bg-gray-700 text-gray-200 font-bold pointer-events-none w-4 flex-shrink-0"
+              "sticky left-0 h-full bg-gray-700 text-gray-200 font-bold pointer-events-none w-4 flex-shrink-0 z-10"
             }
-            style={{
-              transform: `translateX(${leftPosition}px)`,
-            }}
           >
             <HourIndicator
               hourHeight={HOUR_HEIGHT}
@@ -208,13 +167,39 @@ export const ScrollArea: React.FC<{
             />
           </div>
           <div
-            className={`opacity-50 absolute w-full left-0 border-t-4 ${
-              add === 0 ? "border-red-400" : "border-red-200"
-            } transition-all pointer-events-none ml-4`}
-            style={{
-              top: `${(now.minute() / 60) * 180}px`,
-            }}
-          />
+            className={clsx(
+              "relative",
+              "flex",
+              "text-gray-900",
+              "flex-shrink-0",
+              "w-max",
+              "h-max"
+            )}
+          >
+            {filteredServices?.map((service) => {
+              const filteredPrograms =
+                programs?.filter(
+                  (program) => program.serviceId === service.serviceId
+                ) || []
+              return (
+                <ServiceRoll
+                  key={service.id}
+                  service={service}
+                  programs={filteredPrograms}
+                  displayStartTimeInString={displayStartTimeInString}
+                  hourHeight={HOUR_HEIGHT}
+                />
+              )
+            })}
+            <div
+              className={`opacity-50 absolute w-full left-0 border-t-4 ${
+                add === 0 ? "border-red-400" : "border-red-200"
+              } transition-all pointer-events-none`}
+              style={{
+                top: `${(now.minute() / 60) * 180}px`,
+              }}
+            />
+          </div>
         </div>
       </div>
     </div>

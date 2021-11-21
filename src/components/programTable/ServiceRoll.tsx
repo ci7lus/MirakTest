@@ -13,7 +13,7 @@ export const ServiceRoll: React.FC<{
     id={service.id.toString()}
     className={clsx(
       "relative",
-      "h-full",
+      "h-max",
       "content-visibility-auto",
       "w-40",
       "flex-shrink-0"
