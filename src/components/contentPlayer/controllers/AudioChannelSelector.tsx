@@ -6,7 +6,7 @@ export const AudioChannelSelector: React.VFC<{
   setAudioChannel: React.Dispatch<React.SetStateAction<number>>
 }> = memo(({ audioChannel, setAudioChannel }) => (
   <select
-    className="appearance-none border border-gray-800 rounded py-2 px-2 leading-tight focus:outline-none bg-gray-800 bg-opacity-50 text-gray-100"
+    className="appearance-none border border-gray-800 rounded py-2 px-2 leading-tight focus:outline-none bg-gray-800 text-gray-100"
     value={audioChannel}
     onChange={(e) => {
       const selectedChannel = parseInt(e.target.value)

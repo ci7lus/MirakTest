@@ -1,8 +1,9 @@
+import { Popover } from "@headlessui/react"
 import clsx from "clsx"
 import dayjs from "dayjs"
 import { ipcRenderer, remote } from "electron"
 import React, { useEffect, useRef, useState } from "react"
-import { ChevronDown, PauseCircle, PlayCircle } from "react-feather"
+import { ChevronDown, PauseCircle, PlayCircle, Settings } from "react-feather"
 import { useDebounce } from "react-use"
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil"
 import {
@@ -31,6 +32,7 @@ import { useRefFromState } from "../../hooks/ref"
 import { remoteWindow } from "../../utils/remote"
 import { AudioChannelSelector } from "./controllers/AudioChannelSelector"
 import { AudioTrackSelector } from "./controllers/AudioTrackSelector"
+import { FullScreenToggleButton } from "./controllers/FullScreenToggleButton"
 import { PlayToggleButton } from "./controllers/PlayToggleButton"
 import { CoiledScreenshotButton } from "./controllers/ScreenshotButton"
 import { SeekableControl } from "./controllers/SeekableControl"
@@ -182,6 +184,11 @@ export const CoiledController: React.VFC<{}> = () => {
   }, [service])
   const time = useRecoilValue(contentPlayerPlayingTimeAtom)
 
+  const toggleFullScreen = () => {
+    if (!remoteWindow.fullScreenable) return
+    remoteWindow.setFullScreen(!remoteWindow.isFullScreen())
+  }
+
   return (
     <div
       ref={componentRef}
@@ -191,10 +198,7 @@ export const CoiledController: React.VFC<{}> = () => {
         setLastCurMoved(new Date().getSeconds())
       }}
       onMouseLeave={() => setIsVisible(false)}
-      onDoubleClick={() => {
-        if (!remoteWindow.fullScreenable) return
-        remoteWindow.setFullScreen(!remoteWindow.isFullScreen())
-      }}
+      onDoubleClick={toggleFullScreen}
       onMouseDown={(e) => {
         if (
           e.button === 2 ||
@@ -316,17 +320,44 @@ export const CoiledController: React.VFC<{}> = () => {
               setSubtitleEnabled={setSubtitleEnabled}
             />
             <CoiledScreenshotButton />
-            <AudioChannelSelector
-              audioChannel={audioChannel}
-              setAudioChannel={setAudioChannel}
-            />
-            {3 <= audioTracks.length && (
-              <AudioTrackSelector
-                audioTrack={audioTrack}
-                setAudioTrack={setAudioTrack}
-                audioTracks={audioTracks}
-              />
-            )}
+            <Popover className="relative">
+              <Popover.Button
+                className={`focus:outline-none cursor-pointer p-2 text-gray-100`}
+              >
+                <Settings className="pointer-events-none" size="1.75rem" />
+              </Popover.Button>
+              <Popover.Panel
+                className={clsx(
+                  "absolute",
+                  "z-10",
+                  "bottom-0",
+                  "mb-12",
+                  "right-0",
+                  "-mr-4",
+                  "w-max",
+                  "grid",
+                  "grid-cols-1",
+                  "gap-2",
+                  "p-3",
+                  "bg-gray-700",
+                  "bg-opacity-80",
+                  "rounded-md"
+                )}
+              >
+                <AudioChannelSelector
+                  audioChannel={audioChannel}
+                  setAudioChannel={setAudioChannel}
+                />
+                {3 <= audioTracks.length && (
+                  <AudioTrackSelector
+                    audioTrack={audioTrack}
+                    setAudioTrack={setAudioTrack}
+                    audioTracks={audioTracks}
+                  />
+                )}
+              </Popover.Panel>
+            </Popover>
+            <FullScreenToggleButton toggle={toggleFullScreen} />
           </div>
         </div>
         <div className="absolute w-full h-full flex items-center justify-center pointer-events-none">
