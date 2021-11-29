@@ -558,7 +558,7 @@ const openWindow = ({
         contentPlayerWindows.splice(idx, 1)
         updateContentPlayerIds()
         if (states[globalActiveContentPlayerIdAtomKey] === _id) {
-          const value = contentPlayerWindows.splice(0).shift()?.id ?? null
+          const value = contentPlayerWindows.slice(0).shift()?.id ?? null
           // 生Recoil
           states[globalActiveContentPlayerIdAtomKey] = value
           recoilStateUpdate(_id, {
