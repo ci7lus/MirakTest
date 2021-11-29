@@ -38,7 +38,7 @@ import {
   PluginDefineInMain,
   PluginInMainArgs,
 } from "./types/plugin"
-import { InitialData, ObjectLiteral } from "./types/struct"
+import { InitialData, ObjectLiteral, PluginDatum } from "./types/struct"
 
 // プラグイン側で対策するのが面倒すぎるのでこちら側でモックを用意
 global.React = React
@@ -54,6 +54,8 @@ const CONTENT_PLAYER_BOUNDS = `${pkg.name}.contentPlayer.bounds`
 const GLOBAL_CONTENT_PLAYER_IDS = `${pkg.name}.global.contentPlayerIds`
 
 const blockerIdBycontentPlayerWindow: { [key: number]: number | null } = {}
+
+const isDev = process.env.NODE_ENV === "development"
 
 let store: Store<{
   [key: typeof CONTENT_PLAYER_BOUNDS]: Rectangle
@@ -92,7 +94,6 @@ const init = () => {
   display = _display
   openWindow({
     name: ROUTES["ContentPlayer"],
-    isHideUntilLoaded: true,
   })
 }
 
@@ -236,17 +237,27 @@ const buildAppMenu = ({
 
 const userDataDir = app.getPath("userData")
 const pluginsDir = path.join(userDataDir, "plugins")
-let pluginPaths: string[] = []
+const pluginData: PluginDatum[] = []
 const plugins: PluginDefineInMain[] = []
 const appMenus: { [key: string]: Electron.MenuItemConstructorOptions } = {}
 const loadPlugins = async () => {
   console.info("Load plugins from:", pluginsDir)
   if (!fs.existsSync(pluginsDir)) await fs.promises.mkdir(pluginsDir)
   const files = await fs.promises.readdir(pluginsDir)
-  pluginPaths = files
-    .filter((filePath) => filePath.endsWith(".plugin.js"))
-    .map((filePath) => path.join(pluginsDir, filePath))
-  console.info("plugins paths:", pluginPaths)
+  const parsedPlugins = await Promise.all(
+    files
+      .filter((filePath) => filePath.endsWith(".plugin.js"))
+      .map(async (fileName) => {
+        const filePath = path.join(pluginsDir, fileName)
+        const content = await fs.promises.readFile(filePath, "utf8")
+        return { content, filePath, fileName }
+      })
+  )
+  pluginData.push(...parsedPlugins)
+  console.info(
+    "plugins paths:",
+    pluginData.map((p) => p.filePath)
+  )
   const appInfo: AppInfo = { name: pkg.productName, version: pkg.version }
   const args: PluginInMainArgs = {
     appInfo,
@@ -289,10 +300,10 @@ const loadPlugins = async () => {
   }
   const openedPlugins: PluginDefineInMain[] = []
   await Promise.all(
-    pluginPaths.map(async (pluginPath) => {
+    pluginData.map(async ({ filePath }) => {
       try {
         const module: { default: InitPlugin } | InitPlugin =
-          esmRequire(pluginPath)
+          esmRequire(filePath)
         const load = "default" in module ? module.default : module
         if (load.main) {
           const plugin = await load.main(args)
@@ -343,7 +354,7 @@ loadPlugins()
 
 ipcMain.handle(REQUEST_INITIAL_DATA, () => {
   const data: InitialData = {
-    pluginPaths,
+    pluginData,
     states,
     fonts,
   }
@@ -471,7 +482,7 @@ const openWindow = ({
         Math.ceil(headerSize / display.scaleFactor)
       window.setMinimumSize(minWidth, minHeight)
 
-      if (process.env.NODE_ENV === "development") {
+      if (isDev) {
         window.webContents.openDevTools()
       }
 
@@ -495,13 +506,44 @@ const openWindow = ({
       updateContentPlayerIds()
     }
 
+    if (isDev) {
+      window.webContents.session.webRequest.onBeforeSendHeaders(
+        (details, callback) => {
+          callback({
+            requestHeaders: { Origin: "*", ...details.requestHeaders },
+          })
+        }
+      )
+      window.webContents.session.webRequest.onHeadersReceived(
+        (details, callback) => {
+          const responseHeaders = details.responseHeaders || {}
+          const keys = Object.keys(responseHeaders)
+          for (const [key, value] of Object.entries({
+            "Access-Control-Allow-Origin": ["*"],
+            "Access-Control-Allow-Headers": ["*, Authorization"],
+            "Access-Control-Allow-Methods": ["*"],
+            "Access-Control-Allow-Credentials": ["true"],
+          })) {
+            if (!keys.includes(key.toLowerCase())) {
+              responseHeaders[key] = value
+            }
+          }
+          callback({ responseHeaders })
+        }
+      )
+    }
+
     if (0 < windowMapping[name]?.length) {
       windowMapping[name].push(window)
     } else {
       windowMapping[name] = [window]
     }
 
-    window.loadFile("index.html", { hash: name })
+    if (isDev) {
+      window.loadURL("http://localhost:10170/index.html#" + name)
+    } else {
+      window.loadFile("index.html", { hash: name })
+    }
 
     const _id = window.id
     window.on("closed", () => {

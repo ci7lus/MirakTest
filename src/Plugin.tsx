@@ -52,15 +52,14 @@ import {
   PluginInRendererArgs,
   DefineAtom,
 } from "./types/plugin"
-import { ObjectLiteral } from "./types/struct"
-import { nativeImport } from "./utils/nativeImport"
+import { ObjectLiteral, PluginDatum } from "./types/struct"
 import { pluginValidator } from "./utils/plugin"
 
 export const PluginLoader: React.VFC<{
   states: ObjectLiteral
-  pluginPaths: string[]
+  pluginData: PluginDatum[]
   fonts: string[]
-}> = ({ states, pluginPaths, fonts }) => {
+}> = ({ states, pluginData, fonts }) => {
   const [isLoading, setIsLoading] = useState(true)
   const [sharedAtoms, setSharedAtoms] = useState(RECOIL_SHARED_ATOM_KEYS)
   const [storedAtoms, setStoredAtoms] = useState(RECOIL_STORED_ATOM_KEYS)
@@ -138,14 +137,20 @@ export const PluginLoader: React.VFC<{
     ;(async () => {
       const atoms: DefineAtom[] = []
       const plugins: PluginDefineInRenderer[] = []
-      console.info("pluginPaths:", pluginPaths)
+      console.info("pluginPaths:", pluginData)
       const openedPlugins: PluginDefineInRenderer[] = []
       await Promise.all(
-        pluginPaths.map(async (filePath) => {
+        pluginData.map(async (pluginDatum) => {
           try {
-            console.info("[Plugin] 取り込み中:", filePath)
-            const module: { default: InitPlugin } | InitPlugin =
-              await nativeImport(filePath)
+            console.info("[Plugin] 取り込み中:", pluginDatum.fileName)
+            const url = URL.createObjectURL(
+              new Blob([pluginDatum.content], {
+                type: "application/javascript",
+              })
+            )
+            const module: { default: InitPlugin } | InitPlugin = await import(
+              /* webpackIgnore: true */ url
+            )
             const load = "default" in module ? module.default : module
             if (load.renderer) {
               const plugin = await load.renderer(args)

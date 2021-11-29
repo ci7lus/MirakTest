@@ -4,8 +4,14 @@ export type ObjectLiteral<T = unknown> = { [key: string]: T }
 
 export type Routes = keyof typeof ROUTES | (string & {})
 
+export type PluginDatum = {
+  filePath: string
+  fileName: string
+  content: string
+}
+
 export type InitialData = {
   states: ObjectLiteral
-  pluginPaths: string[]
+  pluginData: PluginDatum[]
   fonts: string[]
 }
