@@ -137,7 +137,10 @@ export const PluginLoader: React.VFC<{
     ;(async () => {
       const atoms: DefineAtom[] = []
       const plugins: PluginDefineInRenderer[] = []
-      console.info("pluginPaths:", pluginData)
+      console.info(
+        "pluginPaths:",
+        pluginData.map((plugin) => plugin.filePath)
+      )
       const openedPlugins: PluginDefineInRenderer[] = []
       await Promise.all(
         pluginData.map(async (pluginDatum) => {
