@@ -27,6 +27,7 @@ import {
   UPDATE_IS_PLAYING_STATE,
 } from "./constants/ipc"
 import { ROUTES } from "./constants/routes"
+import { EPGManager } from "./main/epgManager"
 import {
   OpenContentPlayerWindowArgs,
   OpenWindowArg,
@@ -575,3 +576,5 @@ const openWindow = ({
 ipcMain.handle(REUQEST_OPEN_WINDOW, (_, args) => {
   return openWindow(args)?.id
 })
+
+new EPGManager(ipcMain)

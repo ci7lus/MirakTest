@@ -1,10 +1,10 @@
 import dayjs from "dayjs"
 import React, { memo, useEffect, useMemo, useState } from "react"
 import { useRecoilValue } from "recoil"
-import { mirakurunProgramsFamily } from "../../../atoms/mirakurunSelectorFamilies"
+import { contentPlayerIsPlayingAtom } from "../../../atoms/contentPlayer"
 import { useNow } from "../../../hooks/date"
 import { Service } from "../../../infra/mirakurun/api"
-import { getCurrentProgramOfService } from "../../../utils/program"
+import { queryPrograms } from "../../../utils/program"
 
 const CoiledServiceOption: React.FC<{
   service: Service
@@ -13,30 +13,32 @@ const CoiledServiceOption: React.FC<{
   isSelecting: boolean
 }> = memo(({ service, now, isProgramDetailEnabled, isSelecting }) => {
   const [programLabel, setProgramLabel] = useState<string | null>(null)
-  const programs = useRecoilValue(mirakurunProgramsFamily(service.serviceId))
+  const isPlaying = useRecoilValue(contentPlayerIsPlayingAtom)
   useEffect(() => {
     if (!isProgramDetailEnabled || isSelecting) return
-    const currentProgram = getCurrentProgramOfService({
-      programs,
+    const unix = now.unix() * 1000
+    queryPrograms({
       serviceId: service.serviceId,
-      now,
-    })
-    if (currentProgram) {
-      const startAt = dayjs(currentProgram.startAt).format("HH:mm")
-      const endAt = dayjs(
-        currentProgram.startAt + currentProgram.duration
-      ).format("HH:mm")
+      networkId: service.networkId,
+      startAtLessThan: unix,
+      endAtMoreThan: unix,
+    }).then((programs) => {
+      const program = programs.slice(0).pop()
+      if (program) {
+        const startAt = dayjs(program.startAt).format("HH:mm")
+        const endAt = dayjs(program.startAt + program.duration).format("HH:mm")
 
-      setProgramLabel(
-        [`/ ${startAt}〜${endAt}`, currentProgram.name]
-          .filter((s) => s !== undefined)
-          .join(": ")
-          .trim()
-      )
-    } else {
-      setProgramLabel(null)
-    }
-  }, [service, programs, now, isProgramDetailEnabled, isSelecting])
+        setProgramLabel(
+          [`/ ${startAt}〜${endAt}`, program.name]
+            .filter((s) => s !== undefined)
+            .join(": ")
+            .trim()
+        )
+      } else {
+        setProgramLabel(null)
+      }
+    })
+  }, [service, now, isProgramDetailEnabled, isSelecting, isPlaying])
   return (
     <option value={service.id}>
       {[

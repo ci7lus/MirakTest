@@ -5,7 +5,6 @@ import * as global from "./global"
 import * as globalFamilies from "./globalFamilies"
 import * as globalSelectors from "./globalSelectors"
 import * as mirakurun from "./mirakurun"
-import * as mirakurunSelectorFamilies from "./mirakurunSelectorFamilies"
 import * as settings from "./settings"
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -31,4 +30,4 @@ export const ALL_SELECTOR_FAMILIES: ((
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   param: any
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-) => RecoilValueReadOnly<any>)[] = [...Object.values(mirakurunSelectorFamilies)]
+) => RecoilValueReadOnly<any>)[] = []

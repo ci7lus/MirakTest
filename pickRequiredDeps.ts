@@ -22,6 +22,9 @@ const targets = [
   "recoil",
   "react-dom",
   "font-list",
+  "axios",
+  "zod",
+  "stream-json",
 ] as const
 const dependencies = { ...pkg.dependencies, ...pkg.devDependencies }
 const targetWithVersion = targets.map(

@@ -2,6 +2,7 @@ import { remote } from "electron"
 import React from "react"
 import * as Recoil from "recoil"
 import { Program, Service } from "../infra/mirakurun/api"
+import { QuerySchema } from "../main/epgManager"
 export type { Channel, Service, Program } from "../infra/mirakurun/api"
 import { ContentPlayerPlayingContent } from "./contentPlayer"
 import {
@@ -64,6 +65,7 @@ export type PluginInRendererArgs = {
     openContentPlayerWindow: (
       args: OpenContentPlayerWindowArgs
     ) => Promise<number>
+    queryPrograms: (arg: QuerySchema) => Promise<Program[]>
   }
   hooks: {}
   atoms: {
@@ -96,7 +98,6 @@ export type PluginInRendererArgs = {
     mirakurunCompatibilitySelector: Recoil.RecoilValueReadOnly<MirakurunCompatibilityTypes | null>
     mirakurunVersionSelector: Recoil.RecoilValueReadOnly<string | null>
     mirakurunServicesSelector: Recoil.RecoilValueReadOnly<Service[] | null>
-    mirakurunProgramsSelector: Recoil.RecoilValueReadOnly<Program[] | null>
   }
 }
 

@@ -1,7 +1,8 @@
 export type MirakurunSetting = {
   baseUrl?: string
-  isEnableWaitForSingleTuner: boolean
-  isEnableServiceTypeFilter: boolean
+  isEnableWaitForSingleTuner?: boolean
+  isEnableServiceTypeFilter?: boolean
+  userAgent?: string
 }
 
 export type ControllerSetting = {

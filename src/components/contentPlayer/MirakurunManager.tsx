@@ -1,4 +1,3 @@
-import dayjs from "dayjs"
 import { remote } from "electron"
 import React, { useEffect, useRef, useState } from "react"
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil"
@@ -17,11 +16,9 @@ import {
 } from "../../atoms/contentPlayerSelectors"
 import {
   mirakurunCompatibilityAtom,
-  mirakurunProgramsAtom,
   mirakurunServicesAtom,
   mirakurunVersionAtom,
 } from "../../atoms/mirakurun"
-import { mirakurunProgramsFamily } from "../../atoms/mirakurunSelectorFamilies"
 import { mirakurunSetting } from "../../atoms/settings"
 import { useNow } from "../../hooks/date"
 import { MirakurunAPI } from "../../infra/mirakurun"
@@ -29,14 +26,13 @@ import {
   Service,
   ServicesApiAxiosParamCreator,
 } from "../../infra/mirakurun/api"
-import { getCurrentProgramOfService } from "../../utils/program"
+import { queryPrograms, registerEpgManager } from "../../utils/program"
 
 export const MirakurunManager: React.VFC<{}> = () => {
   const mirakurunSettingValue = useRecoilValue(mirakurunSetting)
   const setCompatibility = useSetRecoilState(mirakurunCompatibilityAtom)
   const setVersion = useSetRecoilState(mirakurunVersionAtom)
   const [services, setServices] = useRecoilState(mirakurunServicesAtom)
-  const [programs, setPrograms] = useRecoilState(mirakurunProgramsAtom)
   const [playingContent, setPlayingContent] = useRecoilState(
     contentPlayerPlayingContentAtom
   )
@@ -57,27 +53,6 @@ export const MirakurunManager: React.VFC<{}> = () => {
   const isPlaying = useRecoilValue(contentPlayerIsPlayingAtom)
 
   const programUpdateTimer = useRef<NodeJS.Timeout | null>(null)
-
-  const updatePrograms = async (mirakurun: MirakurunAPI) => {
-    const tomorrow = dayjs().add(1, "days")
-    try {
-      const programs = await mirakurun.programs.getPrograms()
-      const filtered = programs.data.filter(
-        (program) => tomorrow.isAfter(program.startAt) // 直近1日以内のデータのみ抽出
-      )
-      setPrograms(filtered)
-      console.info(
-        `番組情報を更新しました。件数: ${filtered.length.toLocaleString()}/${programs.data.length.toLocaleString()}`
-      )
-    } catch (error) {
-      console.error(error)
-      new remote.Notification({
-        title: "取得に失敗しました",
-        body: "Mirakurun からの番組情報の取得に失敗しました",
-      }).show()
-      return
-    }
-  }
 
   const [isFirstAppeal, setIsFirstAppeal] = useState(true)
 
@@ -118,6 +93,10 @@ export const MirakurunManager: React.VFC<{}> = () => {
         return
       }
     }
+    registerEpgManager({
+      url: mirakurun.baseUrl,
+      userAgent: navigator.userAgent,
+    })
     let services: Service[]
     try {
       const servicesReq = await mirakurun.services.getServices()
@@ -140,14 +119,6 @@ export const MirakurunManager: React.VFC<{}> = () => {
       }
       services = []
     }
-    updatePrograms(mirakurun)
-    if (programUpdateTimer.current) {
-      clearInterval(programUpdateTimer.current)
-    }
-    programUpdateTimer.current = setInterval(
-      () => updatePrograms(mirakurun),
-      1000 * 60 * 60 // 1時間
-    )
     if (!isContentPrepared) {
       if (lastSelectedServiceId) {
         const service = services.find(
@@ -265,9 +236,6 @@ export const MirakurunManager: React.VFC<{}> = () => {
   }, [selectedService])
 
   const now = useNow()
-  const programsByService = useRecoilValue(
-    mirakurunProgramsFamily(playingContent?.service?.serviceId ?? 0)
-  )
 
   useEffect(() => {
     const mirakurunService = services?.find((s) => s.id === service?.id)
@@ -285,12 +253,24 @@ export const MirakurunManager: React.VFC<{}> = () => {
     if (playingContent?.contentType !== "Mirakurun" || !service) {
       return
     }
-    const program = getCurrentProgramOfService({
-      programs: programsByService,
+    const unix = now.unix() * 1000
+    queryPrograms({
       serviceId: service.serviceId,
-      now,
+      networkId: service.networkId,
+      startAtLessThan: unix,
+      endAtMoreThan: unix,
+    }).then((programs) => {
+      const program = programs.slice(0).pop()
+      if (program) {
+        setPlayingContent((prev) =>
+          prev
+            ? prev.program?.id === program.id
+              ? prev
+              : { ...prev, program }
+            : null
+        )
+      }
     })
-    setPlayingContent((prev) => (prev ? { ...prev, program } : null))
-  }, [service, programs, now])
+  }, [service, now])
   return <></>
 }

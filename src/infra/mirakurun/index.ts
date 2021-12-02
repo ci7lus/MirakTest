@@ -31,9 +31,13 @@ import { Configuration } from "./configuration"
 
 export class MirakurunAPI {
   baseUrl: string
-  constructor({ baseUrl }: MirakurunSetting) {
+  userAgent?: string
+  constructor({ baseUrl, userAgent }: Partial<MirakurunSetting>) {
     if (!baseUrl) throw new Error("Mirakurun baseUrl error")
     this.baseUrl = baseUrl
+    if (userAgent) {
+      this.userAgent = userAgent
+    }
   }
 
   getConfigure() {

@@ -30,7 +30,6 @@ import {
 } from "./atoms/globalSelectors"
 import {
   mirakurunCompatibilitySelector,
-  mirakurunProgramsSelector,
   mirakurunServicesSelector,
   mirakurunVersionSelector,
 } from "./atoms/mirakurunSelectors"
@@ -54,6 +53,7 @@ import {
 } from "./types/plugin"
 import { ObjectLiteral, PluginDatum } from "./types/struct"
 import { pluginValidator } from "./utils/plugin"
+import { queryPrograms } from "./utils/program"
 
 export const PluginLoader: React.VFC<{
   states: ObjectLiteral
@@ -105,6 +105,7 @@ export const PluginLoader: React.VFC<{
         openWindow,
         openBuiltinWindow,
         openContentPlayerWindow,
+        queryPrograms,
       },
       hooks: {},
       atoms: {
@@ -131,7 +132,6 @@ export const PluginLoader: React.VFC<{
         mirakurunCompatibilitySelector,
         mirakurunVersionSelector,
         mirakurunServicesSelector,
-        mirakurunProgramsSelector,
       },
     }
     ;(async () => {

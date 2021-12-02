@@ -3,9 +3,9 @@ import dayjs from "dayjs"
 import React, { useEffect, useRef, useState } from "react"
 import { useQuery } from "react-query"
 import { useNow } from "../../hooks/date"
-import { MirakurunAPI } from "../../infra/mirakurun"
 import { Service } from "../../infra/mirakurun/api"
 import { MirakurunSetting } from "../../types/setting"
+import { queryPrograms } from "../../utils/program"
 import { HourIndicator } from "./HourIndicator"
 import { ServiceRoll } from "./ServiceRoll"
 import { ScrollServices } from "./Services"
@@ -17,30 +17,24 @@ export const ScrollArea: React.FC<{
   services: Service[] | null
   add: number
   setService: (service: Service) => void
-}> = ({ mirakurunSetting, services, add, setService }) => {
+}> = ({ services, add, setService }) => {
   const now = useNow()
   const displayStartAt = dayjs().startOf("hour").add(add, "day")
   const displayStartTimeInString = displayStartAt.format()
-  const mirakurun = new MirakurunAPI(mirakurunSetting)
   const { isLoading, error, data } = useQuery(
-    "mirakurun-programs",
-    () => mirakurun.programs.getPrograms().then((res) => res.data),
+    ["mirakurun-programs", displayStartTimeInString],
+    () =>
+      queryPrograms({
+        startAtLessThan: displayStartAt.clone().add(1, "day").unix() * 1000,
+        endAtMoreThan: displayStartAt.unix() * 1000,
+      }),
     { refetchInterval: false }
   )
   const [filteredServices, setFilteredServices] = useState(services)
   const [programs, setPrograms] = useState(data)
   useEffect(() => {
-    const endAt = displayStartAt.clone().add(1, "day")
-    setPrograms(
-      data?.filter(
-        (program) =>
-          program.name &&
-          0 < program.name.length &&
-          dayjs(program.startAt + program.duration).isAfter(displayStartAt) &&
-          dayjs(program.startAt).isBefore(endAt)
-      )
-    )
-  }, [data, add])
+    setPrograms(data?.filter((program) => program.name) || [])
+  }, [data])
   useEffect(() => {
     setFilteredServices(
       services?.filter((service) =>
