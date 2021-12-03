@@ -27,20 +27,23 @@ export const ProgramItem: React.FC<{
 
   const [isHovering, setIsHovering] = useState(false)
 
+  const calcHeight = 0 < top ? height : height + top
+
   return (
     <div
       id={`${service.id}-${program.id}`}
       style={{
         top: `${Math.max(top, 0)}px`,
-        height: isHovering ? "auto" : `${height}px`,
-        minHeight: `${height}px`,
+        height: isHovering ? "auto" : `${calcHeight}px`,
+        minHeight: `${calcHeight}px`,
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-expect-error
-        containIntrinsicSize: `10rem ${height}px`,
+        containIntrinsicSize: `10rem ${calcHeight}px`,
+        maxHeight: isHovering ? `${180 * 24}px` : `${calcHeight}px`,
       }}
       className={`absolute truncate w-40 ${
         genreColor || "bg-gray-100"
-      } border border-gray-400 cursor-pointer select-none content-visibility-auto contain-paint ${
+      } border border-gray-400 cursor-pointer select-none content-visibility-auto contain-paint transition-maxHeight ${
         isHovering && "z-50"
       }`}
       title={[program.name, program.description]
@@ -53,7 +56,7 @@ export const ProgramItem: React.FC<{
         {startAt.format("HH:mm")} {program.name}
       </p>
       <p
-        className="whitespace-pre-wrap pt-1 px-2 text-xs text-gray-600"
+        className="whitespace-pre-wrap pt-1 px-2 pb-2 text-xs text-gray-600"
         /*dangerouslySetInnerHTML={{
                                 __html: program.detail,
                               }}*/

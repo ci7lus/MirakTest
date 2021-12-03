@@ -173,7 +173,9 @@ export const ScrollArea: React.FC<{
             {filteredServices?.map((service) => {
               const filteredPrograms =
                 programs?.filter(
-                  (program) => program.serviceId === service.serviceId
+                  (program) =>
+                    program.serviceId === service.serviceId &&
+                    program.networkId === service.networkId
                 ) || []
               return (
                 <ServiceRoll
