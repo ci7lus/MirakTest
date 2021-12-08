@@ -21,7 +21,7 @@ export const ScrollArea: React.FC<{
   const now = useNow()
   const displayStartAt = dayjs().startOf("hour").add(add, "day")
   const displayStartTimeInString = displayStartAt.format()
-  const { isLoading, error, data } = useQuery(
+  const { error, data } = useQuery(
     ["mirakurun-programs", displayStartTimeInString],
     () =>
       queryPrograms({
@@ -36,6 +36,9 @@ export const ScrollArea: React.FC<{
     setPrograms(data?.filter((program) => program.name) || [])
   }, [data])
   useEffect(() => {
+    if (programs?.length === 0) {
+      return
+    }
     setFilteredServices(
       services?.filter((service) =>
         programs?.find((program) => program.serviceId === service.serviceId)
@@ -65,7 +68,7 @@ export const ScrollArea: React.FC<{
       </div>
     )
   }
-  if (isLoading) {
+  if (filteredServices === null) {
     return (
       <div
         className={clsx(
@@ -149,7 +152,7 @@ export const ScrollArea: React.FC<{
             />
           </div>
         )}
-        <div className={clsx("flex", "w-max")}>
+        <div className={clsx("flex", "w-max", "pr-5", "pb-5")}>
           <div
             className={
               "sticky left-0 h-full bg-gray-700 text-gray-200 font-bold pointer-events-none w-4 flex-shrink-0 z-10"
