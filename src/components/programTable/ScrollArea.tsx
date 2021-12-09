@@ -30,7 +30,9 @@ export const ScrollArea: React.FC<{
       }),
     { refetchInterval: false }
   )
-  const [filteredServices, setFilteredServices] = useState(services)
+  const [filteredServices, setFilteredServices] = useState<Service[] | null>(
+    null
+  )
   const [programs, setPrograms] = useState(data)
   useEffect(() => {
     setPrograms(data?.filter((program) => program.name) || [])
@@ -39,11 +41,10 @@ export const ScrollArea: React.FC<{
     if (programs?.length === 0) {
       return
     }
-    setFilteredServices(
-      services?.filter((service) =>
-        programs?.find((program) => program.serviceId === service.serviceId)
-      ) || null
+    const filteredServices = services?.filter((service) =>
+      programs?.find((program) => program.serviceId === service.serviceId)
     )
+    setFilteredServices(filteredServices?.length ? filteredServices : null)
   }, [data, programs])
   const [isPushing, setIsPushing] = useState(false)
   const [isDragging, setIsDragging] = useState(false)
@@ -80,7 +81,7 @@ export const ScrollArea: React.FC<{
           "text-lg"
         )}
       >
-        番組情報を読み込み中です...
+        <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-gray-200" />
       </div>
     )
   }
