@@ -17,6 +17,12 @@ on:
       - "**.md"
   release:
     types: [published]
+  workflow_dispatch:
+    inputs:
+      override_version:
+        type: boolean
+        description: Set version to nightly
+        default: true
 
 jobs:
   lint:
@@ -97,7 +103,7 @@ jobs:
       - name: Build webchimera.js
         run: ./setup_wcjs.sh
       - name: Set nightly version
-        if: ${{ github.event_name != 'release' }}
+        if: ${{ github.event_name != 'release' && (!github.event.inputs.override_version || github.event.inputs.override_version == 'true') }}
         run: yarn ts-node setPackageVersion.ts
         env:
           SHA1: ${{ github.sha }}
@@ -185,7 +191,7 @@ jobs:
       - name: VLC related libs are licensed under LGPL and GPLv2
         run: ./setup_libvlc_mac.sh
       - name: Set nightly version
-        if: ${{ github.event_name != 'release' }}
+        if: ${{ github.event_name != 'release' && (!github.event.inputs.override_version || github.event.inputs.override_version == 'true') }}
         run: yarn ts-node setPackageVersion.ts
         env:
           SHA1: ${{ github.sha }}
@@ -275,7 +281,7 @@ jobs:
       - name: Setup libvlc
         run: pwsh ./setup_libvlc.ps1
       - name: Set nightly version
-        if: ${{ github.event_name != 'release' }}
+        if: ${{ github.event_name != 'release' && (!github.event.inputs.override_version || github.event.inputs.override_version == 'true') }}
         run: yarn ts-node setPackageVersion.ts
         env:
           SHA1: ${{ github.sha }}
