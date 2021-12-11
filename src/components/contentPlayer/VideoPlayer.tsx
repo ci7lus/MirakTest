@@ -283,7 +283,6 @@ export const CoiledVideoPlayer: React.VFC<{}> = memo(() => {
         : "",
       experimental.isVlcAvCodecHwAny === true ? "--avcodec-hw=any" : "",
       `--http-user-agent=${pkg.productName}/${pkg.version}`,
-      `--http-referrer=${pkg.repository.url}`,
     ].filter((s) => s)
     console.info("VLC Args:", args)
     const player = WebChimeraJs.createPlayer(args)
