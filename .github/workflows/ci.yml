@@ -225,6 +225,7 @@ jobs:
         with:
           files: |
             build/*.dmg
+            dist/plugin.d.ts
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
