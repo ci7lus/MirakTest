@@ -26,7 +26,7 @@ on:
 
 jobs:
   lint:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
 
     timeout-minutes: 10
 
@@ -59,192 +59,27 @@ jobs:
       - name: Typecheck
         run: |
           yarn tsc
-  build-ubuntu:
-    runs-on: ubuntu-latest
+  build:
+    needs: lint
 
     timeout-minutes: 30
 
     strategy:
       matrix:
         node-version: [14.x]
+        target:
+          - x86_64-unknown-linux-gnu
+          - x86_64-pc-windows-gnu
+          - x86_64-apple-darwin
+        include:
+          - target: x86_64-unknown-linux-gnu
+            os: ubuntu-20.04
+          - target: x86_64-pc-windows-gnu
+            os: windows-2019
+          - target: x86_64-apple-darwin
+            os: macos-10.15
 
-    needs: lint
-
-    steps:
-      - uses: actions/checkout@v2
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v1
-        with:
-          node-version: ${{ matrix.node-version }}
-      - id: yarn-cache-dir-path
-        run: echo "::set-output name=dir::$(yarn cache dir)"
-      - uses: actions/cache@v2
-        id: yarn-cache
-        with:
-          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
-          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-yarn-
-      - uses: actions/cache@v2
-        id: electron-cache
-        # https://github.com/electron/get#how-it-works
-        with:
-          path: |
-            ~/Library/Caches/electron/
-            ~/.cache/electron
-            ~/.cache/electron-builder
-          key: ${{ runner.os }}-electron-${{ hashFiles('**/yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-electron-
-      - name: Install deps
-        run: sudo apt-get install cmake=3.16.3-1ubuntu1 libvlc-dev=3.0.9.2-1
-      - name: Install
-        run: yarn
-      - name: Build webchimera.js
-        run: ./setup_wcjs.sh
-      - name: Set nightly version
-        if: ${{ github.event_name != 'release' && (!github.event.inputs.override_version || github.event.inputs.override_version == 'true') }}
-        run: yarn ts-node setPackageVersion.ts
-        env:
-          SHA1: ${{ github.sha }}
-      - name: Set buildVersion
-        run: yarn ts-node setBuildVersion.ts
-        env:
-          SHA1: ${{ github.sha }}
-      - name: Build
-        run: yarn build
-      - name: Pack build artifact
-        run: zip -rq build.zip ./build -x 'build/*.AppImage' -x 'build/*.tar.gz'
-      - name: Upload build artifact
-        uses: actions/upload-artifact@v2
-        with:
-          name: ubuntu-build
-          path: build.zip
-      - name: Upload dist artifact
-        uses: actions/upload-artifact@v2
-        with:
-          name: ubuntu-dist
-          path: dist
-      - name: Upload build artifact
-        uses: actions/upload-artifact@v2
-        with:
-          name: ubuntu-build-image
-          path: |
-            build/*.AppImage
-            build/*.tar.gz
-      - name: Upload app to release
-        uses: softprops/action-gh-release@v1
-        if: startsWith(github.ref, 'refs/tags/')
-        with:
-          files: |
-            build/*.AppImage
-            build/*.tar.gz
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-  build-macos:
-    runs-on: macOS-10.15
-
-    timeout-minutes: 30
-
-    strategy:
-      matrix:
-        node-version: [14.x]
-
-    needs: lint
-
-    steps:
-      - uses: actions/checkout@v2
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v1
-        with:
-          node-version: ${{ matrix.node-version }}
-      - id: yarn-cache-dir-path
-        run: echo "::set-output name=dir::$(yarn cache dir)"
-      - uses: actions/cache@v2
-        id: yarn-cache
-        with:
-          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
-          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-yarn-
-      - uses: actions/cache@v2
-        id: electron-cache
-        # https://github.com/electron/get#how-it-works
-        with:
-          path: |
-            ~/Library/Caches/electron/
-            ~/.cache/electron
-            ~/.cache/electron-builder
-          key: ${{ runner.os }}-electron-${{ hashFiles('**/yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-electron-
-      - name: Download VLC
-        run: |
-          wget https://github.com/vivid-lapin/vlc-miraktest/releases/download/3.0.16.3/vlc-3.0.16.dmg -O /tmp/vlc.dmg
-          hdiutil mount /tmp/vlc.dmg
-          cp -Ra "/Volumes/VLC media player/VLC.app" /Applications
-      - name: Install
-        run: yarn
-      - name: Build webchimera.js
-        run: ./setup_wcjs.sh
-      - name: VLC related libs are licensed under LGPL and GPLv2
-        run: ./setup_libvlc_mac.sh
-      - name: Set nightly version
-        if: ${{ github.event_name != 'release' && (!github.event.inputs.override_version || github.event.inputs.override_version == 'true') }}
-        run: yarn ts-node setPackageVersion.ts
-        env:
-          SHA1: ${{ github.sha }}
-      - name: Set buildVersion
-        run: yarn ts-node setBuildVersion.ts
-        env:
-          SHA1: ${{ github.sha }}
-      - name: Build
-        run: yarn build
-      - name: Pack build artifact
-        run: zip -rq build.zip ./build -x 'build/*.dmg'
-      - name: Upload build artifact
-        uses: actions/upload-artifact@v2
-        with:
-          name: mac-build
-          path: build.zip
-      - name: Upload dist artifact
-        uses: actions/upload-artifact@v2
-        with:
-          name: mac-dist
-          path: dist
-      - name: Upload build-image artifact
-        uses: actions/upload-artifact@v2
-        with:
-          name: mac-build-image
-          path: build/*.dmg
-      - name: Build dts for plugin
-        run: yarn build:dts-plugin
-      - name: Upload plugin.d.ts
-        uses: actions/upload-artifact@v2
-        with:
-          name: plugin-dts
-          path: dist/plugin.d.ts
-      - name: Upload app to release
-        uses: softprops/action-gh-release@v1
-        if: startsWith(github.ref, 'refs/tags/')
-        with:
-          files: |
-            build/*.dmg
-            dist/plugin.d.ts
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-  build-windows:
-    runs-on: windows-latest
-
-    timeout-minutes: 30
-
-    strategy:
-      matrix:
-        node-version: [14.x]
-
-    needs: lint
+    runs-on: ${{ matrix.os }}
 
     steps:
       - uses: actions/checkout@v2
@@ -262,23 +97,59 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-yarn-
       - name: Obtain electron cache dir
+        if: runner.os == 'Windows'
         id: electron-cache-dir-path
         # https://github.com/electron/get#how-it-works
         run: |
           echo "::set-output name=dir::$(Join-Path (Resolve-Path $env:LOCALAPPDATA) electron/Cache)"
           echo "::set-output name=dir::$(Join-Path (Resolve-Path $env:USERPROFILE) AppData/Local/electron/Cache)"
       - uses: actions/cache@v2
-        id: electron-cache
+        if: runner.os == 'Windows'
+        id: electron-cache-win
         with:
           path: ${{ steps.electron-cache-dir-path.outputs.dir }}
           key: ${{ runner.os }}-electron-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
             ${{ runner.os }}-electron-
+      - uses: actions/cache@v2
+        if: runner.os != 'Windows'
+        id: electron-cache
+        # https://github.com/electron/get#how-it-works
+        with:
+          path: |
+            ~/Library/Caches/electron/
+            ~/.cache/electron
+            ~/.cache/electron-builder
+            $XDG_CACHE_HOME
+          key: ${{ runner.os }}-electron-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-electron-
+      - name: Download VLC
+        if: runner.os == 'macOS'
+        run: |
+          wget https://github.com/vivid-lapin/vlc-miraktest/releases/download/3.0.16.3/vlc-3.0.16.dmg -O /tmp/vlc.dmg
+          hdiutil mount /tmp/vlc.dmg
+          cp -Ra "/Volumes/VLC media player/VLC.app" /Applications
+      - name: Install deps
+        if: runner.os == 'Linux'
+        run: sudo apt-get install cmake=3.16.3-1ubuntu1 libvlc-dev=3.0.9.2-1
       - name: Install
+        if: runner.os != 'Windows'
+        run: yarn
+      - name: Install
+        if: runner.os == 'Windows'
         run: yarn --ignore-scripts
+      - name: Build webchimera.js
+        if: runner.os != 'Windows'
+        run: ./setup_wcjs.sh
+      - name: VLC related libs are licensed under LGPL and GPLv2
+        if: runner.os == 'macOS'
+        run: ./setup_libvlc_mac.sh
       - name: Setup WebChiemra.js
+        if: runner.os == 'Windows'
         run: pwsh ./setup_wcjs.ps1
       - name: Setup libvlc
+        if: runner.os == 'Windows'
         run: pwsh ./setup_libvlc.ps1
       - name: Set nightly version
         if: ${{ github.event_name != 'release' && (!github.event.inputs.override_version || github.event.inputs.override_version == 'true') }}
@@ -289,34 +160,53 @@ jobs:
         run: yarn ts-node setBuildVersion.ts
         env:
           SHA1: ${{ github.sha }}
-          IS_WINDOWS: 1
+          OS: ${{ runner.os }}
       - name: Build
         run: yarn build
-      - name: Pack build artifact
-        run: powershell Compress-Archive -Path build -DestinationPath build.zip
       - name: Upload build artifact
         uses: actions/upload-artifact@v2
         with:
-          name: windows-build
-          path: build.zip
+          name: ${{ runner.os }}-build
+          path: |
+            build
+            !build/mac/MirakTest.app
+            !build/*-unpacked
+          if-no-files-found: ignore
       - name: Upload dist artifact
         uses: actions/upload-artifact@v2
         with:
-          name: windows-dist
+          name: ${{ runner.os }}-dist
           path: dist
-      - name: Upload build artifact
+      - name: Upload build-image artifact
         uses: actions/upload-artifact@v2
         with:
-          name: windows-build-image
+          name: ${{ runner.os }}-build-image
           path: |
+            build/*.dmg
             build/*.exe
             build/*.zip
+            build/*.AppImage
+            build/*.tar.gz
+          if-no-files-found: ignore
+      - name: Build dts for plugin
+        if: runner.os == 'Linux'
+        run: yarn build:dts-plugin
+      - name: Upload plugin.d.ts
+        if: runner.os == 'Linux'
+        uses: actions/upload-artifact@v2
+        with:
+          name: plugin-dts
+          path: dist/plugin.d.ts
       - name: Upload app to release
         uses: softprops/action-gh-release@v1
         if: startsWith(github.ref, 'refs/tags/')
         with:
           files: |
+            build/*.dmg
             build/*.exe
             build/*.zip
+            build/*.AppImage
+            build/*.tar.gz
+            dist/plugin.d.ts
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
