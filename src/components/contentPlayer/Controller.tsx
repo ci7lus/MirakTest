@@ -16,7 +16,6 @@ import {
   contentPlayerPlayingTimeAtom,
   contentPlayerPositionUpdateTriggerAtom,
   contentPlayerScreenshotTriggerAtom,
-  contentPlayerServiceLogoUrlAtom,
   contentPlayerSubtitleEnabledAtom,
   contentPlayerVolumeAtom,
 } from "../../atoms/contentPlayer"
@@ -65,7 +64,6 @@ export const CoiledController: React.VFC<{}> = () => {
   const [selectedService, setSelectedService] = useRecoilState(
     contentPlayerSelectedServiceAtom
   )
-  const serviceLogoUrl = useRecoilValue(contentPlayerServiceLogoUrlAtom)
 
   const [subtitleEnabled, setSubtitleEnabled] = useRecoilState(
     contentPlayerSubtitleEnabledAtom
@@ -239,10 +237,10 @@ export const CoiledController: React.VFC<{}> = () => {
           }`}
         >
           <div className="flex items-center space-x-4 pb-2">
-            {serviceLogoUrl && (
+            {selectedService?.logoData && (
               <img
                 className="flex-shrink-0 h-6 rounded-md overflow-hidden"
-                src={serviceLogoUrl}
+                src={`data:image/png;base64,${selectedService.logoData}`}
               />
             )}
             <div className="relative text-gray-200 overflow-hidden">

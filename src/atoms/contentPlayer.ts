@@ -48,11 +48,6 @@ export const contentPlayerAudioTracksAtom = atom<string[]>({
   default: [],
 })
 
-export const contentPlayerServiceLogoUrlAtom = atom<string | null>({
-  key: `${prefix}.serviceLogoUrl`,
-  default: null,
-})
-
 export const contentPlayerIsSeekableAtom = atom<boolean>({
   key: `${prefix}.isSeekable`,
   default: false,

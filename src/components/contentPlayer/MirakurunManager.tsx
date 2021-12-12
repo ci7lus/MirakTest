@@ -4,7 +4,6 @@ import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil"
 import {
   contentPlayerIsPlayingAtom,
   contentPlayerKeyForRestorationAtom,
-  contentPlayerServiceLogoUrlAtom,
 } from "../../atoms/contentPlayer"
 import {
   contentPlayerPlayingContentAtom,
@@ -32,7 +31,7 @@ export const MirakurunManager: React.VFC<{}> = () => {
   const mirakurunSettingValue = useRecoilValue(mirakurunSetting)
   const setCompatibility = useSetRecoilState(mirakurunCompatibilityAtom)
   const setVersion = useSetRecoilState(mirakurunVersionAtom)
-  const [services, setServices] = useRecoilState(mirakurunServicesAtom)
+  const setServices = useSetRecoilState(mirakurunServicesAtom)
   const [playingContent, setPlayingContent] = useRecoilState(
     contentPlayerPlayingContentAtom
   )
@@ -43,12 +42,6 @@ export const MirakurunManager: React.VFC<{}> = () => {
   const url = useRecoilValue(contentPlayerUrlSelector)
   const [lastSelectedServiceId, setLastSelectedServiceId] = useRecoilState(
     contentPlayerKeyForRestorationAtom
-  )
-  const setSelectedServiceLogoUrl = useSetRecoilState(
-    contentPlayerServiceLogoUrlAtom
-  )
-  const [serviceLogos, setServiceLogos] = useState<{ [key: number]: string }>(
-    {}
   )
   const isPlaying = useRecoilValue(contentPlayerIsPlayingAtom)
 
@@ -157,45 +150,12 @@ export const MirakurunManager: React.VFC<{}> = () => {
     }
   }, [mirakurunSettingValue])
 
-  const collectServiceLogo = async (
-    mirakurun: MirakurunAPI,
-    service: Service
-  ) => {
-    if (serviceLogos[service.id]) {
-      setSelectedServiceLogoUrl(serviceLogos[service.id])
-      return
-    }
-    try {
-      const logoData = await mirakurun.services.getLogoImage(service.id, {
-        responseType: "arraybuffer",
-      })
-      const objUrl = URL.createObjectURL(
-        // 自動生成されたクライアントの帰り型がvoidになってしまっている
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        new Blob([logoData.data as any], {
-          type: logoData.headers?.["content-type"] || "image/png",
-        })
-      )
-      setSelectedServiceLogoUrl(objUrl)
-      const copied = Object.assign({}, serviceLogos)
-      copied[service.id] = objUrl
-      setServiceLogos(copied)
-    } catch (error) {
-      console.error("ロゴの取得に失敗しました", service, error)
-    }
-  }
-
   const updateService = async (service: Service | null) => {
     if (!service) {
       setPlayingContent(null)
       return
     }
     const mirakurun = new MirakurunAPI(mirakurunSettingValue)
-    if (service && service.hasLogoData) {
-      collectServiceLogo(mirakurun, service)
-    } else {
-      setSelectedServiceLogoUrl(null)
-    }
 
     const getServiceStreamRequest = await ServicesApiAxiosParamCreator(
       mirakurun.getConfigure()
@@ -236,17 +196,6 @@ export const MirakurunManager: React.VFC<{}> = () => {
   }, [selectedService])
 
   const now = useNow()
-
-  useEffect(() => {
-    const mirakurunService = services?.find((s) => s.id === service?.id)
-    if (!mirakurunService) return
-    const mirakurun = new MirakurunAPI(mirakurunSettingValue)
-    if (mirakurunService && mirakurunService.hasLogoData) {
-      collectServiceLogo(mirakurun, mirakurunService)
-    } else {
-      setSelectedServiceLogoUrl(null)
-    }
-  }, [services, service])
 
   // programs/playingContent.service->playingContent.programの反映
   useEffect(() => {
