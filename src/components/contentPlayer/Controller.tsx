@@ -3,7 +3,13 @@ import clsx from "clsx"
 import dayjs from "dayjs"
 import { ipcRenderer, remote } from "electron"
 import React, { useEffect, useRef, useState } from "react"
-import { ChevronDown, PauseCircle, PlayCircle, Settings } from "react-feather"
+import {
+  ChevronDown,
+  ChevronRight,
+  PauseCircle,
+  PlayCircle,
+  Settings,
+} from "react-feather"
 import { useDebounce } from "react-use"
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil"
 import {
@@ -36,6 +42,7 @@ import { PlayToggleButton } from "./controllers/PlayToggleButton"
 import { CoiledScreenshotButton } from "./controllers/ScreenshotButton"
 import { SeekableControl } from "./controllers/SeekableControl"
 import { ServiceSelector } from "./controllers/ServiceSelector"
+import { ControllerSidebar } from "./controllers/Sidebar"
 import { SubtitleToggleButton } from "./controllers/SubtitleToggleButton"
 import { VolumeSlider } from "./controllers/VolumeSlider"
 
@@ -187,15 +194,19 @@ export const CoiledController: React.VFC<{}> = () => {
     remoteWindow.setFullScreen(!remoteWindow.isFullScreen())
   }
 
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false)
+
   return (
     <div
       ref={componentRef}
-      className="w-full h-full relative"
+      className="w-full h-full relative flex"
       onMouseMove={() => {
         setIsVisible(true)
         setLastCurMoved(new Date().getSeconds())
       }}
-      onMouseLeave={() => setIsVisible(false)}
+      onMouseLeave={() => {
+        setIsVisible(false)
+      }}
       onDoubleClick={toggleFullScreen}
       onMouseDown={(e) => {
         if (
@@ -227,8 +238,11 @@ export const CoiledController: React.VFC<{}> = () => {
     >
       <div
         className={clsx(
-          "absolute w-full h-full flex flex-col justify-between",
-          !isVisible && "cursor-none"
+          "h-full flex flex-col justify-between",
+          "transition-width",
+          !isVisible && "cursor-none",
+          isSidebarOpen ? "w-2/3" : "w-full",
+          "relative"
         )}
       >
         <div
@@ -358,28 +372,78 @@ export const CoiledController: React.VFC<{}> = () => {
             <FullScreenToggleButton toggle={toggleFullScreen} />
           </div>
         </div>
-        <div className="absolute w-full h-full flex items-center justify-center pointer-events-none">
+        <div
+          className={clsx(
+            "absolute",
+            "left-0",
+            "top-0",
+            "w-full",
+            "h-full",
+            "transition-opacity",
+            isVisible || isSidebarOpen ? "opacity-100" : "opacity-0",
+            "flex",
+            "items-center",
+            "justify-end",
+            "pointer-events-none"
+          )}
+        >
           <button
             type="button"
             className={clsx(
-              "focus:outline-none transition-opacity duration-150 ease-in-out",
-              isPlayButtonShowing || !isPlaying
-                ? "opacity-80 cursor-pointer pointer-events-auto"
-                : "opacity-0",
-              isPlaying && "animate-ping-once"
+              "bg-gray-800",
+              "bg-opacity-30",
+              "border-1",
+              "border-gray-800",
+              "py-3",
+              "focus:outline-none",
+              "cursor-pointer",
+              "pointer-events-auto"
             )}
-            onClick={() => setIsPlaying((isPlaying) => !isPlaying)}
-            onDoubleClick={(e) => e.stopPropagation()}
+            onClick={() => setIsSidebarOpen((o) => !o)}
           >
-            <div className="p-4 rounded-full bg-opacity-50 bg-gray-800">
-              {isPlaying ? (
-                <PauseCircle className="pointer-events-none" size="3rem" />
-              ) : (
-                <PlayCircle className="pointer-events-none" size="3rem" />
-              )}
-            </div>
+            <ChevronRight
+              width="3rem"
+              className={clsx("pointer-events-none")}
+            />
           </button>
         </div>
+      </div>
+      <div
+        className={clsx(
+          "h-full",
+          "transition-width",
+          isSidebarOpen ? "w-1/3" : "w-0"
+        )}
+      >
+        {services && (
+          <ControllerSidebar
+            isVisible={isVisible || isSidebarOpen}
+            services={services}
+            setService={setSelectedService}
+          />
+        )}
+      </div>
+      <div className="absolute w-full h-full flex items-center justify-center pointer-events-none">
+        <button
+          type="button"
+          className={clsx(
+            "focus:outline-none transition-opacity duration-150 ease-in-out",
+            isPlayButtonShowing || !isPlaying
+              ? "opacity-80 cursor-pointer pointer-events-auto"
+              : "opacity-0",
+            isPlaying && "animate-ping-once"
+          )}
+          onClick={() => setIsPlaying((isPlaying) => !isPlaying)}
+          onDoubleClick={(e) => e.stopPropagation()}
+        >
+          <div className="p-4 rounded-full bg-opacity-50 bg-gray-800 cursor-pointer">
+            {isPlaying ? (
+              <PauseCircle className="pointer-events-none" size="3rem" />
+            ) : (
+              <PlayCircle className="pointer-events-none" size="3rem" />
+            )}
+          </div>
+        </button>
       </div>
     </div>
   )
