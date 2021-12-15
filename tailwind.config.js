@@ -25,6 +25,10 @@ module.exports = {
         "ping-once":
           "ping 1s cubic-bezier(0, 0, 0.2, 1), hidden 1s linear 1s infinite",
       },
+      transitionProperty: {
+        maxHeight: "max-height",
+        width: "width",
+      },
       keyframes: {
         hidden: {
           "0%, 100%": {
