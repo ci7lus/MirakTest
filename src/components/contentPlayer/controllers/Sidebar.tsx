@@ -147,11 +147,15 @@ export const ControllerSidebar: React.FC<{
                         {current.name}
                       </h4>
                       <p>
-                        {dayjs(current.startAt).format("hh:mm")}〜
+                        {dayjs(current.startAt).format("HH:mm")}〜
                         {dayjs(current.startAt + current.duration).format(
-                          "hh:mm"
+                          "HH:mm"
                         )}{" "}
                         ({Math.floor(current.duration / 1000 / 60)}分間)
+                      </p>
+                      <p className={clsx("my-1", "text-sm")}>
+                        {current.description?.trim() ||
+                          Object.values(current.extended || {}).shift()}
                       </p>
                     </div>
                   )}
@@ -160,9 +164,9 @@ export const ControllerSidebar: React.FC<{
                       Next
                       <ChevronsRight size="1rem" className={clsx("inline")} />
                       <span>
-                        {dayjs(next.startAt).format("hh:mm")}〜
-                        {dayjs(next.startAt + next.duration).format("hh:mm")}{" "}
-                        {next.name} ({Math.floor(current.duration / 1000 / 60)}
+                        {dayjs(next.startAt).format("HH:mm")}〜
+                        {dayjs(next.startAt + next.duration).format("HH:mm")}{" "}
+                        {next.name} ({Math.floor(next.duration / 1000 / 60)}
                         分間)
                       </span>
                     </div>
