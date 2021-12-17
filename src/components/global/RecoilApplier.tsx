@@ -1,13 +1,11 @@
-import { ipcRenderer } from "electron"
 import React, { useEffect, useState } from "react"
 import { useSetRecoilState, SetterOrUpdater } from "recoil"
 import { ALL_ATOMS, ALL_FAMILIES } from "../../atoms"
-import { RECOIL_STATE_UPDATE } from "../../constants/ipc"
-import { RecoilStateUpdateArg } from "../../types/ipc"
+import { SerializableKV } from "../../types/ipc"
 import { Atom, AtomFamily } from "../../types/plugin"
 
 const AtomSetter: React.VFC<{
-  payload: RecoilStateUpdateArg
+  payload: SerializableKV
 }> = ({ payload }) => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let setter: SetterOrUpdater<any>
@@ -51,19 +49,16 @@ const AtomSetter: React.VFC<{
 }
 
 export const RecoilApplier: React.VFC<{}> = () => {
-  const [payload, setPayload] = useState<RecoilStateUpdateArg | null>(null)
+  const [payload, setPayload] = useState<SerializableKV | null>(null)
   useEffect(() => {
-    const fn = (
-      _ev: Electron.IpcRendererEvent,
-      payload: RecoilStateUpdateArg
-    ) => {
+    const fn = (payload: SerializableKV) => {
       if (!payload.key) return
       const { key, value } = payload
       setPayload({ key, value })
     }
-    ipcRenderer.on(RECOIL_STATE_UPDATE, fn)
+    const off = window.Preload.onRecoilStateUpdate(fn)
     return () => {
-      ipcRenderer.off(RECOIL_STATE_UPDATE, fn)
+      off()
     }
   }, [])
   if (payload) {

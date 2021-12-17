@@ -5,7 +5,6 @@ import { useQuery } from "react-query"
 import { useNow } from "../../hooks/date"
 import { Service } from "../../infra/mirakurun/api"
 import { MirakurunSetting } from "../../types/setting"
-import { queryPrograms } from "../../utils/program"
 import { HourIndicator } from "./HourIndicator"
 import { ServiceRoll } from "./ServiceRoll"
 import { ScrollServices } from "./Services"
@@ -24,7 +23,7 @@ export const ScrollArea: React.FC<{
   const { error, data } = useQuery(
     ["mirakurun-programs", displayStartTimeInString],
     () =>
-      queryPrograms({
+      window.Preload.public.epgManager.query({
         startAtLessThan: displayStartAt.clone().add(1, "day").unix() * 1000,
         endAtMoreThan: displayStartAt.unix() * 1000,
       }),

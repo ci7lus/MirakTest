@@ -24,10 +24,15 @@ export const MirakurunSettingForm: React.VFC<{}> = () => {
               : [url, ...(10 < prev.length ? [...prev].slice(0, 10) : prev)]
           )
         }
-        setMirakurun({
-          baseUrl: url || undefined,
-          isEnableWaitForSingleTuner,
-          isEnableServiceTypeFilter,
+        setMirakurun((prev) => {
+          if (prev.baseUrl !== url && prev.baseUrl) {
+            window.Preload.public.epgManager.unregister(prev.baseUrl)
+          }
+          return {
+            baseUrl: url || undefined,
+            isEnableWaitForSingleTuner,
+            isEnableServiceTypeFilter,
+          }
         })
       }}
     >

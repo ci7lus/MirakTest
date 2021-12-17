@@ -1,8 +1,9 @@
-import { remote } from "electron"
 import React, { useEffect } from "react"
 import { useRecoilValue, useSetRecoilState } from "recoil"
+import pkg from "../../package.json"
 import {
   contentPlayerBoundsAtom,
+  contentPlayerIsPlayingAtom,
   contentPlayerTitleAtom,
 } from "../atoms/contentPlayer"
 import { globalActiveContentPlayerIdAtom } from "../atoms/global"
@@ -13,56 +14,60 @@ import { CoiledProgramTitleManager } from "../components/contentPlayer/ProgramTi
 import { CoiledSubtitleRenderer } from "../components/contentPlayer/SubtitleRenderer"
 import { CoiledVideoPlayer } from "../components/contentPlayer/VideoPlayer"
 import { Splash } from "../components/global/Splash"
-import { useContentPlayerContextMenu } from "../utils/contextmenu"
-import { remoteWindow } from "../utils/remote"
 
 export const CoiledContentPlayer: React.VFC<{}> = () => {
   const setBounds = useSetRecoilState(contentPlayerBoundsAtom)
-  const onContextMenu = useContentPlayerContextMenu()
   const setActiveContentPlayerId = useSetRecoilState(
     globalActiveContentPlayerIdAtom
   )
+  const setIsPlaying = useSetRecoilState(contentPlayerIsPlayingAtom)
 
   useEffect(() => {
     // 16:9以下の比率になったら戻し、ウィンドウサイズを保存する
-    const onResizedOrMoved = () => {
-      const bounds = remoteWindow.getContentBounds()
+    const onResizedOrMoved = async () => {
+      const bounds = await window.Preload.public.requestWindowContentBounds()
+      if (!bounds) {
+        return
+      }
       const min = Math.ceil((bounds.width / 16) * 9)
-      if (process.platform === "win32" && bounds.height < min) {
+      if (process.platform === "darwin" && bounds.height < min) {
         const targetBounds = {
           ...bounds,
           height: min,
         }
-        remoteWindow.setContentBounds(targetBounds)
+        window.Preload.public.setWindowContentBounds(targetBounds)
         setBounds(targetBounds)
       } else {
         setBounds(bounds)
       }
     }
-    remoteWindow.on("resized", onResizedOrMoved)
-    remoteWindow.on("moved", onResizedOrMoved)
+    window.addEventListener("resize", onResizedOrMoved)
+    const onWindowMoved = window.Preload.onWindowMoved(() => onResizedOrMoved())
     onResizedOrMoved()
-    // コンテキストメニュー
-    remoteWindow.webContents.on("context-menu", onContextMenu)
     const onFocus = () => {
-      setActiveContentPlayerId(remoteWindow.id)
+      setActiveContentPlayerId(window.id ?? -1)
     }
     onFocus()
-    remoteWindow.on("focus", onFocus)
+    window.addEventListener("focus", onFocus)
+    const onUpdateIsPlayingState = window.Preload.onUpdateIsPlayingState(
+      (isPlaying) => {
+        setIsPlaying(isPlaying)
+      }
+    )
     return () => {
-      remoteWindow.off("resized", onResizedOrMoved)
-      remoteWindow.off("moved", onResizedOrMoved)
-      remoteWindow.off("focus", onFocus)
+      window.removeEventListener("resize", onResizedOrMoved)
+      window.removeEventListener("focus", onFocus)
+      onUpdateIsPlayingState()
+      onWindowMoved()
     }
   }, [])
   // タイトル
   const title = useRecoilValue(contentPlayerTitleAtom)
   useEffect(() => {
-    const window = remoteWindow
     if (title) {
-      window.setTitle(`${title} - ${remote.app.name}`)
+      window.Preload.public.setWindowTitle(`${title} - ${pkg.productName}`)
     } else {
-      window.setTitle(remote.app.name)
+      window.Preload.public.setWindowTitle(pkg.productName)
     }
   }, [title])
 

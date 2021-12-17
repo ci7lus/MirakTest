@@ -109,9 +109,13 @@ export class EPGManager {
   unregister(_payload: unknown) {
     const payload = unregisterSchema.parse(_payload)
     const stream = this.connections.get(payload.url)
+    const hostname = new URL(payload.url).hostname
     if (stream) {
       stream.destroy()
       this.connections.delete(payload.url)
+      console.info(
+        `[epgmanager] 番組イベントストリームを切断しました: ${hostname}`
+      )
     }
   }
 

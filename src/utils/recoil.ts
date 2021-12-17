@@ -8,7 +8,6 @@ import {
 } from "../atoms/global"
 import { AtomFamily } from "../types/plugin"
 import { ObjectLiteral } from "../types/struct"
-import { store } from "./store"
 
 export const initializeState =
   ({
@@ -27,7 +26,7 @@ export const initializeState =
     mutableSnapShot.set(globalStoredAtomsAtom, storedAtoms)
     mutableSnapShot.set(globalFontsAtom, fonts)
     storedAtoms.forEach((key) => {
-      const savedValue = store.get(key, null)
+      const savedValue = window.Preload.store.get(key)
       const atom =
         ALL_ATOMS.find((atom) => "key" in atom && atom.key === key) ||
         window.atoms?.find((atom) => "key" in atom && atom.key === key)

@@ -1,4 +1,3 @@
-import { remote } from "electron"
 import React, { useEffect, useRef, useState } from "react"
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil"
 import {
@@ -6,13 +5,13 @@ import {
   contentPlayerKeyForRestorationAtom,
 } from "../../atoms/contentPlayer"
 import {
-  contentPlayerPlayingContentAtom,
-  contentPlayerSelectedServiceAtom,
-} from "../../atoms/contentPlayerResolvedFamilies"
-import {
   contentPlayerServiceSelector,
   contentPlayerUrlSelector,
 } from "../../atoms/contentPlayerSelectors"
+import {
+  globalContentPlayerPlayingContentFamily,
+  globalContentPlayerSelectedServiceFamily,
+} from "../../atoms/globalFamilies"
 import {
   mirakurunCompatibilityAtom,
   mirakurunServicesAtom,
@@ -25,7 +24,6 @@ import {
   Service,
   ServicesApiAxiosParamCreator,
 } from "../../infra/mirakurun/api"
-import { queryPrograms, registerEpgManager } from "../../utils/program"
 
 export const MirakurunManager: React.VFC<{}> = () => {
   const mirakurunSettingValue = useRecoilValue(mirakurunSetting)
@@ -33,11 +31,11 @@ export const MirakurunManager: React.VFC<{}> = () => {
   const setVersion = useSetRecoilState(mirakurunVersionAtom)
   const setServices = useSetRecoilState(mirakurunServicesAtom)
   const [playingContent, setPlayingContent] = useRecoilState(
-    contentPlayerPlayingContentAtom
+    globalContentPlayerPlayingContentFamily(window.id ?? -1)
   )
   const service = useRecoilValue(contentPlayerServiceSelector)
   const [selectedService, setSelectedService] = useRecoilState(
-    contentPlayerSelectedServiceAtom
+    globalContentPlayerSelectedServiceFamily(window.id ?? -1)
   )
   const url = useRecoilValue(contentPlayerUrlSelector)
   const [lastSelectedServiceId, setLastSelectedServiceId] = useRecoilState(
@@ -70,23 +68,23 @@ export const MirakurunManager: React.VFC<{}> = () => {
         throw new Error()
       }
       if (!isFirstAppeal) {
-        new remote.Notification({
+        window.Preload.public.showNotification({
           title: "Mirakurun に接続しました",
           body: message,
-        }).show()
+        })
       }
       setIsFirstAppeal(false)
     } catch (error) {
       console.error(error)
-      new remote.Notification({
+      window.Preload.public.showNotification({
         title: "Mirakurun への接続に失敗しました",
         body: error instanceof Error ? error.message : undefined,
-      }).show()
+      })
       if (!isContentPrepared) {
         return
       }
     }
-    registerEpgManager({
+    window.Preload.public.epgManager.register({
       url: mirakurun.baseUrl,
       userAgent: navigator.userAgent,
     })
@@ -103,10 +101,10 @@ export const MirakurunManager: React.VFC<{}> = () => {
       services = servicesReq.data
     } catch (error) {
       console.error(error)
-      new remote.Notification({
+      window.Preload.public.showNotification({
         title: "Mirakurun サービス情報の取得に失敗しました",
         body: error instanceof Error ? error.message : undefined,
-      }).show()
+      })
       if (!isContentPrepared) {
         return
       }
@@ -136,10 +134,10 @@ export const MirakurunManager: React.VFC<{}> = () => {
         console.error(error)
       }
     } else {
-      new remote.Notification({
+      window.Preload.public.showNotification({
         title: "Mirakurun の設定が行われていません",
         body: "設定画面から設定を行ってください。",
-      }).show()
+      })
       setIsFirstAppeal(false)
     }
     return () => {
@@ -203,23 +201,25 @@ export const MirakurunManager: React.VFC<{}> = () => {
       return
     }
     const unix = now.unix() * 1000
-    queryPrograms({
-      serviceId: service.serviceId,
-      networkId: service.networkId,
-      startAtLessThan: unix,
-      endAtMoreThan: unix,
-    }).then((programs) => {
-      const program = programs.slice(0).pop()
-      if (program) {
-        setPlayingContent((prev) =>
-          prev
-            ? prev.program?.id === program.id
-              ? prev
-              : { ...prev, program }
-            : null
-        )
-      }
-    })
+    window.Preload.public.epgManager
+      .query({
+        serviceId: service.serviceId,
+        networkId: service.networkId,
+        startAtLessThan: unix,
+        endAtMoreThan: unix,
+      })
+      .then((programs) => {
+        const program = programs.slice(0).pop()
+        if (program) {
+          setPlayingContent((prev) =>
+            prev
+              ? prev.program?.id === program.id
+                ? prev
+                : { ...prev, program }
+              : null
+          )
+        }
+      })
   }, [service, now])
   return <></>
 }

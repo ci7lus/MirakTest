@@ -4,7 +4,6 @@ import { ComponentShadowWrapper } from "./components/common/ComponentShadowWrapp
 import { Splash } from "./components/global/Splash"
 import { ROUTES } from "./constants/routes"
 import { Routes } from "./types/struct"
-import { remoteWindow } from "./utils/remote"
 import { CoiledContentPlayer } from "./windows/ContentPlayer"
 import { CoiledProgramTable } from "./windows/ProgramTable"
 import { Settings } from "./windows/Settings"
@@ -19,7 +18,7 @@ export const Router: React.VFC<{}> = () => {
     }
     window.addEventListener("hashchange", onHashChange)
     onHashChange()
-    remoteWindow.show()
+    window.Preload.public.showWindow()
     return () => window.removeEventListener("hashchange", onHashChange)
   }, [])
   if (hash === ROUTES["ContentPlayer"]) {

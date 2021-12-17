@@ -1,11 +1,8 @@
-import fs from "fs"
 import path from "path"
 import { CanvasProvider } from "aribb24.js"
 import dayjs from "dayjs"
-import { nativeImage, remote } from "electron"
 import React, { memo, useEffect, useRef, useState } from "react"
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil"
-import WebChimeraJs from "webchimera.js"
 import pkg from "../../../package.json"
 import {
   contentPlayerAribSubtitleDataAtom,
@@ -36,7 +33,6 @@ import {
 } from "../../atoms/settings"
 import { SUBTITLE_DEFAULT_FONT } from "../../constants/font"
 import { useRefFromState } from "../../hooks/ref"
-import { remoteWindow } from "../../utils/remote"
 import { VideoRenderer } from "../../utils/videoRenderer"
 import { VLCLogFilter } from "../../utils/vlc"
 
@@ -49,41 +45,41 @@ export const CoiledVideoPlayer: React.VFC<{}> = memo(() => {
   const height = Math.ceil(width / aspect)
 
   useEffect(() => {
-    if (process.platform !== "win32") {
-      remoteWindow.setAspectRatio(aspect)
+    if (process.platform === "darwin") {
+      window.Preload.public.setWindowAspect(aspect)
     }
   }, [aspect])
 
-  const playerRef = useRef<WebChimeraJs.Player | null>(null)
-
   const url = useRecoilValue(contentPlayerUrlSelector)
   useEffect(() => {
-    if (!playerRef.current) return
+    if (!window.Preload.webchimera.isOk()) return
     if (url) {
-      playerRef.current.play(url)
+      window.Preload.webchimera.play(url)
       console.info("URL再生:", url)
     } else {
-      playerRef.current.stop()
+      window.Preload.webchimera.stop()
       console.info("再生停止")
     }
-  }, [url, playerRef.current])
+  }, [url])
   const [isPlaying, setIsPlaying] = useRecoilState(contentPlayerIsPlayingAtom)
   const [isErrorEncounted, setIsErrorEncounted] = useState(false)
   useEffect(() => {
-    const player = playerRef.current
-    if (!player || !url) return
-    if (isSeekable && player.input.hasVout) {
+    if (!window.Preload.webchimera.isOk() || !url) {
+      return
+    }
+    if (isSeekable && window.Preload.webchimera.hasVout()) {
       console.info("ポーズ切り替え")
-      player.togglePause()
+      window.Preload.webchimera.togglePause()
     } else {
       if (
         isPlaying &&
-        (!player.playing || (!player.input.hasVout && !isErrorEncounted))
+        (!window.Preload.webchimera.isPlaying() ||
+          (!window.Preload.webchimera.hasVout() && !isErrorEncounted))
       ) {
-        player.play(url)
+        window.Preload.webchimera.play(url)
         console.info("再生開始", url)
       } else if (!isPlaying) {
-        player.stop()
+        window.Preload.webchimera.stop()
         console.info("再生停止")
       }
     }
@@ -92,8 +88,8 @@ export const CoiledVideoPlayer: React.VFC<{}> = memo(() => {
   const volume = useRecoilValue(contentPlayerVolumeAtom)
   const volumeRef = useRefFromState(volume)
   useEffect(() => {
-    if (!playerRef.current) return
-    playerRef.current.volume = volume
+    if (!window.Preload.webchimera.isOk()) return
+    window.Preload.webchimera.setVolume(volume)
     console.info("音量変更:", volume)
   }, [volume])
 
@@ -101,16 +97,17 @@ export const CoiledVideoPlayer: React.VFC<{}> = memo(() => {
     contentPlayerSubtitleEnabledAtom
   )
   useEffect(() => {
-    if (!playerRef.current || firstPcr !== 0) return
-    playerRef.current.subtitles.track = Number(isSubtitleEnabled)
+    if (!window.Preload.webchimera.isOk() || firstPcr !== 0) return
+    window.Preload.webchimera.setSubtitleTrack(Number(isSubtitleEnabled))
     console.info("字幕変更:", Number(isSubtitleEnabled))
   }, [isSubtitleEnabled])
   const [audioChannel, setAudioChannel] = useRecoilState(
     contentPlayerAudioChannelAtom
   )
+  const audioChannelRef = useRefFromState(audioChannel)
   useEffect(() => {
-    if (!playerRef.current) return
-    playerRef.current.audio.channel = audioChannel
+    if (!window.Preload.webchimera.isOk()) return
+    window.Preload.webchimera.setAudioChannel(audioChannel)
     console.info("オーディオチャンネル変更:", audioChannel)
   }, [audioChannel])
 
@@ -118,8 +115,8 @@ export const CoiledVideoPlayer: React.VFC<{}> = memo(() => {
     contentPlayerAudioTrackAtom
   )
   useEffect(() => {
-    if (!playerRef.current) return
-    playerRef.current.audio.track = audioTrack
+    if (!window.Preload.webchimera.isOk()) return
+    window.Preload.webchimera.setAudioTrack(audioTrack)
     console.info("オーディオトラック変更:", audioTrack)
   }, [audioTrack])
   const setAudioTracks = useSetRecoilState(contentPlayerAudioTracksAtom)
@@ -128,15 +125,16 @@ export const CoiledVideoPlayer: React.VFC<{}> = memo(() => {
   const [screenshot, setScreenshot] = useRecoilState(screenshotSetting)
   useEffect(() => {
     if (screenshot.basePath) return
-    const pictures = remote.app.getPath("pictures")
-    if (!pictures) return
-    fs.promises
-      .stat(pictures)
-      .then(() => {
+    window.Preload.public.requestAppPath("pictures").then(async (pictures) => {
+      if (!pictures) return
+      const isExists = await window.Preload.public.isDirectoryExists(pictures)
+      if (isExists) {
         setScreenshot({ ...screenshot, basePath: pictures })
         console.info("スクリーンショット用パス:", pictures)
-      })
-      .catch(console.error)
+      } else {
+        console.warn("スクリーンショット用パスが存在しませんでした:", pictures)
+      }
+    })
   }, [])
   const service = useRecoilValue(contentPlayerServiceSelector)
 
@@ -196,10 +194,9 @@ export const CoiledVideoPlayer: React.VFC<{}> = memo(() => {
           contentCanvas.toBlob((blob) => res(blob), "image/png", 1)
         )
         if (!blob) throw new Error("blob")
-        const buffer = Buffer.from(await blob.arrayBuffer())
+        const buffer = await blob.arrayBuffer()
         try {
-          const image = nativeImage.createFromBuffer(buffer)
-          remote.clipboard.writeImage(image, "clipboard")
+          window.Preload.public.writeArrayBufferToClipboard(buffer)
         } catch (error) {
           console.error(error)
         }
@@ -222,29 +219,28 @@ export const CoiledVideoPlayer: React.VFC<{}> = memo(() => {
               .join("_")
             const fileName = `${baseName}.png`
             const filePath = path.join(screenshot.basePath, fileName)
-            await fs.promises.writeFile(filePath, buffer)
+            await window.Preload.public.writeFile(filePath, buffer)
             console.info(`キャプチャを保存しました:`, filePath)
-            const notify = new remote.Notification({
-              title: "スクリーンショットを撮影しました",
-              body: `${fileName} (クリックで開く)`,
-            })
-            notify.show()
-            notify.on("click", () => {
-              remote.shell.openPath(filePath)
-            })
+            window.Preload.public.showNotification(
+              {
+                title: "スクリーンショットを撮影しました",
+                body: `${fileName} (クリックで開く)`,
+              },
+              filePath
+            )
           } catch (error) {
             console.error(error)
           }
         } else {
-          new remote.Notification({
+          window.Preload.public.showNotification({
             title: "スクリーンショットを撮影しました",
-          }).show()
+          })
         }
       } catch (error) {
-        new remote.Notification({
+        window.Preload.public.showNotification({
           title: "スクリーンショットの撮影に失敗しました",
           body: error instanceof Error ? error.message : undefined,
-        }).show()
+        })
         console.error(error)
       }
     })()
@@ -265,9 +261,8 @@ export const CoiledVideoPlayer: React.VFC<{}> = memo(() => {
   const isSeekableRef = useRefFromState(isSeekable)
   useEffect(() => setPlayingPosition(position), [position])
   useEffect(() => {
-    const player = playerRef.current
-    if (!player) return
-    player.position = positionUpdate
+    if (!window.Preload.webchimera.isOk()) return
+    window.Preload.webchimera.setPosition(positionUpdate)
     console.info(`ユーザー位置更新:`, positionUpdate)
   }, [positionUpdate])
   const experimental = useRecoilValue(experimentalSetting)
@@ -285,16 +280,16 @@ export const CoiledVideoPlayer: React.VFC<{}> = memo(() => {
       `--http-user-agent=${pkg.productName}/${pkg.version}`,
     ].filter((s) => s)
     console.info("VLC Args:", args)
-    const player = WebChimeraJs.createPlayer(args)
+    window.Preload.webchimera.setup(args)
     let pcr_i_first = 0
     let last = 0
-    player.onTimeChanged = (time) => {
-      if (770 < Math.abs(time - last)) {
+    window.Preload.webchimera.onTimeChanged((time) => {
+      if (300 < Math.abs(time - last)) {
         setPlayingTime(time)
         last = time
       }
-    }
-    player.onLogMessage = (_level, message) => {
+    })
+    window.Preload.webchimera.onLogMessage((_level, message) => {
       const parsed = VLCLogFilter(message)
       switch (parsed.category) {
         case "resize":
@@ -309,7 +304,7 @@ export const CoiledVideoPlayer: React.VFC<{}> = memo(() => {
           if (pcr_i_first === 0) {
             setIsSubtitleEnabled(false)
           } else {
-            player.subtitles.track = 1
+            window.Preload.webchimera.setSubtitleTrack(1)
           }
           break
         case "arib_data":
@@ -335,36 +330,36 @@ export const CoiledVideoPlayer: React.VFC<{}> = memo(() => {
         case "received_first_picture":
         case "es_out_program_epg":
         case "PMTCallBack_called_for_program":
-        case "discontinuity_received_0":
+        case "discontinuity_received_0": {
           // ほどほどの頻度
           console.debug(message)
-          setAudioTracks(
-            [...Array(player.audio.count).keys()].map(
-              (trackId) => player.audio[trackId]
-            )
-          )
-          if (pcr_i_first !== 0 && player.subtitles.track !== 1) {
-            player.subtitles.track = 1
+          setAudioTracks(window.Preload.webchimera.getAudioTracks())
+          const audioChannel = window.Preload.webchimera.getAudioChannel()
+          if (audioChannel !== audioChannelRef.current) {
+            setAudioChannel(audioChannel)
           }
-          player.volume = volumeRef.current
+          if (
+            pcr_i_first !== 0 &&
+            window.Preload.webchimera.getSubtitleTrack() !== 1
+          ) {
+            window.Preload.webchimera.setSubtitleTrack(1)
+          }
+          window.Preload.webchimera.setVolume(volumeRef.current)
           break
+        }
         case "unknown":
           console.debug(message)
           break
         default:
           break
       }
-    }
-    player.onFrameReady = (frame) => {
-      renderContext.render(
-        frame,
-        frame.width,
-        frame.height,
-        frame.uOffset,
-        frame.vOffset
-      )
-    }
-    player.onMediaChanged = () => {
+    })
+    window.Preload.webchimera.onFrameReady(
+      (frame, width, height, uOffset, vOffset) => {
+        renderContext.render(frame, width, height, uOffset, vOffset)
+      }
+    )
+    window.Preload.webchimera.onMediaChanged(() => {
       setIsPlaying(true)
       if (pcr_i_first === 0) {
         setIsSubtitleEnabled(false)
@@ -373,42 +368,38 @@ export const CoiledVideoPlayer: React.VFC<{}> = memo(() => {
       setAudioChannel(0)
       setAudioTrack(1)
       setIsErrorEncounted(false)
-    }
-    player.onEncounteredError = () => {
-      new remote.Notification({
+    })
+    window.Preload.webchimera.onEncounteredError(() => {
+      window.Preload.public.showNotification({
         title: "映像の受信に失敗しました",
-      }).show()
+      })
       renderContext.fillTransparent()
       setIsErrorEncounted(true)
-    }
-    player.onStopped = () => {
+    })
+    window.Preload.webchimera.onStopped(() => {
       setIsPlaying(false)
-    }
-    player.onEndReached = () => {
+    })
+    window.Preload.webchimera.onEndReached(() => {
       setIsPlaying(false)
       if (isSeekableRef.current === false) {
-        new remote.Notification({
+        window.Preload.public.showNotification({
           title: "映像の受信が中断されました",
-        }).show()
+        })
       }
-    }
-    player.onPaused = () => {
+    })
+    window.Preload.webchimera.onPaused(() => {
       setIsPlaying(false)
-    }
-    player.onPlaying = () => {
+    })
+    window.Preload.webchimera.onPlaying(() => {
       setIsPlaying(true)
-    }
-    player.onSeekableChanged = (seekable) => {
+    })
+    window.Preload.webchimera.onSeekableChanged((seekable) => {
       setIsSeekable(seekable)
-    }
-    player.onPositionChanged = (position) => {
+    })
+    window.Preload.webchimera.onPositionChanged((position) => {
       setPosition(position)
-    }
-    player.volume = volume
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    window.player = player
-    playerRef.current = player
+    })
+    window.Preload.webchimera.setVolume(volume)
     const onResize = () => {
       if (!containerRef.current) return
       setWidth(containerRef.current.clientWidth)
@@ -417,8 +408,7 @@ export const CoiledVideoPlayer: React.VFC<{}> = memo(() => {
     onResize()
     return () => {
       window.removeEventListener("resize", onResize)
-      player.close()
-      playerRef.current = null
+      window.Preload.webchimera.destroy()
     }
   }, [])
   return (

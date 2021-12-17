@@ -10,6 +10,7 @@ import {
   shell,
   dialog,
   powerSaveBlocker,
+  Notification,
 } from "electron"
 import Store from "electron-store"
 import esm from "esm"
@@ -21,17 +22,31 @@ import pkg from "../package.json"
 import { globalContentPlayerPlayingContentFamilyKey } from "./atoms/globalFamilyKeys"
 import { globalActiveContentPlayerIdAtomKey } from "./atoms/globalKeys"
 import {
+  ON_WINDOW_MOVED,
   RECOIL_STATE_UPDATE,
+  REQUEST_APP_PATH,
+  REQUEST_CONTENT_BOUNDS,
+  REQUEST_CURSOR_SCREEN_POINT,
+  REQUEST_DIALOG,
   REQUEST_INITIAL_DATA,
   REUQEST_OPEN_WINDOW,
+  SET_WINDOW_ASPECT,
+  SET_WINDOW_CONTENT_BOUNDS,
+  SET_WINDOW_POSITION,
+  SET_WINDOW_TITLE,
+  SHOW_NOTIFICATION,
+  SHOW_WINDOW,
+  TOGGLE_ALWAYS_ON_TOP,
+  TOGGLE_FULL_SCREEN,
   UPDATE_IS_PLAYING_STATE,
 } from "./constants/ipc"
 import { ROUTES } from "./constants/routes"
+import { generateContentPlayerContextMenu } from "./main/contextmenu"
 import { EPGManager } from "./main/epgManager"
 import {
   OpenContentPlayerWindowArgs,
   OpenWindowArg,
-  RecoilStateUpdateArg,
+  SerializableKV,
 } from "./types/ipc"
 import {
   AppInfo,
@@ -113,7 +128,7 @@ const buildAppMenu = ({
     {
       label: "新しいプレイヤー",
       click: () =>
-        openWindow({ name: ROUTES["ContentPlayer"], isHideUntilLoaded: true }),
+        openWindow({ name: ROUTES["ContentPlayer"], args: { show: false } }),
       accelerator: "CmdOrCtrl+N",
     },
   ]
@@ -283,18 +298,16 @@ const loadPlugins = async () => {
         openWindow({
           name: name as string,
           isSingletone: true,
-          isHideUntilLoaded: true,
+          args: { show: false },
         })
       },
       openContentPlayerWindow: ({
         playingContent,
-        isHideUntilLoaded,
       }: OpenContentPlayerWindowArgs) => {
         return openWindow({
           name: ROUTES["ContentPlayer"],
           isSingletone: false,
           playingContent,
-          isHideUntilLoaded,
         })
       },
     },
@@ -353,39 +366,41 @@ const loadPlugins = async () => {
 }
 loadPlugins()
 
-ipcMain.handle(REQUEST_INITIAL_DATA, () => {
+ipcMain.handle(REQUEST_INITIAL_DATA, (event) => {
   const data: InitialData = {
     pluginData,
     states,
     fonts,
+    windowId: BrowserWindow.fromWebContents(event.sender)?.id ?? -1,
   }
   return data
 })
 
-ipcMain.handle(
-  UPDATE_IS_PLAYING_STATE,
-  (_, { isPlaying, windowId }: { isPlaying: boolean; windowId: number }) => {
-    if (isPlaying) {
-      const blockerId = blockerIdBycontentPlayerWindow[windowId]
-      if (typeof blockerId !== "number") {
-        blockerIdBycontentPlayerWindow[windowId] = powerSaveBlocker.start(
-          "prevent-display-sleep"
-        )
-      }
-    } else {
-      const blockerId = blockerIdBycontentPlayerWindow[windowId]
-      if (typeof blockerId === "number") {
-        powerSaveBlocker.stop(blockerId)
-        blockerIdBycontentPlayerWindow[windowId] = null
-      }
+ipcMain.handle(UPDATE_IS_PLAYING_STATE, (event, isPlaying: boolean) => {
+  const windowId = BrowserWindow.fromWebContents(event.sender)?.id
+  if (!windowId) {
+    return
+  }
+  if (isPlaying) {
+    const blockerId = blockerIdBycontentPlayerWindow[windowId]
+    if (typeof blockerId !== "number") {
+      blockerIdBycontentPlayerWindow[windowId] = powerSaveBlocker.start(
+        "prevent-display-sleep"
+      )
+    }
+  } else {
+    const blockerId = blockerIdBycontentPlayerWindow[windowId]
+    if (typeof blockerId === "number") {
+      powerSaveBlocker.stop(blockerId)
+      blockerIdBycontentPlayerWindow[windowId] = null
     }
   }
-)
+})
 
 const states: ObjectLiteral<unknown> = {}
 const statesHash: ObjectLiteral<string> = {}
 
-const recoilStateUpdate = (source: number, payload: RecoilStateUpdateArg) => {
+const recoilStateUpdate = (source: number, payload: SerializableKV) => {
   for (const window of BrowserWindow.getAllWindows()) {
     if (window.webContents.id === source) continue
     window.webContents.send(RECOIL_STATE_UPDATE, payload)
@@ -401,7 +416,7 @@ const updateContentPlayerIds = () => {
   states[GLOBAL_CONTENT_PLAYER_IDS] = contentPlayerWindows.map((w) => w.id)
 }
 
-ipcMain.handle(RECOIL_STATE_UPDATE, (event, payload: RecoilStateUpdateArg) => {
+ipcMain.handle(RECOIL_STATE_UPDATE, (event, payload: SerializableKV) => {
   const { key, value } = payload
   if (!key) return
   const hash = JSON.stringify(value)
@@ -418,7 +433,6 @@ const openWindow = ({
   isSingletone = false,
   args = {},
   playingContent,
-  isHideUntilLoaded,
 }: OpenWindowArg) => {
   const map = windowMapping[name] || []
   if (0 < map.length && isSingletone) {
@@ -463,13 +477,14 @@ const openWindow = ({
       minWidth,
       minHeight,
       webPreferences: {
-        contextIsolation: false,
-        nodeIntegration: true,
-        enableRemoteModule: true,
+        preload: `${__dirname}/main/preload.js`,
+        contextIsolation: true,
+        nodeIntegration: false,
+        enableRemoteModule: false,
+        worldSafeExecuteJavaScript: true,
       },
       backgroundColor,
       ...args,
-      show: isHideUntilLoaded !== true,
     })
     const [, contentHeight] = window.getContentSize()
     if (width && height && display && name === ROUTES["ContentPlayer"]) {
@@ -506,6 +521,60 @@ const openWindow = ({
       contentPlayerWindows.push(window)
       updateContentPlayerIds()
     }
+
+    window.webContents.setWindowOpenHandler(({ url }) => {
+      if (url === "about:blank") {
+        return { action: "allow" }
+      } else if (url.startsWith("http")) {
+        shell.openExternal(url)
+        return { action: "deny" }
+      } else {
+        return { action: "deny" }
+      }
+    })
+
+    window.webContents.on("context-menu", (e, params) =>
+      generateContentPlayerContextMenu({
+        isPlaying:
+          name === ROUTES.ContentPlayer
+            ? window.id in blockerIdBycontentPlayerWindow &&
+              blockerIdBycontentPlayerWindow[window.id] !== null
+            : null,
+        toggleIsPlaying: () => {
+          window.webContents.send(UPDATE_IS_PLAYING_STATE)
+        },
+        isAlwaysOnTop: window.isAlwaysOnTop(),
+        toggleIsAlwaysOnTop: () => {
+          window.setAlwaysOnTop(!window.isAlwaysOnTop())
+        },
+        openContentPlayer: () =>
+          openWindow({
+            name: ROUTES.ContentPlayer,
+            args: { show: false },
+          }),
+        openSetting: () =>
+          openWindow({
+            name: ROUTES.Settings,
+            isSingletone: true,
+            args: { show: false },
+          }),
+        openProgramTable: () =>
+          openWindow({
+            name: ROUTES.ProgramTable,
+            isSingletone: true,
+            args: { show: false },
+          }),
+        plugins: plugins
+          .filter(
+            (plugin): plugin is Required<typeof plugin> => !!plugin.contextMenu
+          )
+          .map((plugin) => plugin.contextMenu),
+      })(e, params)
+    )
+
+    window.on("moved", () => {
+      window.webContents.send(ON_WINDOW_MOVED)
+    })
 
     if (isDev) {
       window.webContents.session.webRequest.onBeforeSendHeaders(
@@ -575,6 +644,68 @@ const openWindow = ({
 
 ipcMain.handle(REUQEST_OPEN_WINDOW, (_, args) => {
   return openWindow(args)?.id
+})
+
+ipcMain.handle(SET_WINDOW_TITLE, (event, title) => {
+  BrowserWindow.fromWebContents(event.sender)?.setTitle(title)
+})
+
+ipcMain.handle(SET_WINDOW_ASPECT, (event, aspect) =>
+  BrowserWindow.fromWebContents(event.sender)?.setAspectRatio(aspect)
+)
+
+ipcMain.handle(SET_WINDOW_POSITION, (event, x, y) => {
+  BrowserWindow.fromWebContents(event.sender)?.setPosition(x, y)
+})
+
+ipcMain.handle(SHOW_WINDOW, (event) => {
+  BrowserWindow.fromWebContents(event.sender)?.show()
+})
+
+ipcMain.handle(REQUEST_APP_PATH, (_, path) => {
+  return app.getPath(path)
+})
+
+ipcMain.handle(REQUEST_CURSOR_SCREEN_POINT, () => {
+  return screen.getCursorScreenPoint()
+})
+
+ipcMain.handle(TOGGLE_FULL_SCREEN, (event) => {
+  const window = BrowserWindow.fromWebContents(event.sender)
+  if (!window || !window.isFullScreenable()) {
+    return
+  }
+  window.setFullScreen(!window.isFullScreen())
+})
+
+ipcMain.handle(SHOW_NOTIFICATION, (_, arg, path) => {
+  const n = new Notification(arg)
+  if (path) {
+    n.on("click", () => shell.openPath(path))
+  }
+  n.show()
+})
+
+ipcMain.handle(TOGGLE_ALWAYS_ON_TOP, (event) => {
+  const window = BrowserWindow.fromWebContents(event.sender)
+  if (!window) {
+    return
+  }
+  window.setAlwaysOnTop(!window.isAlwaysOnTop())
+})
+
+ipcMain.handle(REQUEST_CONTENT_BOUNDS, (event) => {
+  return BrowserWindow.fromWebContents(event.sender)?.getContentBounds()
+})
+
+ipcMain.handle(SET_WINDOW_CONTENT_BOUNDS, (event, bounds) => {
+  BrowserWindow.fromWebContents(event.sender)?.setContentBounds(bounds)
+})
+
+ipcMain.handle(REQUEST_DIALOG, async () => {
+  return await dialog.showOpenDialog({
+    properties: ["openFile", "openDirectory"],
+  })
 })
 
 new EPGManager(ipcMain)

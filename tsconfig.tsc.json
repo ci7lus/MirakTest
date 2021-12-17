@@ -5,6 +5,11 @@
     "outDir": "./dist",
     "noEmit": false
   },
-  "include": ["src/index.electron.ts", "src/afterpack.ts", "src/@types/*.d.ts"],
+  "include": [
+    "src/index.electron.ts",
+    "src/afterpack.ts",
+    "src/main/preload.ts",
+    "src/@types/*.d.ts"
+  ],
   "exclude": ["node_modules"]
 }

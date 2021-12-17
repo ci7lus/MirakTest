@@ -1,13 +1,11 @@
 import path from "path"
-import { remote } from "electron"
 import React, { useEffect, useState } from "react"
 import { useRecoilBridgeAcrossReactRoots_UNSTABLE } from "recoil"
+import pkg from "../../package.json"
 import { ComponentShadowWrapper } from "../components/common/ComponentShadowWrapper"
 import { MirakurunSettingForm } from "../components/settings/Mirakurun"
 import { CoiledGeneralSetting } from "../components/settings/general"
 import { OnSettingComponent } from "../types/plugin"
-import { remoteWindow } from "../utils/remote"
-import { store } from "../utils/store"
 
 type Routes = "General" | "Mirakurun" | (string & {})
 
@@ -62,7 +60,7 @@ export const Settings: React.VFC<{}> = () => {
   const [route, setRoute] = useState<Routes>("General")
   const [aditionalRoutes, setAditionalRoutes] = useState<[string, string][]>([])
   useEffect(() => {
-    remoteWindow.setTitle(`設定 - ${remote.app.name}`)
+    window.Preload.public.setWindowTitle(`設定 - ${pkg.productName}`)
     try {
       const plugins: [string, string][] =
         window.plugins
@@ -119,17 +117,22 @@ export const Settings: React.VFC<{}> = () => {
         <div className="flex flex-col items-center justify-center space-y-2 pb-4 pt-6">
           <a
             className="text-blue-400 hover:underline text-sm cursor-pointer"
-            onClick={() => store.openInEditor()}
+            onClick={() => {
+              window.Preload.store.openConfig()
+            }}
           >
             設定ファイルを開く
           </a>
           <a
             className="text-blue-400 hover:underline text-sm cursor-pointer"
-            onClick={() =>
-              remote.shell.openPath(
-                path.join(remote.app.getPath("userData"), "plugins")
+            onClick={async () => {
+              const userData = await window.Preload.public.requestAppPath(
+                "userData"
               )
-            }
+              window.Preload.public.requestShellOpenPath(
+                path.join(userData, "plugins")
+              )
+            }}
           >
             プラグインフォルダを開く
           </a>

@@ -9,7 +9,7 @@ import {
   contentPlayerScreenshotUrlAtom,
   contentPlayerTotAtom,
 } from "./contentPlayer"
-import { contentPlayerPlayingContentAtom } from "./contentPlayerResolvedFamilies"
+import { globalContentPlayerPlayingContentFamily } from "./globalFamilies"
 
 const prefix = `${pkg.name}.contentPlayer`
 
@@ -65,7 +65,9 @@ export const contentPlayerTsFirstPcrSelector = selector<number>({
 export const contentPlayerUrlSelector = selector<string | null>({
   key: `${prefix}.url`,
   get: ({ get }) => {
-    const content = get(contentPlayerPlayingContentAtom)
+    const content = get(
+      globalContentPlayerPlayingContentFamily(window.id ?? -1)
+    )
     return content?.url || null
   },
 })
@@ -73,7 +75,9 @@ export const contentPlayerUrlSelector = selector<string | null>({
 export const contentPlayerServiceSelector = selector<Service | null>({
   key: `${prefix}.service`,
   get: ({ get }) => {
-    const content = get(contentPlayerPlayingContentAtom)
+    const content = get(
+      globalContentPlayerPlayingContentFamily(window.id ?? -1)
+    )
     return content?.service || null
   },
 })
@@ -81,7 +85,9 @@ export const contentPlayerServiceSelector = selector<Service | null>({
 export const contentPlayerProgramSelector = selector<Program | null>({
   key: `${prefix}.program`,
   get: ({ get }) => {
-    const content = get(contentPlayerPlayingContentAtom)
+    const content = get(
+      globalContentPlayerPlayingContentFamily(window.id ?? -1)
+    )
     return content?.program || null
   },
 })

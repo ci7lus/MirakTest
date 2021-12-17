@@ -1,8 +1,7 @@
 import { Popover } from "@headlessui/react"
 import clsx from "clsx"
 import dayjs from "dayjs"
-import { ipcRenderer, remote } from "electron"
-import React, { useEffect, useRef, useState } from "react"
+import React, { useCallback, useEffect, useRef, useState } from "react"
 import { ChevronRight, PauseCircle, PlayCircle, Settings } from "react-feather"
 import { useDebounce } from "react-use"
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil"
@@ -19,16 +18,14 @@ import {
   contentPlayerSubtitleEnabledAtom,
   contentPlayerVolumeAtom,
 } from "../../atoms/contentPlayer"
-import { contentPlayerSelectedServiceAtom } from "../../atoms/contentPlayerResolvedFamilies"
 import {
   contentPlayerProgramSelector,
   contentPlayerServiceSelector,
 } from "../../atoms/contentPlayerSelectors"
+import { globalContentPlayerSelectedServiceFamily } from "../../atoms/globalFamilies"
 import { mirakurunServicesAtom } from "../../atoms/mirakurun"
 import { controllerSetting, experimentalSetting } from "../../atoms/settings"
-import { UPDATE_IS_PLAYING_STATE } from "../../constants/ipc"
 import { useRefFromState } from "../../hooks/ref"
-import { remoteWindow } from "../../utils/remote"
 import { AudioChannelSelector } from "./controllers/AudioChannelSelector"
 import { AudioTrackSelector } from "./controllers/AudioTrackSelector"
 import { FullScreenToggleButton } from "./controllers/FullScreenToggleButton"
@@ -62,7 +59,7 @@ export const CoiledController: React.VFC<{}> = () => {
 
   const services = useRecoilValue(mirakurunServicesAtom)
   const [selectedService, setSelectedService] = useRecoilState(
-    contentPlayerSelectedServiceAtom
+    globalContentPlayerSelectedServiceFamily(window.id ?? -1)
   )
 
   const [subtitleEnabled, setSubtitleEnabled] = useRecoilState(
@@ -91,19 +88,20 @@ export const CoiledController: React.VFC<{}> = () => {
   const mouseRef = useRefFromState(mouse)
   const animId = useRef<number>(0)
 
-  const moveWindow = () => {
+  const moveWindow = useCallback(async () => {
     const [mouseX, mouseY] = mouseRef.current
-    const { x, y } = remote.screen.getCursorScreenPoint()
+    const { x, y } = await window.Preload.public.requestCursorScreenPoint()
     const xPos = x - mouseX
     const yPos = y - mouseY - window.outerHeight + window.innerHeight
     if (0 < xPos && 0 < yPos) {
-      remoteWindow.setPosition(xPos, yPos)
+      window.Preload.public.setWindowPosition(xPos, yPos)
     }
     animId.current = requestAnimationFrame(moveWindow)
-  }
+  }, [mouseRef.current])
   // 移動キャンセル
-  const cancelMoveWindow = () =>
-    requestAnimationFrame(() => cancelAnimationFrame(animId.current))
+  const cancelMoveWindow = useCallback(() => {
+    cancelAnimationFrame(animId.current)
+  }, [animId.current])
 
   const experimental = useRecoilValue(experimentalSetting)
 
@@ -154,12 +152,7 @@ export const CoiledController: React.VFC<{}> = () => {
   }, [isPlaying])
 
   useEffect(() => {
-    ipcRenderer
-      .invoke(UPDATE_IS_PLAYING_STATE, {
-        isPlaying,
-        windowId: remoteWindow.id,
-      })
-      .catch(console.error)
+    window.Preload.updateIsPlayingState(isPlaying).catch(console.error)
   }, [isPlaying])
 
   const startAt = dayjs(program?.startAt).format(
@@ -182,11 +175,6 @@ export const CoiledController: React.VFC<{}> = () => {
   }, [service])
   const time = useRecoilValue(contentPlayerPlayingTimeAtom)
 
-  const toggleFullScreen = () => {
-    if (!remoteWindow.fullScreenable) return
-    remoteWindow.setFullScreen(!remoteWindow.isFullScreen())
-  }
-
   const [isSidebarOpen, setIsSidebarOpen] = useState(false)
 
   return (
@@ -199,15 +187,18 @@ export const CoiledController: React.VFC<{}> = () => {
       }}
       onMouseLeave={() => {
         setIsVisible(false)
+        cancelMoveWindow()
       }}
-      onDoubleClick={toggleFullScreen}
+      onDoubleClick={() => window.Preload.public.toggleFullScreen()}
       onMouseDown={(e) => {
         if (
           e.button === 2 ||
           !document.hasFocus() ||
           !experimental.isWindowDragMoveEnabled
-        )
+        ) {
+          cancelMoveWindow()
           return
+        }
         setMouse([e.clientX, e.clientY])
         requestAnimationFrame(moveWindow)
       }}
@@ -344,7 +335,9 @@ export const CoiledController: React.VFC<{}> = () => {
                 )}
               </Popover.Panel>
             </Popover>
-            <FullScreenToggleButton toggle={toggleFullScreen} />
+            <FullScreenToggleButton
+              toggle={() => window.Preload.public.toggleFullScreen()}
+            />
           </div>
         </div>
         <div
@@ -375,6 +368,7 @@ export const CoiledController: React.VFC<{}> = () => {
               "pointer-events-auto"
             )}
             onClick={() => setIsSidebarOpen((o) => !o)}
+            onMouseDown={(e) => e.stopPropagation()}
           >
             <ChevronRight
               width="3rem"
@@ -389,6 +383,7 @@ export const CoiledController: React.VFC<{}> = () => {
           "transition-width",
           isSidebarOpen ? "w-1/3" : "w-0"
         )}
+        onMouseDown={(e) => e.stopPropagation()}
       >
         {services && (
           <ControllerSidebar

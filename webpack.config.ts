@@ -85,7 +85,7 @@ const factory: MultiConfigurationFactory = (env, args) => {
         path: path.resolve(__dirname, "dist/"),
       },
 
-      target: "electron-renderer",
+      target: "web",
 
       module: {
         rules: [
@@ -111,6 +111,7 @@ const factory: MultiConfigurationFactory = (env, args) => {
           ".tsx",
           ".js",
         ],
+        fallback: { path: require.resolve("path-browserify") },
       },
 
       devServer: {
@@ -124,16 +125,13 @@ const factory: MultiConfigurationFactory = (env, args) => {
       },
 
       plugins: [
+        new webpack.DefinePlugin({
+          "process.platform": JSON.stringify(process.platform),
+        }),
         // TODO: 型 'import("node_modules/tapable/tapable").SyncBailHook<[import("node_modules/webpack/types").Compilation], boolean, import("node_modules/tapable/tapable").UnsetAdditionalOptions>' を型 'import("node_modules/tapable/tapable").SyncBailHook<[import("node_modules/@types/mini-css-extract-plugin/node_modules/webpack/types").Compilation], boolean, import("node_modules/tapable/tapab...' に割り当てることはできません。ts(2322)
         new MiniCSSExtractPlugin() as never,
         isDev ? new ReactRefreshWebpackPlugin() : (undefined as never),
       ].filter((p: unknown) => p),
-      externals: {
-        "webchimera.js": "commonjs webchimera.js",
-        react: "commonjs react",
-        recoil: "commonjs recoil",
-        "react-dom": "commonjs react-dom",
-      },
     },
   ]
 }
