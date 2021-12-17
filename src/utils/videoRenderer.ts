@@ -1,5 +1,5 @@
 /**
- * https://github.com/RSATom/webgl-video-renderer
+ * https://gist.github.com/ci7lus/b5af28c5f8180276d31efe6fdfac91ba
  * The MIT License (MIT)
 
 Copyright (c) 2015 Sergey Radionov
@@ -44,12 +44,7 @@ export class VideoRenderer {
   }
 
   render(
-    videoFrame: Uint8Array & {
-      width: number
-      height: number
-      uOffset: number
-      vOffset: number
-    },
+    videoFrame: Uint8Array,
     width: number,
     height: number,
     uOffset: number,
