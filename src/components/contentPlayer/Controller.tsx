@@ -3,13 +3,7 @@ import clsx from "clsx"
 import dayjs from "dayjs"
 import { ipcRenderer, remote } from "electron"
 import React, { useEffect, useRef, useState } from "react"
-import {
-  ChevronDown,
-  ChevronRight,
-  PauseCircle,
-  PlayCircle,
-  Settings,
-} from "react-feather"
+import { ChevronRight, PauseCircle, PlayCircle, Settings } from "react-feather"
 import { useDebounce } from "react-use"
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil"
 import {
@@ -41,7 +35,6 @@ import { FullScreenToggleButton } from "./controllers/FullScreenToggleButton"
 import { PlayToggleButton } from "./controllers/PlayToggleButton"
 import { CoiledScreenshotButton } from "./controllers/ScreenshotButton"
 import { SeekableControl } from "./controllers/SeekableControl"
-import { ServiceSelector } from "./controllers/ServiceSelector"
 import { ControllerSidebar } from "./controllers/Sidebar"
 import { SubtitleToggleButton } from "./controllers/SubtitleToggleButton"
 import { VolumeSlider } from "./controllers/VolumeSlider"
@@ -258,40 +251,22 @@ export const CoiledController: React.VFC<{}> = () => {
               />
             )}
             <div className="relative text-gray-200 overflow-hidden">
-              <div className="absolute top-0 opacity-0 w-full h-full">
-                <ServiceSelector
-                  services={services}
-                  selectedService={selectedService}
-                  setSelectedService={setSelectedService}
-                  isProgramDetailEnabled={
-                    experimental.isProgramDetailInServiceSelectorEnabled
-                  }
-                />
-              </div>
               {program ? (
                 <div className="flex flex-col">
                   <h2 className="font-semibold text-2xl truncate">
                     {program.name}
                   </h2>
-                  <div className="flex space-x-4 font-normal text-lg truncate">
-                    {serviceLabel ? (
-                      <div className="flex items-center space-x-1">
-                        <p>{serviceLabel}</p>
-                        <ChevronDown size="1.125rem" />
-                      </div>
-                    ) : (
-                      <></>
-                    )}
+                  <div className="flex space-x-3 font-normal text-lg truncate">
+                    {serviceLabel ? <p>{serviceLabel}</p> : <></>}
                     <p>
                       {startAt} 〜 {endAt}
                     </p>
                   </div>
                 </div>
               ) : serviceLabel ? (
-                <div className="font-semibold text-2xl flex items-center space-x-1">
-                  <p>{serviceLabel}</p>
-                  <ChevronDown size="1.5rem" />
-                </div>
+                <p className="font-semibold text-2xl flex items-center space-x-1">
+                  {serviceLabel}
+                </p>
               ) : (
                 <></>
               )}
