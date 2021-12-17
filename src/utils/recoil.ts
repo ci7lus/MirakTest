@@ -31,10 +31,10 @@ export const initializeState =
       const atom =
         ALL_ATOMS.find((atom) => "key" in atom && atom.key === key) ||
         window.atoms?.find((atom) => "key" in atom && atom.key === key)
-      if (savedValue !== null && atom) {
+      if (savedValue !== undefined && savedValue !== null && atom) {
         mutableSnapShot.set(atom as never, savedValue)
       } else {
-        console.warn("[Recoil] ignored in initialize:", key)
+        console.warn("[Recoil] ignored in initialize:", key, savedValue)
       }
     })
     Object.entries(states).map(([key, value]) => {
