@@ -22,6 +22,7 @@ import pkg from "../package.json"
 import { globalContentPlayerPlayingContentFamilyKey } from "./atoms/globalFamilyKeys"
 import { globalActiveContentPlayerIdAtomKey } from "./atoms/globalKeys"
 import {
+  REQUEST_CONFIRM_DIALOG,
   ON_WINDOW_MOVED,
   RECOIL_STATE_UPDATE,
   REQUEST_APP_PATH,
@@ -706,6 +707,18 @@ ipcMain.handle(REQUEST_DIALOG, async () => {
   return await dialog.showOpenDialog({
     properties: ["openFile", "openDirectory"],
   })
+})
+
+ipcMain.handle(REQUEST_CONFIRM_DIALOG, async (event, message, buttons) => {
+  return await dialog.showMessageBox(
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    BrowserWindow.fromWebContents(event.sender)!,
+    {
+      message,
+      buttons,
+      type: "question",
+    }
+  )
 })
 
 new EPGManager(ipcMain)

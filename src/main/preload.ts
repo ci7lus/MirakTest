@@ -1,4 +1,6 @@
 import fs from "fs"
+import os from "os"
+import path from "path"
 import {
   clipboard,
   contextBridge,
@@ -8,6 +10,7 @@ import {
 } from "electron"
 import WebChimera from "webchimera.js"
 import {
+  REQUEST_CONFIRM_DIALOG,
   EPG_MANAGER,
   ON_WINDOW_MOVED,
   RECOIL_STATE_UPDATE,
@@ -35,6 +38,20 @@ import {
 } from "../types/ipc"
 import { store } from "../utils/store"
 import { QuerySchema } from "./epgManager"
+
+const homeDir = os.homedir()
+const exists = async (filePath: string) =>
+  new Promise<boolean>((res) => {
+    fs.promises
+      .lstat(filePath)
+      .then((stat) => res(stat.isFile() || stat.isDirectory()))
+      .catch(() => res(false))
+  })
+const isChildOfHome = (filePath: string) => {
+  // https://stackoverflow.com/questions/37521893/determine-if-a-path-is-subdirectory-of-another-in-node-js
+  const relative = path.relative(homeDir, filePath)
+  return relative && !relative.startsWith("..") && !path.isAbsolute(relative)
+}
 
 let wc: WebChimera.Player | null = null
 
@@ -311,11 +328,29 @@ const preload: Preload = {
           .catch(() => res(false))
       })
     },
+    requestConfirmDialog(message, buttons) {
+      return ipcRenderer.invoke(REQUEST_CONFIRM_DIALOG, message, buttons)
+    },
     async writeFile(path, buffer) {
+      const isNotChild = !isChildOfHome(path)
+      const isAlreadyExists = await exists(path)
+      if (isNotChild || isAlreadyExists) {
+        const ask = await preload.public.requestConfirmDialog(
+          `「${path}」${
+            isAlreadyExists
+              ? "は既に存在します。"
+              : "はホームディレクトリの外です。"
+          }書き込みを許可しますか？`,
+          ["許可する", "拒否する"]
+        )
+        if (ask.response === 1) {
+          return false
+        }
+      }
       await fs.promises.writeFile(path, Buffer.from(buffer))
+      return true
     },
     invoke(channel, ...args) {
-      // TODO: ビルトインのチャンネルを禁止する
       return ipcRenderer.invoke(channel, ...args)
     },
   },

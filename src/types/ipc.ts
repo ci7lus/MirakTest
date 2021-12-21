@@ -78,11 +78,15 @@ export type Preload = {
   public: {
     setWindowAspect: (aspect: number) => void
     isDirectoryExists: (path: string) => Promise<boolean>
-    writeFile: (path: string, buffer: ArrayBuffer) => Promise<void>
+    writeFile: (path: string, buffer: ArrayBuffer) => Promise<boolean>
     writeArrayBufferToClipboard: (buffer: ArrayBuffer) => void
     requestDialog: (
       arg: Electron.OpenDialogOptions
     ) => Promise<Electron.OpenDialogReturnValue>
+    requestConfirmDialog: (
+      message: string,
+      buttons: string[]
+    ) => Promise<Electron.MessageBoxReturnValue>
     requestShellOpenPath: (path: string) => void
     toggleAlwaysOnTop: () => void
     requestAppPath: (name: string) => Promise<string>
