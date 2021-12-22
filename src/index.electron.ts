@@ -15,8 +15,6 @@ import {
 import Store from "electron-store"
 import esm from "esm"
 import fontList from "font-list"
-import React from "react"
-import Recoil from "recoil"
 import WebChimeraJs from "webchimera.js"
 import pkg from "../package.json"
 import { globalContentPlayerPlayingContentFamilyKey } from "./atoms/globalFamilyKeys"
@@ -56,10 +54,6 @@ import {
   PluginInMainArgs,
 } from "./types/plugin"
 import { InitialData, ObjectLiteral, PluginDatum } from "./types/struct"
-
-// プラグイン側で対策するのが面倒すぎるのでこちら側でモックを用意
-global.React = React
-global.Recoil = Recoil
 
 const esmRequire = esm(module)
 
