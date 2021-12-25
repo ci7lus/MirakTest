@@ -73,6 +73,13 @@ export class EPGManager {
             responseType: "stream",
           }
         )
+        const statusCode = claimStream.status.toString()
+        if (statusCode.startsWith("4")) {
+          console.info(
+            `[epgmanager] 番組イベントストリームに対応していません: ${statusCode} / ${hostname}`
+          )
+          return
+        }
         const stream = claimStream.data as unknown as Readable
         const pipeline = chain([stream, parser(), streamArray()])
         pipeline.on("data", ({ value }: { value: Event }) => {

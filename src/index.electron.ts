@@ -76,6 +76,8 @@ let display: Electron.Display | null = null
 
 let fonts: string[] = []
 
+let watching: fs.FSWatcher | null = null
+
 const init = () => {
   if (process.platform == "win32" && WebChimeraJs.path) {
     const VLCPluginPath = path.join(WebChimeraJs.path, "plugins")
@@ -83,7 +85,9 @@ const init = () => {
     process.env["VLC_PLUGIN_PATH"] = VLCPluginPath
   }
 
-  Menu.setApplicationMenu(buildAppMenu({ plugins: appMenus }))
+  Menu.setApplicationMenu(
+    buildAppMenu({ pluginMenus: Array.from(appMenus.values()) })
+  )
 
   fontList
     .getFonts()
@@ -112,12 +116,18 @@ app.on("ready", () => init())
 
 app.allowRendererProcessReuse = false
 
-app.on("window-all-closed", () => app.quit())
+app.on("window-all-closed", () => {
+  if (watching) {
+    watching.close()
+    watching = null
+  }
+  app.quit()
+})
 
 const buildAppMenu = ({
-  plugins,
+  pluginMenus,
 }: {
-  plugins?: { [key: string]: Electron.MenuItemConstructorOptions }
+  pluginMenus?: Electron.MenuItemConstructorOptions[]
 }) => {
   const fileSubMenu: Electron.MenuItemConstructorOptions["submenu"] = [
     {
@@ -169,11 +179,10 @@ const buildAppMenu = ({
     { label: "ウィンドウ", role: "windowMenu" },
   ]
 
-  if (0 < Object.keys(plugins || {}).length) {
-    const pluginItems = Object.entries(plugins || {}).map(([, item]) => item)
+  if (0 < (pluginMenus || []).length) {
     items.push({
       label: "プラグイン",
-      submenu: pluginItems,
+      submenu: pluginMenus,
     })
   }
 
@@ -248,26 +257,29 @@ const buildAppMenu = ({
 
 const userDataDir = app.getPath("userData")
 const pluginsDir = path.join(userDataDir, "plugins")
-const pluginData: PluginDatum[] = []
-const plugins: PluginDefineInMain[] = []
-const appMenus: { [key: string]: Electron.MenuItemConstructorOptions } = {}
+const pluginData = new Map<string, PluginDatum>()
+const plugins = new Map<string, PluginDefineInMain>()
+const appMenus = new Map<string, Electron.MenuItemConstructorOptions>()
+const pluginLoader = async (fileName: string) => {
+  const filePath = path.join(pluginsDir, fileName)
+  const content = await fs.promises.readFile(filePath, "utf8")
+  return { content, filePath, fileName }
+}
 const loadPlugins = async () => {
   console.info("Load plugins from:", pluginsDir)
   if (!fs.existsSync(pluginsDir)) await fs.promises.mkdir(pluginsDir)
   const files = await fs.promises.readdir(pluginsDir)
-  const parsedPlugins = await Promise.all(
+  for (const plugin of await Promise.all(
     files
       .filter((filePath) => filePath.endsWith(".plugin.js"))
-      .map(async (fileName) => {
-        const filePath = path.join(pluginsDir, fileName)
-        const content = await fs.promises.readFile(filePath, "utf8")
-        return { content, filePath, fileName }
-      })
-  )
-  pluginData.push(...parsedPlugins)
+      .map(pluginLoader)
+  )) {
+    pluginData.set(plugin.fileName, plugin)
+    console.info(`[Plugin] ロードしました: ${plugin.fileName}`)
+  }
   console.info(
-    "plugins paths:",
-    pluginData.map((p) => p.filePath)
+    "[Plugin] 初期ロードプラグイン:",
+    Array.from(pluginData.values()).map((p) => p.filePath)
   )
   const appInfo: AppInfo = { name: pkg.productName, version: pkg.version }
   const args: PluginInMainArgs = {
@@ -307,36 +319,45 @@ const loadPlugins = async () => {
       },
     },
   }
-  const openedPlugins: PluginDefineInMain[] = []
+  const openedPlugins = new Map<string, PluginDefineInMain>()
+  const moduleLoader = async (filePath: string) => {
+    const module: { default: InitPlugin } | InitPlugin = esmRequire(filePath)
+    const load = "default" in module ? module.default : module
+    if (load.main) {
+      const plugin = await load.main(args)
+      console.info(
+        `[Plugin] 読込中: ${plugin.name} (${plugin.id}, ${plugin.version})`
+      )
+      return plugin
+    }
+  }
   await Promise.all(
-    pluginData.map(async ({ filePath }) => {
+    Array.from(pluginData.values()).map(async ({ filePath, fileName }) => {
       try {
-        const module: { default: InitPlugin } | InitPlugin =
-          esmRequire(filePath)
-        const load = "default" in module ? module.default : module
-        if (load.main) {
-          const plugin = await load.main(args)
-          console.info(
-            `[Plugin] 読込中: ${plugin.name} (${plugin.id}, ${plugin.version})`
-          )
-          openedPlugins.push(plugin)
+        const module = await moduleLoader(filePath)
+        if (module) {
+          openedPlugins.set(fileName, module)
         }
       } catch (error) {
         console.error(error)
       }
     })
   )
+  const entries = Array.from(openedPlugins.values())
   await Promise.all(
-    openedPlugins.map(async (plugin) => {
+    Array.from(openedPlugins.entries()).map(async ([fileName, plugin]) => {
       try {
-        await plugin.setup({ plugins: openedPlugins })
+        await plugin.setup({ plugins: entries })
         if (plugin.appMenu) {
-          appMenus[plugin.id] = plugin.appMenu
+          appMenus.set(fileName, plugin.appMenu)
           console.info(
-            `[Plugin] ${plugin.name} のアプリメニューを読み込みました`
+            `[Plugin] ${plugin.name}(${plugin.id}) のアプリメニューを読み込みました`
           )
         }
-        plugins.push(plugin)
+        plugins.set(fileName, plugin)
+        console.info(
+          `[Plugin] ${fileName} を ${plugin.name}(${plugin.id}) として読み込みました`
+        )
       } catch (error) {
         console.error(
           "[Plugin] setup 中にエラーが発生しました:",
@@ -355,15 +376,73 @@ const loadPlugins = async () => {
       }
     })
   )
-  if (0 < Object.keys(appMenus).length) {
-    Menu.setApplicationMenu(buildAppMenu({ plugins: appMenus }))
+  const makeMenus = () => {
+    if (0 < Object.keys(appMenus).length) {
+      Menu.setApplicationMenu(
+        buildAppMenu({ pluginMenus: Array.from(appMenus.values()) })
+      )
+    }
   }
+  makeMenus()
+  watching = fs.watch(
+    pluginsDir,
+    { recursive: false },
+    async (eventType, fileName) => {
+      if (!fileName.endsWith(".plugin.js")) {
+        return
+      }
+      const instance = plugins.get(fileName)
+      if (instance) {
+        try {
+          await instance.destroy()
+        } catch (error) {
+          console.error(
+            "[Plugin] destroy 中にエラーが発生しました:",
+            instance.id,
+            error
+          )
+        }
+        plugins.delete(fileName)
+        openedPlugins.delete(fileName)
+        pluginData.delete(fileName)
+        console.info(`[Plugin] ${fileName} を読み込み解除しました`)
+      }
+      if (eventType === "change") {
+        try {
+          const datum = await pluginLoader(fileName)
+          pluginData.set(fileName, datum)
+          console.info(`[Plugin] ロードしました: ${datum.fileName}`)
+          const plugin = await moduleLoader(datum.filePath)
+          if (plugin) {
+            openedPlugins.set(fileName, plugin)
+            await plugin.setup({ plugins: Array.from(openedPlugins.values()) })
+            if (plugin.appMenu) {
+              appMenus.set(fileName, plugin.appMenu)
+              console.info(
+                `[Plugin] ${plugin.name}(${plugin.id}) のアプリメニューを読み込みました`
+              )
+            }
+            plugins.set(fileName, plugin)
+            console.info(
+              `[Plugin] ${fileName} を ${plugin.name}(${plugin.id}) として読み込みました`
+            )
+            makeMenus()
+          }
+        } catch (e) {
+          console.error(e, fileName)
+          plugins.delete(fileName)
+          openedPlugins.delete(fileName)
+          pluginData.delete(fileName)
+        }
+      }
+    }
+  )
 }
 loadPlugins()
 
 ipcMain.handle(REQUEST_INITIAL_DATA, (event) => {
   const data: InitialData = {
-    pluginData,
+    pluginData: Array.from(pluginData.values()),
     states,
     fonts,
     windowId: BrowserWindow.fromWebContents(event.sender)?.id ?? -1,
@@ -559,7 +638,7 @@ const openWindow = ({
             isSingletone: true,
             args: { show: false },
           }),
-        plugins: plugins
+        plugins: Array.from(plugins.values())
           .filter(
             (plugin): plugin is Required<typeof plugin> => !!plugin.contextMenu
           )
