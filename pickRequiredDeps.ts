@@ -22,6 +22,7 @@ const targets = [
   "axios",
   "zod",
   "stream-json",
+  "vm2",
 ] as const
 const dependencies = { ...pkg.dependencies, ...pkg.devDependencies }
 const targetWithVersion = targets.map(

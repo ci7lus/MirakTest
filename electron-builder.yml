@@ -201,12 +201,13 @@ files:
   - "node_modules/zod"
   - "node_modules/stream-json"
   - "node_modules/stream-chain"
+  - "node_modules/vm2"
   - from: node_modules/webchimera.js
     to: node_modules/webchimera.js
 publish: null
 npmRebuild: false
 npmArgs: "--runtime=node "
-afterPack: "dist/src/afterpack.js"
+afterPack: "./dist/src/main/afterpack.js"
 mac:
   icon: "assets/miraktest.icns"
   entitlements: "entitlements.plist"

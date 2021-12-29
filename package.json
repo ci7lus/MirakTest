@@ -9,13 +9,13 @@
     "type": "git",
     "url": "https://github.com/ci7lus/miraktest.git"
   },
-  "main": "dist/src/index.electron.js",
+  "main": "dist/src/main/index.electron.js",
   "scripts": {
     "dev:electron": "cross-env NODE_ENV=development electron .",
     "run:electron": "cross-env NODE_ENV=production electron .",
     "dev:webpack": "webpack serve --hot --mode=development --color",
     "build:electron": "electron-builder",
-    "build:tsc": "tsc --build tsconfig.tsc.json",
+    "build:tsc": "tsc --build ./src/main/tsconfig.json",
     "build:webpack": "cross-env NODE_ENV=production webpack --mode production",
     "build": "yarn build:webpack && yarn build:tsc && yarn build:electron",
     "lint:prettier": "prettier --check './src/**/*.{js,ts,tsx}'",
@@ -96,6 +96,7 @@
     "react-use": "^17.3.1",
     "recoil": "^0.4.1",
     "stream-json": "^1.7.3",
+    "vm2": "^3.9.5",
     "webchimera.js": "^0.5.2",
     "zod": "^3.9.8"
   },

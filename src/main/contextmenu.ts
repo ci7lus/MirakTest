@@ -1,34 +1,37 @@
 import { Menu } from "electron"
 
-export const generateContentPlayerContextMenu = ({
-  isPlaying,
-  toggleIsPlaying,
-  isAlwaysOnTop,
-  toggleIsAlwaysOnTop,
-  openContentPlayer,
-  openProgramTable,
-  openSetting,
-  plugins,
-}: {
-  isPlaying: boolean | null
-  toggleIsPlaying: () => void
-  isAlwaysOnTop: boolean
-  toggleIsAlwaysOnTop: () => void
-  openContentPlayer: () => void
-  openProgramTable: () => void
-  openSetting: () => void
-  plugins: Electron.MenuItemConstructorOptions[]
-}) => {
-  const pluginSeparator: Electron.MenuItemConstructorOptions[] = []
-  if (0 < plugins.length) {
-    pluginSeparator.push({
-      type: "separator",
-    })
-  }
+export const generateContentPlayerContextMenu = (
+  {
+    isPlaying,
+    toggleIsPlaying,
+    isAlwaysOnTop,
+    toggleIsAlwaysOnTop,
+    openContentPlayer,
+    openProgramTable,
+    openSetting,
+  }: {
+    isPlaying: boolean | null
+    toggleIsPlaying: () => void
+    isAlwaysOnTop: boolean
+    toggleIsAlwaysOnTop: () => void
+    openContentPlayer: () => void
+    openProgramTable: () => void
+    openSetting: () => void
+  },
+  e: Electron.Event,
+  params: Electron.ContextMenuParams
+) => {
+  e.preventDefault()
+  const noParams = typeof params !== "object"
 
-  return (e: Electron.Event, params: Electron.ContextMenuParams) => {
-    const noParams = typeof params !== "object"
-    e.preventDefault()
+  return (plugins: Electron.MenuItemConstructorOptions[]) => {
+    const pluginSeparator: Electron.MenuItemConstructorOptions[] = []
+    if (0 < plugins.length) {
+      pluginSeparator.push({
+        type: "separator",
+      })
+    }
+
     const menu = [
       ...(isPlaying !== null
         ? [

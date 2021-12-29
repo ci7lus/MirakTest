@@ -15,10 +15,11 @@ import {
 import Store from "electron-store"
 import esm from "esm"
 import fontList from "font-list"
+import { NodeVM } from "vm2"
 import WebChimeraJs from "webchimera.js"
-import pkg from "../package.json"
-import { globalContentPlayerPlayingContentFamilyKey } from "./atoms/globalFamilyKeys"
-import { globalActiveContentPlayerIdAtomKey } from "./atoms/globalKeys"
+import pkg from "../../package.json"
+import { globalContentPlayerPlayingContentFamilyKey } from "../../src/atoms/globalFamilyKeys"
+import { globalActiveContentPlayerIdAtomKey } from "../../src/atoms/globalKeys"
 import {
   REQUEST_CONFIRM_DIALOG,
   ON_WINDOW_MOVED,
@@ -38,24 +39,17 @@ import {
   TOGGLE_ALWAYS_ON_TOP,
   TOGGLE_FULL_SCREEN,
   UPDATE_IS_PLAYING_STATE,
-} from "./constants/ipc"
-import { ROUTES } from "./constants/routes"
-import { generateContentPlayerContextMenu } from "./main/contextmenu"
-import { EPGManager } from "./main/epgManager"
+} from "../../src/constants/ipc"
+import { ROUTES } from "../../src/constants/routes"
 import {
   OpenContentPlayerWindowArgs,
   OpenWindowArg,
   SerializableKV,
-} from "./types/ipc"
-import {
-  AppInfo,
-  InitPlugin,
-  PluginDefineInMain,
-  PluginInMainArgs,
-} from "./types/plugin"
-import { InitialData, ObjectLiteral, PluginDatum } from "./types/struct"
-
-const esmRequire = esm(module)
+} from "../../src/types/ipc"
+import { AppInfo, PluginInMainArgs } from "../../src/types/plugin"
+import { InitialData, ObjectLiteral, PluginDatum } from "../../src/types/struct"
+import { generateContentPlayerContextMenu } from "./contextmenu"
+import { EPGManager } from "./epgManager"
 
 const backgroundColor = "#111827"
 
@@ -84,10 +78,6 @@ const init = () => {
     console.info("win32 detected, VLC_PLUGIN_PATH:", VLCPluginPath)
     process.env["VLC_PLUGIN_PATH"] = VLCPluginPath
   }
-
-  Menu.setApplicationMenu(
-    buildAppMenu({ pluginMenus: Array.from(appMenus.values()) })
-  )
 
   fontList
     .getFonts()
@@ -258,13 +248,21 @@ const buildAppMenu = ({
 const userDataDir = app.getPath("userData")
 const pluginsDir = path.join(userDataDir, "plugins")
 const pluginData = new Map<string, PluginDatum>()
-const plugins = new Map<string, PluginDefineInMain>()
-const appMenus = new Map<string, Electron.MenuItemConstructorOptions>()
 const pluginLoader = async (fileName: string) => {
   const filePath = path.join(pluginsDir, fileName)
   const content = await fs.promises.readFile(filePath, "utf8")
   return { content, filePath, fileName }
 }
+const pluginVM = new NodeVM({
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-expect-error
+  strict: true,
+  require: {
+    external: false,
+    builtin: ["module", "vm", "fs", "path", "os", "url", "util"],
+    context: "sandbox",
+  },
+})
 const loadPlugins = async () => {
   console.info("Load plugins from:", pluginsDir)
   if (!fs.existsSync(pluginsDir)) await fs.promises.mkdir(pluginsDir)
@@ -319,71 +317,36 @@ const loadPlugins = async () => {
       },
     },
   }
-  const openedPlugins = new Map<string, PluginDefineInMain>()
-  const moduleLoader = async (filePath: string) => {
-    const module: { default: InitPlugin } | InitPlugin = esmRequire(filePath)
-    const load = "default" in module ? module.default : module
-    if (load.main) {
-      const plugin = await load.main(args)
-      console.info(
-        `[Plugin] 読込中: ${plugin.name} (${plugin.id}, ${plugin.version})`
-      )
-      return plugin
+  const setAppMenu = (pluginMenus: Electron.MenuItemConstructorOptions[]) => {
+    if (0 < pluginMenus.length) {
+      Menu.setApplicationMenu(buildAppMenu({ pluginMenus }))
     }
+  }
+  const setAppMenuCode = "globalThis.setAppMenu()"
+  pluginVM.sandbox.esm = esm
+  pluginVM.sandbox.sandboxArgs = args
+  pluginVM.sandbox.sandboxSetMenu = setAppMenu
+  pluginVM.runFile("./dist/src/main/vm/init.js")
+  pluginVM.sandbox.esm = null
+  pluginVM.sandbox.sandboxArgs = null
+  pluginVM.sandbox.sandboxSetMenu = null
+  const moduleLoader = async (filePath: string, fileName: string) => {
+    await pluginVM.run(
+      `module.exports = globalThis.loadModule("${filePath}", "${fileName}")`,
+      `${fileName}.load.js`
+    )
   }
   await Promise.all(
     Array.from(pluginData.values()).map(async ({ filePath, fileName }) => {
       try {
-        const module = await moduleLoader(filePath)
-        if (module) {
-          openedPlugins.set(fileName, module)
-        }
+        await moduleLoader(filePath, fileName)
       } catch (error) {
         console.error(error)
       }
     })
   )
-  const entries = Array.from(openedPlugins.values())
-  await Promise.all(
-    Array.from(openedPlugins.entries()).map(async ([fileName, plugin]) => {
-      try {
-        await plugin.setup({ plugins: entries })
-        if (plugin.appMenu) {
-          appMenus.set(fileName, plugin.appMenu)
-          console.info(
-            `[Plugin] ${plugin.name}(${plugin.id}) のアプリメニューを読み込みました`
-          )
-        }
-        plugins.set(fileName, plugin)
-        console.info(
-          `[Plugin] ${fileName} を ${plugin.name}(${plugin.id}) として読み込みました`
-        )
-      } catch (error) {
-        console.error(
-          "[Plugin] setup 中にエラーが発生しました:",
-          plugin.id,
-          error
-        )
-        try {
-          await plugin.destroy()
-        } catch (error) {
-          console.error(
-            "[Plugin] destroy 中にエラーが発生しました:",
-            plugin.id,
-            error
-          )
-        }
-      }
-    })
-  )
-  const makeMenus = () => {
-    if (0 < Object.keys(appMenus).length) {
-      Menu.setApplicationMenu(
-        buildAppMenu({ pluginMenus: Array.from(appMenus.values()) })
-      )
-    }
-  }
-  makeMenus()
+  await pluginVM.runFile("./dist/src/main/vm/setup.js")
+  pluginVM.run(setAppMenuCode, "setAppMenu.js")
   watching = fs.watch(
     pluginsDir,
     { recursive: false },
@@ -391,47 +354,29 @@ const loadPlugins = async () => {
       if (!fileName.endsWith(".plugin.js")) {
         return
       }
-      const instance = plugins.get(fileName)
-      if (instance) {
-        try {
-          await instance.destroy()
-        } catch (error) {
-          console.error(
-            "[Plugin] destroy 中にエラーが発生しました:",
-            instance.id,
-            error
-          )
-        }
-        plugins.delete(fileName)
-        openedPlugins.delete(fileName)
-        pluginData.delete(fileName)
-        console.info(`[Plugin] ${fileName} を読み込み解除しました`)
-      }
+      await pluginVM.run(
+        `module.exports = globalThis.destroyPlugin("${fileName}")`,
+        `${fileName}.destroy.js`
+      )
+      pluginData.delete(fileName)
+      pluginVM.run(setAppMenuCode, "setAppMenu.js")
       if (eventType === "change") {
         try {
           const datum = await pluginLoader(fileName)
           pluginData.set(fileName, datum)
           console.info(`[Plugin] ロードしました: ${datum.fileName}`)
-          const plugin = await moduleLoader(datum.filePath)
-          if (plugin) {
-            openedPlugins.set(fileName, plugin)
-            await plugin.setup({ plugins: Array.from(openedPlugins.values()) })
-            if (plugin.appMenu) {
-              appMenus.set(fileName, plugin.appMenu)
-              console.info(
-                `[Plugin] ${plugin.name}(${plugin.id}) のアプリメニューを読み込みました`
-              )
-            }
-            plugins.set(fileName, plugin)
-            console.info(
-              `[Plugin] ${fileName} を ${plugin.name}(${plugin.id}) として読み込みました`
-            )
-            makeMenus()
-          }
+          await moduleLoader(datum.filePath, datum.fileName)
+          await pluginVM.run(
+            `module.exports = globalThis.setupPlugin("${datum.fileName}")`,
+            `${datum.fileName}.setup.js`
+          )
+          pluginVM.run(setAppMenuCode)
         } catch (e) {
           console.error(e, fileName)
-          plugins.delete(fileName)
-          openedPlugins.delete(fileName)
+          await pluginVM.run(
+            `module.exports = globalThis.destroyPlugin("${fileName}")`,
+            `${fileName}.destroy.js`
+          )
           pluginData.delete(fileName)
         }
       }
@@ -551,7 +496,7 @@ const openWindow = ({
       minWidth,
       minHeight,
       webPreferences: {
-        preload: `${__dirname}/main/preload.js`,
+        preload: `${__dirname}/preload.js`,
         contextIsolation: true,
         nodeIntegration: false,
         enableRemoteModule: false,
@@ -607,44 +552,45 @@ const openWindow = ({
       }
     })
 
-    window.webContents.on("context-menu", (e, params) =>
-      generateContentPlayerContextMenu({
-        isPlaying:
-          name === ROUTES.ContentPlayer
-            ? window.id in blockerIdBycontentPlayerWindow &&
-              blockerIdBycontentPlayerWindow[window.id] !== null
-            : null,
-        toggleIsPlaying: () => {
-          window.webContents.send(UPDATE_IS_PLAYING_STATE)
+    window.webContents.on("context-menu", (e, params) => {
+      pluginVM.sandbox.sandboxSetContextMenu = generateContentPlayerContextMenu(
+        {
+          isPlaying:
+            name === ROUTES.ContentPlayer
+              ? window.id in blockerIdBycontentPlayerWindow &&
+                blockerIdBycontentPlayerWindow[window.id] !== null
+              : null,
+          toggleIsPlaying: () => {
+            window.webContents.send(UPDATE_IS_PLAYING_STATE)
+          },
+          isAlwaysOnTop: window.isAlwaysOnTop(),
+          toggleIsAlwaysOnTop: () => {
+            window.setAlwaysOnTop(!window.isAlwaysOnTop())
+          },
+          openContentPlayer: () =>
+            openWindow({
+              name: ROUTES.ContentPlayer,
+              args: { show: false },
+            }),
+          openSetting: () =>
+            openWindow({
+              name: ROUTES.Settings,
+              isSingletone: true,
+              args: { show: false },
+            }),
+          openProgramTable: () =>
+            openWindow({
+              name: ROUTES.ProgramTable,
+              isSingletone: true,
+              args: { show: false },
+            }),
         },
-        isAlwaysOnTop: window.isAlwaysOnTop(),
-        toggleIsAlwaysOnTop: () => {
-          window.setAlwaysOnTop(!window.isAlwaysOnTop())
-        },
-        openContentPlayer: () =>
-          openWindow({
-            name: ROUTES.ContentPlayer,
-            args: { show: false },
-          }),
-        openSetting: () =>
-          openWindow({
-            name: ROUTES.Settings,
-            isSingletone: true,
-            args: { show: false },
-          }),
-        openProgramTable: () =>
-          openWindow({
-            name: ROUTES.ProgramTable,
-            isSingletone: true,
-            args: { show: false },
-          }),
-        plugins: Array.from(plugins.values())
-          .filter(
-            (plugin): plugin is Required<typeof plugin> => !!plugin.contextMenu
-          )
-          .map((plugin) => plugin.contextMenu),
-      })(e, params)
-    )
+        e,
+        params
+      )
+      pluginVM.run("module.exports = globalThis.showContextMenu()")
+      pluginVM.sandbox.sandboxSetContextMenu = null
+    })
 
     window.on("moved", () => {
       window.webContents.send(ON_WINDOW_MOVED)
