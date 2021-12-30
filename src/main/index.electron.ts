@@ -1,5 +1,8 @@
 import fs from "fs"
+import { builtinModules } from "module"
 import path from "path"
+import timers from "timers"
+import vm from "vm"
 import {
   Rectangle,
   app,
@@ -13,9 +16,7 @@ import {
   Notification,
 } from "electron"
 import Store from "electron-store"
-import esm from "esm"
 import fontList from "font-list"
-import { NodeVM } from "vm2"
 import WebChimeraJs from "webchimera.js"
 import pkg from "../../package.json"
 import { globalContentPlayerPlayingContentFamilyKey } from "../../src/atoms/globalFamilyKeys"
@@ -48,6 +49,7 @@ import {
 } from "../../src/types/ipc"
 import { AppInfo, PluginInMainArgs } from "../../src/types/plugin"
 import { InitialData, ObjectLiteral, PluginDatum } from "../../src/types/struct"
+import { FORBIDDEN_MODULES } from "./constants"
 import { generateContentPlayerContextMenu } from "./contextmenu"
 import { EPGManager } from "./epgManager"
 
@@ -253,19 +255,39 @@ const pluginLoader = async (fileName: string) => {
   const content = await fs.promises.readFile(filePath, "utf8")
   return { content, filePath, fileName }
 }
-const pluginVM = new NodeVM({
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-expect-error
-  strict: true,
-  require: {
-    external: false,
-    builtin: ["module", "vm", "fs", "path", "os", "url", "util"],
-    context: "sandbox",
-  },
-})
+const pluginsVMContext = vm.createContext({ console })
+const pluginRequire = (fileName: string) => (s: string) => {
+  if (["buffer", "console", "process", "timers"].includes(s)) {
+    return require(s)
+  }
+  console.info(`[Plugin] "${fileName}"が"${s}"を要求しています`)
+  if (s === "electron" || s === "fs") {
+    return
+  }
+  if (
+    s.startsWith("_") ||
+    FORBIDDEN_MODULES.includes(s) ||
+    !builtinModules.includes(s)
+  ) {
+    return
+  }
+  return require(s)
+}
 const loadPlugins = async () => {
+  const sandboxJsInit = await fs.promises.readFile(
+    "./dist/src/main/vm/init.js",
+    "utf8"
+  )
+  const sandboxJsSetup = await fs.promises.readFile(
+    "./dist/src/main/vm/setup.js",
+    "utf8"
+  )
+  vm.runInContext("const exports = {};", pluginsVMContext)
+  vm.runInContext(sandboxJsInit, pluginsVMContext)
   console.info("Load plugins from:", pluginsDir)
-  if (!fs.existsSync(pluginsDir)) await fs.promises.mkdir(pluginsDir)
+  if (!fs.existsSync(pluginsDir)) {
+    await fs.promises.mkdir(pluginsDir)
+  }
   const files = await fs.promises.readdir(pluginsDir)
   for (const plugin of await Promise.all(
     files
@@ -322,31 +344,44 @@ const loadPlugins = async () => {
       Menu.setApplicationMenu(buildAppMenu({ pluginMenus }))
     }
   }
-  const setAppMenuCode = "globalThis.setAppMenu()"
-  pluginVM.sandbox.esm = esm
-  pluginVM.sandbox.sandboxArgs = args
-  pluginVM.sandbox.sandboxSetMenu = setAppMenu
-  pluginVM.runFile("./dist/src/main/vm/init.js")
-  pluginVM.sandbox.esm = null
-  pluginVM.sandbox.sandboxArgs = null
-  pluginVM.sandbox.sandboxSetMenu = null
-  const moduleLoader = async (filePath: string, fileName: string) => {
-    await pluginVM.run(
-      `module.exports = globalThis.loadModule("${filePath}", "${fileName}")`,
-      `${fileName}.load.js`
+  const moduleLoader = async (fileName: string, code: string) => {
+    const ctx = vm.createContext({
+      require: pluginRequire(fileName),
+      Buffer,
+      process,
+      console,
+      timers,
+    })
+    vm.runInContext(
+      `const global = globalThis;
+      Object.assign(globalThis, timers);
+      const exports = {};`,
+      ctx
+    )
+    const mod = new vm.SourceTextModule(code, {
+      context: ctx,
+    })
+    await mod.link((spec) => {
+      throw new Error(`unresolved import: ${spec}`)
+    })
+    await mod.evaluate()
+    await vm.runInContext("setupModule", pluginsVMContext)(
+      fileName,
+      mod.namespace,
+      args
     )
   }
   await Promise.all(
-    Array.from(pluginData.values()).map(async ({ filePath, fileName }) => {
+    Array.from(pluginData.values()).map(async ({ fileName, content }) => {
       try {
-        await moduleLoader(filePath, fileName)
+        await moduleLoader(fileName, content)
       } catch (error) {
         console.error(error)
       }
     })
   )
-  await pluginVM.runFile("./dist/src/main/vm/setup.js")
-  pluginVM.run(setAppMenuCode, "setAppMenu.js")
+  await vm.runInContext(sandboxJsSetup, pluginsVMContext)
+  vm.runInContext("setAppMenu", pluginsVMContext)(setAppMenu)
   watching = fs.watch(
     pluginsDir,
     { recursive: false },
@@ -354,36 +389,26 @@ const loadPlugins = async () => {
       if (!fileName.endsWith(".plugin.js")) {
         return
       }
-      await pluginVM.run(
-        `module.exports = globalThis.destroyPlugin("${fileName}")`,
-        `${fileName}.destroy.js`
-      )
+      await vm.runInContext("destroyPlugin", pluginsVMContext)(fileName)
       pluginData.delete(fileName)
-      pluginVM.run(setAppMenuCode, "setAppMenu.js")
       if (eventType === "change") {
         try {
           const datum = await pluginLoader(fileName)
           pluginData.set(fileName, datum)
           console.info(`[Plugin] ロードしました: ${datum.fileName}`)
-          await moduleLoader(datum.filePath, datum.fileName)
-          await pluginVM.run(
-            `module.exports = globalThis.setupPlugin("${datum.fileName}")`,
-            `${datum.fileName}.setup.js`
-          )
-          pluginVM.run(setAppMenuCode)
+          await moduleLoader(datum.fileName, datum.content)
+          await vm.runInContext("setupPlugin", pluginsVMContext)(fileName)
         } catch (e) {
           console.error(e, fileName)
-          await pluginVM.run(
-            `module.exports = globalThis.destroyPlugin("${fileName}")`,
-            `${fileName}.destroy.js`
-          )
+          await vm.runInContext("destroyPlugin", pluginsVMContext)(fileName)
           pluginData.delete(fileName)
         }
       }
+      vm.runInContext("setAppMenu", pluginsVMContext)(setAppMenu)
     }
   )
 }
-loadPlugins()
+loadPlugins().catch(console.error)
 
 ipcMain.handle(REQUEST_INITIAL_DATA, (event) => {
   const data: InitialData = {
@@ -553,43 +578,46 @@ const openWindow = ({
     })
 
     window.webContents.on("context-menu", (e, params) => {
-      pluginVM.sandbox.sandboxSetContextMenu = generateContentPlayerContextMenu(
-        {
-          isPlaying:
-            name === ROUTES.ContentPlayer
-              ? window.id in blockerIdBycontentPlayerWindow &&
-                blockerIdBycontentPlayerWindow[window.id] !== null
-              : null,
-          toggleIsPlaying: () => {
-            window.webContents.send(UPDATE_IS_PLAYING_STATE)
+      vm.runInContext(
+        "showContextMenu",
+        pluginsVMContext
+      )(
+        generateContentPlayerContextMenu(
+          {
+            isPlaying:
+              name === ROUTES.ContentPlayer
+                ? window.id in blockerIdBycontentPlayerWindow &&
+                  blockerIdBycontentPlayerWindow[window.id] !== null
+                : null,
+            toggleIsPlaying: () => {
+              window.webContents.send(UPDATE_IS_PLAYING_STATE)
+            },
+            isAlwaysOnTop: window.isAlwaysOnTop(),
+            toggleIsAlwaysOnTop: () => {
+              window.setAlwaysOnTop(!window.isAlwaysOnTop())
+            },
+            openContentPlayer: () =>
+              openWindow({
+                name: ROUTES.ContentPlayer,
+                args: { show: false },
+              }),
+            openSetting: () =>
+              openWindow({
+                name: ROUTES.Settings,
+                isSingletone: true,
+                args: { show: false },
+              }),
+            openProgramTable: () =>
+              openWindow({
+                name: ROUTES.ProgramTable,
+                isSingletone: true,
+                args: { show: false },
+              }),
           },
-          isAlwaysOnTop: window.isAlwaysOnTop(),
-          toggleIsAlwaysOnTop: () => {
-            window.setAlwaysOnTop(!window.isAlwaysOnTop())
-          },
-          openContentPlayer: () =>
-            openWindow({
-              name: ROUTES.ContentPlayer,
-              args: { show: false },
-            }),
-          openSetting: () =>
-            openWindow({
-              name: ROUTES.Settings,
-              isSingletone: true,
-              args: { show: false },
-            }),
-          openProgramTable: () =>
-            openWindow({
-              name: ROUTES.ProgramTable,
-              isSingletone: true,
-              args: { show: false },
-            }),
-        },
-        e,
-        params
+          e,
+          params
+        )
       )
-      pluginVM.run("module.exports = globalThis.showContextMenu()")
-      pluginVM.sandbox.sandboxSetContextMenu = null
     })
 
     window.on("moved", () => {

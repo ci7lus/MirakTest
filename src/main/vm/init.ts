@@ -1,16 +1,18 @@
-import { PluginDefineInMain } from "../../types/plugin"
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import {
+  InitPlugin,
+  PluginDefineInMain,
+  PluginInMainArgs,
+} from "../../types/plugin"
 
-const esmRequire = esm(module)
+const openedPlugins = new Map()
+const plugins = new Map()
 
-globalThis.openedPlugins = new Map()
-globalThis.plugins = new Map()
-
-const setupArgment = sandboxArgs
-const setAppMenuInternal = sandboxSetMenu
-
-globalThis.setAppMenu = () => {
-  setAppMenuInternal(
-    Array.from(globalThis.plugins.values())
+const setAppMenu = (
+  sandboxSetMenu: (m: Electron.MenuItemConstructorOptions[]) => void
+) => {
+  sandboxSetMenu(
+    Array.from(plugins.values())
       .filter(
         (
           plugin
@@ -21,9 +23,11 @@ globalThis.setAppMenu = () => {
       .map((plugin) => plugin.appMenu)
   )
 }
-globalThis.showContextMenu = () => {
+const showContextMenu = (
+  sandboxSetContextMenu: (m: Electron.MenuItemConstructorOptions[]) => void
+) => {
   sandboxSetContextMenu(
-    Array.from(globalThis.plugins.values())
+    Array.from(plugins.values())
       .filter(
         (
           plugin
@@ -34,25 +38,28 @@ globalThis.showContextMenu = () => {
       .map((plugin) => plugin.contextMenu)
   )
 }
-globalThis.loadModule = async (filePath, fileName) => {
-  const mod = esmRequire(filePath)
+const setupModule = async (
+  fileName: string,
+  mod: { default: InitPlugin } | InitPlugin,
+  setupArgment: PluginInMainArgs
+) => {
   const load = "default" in mod ? mod.default : mod
   if (load.main) {
     const plugin = await load.main(setupArgment)
     console.info(
       `[Plugin] 読込中: ${plugin.name} (${plugin.id}, ${plugin.version})`
     )
-    globalThis.openedPlugins.set(fileName, plugin)
+    openedPlugins.set(fileName, plugin)
   }
 }
-globalThis.setupPlugin = async (fileName) => {
-  const plugin = globalThis.openedPlugins.get(fileName)
+const setupPlugin = async (fileName: string) => {
+  const plugin = openedPlugins.get(fileName)
   if (!plugin) {
     return
   }
   try {
     await plugin.setup({
-      plugins: Array.from(globalThis.openedPlugins.values()),
+      plugins: Array.from(openedPlugins.values()),
     })
     if (plugin.appMenu) {
       console.info(
@@ -64,7 +71,7 @@ globalThis.setupPlugin = async (fileName) => {
         `[Plugin] ${plugin.name}(${plugin.id}) コンテキストメニューを読み込みました`
       )
     }
-    globalThis.plugins.set(fileName, plugin)
+    plugins.set(fileName, plugin)
     console.info(
       `[Plugin] ${fileName} を ${plugin.name}(${plugin.id}) として読み込みました`
     )
@@ -79,13 +86,12 @@ globalThis.setupPlugin = async (fileName) => {
         error
       )
     }
-    globalThis.openedPlugins.delete(fileName)
-    globalThis.plugins.delete(fileName)
+    openedPlugins.delete(fileName)
+    plugins.delete(fileName)
   }
 }
-globalThis.destroyPlugin = async (fileName) => {
-  const instance =
-    globalThis.plugins.get(fileName) || globalThis.openedPlugins.get(fileName)
+const destroyPlugin = async (fileName: string) => {
+  const instance = plugins.get(fileName) || openedPlugins.get(fileName)
   if (instance) {
     try {
       await instance.destroy()
@@ -96,8 +102,8 @@ globalThis.destroyPlugin = async (fileName) => {
         error
       )
     }
-    globalThis.plugins.delete(fileName)
-    globalThis.openedPlugins.delete(fileName)
+    plugins.delete(fileName)
+    openedPlugins.delete(fileName)
     console.info(`[Plugin] ${fileName} を読み込み解除しました`)
   }
 }

@@ -11,10 +11,10 @@
   },
   "main": "dist/src/main/index.electron.js",
   "scripts": {
-    "dev:electron": "cross-env NODE_ENV=development electron .",
-    "run:electron": "cross-env NODE_ENV=production electron .",
+    "dev:electron": "cross-env NODE_ENV=development NODE_OPTIONS='--experimental-vm-modules' electron .",
+    "run:electron": "cross-env NODE_ENV=production NODE_OPTIONS='--experimental-vm-modules' electron .",
     "dev:webpack": "webpack serve --hot --mode=development --color",
-    "build:electron": "electron-builder",
+    "build:electron": "cross-env NODE_OPTIONS='--experimental-vm-modules' electron-builder",
     "build:tsc": "tsc --build ./src/main/tsconfig.json",
     "build:webpack": "cross-env NODE_ENV=production webpack --mode production",
     "build": "yarn build:webpack && yarn build:tsc && yarn build:electron",

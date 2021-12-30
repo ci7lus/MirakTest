@@ -17,12 +17,10 @@ type Package = {
 const targets = [
   "webchimera.js",
   "electron-store",
-  "esm",
   "font-list",
   "axios",
   "zod",
   "stream-json",
-  "vm2",
 ] as const
 const dependencies = { ...pkg.dependencies, ...pkg.devDependencies }
 const targetWithVersion = targets.map(

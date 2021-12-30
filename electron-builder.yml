@@ -194,14 +194,12 @@ files:
   - "node_modules/lru-cache"
   - "node_modules/yallist"
   - "node_modules/type-fest"
-  - "node_modules/esm"
   - "node_modules/font-list"
   - "node_modules/axios"
   - "node_modules/follow-redirects"
   - "node_modules/zod"
   - "node_modules/stream-json"
   - "node_modules/stream-chain"
-  - "node_modules/vm2"
   - from: node_modules/webchimera.js
     to: node_modules/webchimera.js
 publish: null
