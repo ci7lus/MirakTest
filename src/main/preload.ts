@@ -1,6 +1,4 @@
 import fs from "fs"
-import os from "os"
-import path from "path"
 import {
   clipboard,
   contextBridge,
@@ -38,20 +36,7 @@ import {
 } from "../types/ipc"
 import { store } from "../utils/store"
 import { QuerySchema } from "./epgManager"
-
-const homeDir = os.homedir()
-const exists = async (filePath: string) =>
-  new Promise<boolean>((res) => {
-    fs.promises
-      .lstat(filePath)
-      .then((stat) => res(stat.isFile() || stat.isDirectory()))
-      .catch(() => res(false))
-  })
-const isChildOfHome = (filePath: string) => {
-  // https://stackoverflow.com/questions/37521893/determine-if-a-path-is-subdirectory-of-another-in-node-js
-  const relative = path.relative(homeDir, filePath)
-  return relative && !relative.startsWith("..") && !path.isAbsolute(relative)
-}
+import { exists, isChildOfHome, isHidden } from "./fsUtils"
 
 let wc: WebChimera.Player | null = null
 
@@ -334,12 +319,15 @@ const preload: Preload = {
     async writeFile(path, buffer) {
       const isNotChild = !isChildOfHome(path)
       const isAlreadyExists = await exists(path)
-      if (isNotChild || isAlreadyExists) {
+      const isHiddenFile = isHidden(path)
+      if (isNotChild || isAlreadyExists || isHiddenFile) {
         const ask = await preload.public.requestConfirmDialog(
           `「${path}」${
-            isAlreadyExists
-              ? "は既に存在します。"
-              : "はホームディレクトリの外です。"
+            isHiddenFile
+              ? "は隠しファイルです。"
+              : isNotChild
+              ? "はホームディレクトリの外です。"
+              : "は既に存在します。"
           }書き込みを許可しますか？`,
           ["許可する", "拒否する"]
         )

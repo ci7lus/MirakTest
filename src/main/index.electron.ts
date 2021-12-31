@@ -3,7 +3,10 @@ import { builtinModules } from "module"
 import path from "path"
 import timers from "timers"
 import vm from "vm"
-import {
+import { transformAsync } from "@babel/core"
+// @ts-expect-error dts not found
+import babelTransformModulesCommonjs from "@babel/plugin-transform-modules-commonjs"
+import electron, {
   Rectangle,
   app,
   BrowserWindow,
@@ -47,11 +50,12 @@ import {
   OpenWindowArg,
   SerializableKV,
 } from "../../src/types/ipc"
-import { AppInfo, PluginInMainArgs } from "../../src/types/plugin"
+import { AppInfo, InitPlugin, PluginInMainArgs } from "../../src/types/plugin"
 import { InitialData, ObjectLiteral, PluginDatum } from "../../src/types/struct"
 import { FORBIDDEN_MODULES } from "./constants"
 import { generateContentPlayerContextMenu } from "./contextmenu"
 import { EPGManager } from "./epgManager"
+import { exists, isChildOfHome, isHidden } from "./fsUtils"
 
 const backgroundColor = "#111827"
 
@@ -91,9 +95,7 @@ const init = () => {
   Store.initRenderer()
   // store/bounds定義を引っ張ってくると目に見えて容量が増えるので決め打ち
   const _store = new Store<{ [key: typeof CONTENT_PLAYER_BOUNDS]: Rectangle }>({
-    // workaround for conf's Project name could not be inferred. Please specify the `projectName` option.
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
+    // @ts-expect-error workaround for conf's Project name could not be inferred. Please specify the `projectName` option.
     projectName: pkg.name,
   })
   store = _store
@@ -256,13 +258,46 @@ const pluginLoader = async (fileName: string) => {
   return { content, filePath, fileName }
 }
 const pluginsVMContext = vm.createContext({ console })
+const promises = new Proxy(fs.promises, {
+  get:
+    (target, name) =>
+    async (path: string, ...args: unknown[]) => {
+      const isNotChild = !isChildOfHome(path)
+      const isAlreadyExists = await exists(path)
+      const isHiddenFile = isHidden(path)
+      if (isNotChild || isAlreadyExists || isHiddenFile) {
+        const ask = await dialog.showMessageBox(undefined as never, {
+          message: `「${path}」${
+            isHiddenFile
+              ? "は隠しファイルです。"
+              : isNotChild
+              ? "はホームディレクトリの外です。"
+              : "は既に存在します。"
+          }${name.toString()}を許可しますか？`,
+          buttons: ["許可する", "拒否する"],
+          type: "question",
+        })
+        if (ask.response !== 0) {
+          throw new Error("denied")
+        }
+      }
+      // @ts-expect-error proxy
+      return target[name](path, ...args)
+    },
+})
 const pluginRequire = (fileName: string) => (s: string) => {
   if (["buffer", "console", "process", "timers"].includes(s)) {
-    return require(s)
+    return require(/* webpackIgnore: true */ s)
   }
   console.info(`[Plugin] "${fileName}"が"${s}"を要求しています`)
-  if (s === "electron" || s === "fs") {
-    return
+  if (s === "electron") {
+    return electron
+  }
+  if (s === "fs") {
+    return { promises }
+  }
+  if (s === "fs/promises") {
+    return promises
   }
   if (
     s.startsWith("_") ||
@@ -271,15 +306,25 @@ const pluginRequire = (fileName: string) => (s: string) => {
   ) {
     return
   }
-  return require(s)
+  return require(/* webpackIgnore: true */ s)
+}
+const esmToCjs = async (code: string) => {
+  const transformed = await transformAsync(code, {
+    plugins: [babelTransformModulesCommonjs],
+    compact: false,
+  })
+  if (!transformed || !transformed.code) {
+    throw new Error("[Plugin] cjs transform failed")
+  }
+  return transformed.code
 }
 const loadPlugins = async () => {
   const sandboxJsInit = await fs.promises.readFile(
-    "./dist/src/main/vm/init.js",
+    `${__dirname}/src/main/vm/init.js`,
     "utf8"
   )
   const sandboxJsSetup = await fs.promises.readFile(
-    "./dist/src/main/vm/setup.js",
+    `${__dirname}/src/main/vm/setup.js`,
     "utf8"
   )
   vm.runInContext("const exports = {};", pluginsVMContext)
@@ -358,18 +403,9 @@ const loadPlugins = async () => {
       const exports = {};`,
       ctx
     )
-    const mod = new vm.SourceTextModule(code, {
-      context: ctx,
-    })
-    await mod.link((spec) => {
-      throw new Error(`unresolved import: ${spec}`)
-    })
-    await mod.evaluate()
-    await vm.runInContext("setupModule", pluginsVMContext)(
-      fileName,
-      mod.namespace,
-      args
-    )
+    const cjscode = await esmToCjs(code)
+    const mod: InitPlugin = vm.runInContext(cjscode, ctx)
+    await vm.runInContext("setupModule", pluginsVMContext)(fileName, mod, args)
   }
   await Promise.all(
     Array.from(pluginData.values()).map(async ({ fileName, content }) => {
@@ -521,7 +557,7 @@ const openWindow = ({
       minWidth,
       minHeight,
       webPreferences: {
-        preload: `${__dirname}/preload.js`,
+        preload: `${__dirname}/src/main/preload.js`,
         contextIsolation: true,
         nodeIntegration: false,
         enableRemoteModule: false,
