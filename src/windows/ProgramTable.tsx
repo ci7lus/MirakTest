@@ -9,7 +9,6 @@ import { mirakurunSetting } from "../atoms/settings"
 import { ScrollArea } from "../components/programTable/ScrollArea"
 import { WeekdaySelector } from "../components/programTable/WeekdaySelector"
 import { useNow } from "../hooks/date"
-import { remoteWindow } from "../utils/remote"
 
 export const CoiledProgramTable: React.VFC<{}> = () => {
   const now = useNow()
@@ -22,7 +21,7 @@ export const CoiledProgramTable: React.VFC<{}> = () => {
   const mirakurunSettingValue = useRecoilValue(mirakurunSetting)
 
   useEffect(() => {
-    remoteWindow.setTitle(`番組表 - ${pkg.productName}`)
+    window.Preload.public.setWindowTitle(`番組表 - ${pkg.productName}`)
   }, [])
 
   return (

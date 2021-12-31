@@ -1,5 +1,4 @@
 import clsx from "clsx"
-import { remote } from "electron"
 import React, { useState } from "react"
 import { File } from "react-feather"
 import { useDebounce } from "react-use"
@@ -65,13 +64,13 @@ export const ScreenshotSettingForm: React.VFC<{
             disabled={!saveAsAFile}
             onClick={async () => {
               if (!saveAsAFile) return
-              const dialog = await remote.dialog.showOpenDialog({
+              const dialog = await window.Preload.public.requestDialog({
                 properties: ["openDirectory", "createDirectory"],
                 defaultPath: basePath || undefined,
               })
 
               if (dialog.canceled) return
-              const path = dialog.filePaths.shift()
+              const path = dialog.filePaths.slice(0).shift()
               if (!path) return
               setBasePath(path)
             }}

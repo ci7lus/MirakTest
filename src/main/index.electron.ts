@@ -1,6 +1,12 @@
 import fs from "fs"
+import { builtinModules } from "module"
 import path from "path"
-import {
+import timers from "timers"
+import vm from "vm"
+import { transformAsync } from "@babel/core"
+// @ts-expect-error dts not found
+import babelTransformModulesCommonjs from "@babel/plugin-transform-modules-commonjs"
+import electron, {
   Rectangle,
   app,
   BrowserWindow,
@@ -10,42 +16,46 @@ import {
   shell,
   dialog,
   powerSaveBlocker,
+  Notification,
 } from "electron"
 import Store from "electron-store"
-import esm from "esm"
 import fontList from "font-list"
-import React from "react"
-import Recoil from "recoil"
 import WebChimeraJs from "webchimera.js"
-import pkg from "../package.json"
-import { globalContentPlayerPlayingContentFamilyKey } from "./atoms/globalFamilyKeys"
-import { globalActiveContentPlayerIdAtomKey } from "./atoms/globalKeys"
+import pkg from "../../package.json"
+import { globalContentPlayerPlayingContentFamilyKey } from "../../src/atoms/globalFamilyKeys"
+import { globalActiveContentPlayerIdAtomKey } from "../../src/atoms/globalKeys"
 import {
+  REQUEST_CONFIRM_DIALOG,
+  ON_WINDOW_MOVED,
   RECOIL_STATE_UPDATE,
+  REQUEST_APP_PATH,
+  REQUEST_CONTENT_BOUNDS,
+  REQUEST_CURSOR_SCREEN_POINT,
+  REQUEST_DIALOG,
   REQUEST_INITIAL_DATA,
   REUQEST_OPEN_WINDOW,
+  SET_WINDOW_ASPECT,
+  SET_WINDOW_CONTENT_BOUNDS,
+  SET_WINDOW_POSITION,
+  SET_WINDOW_TITLE,
+  SHOW_NOTIFICATION,
+  SHOW_WINDOW,
+  TOGGLE_ALWAYS_ON_TOP,
+  TOGGLE_FULL_SCREEN,
   UPDATE_IS_PLAYING_STATE,
-} from "./constants/ipc"
-import { ROUTES } from "./constants/routes"
-import { EPGManager } from "./main/epgManager"
+} from "../../src/constants/ipc"
+import { ROUTES } from "../../src/constants/routes"
 import {
   OpenContentPlayerWindowArgs,
   OpenWindowArg,
-  RecoilStateUpdateArg,
-} from "./types/ipc"
-import {
-  AppInfo,
-  InitPlugin,
-  PluginDefineInMain,
-  PluginInMainArgs,
-} from "./types/plugin"
-import { InitialData, ObjectLiteral, PluginDatum } from "./types/struct"
-
-// プラグイン側で対策するのが面倒すぎるのでこちら側でモックを用意
-global.React = React
-global.Recoil = Recoil
-
-const esmRequire = esm(module)
+  SerializableKV,
+} from "../../src/types/ipc"
+import { AppInfo, InitPlugin, PluginInMainArgs } from "../../src/types/plugin"
+import { InitialData, ObjectLiteral, PluginDatum } from "../../src/types/struct"
+import { FORBIDDEN_MODULES } from "./constants"
+import { generateContentPlayerContextMenu } from "./contextmenu"
+import { EPGManager } from "./epgManager"
+import { exists, isChildOfHome, isHidden } from "./fsUtils"
 
 const backgroundColor = "#111827"
 
@@ -66,14 +76,14 @@ let display: Electron.Display | null = null
 
 let fonts: string[] = []
 
+let watching: fs.FSWatcher | null = null
+
 const init = () => {
   if (process.platform == "win32" && WebChimeraJs.path) {
     const VLCPluginPath = path.join(WebChimeraJs.path, "plugins")
     console.info("win32 detected, VLC_PLUGIN_PATH:", VLCPluginPath)
     process.env["VLC_PLUGIN_PATH"] = VLCPluginPath
   }
-
-  Menu.setApplicationMenu(buildAppMenu({ plugins: appMenus }))
 
   fontList
     .getFonts()
@@ -85,9 +95,7 @@ const init = () => {
   Store.initRenderer()
   // store/bounds定義を引っ張ってくると目に見えて容量が増えるので決め打ち
   const _store = new Store<{ [key: typeof CONTENT_PLAYER_BOUNDS]: Rectangle }>({
-    // workaround for conf's Project name could not be inferred. Please specify the `projectName` option.
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
+    // @ts-expect-error workaround for conf's Project name could not be inferred. Please specify the `projectName` option.
     projectName: pkg.name,
   })
   store = _store
@@ -102,18 +110,24 @@ app.on("ready", () => init())
 
 app.allowRendererProcessReuse = false
 
-app.on("window-all-closed", () => app.quit())
+app.on("window-all-closed", () => {
+  if (watching) {
+    watching.close()
+    watching = null
+  }
+  app.quit()
+})
 
 const buildAppMenu = ({
-  plugins,
+  pluginMenus,
 }: {
-  plugins?: { [key: string]: Electron.MenuItemConstructorOptions }
+  pluginMenus?: Electron.MenuItemConstructorOptions[]
 }) => {
   const fileSubMenu: Electron.MenuItemConstructorOptions["submenu"] = [
     {
       label: "新しいプレイヤー",
       click: () =>
-        openWindow({ name: ROUTES["ContentPlayer"], isHideUntilLoaded: true }),
+        openWindow({ name: ROUTES["ContentPlayer"], args: { show: false } }),
       accelerator: "CmdOrCtrl+N",
     },
   ]
@@ -159,11 +173,10 @@ const buildAppMenu = ({
     { label: "ウィンドウ", role: "windowMenu" },
   ]
 
-  if (0 < Object.keys(plugins || {}).length) {
-    const pluginItems = Object.entries(plugins || {}).map(([, item]) => item)
+  if (0 < (pluginMenus || []).length) {
     items.push({
       label: "プラグイン",
-      submenu: pluginItems,
+      submenu: pluginMenus,
     })
   }
 
@@ -238,26 +251,100 @@ const buildAppMenu = ({
 
 const userDataDir = app.getPath("userData")
 const pluginsDir = path.join(userDataDir, "plugins")
-const pluginData: PluginDatum[] = []
-const plugins: PluginDefineInMain[] = []
-const appMenus: { [key: string]: Electron.MenuItemConstructorOptions } = {}
+const pluginData = new Map<string, PluginDatum>()
+const pluginLoader = async (fileName: string) => {
+  const filePath = path.join(pluginsDir, fileName)
+  const content = await fs.promises.readFile(filePath, "utf8")
+  return { content, filePath, fileName }
+}
+const pluginsVMContext = vm.createContext({ console })
+const promises = new Proxy(fs.promises, {
+  get:
+    (target, name) =>
+    async (path: string, ...args: unknown[]) => {
+      const isNotChild = !isChildOfHome(path)
+      const isAlreadyExists = await exists(path)
+      const isHiddenFile = isHidden(path)
+      if (isNotChild || isAlreadyExists || isHiddenFile) {
+        const ask = await dialog.showMessageBox(undefined as never, {
+          message: `「${path}」${
+            isHiddenFile
+              ? "は隠しファイルです。"
+              : isNotChild
+              ? "はホームディレクトリの外です。"
+              : "は既に存在します。"
+          }${name.toString()}を許可しますか？`,
+          buttons: ["許可する", "拒否する"],
+          type: "question",
+        })
+        if (ask.response !== 0) {
+          throw new Error("denied")
+        }
+      }
+      // @ts-expect-error proxy
+      return target[name](path, ...args)
+    },
+})
+const pluginRequire = (fileName: string) => (s: string) => {
+  if (["buffer", "console", "process", "timers"].includes(s)) {
+    return require(/* webpackIgnore: true */ s)
+  }
+  console.info(`[Plugin] "${fileName}"が"${s}"を要求しています`)
+  if (s === "electron") {
+    return electron
+  }
+  if (s === "fs") {
+    return { promises }
+  }
+  if (s === "fs/promises") {
+    return promises
+  }
+  if (
+    s.startsWith("_") ||
+    FORBIDDEN_MODULES.includes(s) ||
+    !builtinModules.includes(s)
+  ) {
+    return
+  }
+  return require(/* webpackIgnore: true */ s)
+}
+const esmToCjs = async (code: string) => {
+  const transformed = await transformAsync(code, {
+    plugins: [babelTransformModulesCommonjs],
+    compact: false,
+  })
+  if (!transformed || !transformed.code) {
+    throw new Error("[Plugin] cjs transform failed")
+  }
+  return transformed.code
+}
 const loadPlugins = async () => {
+  const sandboxJsInit = await fs.promises.readFile(
+    `${__dirname}/src/main/vm/init.js`,
+    "utf8"
+  )
+  const sandboxJsSetup = await fs.promises.readFile(
+    `${__dirname}/src/main/vm/setup.js`,
+    "utf8"
+  )
+  vm.runInContext("const exports = {};", pluginsVMContext)
+  vm.runInContext(sandboxJsInit, pluginsVMContext)
   console.info("Load plugins from:", pluginsDir)
-  if (!fs.existsSync(pluginsDir)) await fs.promises.mkdir(pluginsDir)
+  if (!fs.existsSync(pluginsDir)) {
+    await fs.promises.mkdir(pluginsDir)
+  }
   const files = await fs.promises.readdir(pluginsDir)
-  const parsedPlugins = await Promise.all(
+  for (const plugin of await Promise.all(
     files
       .filter((filePath) => filePath.endsWith(".plugin.js"))
-      .map(async (fileName) => {
-        const filePath = path.join(pluginsDir, fileName)
-        const content = await fs.promises.readFile(filePath, "utf8")
-        return { content, filePath, fileName }
-      })
-  )
-  pluginData.push(...parsedPlugins)
+      .map(pluginLoader)
+  )) {
+    pluginData.set(plugin.fileName, plugin)
+    console.info(`[Plugin] ロードしました: ${plugin.fileName}`)
+  }
   console.info(
-    "plugins paths:",
-    pluginData.map((p) => p.filePath)
+    "[Plugin] 初期ロードプラグイン:",
+    Array.from(pluginData.values()).map((p) => p.filePath)
   )
   const appInfo: AppInfo = { name: pkg.productName, version: pkg.version }
   const args: PluginInMainArgs = {
@@ -283,109 +370,117 @@ const loadPlugins = async () => {
         openWindow({
           name: name as string,
           isSingletone: true,
-          isHideUntilLoaded: true,
+          args: { show: false },
         })
       },
       openContentPlayerWindow: ({
         playingContent,
-        isHideUntilLoaded,
       }: OpenContentPlayerWindowArgs) => {
         return openWindow({
           name: ROUTES["ContentPlayer"],
           isSingletone: false,
           playingContent,
-          isHideUntilLoaded,
         })
       },
     },
   }
-  const openedPlugins: PluginDefineInMain[] = []
+  const setAppMenu = (pluginMenus: Electron.MenuItemConstructorOptions[]) => {
+    if (0 < pluginMenus.length) {
+      Menu.setApplicationMenu(buildAppMenu({ pluginMenus }))
+    }
+  }
+  const moduleLoader = async (fileName: string, code: string) => {
+    const ctx = vm.createContext({
+      require: pluginRequire(fileName),
+      Buffer,
+      process,
+      console,
+      timers,
+    })
+    vm.runInContext(
+      `const global = globalThis;
+      Object.assign(globalThis, timers);
+      const exports = {};`,
+      ctx
+    )
+    const cjscode = await esmToCjs(code)
+    const mod: InitPlugin = vm.runInContext(cjscode, ctx)
+    await vm.runInContext("setupModule", pluginsVMContext)(fileName, mod, args)
+  }
   await Promise.all(
-    pluginData.map(async ({ filePath }) => {
+    Array.from(pluginData.values()).map(async ({ fileName, content }) => {
       try {
-        const module: { default: InitPlugin } | InitPlugin =
-          esmRequire(filePath)
-        const load = "default" in module ? module.default : module
-        if (load.main) {
-          const plugin = await load.main(args)
-          console.info(
-            `[Plugin] 読込中: ${plugin.name} (${plugin.id}, ${plugin.version})`
-          )
-          openedPlugins.push(plugin)
-        }
+        await moduleLoader(fileName, content)
       } catch (error) {
         console.error(error)
       }
     })
   )
-  await Promise.all(
-    openedPlugins.map(async (plugin) => {
-      try {
-        await plugin.setup({ plugins: openedPlugins })
-        if (plugin.appMenu) {
-          appMenus[plugin.id] = plugin.appMenu
-          console.info(
-            `[Plugin] ${plugin.name} のアプリメニューを読み込みました`
-          )
-        }
-        plugins.push(plugin)
-      } catch (error) {
-        console.error(
-          "[Plugin] setup 中にエラーが発生しました:",
-          plugin.id,
-          error
-        )
+  await vm.runInContext(sandboxJsSetup, pluginsVMContext)
+  vm.runInContext("setAppMenu", pluginsVMContext)(setAppMenu)
+  watching = fs.watch(
+    pluginsDir,
+    { recursive: false },
+    async (eventType, fileName) => {
+      if (!fileName.endsWith(".plugin.js")) {
+        return
+      }
+      await vm.runInContext("destroyPlugin", pluginsVMContext)(fileName)
+      pluginData.delete(fileName)
+      if (eventType === "change") {
         try {
-          await plugin.destroy()
-        } catch (error) {
-          console.error(
-            "[Plugin] destroy 中にエラーが発生しました:",
-            plugin.id,
-            error
-          )
+          const datum = await pluginLoader(fileName)
+          pluginData.set(fileName, datum)
+          console.info(`[Plugin] ロードしました: ${datum.fileName}`)
+          await moduleLoader(datum.fileName, datum.content)
+          await vm.runInContext("setupPlugin", pluginsVMContext)(fileName)
+        } catch (e) {
+          console.error(e, fileName)
+          await vm.runInContext("destroyPlugin", pluginsVMContext)(fileName)
+          pluginData.delete(fileName)
         }
       }
-    })
+      vm.runInContext("setAppMenu", pluginsVMContext)(setAppMenu)
+    }
   )
-  if (0 < Object.keys(appMenus).length) {
-    Menu.setApplicationMenu(buildAppMenu({ plugins: appMenus }))
-  }
 }
-loadPlugins()
+loadPlugins().catch(console.error)
 
-ipcMain.handle(REQUEST_INITIAL_DATA, () => {
+ipcMain.handle(REQUEST_INITIAL_DATA, (event) => {
   const data: InitialData = {
-    pluginData,
+    pluginData: Array.from(pluginData.values()),
     states,
     fonts,
+    windowId: BrowserWindow.fromWebContents(event.sender)?.id ?? -1,
   }
   return data
 })
 
-ipcMain.handle(
-  UPDATE_IS_PLAYING_STATE,
-  (_, { isPlaying, windowId }: { isPlaying: boolean; windowId: number }) => {
-    if (isPlaying) {
-      const blockerId = blockerIdBycontentPlayerWindow[windowId]
-      if (typeof blockerId !== "number") {
-        blockerIdBycontentPlayerWindow[windowId] = powerSaveBlocker.start(
-          "prevent-display-sleep"
-        )
-      }
-    } else {
-      const blockerId = blockerIdBycontentPlayerWindow[windowId]
-      if (typeof blockerId === "number") {
-        powerSaveBlocker.stop(blockerId)
-        blockerIdBycontentPlayerWindow[windowId] = null
-      }
+ipcMain.handle(UPDATE_IS_PLAYING_STATE, (event, isPlaying: boolean) => {
+  const windowId = BrowserWindow.fromWebContents(event.sender)?.id
+  if (!windowId) {
+    return
+  }
+  if (isPlaying) {
+    const blockerId = blockerIdBycontentPlayerWindow[windowId]
+    if (typeof blockerId !== "number") {
+      blockerIdBycontentPlayerWindow[windowId] = powerSaveBlocker.start(
+        "prevent-display-sleep"
+      )
+    }
+  } else {
+    const blockerId = blockerIdBycontentPlayerWindow[windowId]
+    if (typeof blockerId === "number") {
+      powerSaveBlocker.stop(blockerId)
+      blockerIdBycontentPlayerWindow[windowId] = null
     }
   }
-)
+})
 
 const states: ObjectLiteral<unknown> = {}
 const statesHash: ObjectLiteral<string> = {}
 
-const recoilStateUpdate = (source: number, payload: RecoilStateUpdateArg) => {
+const recoilStateUpdate = (source: number, payload: SerializableKV) => {
   for (const window of BrowserWindow.getAllWindows()) {
     if (window.webContents.id === source) continue
     window.webContents.send(RECOIL_STATE_UPDATE, payload)
@@ -401,7 +496,7 @@ const updateContentPlayerIds = () => {
   states[GLOBAL_CONTENT_PLAYER_IDS] = contentPlayerWindows.map((w) => w.id)
 }
 
-ipcMain.handle(RECOIL_STATE_UPDATE, (event, payload: RecoilStateUpdateArg) => {
+ipcMain.handle(RECOIL_STATE_UPDATE, (event, payload: SerializableKV) => {
   const { key, value } = payload
   if (!key) return
   const hash = JSON.stringify(value)
@@ -418,7 +513,6 @@ const openWindow = ({
   isSingletone = false,
   args = {},
   playingContent,
-  isHideUntilLoaded,
 }: OpenWindowArg) => {
   const map = windowMapping[name] || []
   if (0 < map.length && isSingletone) {
@@ -463,13 +557,14 @@ const openWindow = ({
       minWidth,
       minHeight,
       webPreferences: {
-        contextIsolation: false,
-        nodeIntegration: true,
-        enableRemoteModule: true,
+        preload: `${__dirname}/src/main/preload.js`,
+        contextIsolation: true,
+        nodeIntegration: false,
+        enableRemoteModule: false,
+        worldSafeExecuteJavaScript: true,
       },
       backgroundColor,
       ...args,
-      show: isHideUntilLoaded !== true,
     })
     const [, contentHeight] = window.getContentSize()
     if (width && height && display && name === ROUTES["ContentPlayer"]) {
@@ -506,6 +601,64 @@ const openWindow = ({
       contentPlayerWindows.push(window)
       updateContentPlayerIds()
     }
+
+    window.webContents.setWindowOpenHandler(({ url }) => {
+      if (url === "about:blank") {
+        return { action: "allow" }
+      } else if (url.startsWith("http")) {
+        shell.openExternal(url)
+        return { action: "deny" }
+      } else {
+        return { action: "deny" }
+      }
+    })
+
+    window.webContents.on("context-menu", (e, params) => {
+      vm.runInContext(
+        "showContextMenu",
+        pluginsVMContext
+      )(
+        generateContentPlayerContextMenu(
+          {
+            isPlaying:
+              name === ROUTES.ContentPlayer
+                ? window.id in blockerIdBycontentPlayerWindow &&
+                  blockerIdBycontentPlayerWindow[window.id] !== null
+                : null,
+            toggleIsPlaying: () => {
+              window.webContents.send(UPDATE_IS_PLAYING_STATE)
+            },
+            isAlwaysOnTop: window.isAlwaysOnTop(),
+            toggleIsAlwaysOnTop: () => {
+              window.setAlwaysOnTop(!window.isAlwaysOnTop())
+            },
+            openContentPlayer: () =>
+              openWindow({
+                name: ROUTES.ContentPlayer,
+                args: { show: false },
+              }),
+            openSetting: () =>
+              openWindow({
+                name: ROUTES.Settings,
+                isSingletone: true,
+                args: { show: false },
+              }),
+            openProgramTable: () =>
+              openWindow({
+                name: ROUTES.ProgramTable,
+                isSingletone: true,
+                args: { show: false },
+              }),
+          },
+          e,
+          params
+        )
+      )
+    })
+
+    window.on("moved", () => {
+      window.webContents.send(ON_WINDOW_MOVED)
+    })
 
     if (isDev) {
       window.webContents.session.webRequest.onBeforeSendHeaders(
@@ -575,6 +728,80 @@ const openWindow = ({
 
 ipcMain.handle(REUQEST_OPEN_WINDOW, (_, args) => {
   return openWindow(args)?.id
+})
+
+ipcMain.handle(SET_WINDOW_TITLE, (event, title) => {
+  BrowserWindow.fromWebContents(event.sender)?.setTitle(title)
+})
+
+ipcMain.handle(SET_WINDOW_ASPECT, (event, aspect) =>
+  BrowserWindow.fromWebContents(event.sender)?.setAspectRatio(aspect)
+)
+
+ipcMain.handle(SET_WINDOW_POSITION, (event, x, y) => {
+  BrowserWindow.fromWebContents(event.sender)?.setPosition(x, y)
+})
+
+ipcMain.handle(SHOW_WINDOW, (event) => {
+  BrowserWindow.fromWebContents(event.sender)?.show()
+})
+
+ipcMain.handle(REQUEST_APP_PATH, (_, path) => {
+  return app.getPath(path)
+})
+
+ipcMain.handle(REQUEST_CURSOR_SCREEN_POINT, () => {
+  return screen.getCursorScreenPoint()
+})
+
+ipcMain.handle(TOGGLE_FULL_SCREEN, (event) => {
+  const window = BrowserWindow.fromWebContents(event.sender)
+  if (!window || !window.isFullScreenable()) {
+    return
+  }
+  window.setFullScreen(!window.isFullScreen())
+})
+
+ipcMain.handle(SHOW_NOTIFICATION, (_, arg, path) => {
+  const n = new Notification(arg)
+  if (path) {
+    n.on("click", () => shell.openPath(path))
+  }
+  n.show()
+})
+
+ipcMain.handle(TOGGLE_ALWAYS_ON_TOP, (event) => {
+  const window = BrowserWindow.fromWebContents(event.sender)
+  if (!window) {
+    return
+  }
+  window.setAlwaysOnTop(!window.isAlwaysOnTop())
+})
+
+ipcMain.handle(REQUEST_CONTENT_BOUNDS, (event) => {
+  return BrowserWindow.fromWebContents(event.sender)?.getContentBounds()
+})
+
+ipcMain.handle(SET_WINDOW_CONTENT_BOUNDS, (event, bounds) => {
+  BrowserWindow.fromWebContents(event.sender)?.setContentBounds(bounds)
+})
+
+ipcMain.handle(REQUEST_DIALOG, async () => {
+  return await dialog.showOpenDialog({
+    properties: ["openFile", "openDirectory"],
+  })
+})
+
+ipcMain.handle(REQUEST_CONFIRM_DIALOG, async (event, message, buttons) => {
+  return await dialog.showMessageBox(
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    BrowserWindow.fromWebContents(event.sender)!,
+    {
+      message,
+      buttons,
+      type: "question",
+    }
+  )
 })
 
 new EPGManager(ipcMain)

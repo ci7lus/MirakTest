@@ -1,11 +1,13 @@
 import _Recoil from "recoil"
+import { Preload } from "../types/ipc"
 import { PluginDefineInRenderer, DefineAtom } from "../types/plugin"
 
 declare global {
   interface Window {
     atoms?: DefineAtom[]
     plugins?: PluginDefineInRenderer[]
-    contextMenus?: { [key: string]: Electron.MenuItemConstructorOptions }
+    Preload: Preload
+    id?: number
   }
 
   // eslint-disable-next-line no-var

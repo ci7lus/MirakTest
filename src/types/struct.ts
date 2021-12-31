@@ -14,4 +14,5 @@ export type InitialData = {
   states: ObjectLiteral
   pluginData: PluginDatum[]
   fonts: string[]
+  windowId: number
 }

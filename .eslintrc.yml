@@ -1,3 +1,6 @@
 ---
 extends:
   - "@ci7lus/eslint-config"
+parserOptions:
+  project:
+    - "./tsconfig.eslint.json"

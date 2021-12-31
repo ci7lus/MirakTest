@@ -14,18 +14,8 @@ type Package = {
   dependencies?: { [key: string]: string }
 }
 
-const targets = [
-  "webchimera.js",
-  "electron-store",
-  "esm",
-  "react",
-  "recoil",
-  "react-dom",
-  "font-list",
-  "axios",
-  "zod",
-  "stream-json",
-] as const
+const excludes = ["cmake-js"]
+const targets = ["webchimera.js", "font-list", "electron-store"] as const
 const dependencies = { ...pkg.dependencies, ...pkg.devDependencies }
 const targetWithVersion = targets.map(
   (depName) => `${depName}@${dependencies[depName]}`
@@ -41,7 +31,7 @@ const packages = lock.object as {
 const pickPackage = (dep: Package) => {
   Object.entries(dep.dependencies || {}).map(([packageName, version]) => {
     const key = `${packageName}@${version}`
-    if (!deps_dedupe.includes(key)) {
+    if (!deps_dedupe.includes(key) && !excludes.includes(packageName)) {
       deps.push(packageName)
       deps_dedupe.push(key)
       packages[key] && pickPackage(packages[key])

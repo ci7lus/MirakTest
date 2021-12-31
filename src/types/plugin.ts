@@ -1,14 +1,13 @@
-import { remote } from "electron"
 import React from "react"
 import * as Recoil from "recoil"
 import { Program, Service } from "../infra/mirakurun/api"
-import { QuerySchema } from "../main/epgManager"
 export type { Channel, Service, Program } from "../infra/mirakurun/api"
 import { ContentPlayerPlayingContent } from "./contentPlayer"
 import {
   OpenBuiltinWindowArg,
   OpenContentPlayerWindowArgs,
   OpenWindowArg,
+  Preload,
 } from "./ipc"
 import { MirakurunCompatibilityTypes } from "./mirakurun"
 export type { ContentPlayerPlayingContent } from "./contentPlayer"
@@ -55,17 +54,14 @@ export type InitPlugin = {
 
 export type PluginInRendererArgs = {
   appInfo: AppInfo
-  packages: {
-    Electron: typeof remote
-    IpcRenderer: Electron.IpcRenderer
-  }
+  rpc: Preload["public"]
+  windowId: number
   functions: {
     openWindow: (args: OpenWindowArg) => Promise<number>
     openBuiltinWindow: (args: OpenBuiltinWindowArg) => Promise<void>
     openContentPlayerWindow: (
       args: OpenContentPlayerWindowArgs
     ) => Promise<number>
-    queryPrograms: (arg: QuerySchema) => Promise<Program[]>
   }
   hooks: {}
   atoms: {
@@ -169,7 +165,6 @@ export type PluginDefineInRenderer = PluginMeta & {
   windows: {
     [key: string]: React.VFC<{}> // カスタム画面、hash を key に
   }
-  contextMenu?: Electron.MenuItemConstructorOptions
   _experimental_feature__service?: {
     // テレビサービス（構想中）
     contentType: string
@@ -189,4 +184,5 @@ export type PluginDefineInMain = PluginMeta & {
     plugins: PluginDefineInMain[]
   }) => void | Promise<void>
   appMenu?: Electron.MenuItemConstructorOptions
+  contextMenu?: Electron.MenuItemConstructorOptions
 }

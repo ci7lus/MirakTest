@@ -73,6 +73,13 @@ export class EPGManager {
             responseType: "stream",
           }
         )
+        const statusCode = claimStream.status.toString()
+        if (statusCode.startsWith("4")) {
+          console.info(
+            `[epgmanager] 番組イベントストリームに対応していません: ${statusCode} / ${hostname}`
+          )
+          return
+        }
         const stream = claimStream.data as unknown as Readable
         const pipeline = chain([stream, parser(), streamArray()])
         pipeline.on("data", ({ value }: { value: Event }) => {
@@ -109,9 +116,13 @@ export class EPGManager {
   unregister(_payload: unknown) {
     const payload = unregisterSchema.parse(_payload)
     const stream = this.connections.get(payload.url)
+    const hostname = new URL(payload.url).hostname
     if (stream) {
       stream.destroy()
       this.connections.delete(payload.url)
+      console.info(
+        `[epgmanager] 番組イベントストリームを切断しました: ${hostname}`
+      )
     }
   }
 

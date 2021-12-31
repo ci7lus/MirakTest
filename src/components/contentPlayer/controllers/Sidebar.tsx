@@ -4,7 +4,6 @@ import React, { useEffect, useState } from "react"
 import { ChevronsRight } from "react-feather"
 import { useNow } from "../../../hooks/date"
 import { ChannelType, Program, Service } from "../../../infra/mirakurun/api"
-import { queryPrograms } from "../../../utils/program"
 
 export const ControllerSidebar: React.FC<{
   isVisible: boolean
@@ -24,30 +23,32 @@ export const ControllerSidebar: React.FC<{
   const [queriedPrograms, setQueriedPrograms] = useState<Program[]>([])
   useEffect(() => {
     const unix = now.unix() * 1000
-    queryPrograms({
-      startAtLessThan: unix,
-      endAtMoreThan: unix,
-    }).then(async (currentPrograms) => {
-      const filter = (program: Program) =>
-        services.find(
-          (service) =>
-            service.serviceId === program.serviceId &&
-            service.networkId === program.networkId
-        )
-      const filtered = currentPrograms.filter(filter)
-      const max = Math.max(
-        ...filtered.map((program) => program.startAt + program.duration)
-      )
-      if (!max) {
-        setQueriedPrograms(filtered)
-        return
-      }
-      const programs = await queryPrograms({
-        startAtLessThan: max,
-        startAt: unix,
+    window.Preload.public.epgManager
+      .query({
+        startAtLessThan: unix,
+        endAtMoreThan: unix + 1,
       })
-      setQueriedPrograms([...programs.filter(filter), ...filtered])
-    })
+      .then(async (currentPrograms) => {
+        const filter = (program: Program) =>
+          services.find(
+            (service) =>
+              service.serviceId === program.serviceId &&
+              service.networkId === program.networkId
+          )
+        const filtered = currentPrograms.filter(filter)
+        const max = Math.max(
+          ...filtered.map((program) => program.startAt + program.duration)
+        )
+        if (!max) {
+          setQueriedPrograms(filtered)
+          return
+        }
+        const programs = await window.Preload.public.epgManager.query({
+          startAtLessThan: max,
+          startAt: unix,
+        })
+        setQueriedPrograms([...programs.filter(filter), ...filtered])
+      })
   }, [now])
   return (
     <div
