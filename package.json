@@ -54,7 +54,7 @@
     "cross-env": "^7.0.3",
     "css-loader": "^6.4.0",
     "dts-bundle-generator": "^5.9.0",
-    "electron": "^12.2.2",
+    "electron": "^13",
     "electron-builder": "^22.13.1",
     "eslint": "^7",
     "husky": "^7.0.2",
@@ -96,7 +96,7 @@
     "react-use": "^17.3.1",
     "recoil": "^0.4.1",
     "stream-json": "^1.7.3",
-    "webchimera.js": "^0.5.2",
+    "webchimera.js": "patch:webchimera.js@^0.5.2#patches/webchimera.js+0.5.2.patch",
     "zod": "^3.9.8"
   },
   "cmake-js": {

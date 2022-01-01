@@ -6193,16 +6193,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"electron@npm:^12.2.2":
-  version: 12.2.3
-  resolution: "electron@npm:12.2.3"
+"electron@npm:^13":
+  version: 13.6.3
+  resolution: "electron@npm:13.6.3"
   dependencies:
     "@electron/get": ^1.0.1
     "@types/node": ^14.6.2
     extract-zip: ^1.0.3
   bin:
     electron: cli.js
-  checksum: fba741639ce53397c916a91c192b819c745adfee3559b1ffccf74f0631b9cf14ab313ed755a5972c4f845e1b220eeba54a2e941d83569798753081bf0325537b
+  checksum: 5b59ee21076773c3f0417a522338fc0db70af30672f72152df100268c71536defa0af257b69421cf17daf34b1c8a1280c78f0f5e82feee5d4e27e68e48b42f30
   languageName: node
   linkType: hard
 
@@ -9969,7 +9969,7 @@ __metadata:
     css-loader: ^6.4.0
     dayjs: ^1.10.7
     dts-bundle-generator: ^5.9.0
-    electron: ^12.2.2
+    electron: ^13
     electron-builder: ^22.13.1
     electron-store: ^8.0.1
     eslint: ^7
@@ -10001,7 +10001,7 @@ __metadata:
     ts-node: ^10.3.0
     type-fest: ^2.6.0
     typescript: ^4.4.3
-    webchimera.js: ^0.5.2
+    webchimera.js: "patch:webchimera.js@^0.5.2#patches/webchimera.js+0.5.2.patch"
     webpack: ^5.64.4
     webpack-cli: ^4.9.1
     webpack-dev-server: ^4.6.0
@@ -14019,6 +14019,16 @@ __metadata:
     bindings: ~1.2.1
     cmake-js: "*"
   checksum: 3ab59997c2c992abf2224c66cd066f53b3d05b1bf080d7e0b79664c7438c21d52c3617cc9c89d2e317bcfecf308df4e30ace2005bd76a027ce04edcd6f307387
+  languageName: node
+  linkType: hard
+
+"webchimera.js@patch:webchimera.js@^0.5.2#patches/webchimera.js+0.5.2.patch::locator=miraktest%40workspace%3A.":
+  version: 0.5.2
+  resolution: "webchimera.js@patch:webchimera.js@npm%3A0.5.2#patches/webchimera.js+0.5.2.patch::version=0.5.2&hash=5bc964&locator=miraktest%40workspace%3A."
+  dependencies:
+    bindings: ~1.2.1
+    cmake-js: "*"
+  checksum: 62aa52f5c73bd06e61861a2a7a91fee0daa6e88099e276bd478c14c2ef4494aad307fb5061371b5e854e1799fd714b55d41094fc6b525b04b4ba88e20beced85
   languageName: node
   linkType: hard
 

@@ -1,0 +1,57 @@
+# https://github.com/RSATom/WebChimera.js/commit/1566bdb5ac83bd5897f1315d6198722b09b8cf4f
+diff --git a/package.json b/package.json
+index 1c08d04..95c8cdf 100644
+--- a/package.json
++++ b/package.json
+@@ -16,10 +16,13 @@
+     "url": "https://github.com/RSATom/WebChimera.js"
+   },
+   "dependencies": {
+-    "bindings": "~1.2.1",
++    "bindings": "~1.2.1"
++  },
++  "devDependencies": {
+     "cmake-js": "*"
+   },
+   "scripts": {
+-    "install": "node rebuild.js"
+-  }
++    "install": "echo skip build"
++  },
++  "packageManager": "yarn@1.22.17"
+ }
+diff --git a/src/JsVlcPlayer.cpp b/src/JsVlcPlayer.cpp
+index 358133a..e69e2fd 100644
+--- a/src/JsVlcPlayer.cpp
++++ b/src/JsVlcPlayer.cpp
+@@ -2,6 +2,8 @@
+ 
+ #include <string.h>
+ 
++#include "node.h"
++#include "node_buffer.h"
+ #include "NodeTools.h"
+ #include "JsVlcInput.h"
+ #include "JsVlcAudio.h"
+@@ -606,7 +608,9 @@ void* JsVlcPlayer::onFrameSetup(const RV32VideoFrame& videoFrame)
+     callCallback(CB_FrameSetup, { jsWidth, jsHeight, jsPixelFormat, jsArray });
+ 
+ #ifdef USE_ARRAY_BUFFER
+-    return jsArray->Buffer()->GetContents().Data();
++    v8::Local<v8::Object> local;
++    node::Buffer::New(isolate, jsArray->Buffer(), 0, jsArray->Buffer()->ByteLength()).ToLocal(&local);
++    return node::Buffer::Data(local);
+ #else
+     return jsArray->GetIndexedPropertiesExternalArrayData();
+ #endif
+@@ -679,7 +683,9 @@ void* JsVlcPlayer::onFrameSetup(const I420VideoFrame& videoFrame)
+     callCallback(CB_FrameSetup, { jsWidth, jsHeight, jsPixelFormat, jsArray });
+ 
+ #ifdef USE_ARRAY_BUFFER
+-    return jsArray->Buffer()->GetContents().Data();
++    v8::Local<v8::Object> local;
++    node::Buffer::New(isolate, jsArray->Buffer(), 0, jsArray->Buffer()->ByteLength()).ToLocal(&local);
++    return node::Buffer::Data(local);
+ #else
+     return jsArray->GetIndexedPropertiesExternalArrayData();
+ #endif
