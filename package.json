@@ -23,7 +23,8 @@
     "format:prettier": "prettier --write './src/**/*.{js,ts,tsx}'",
     "lint:eslint": "eslint --max-warnings 0 --cache './src/**/*.{js,ts,tsx}'",
     "format:eslint": "eslint './src/**/*.{js,ts,tsx}' --cache --fix",
-    "build:dts-plugin": "yarn dts-bundle-generator --export-referenced-types=false --external-inlines=electron -o dist/plugin.d.ts --no-check src/types/plugin.ts && ts-node setLicenseInDts.ts && prettier --write dist/plugin.d.ts"
+    "build:dts-plugin": "yarn dts-bundle-generator --export-referenced-types=false --external-inlines=electron -o dist/plugin.d.ts --no-check src/types/plugin.ts && ts-node setLicenseInDts.ts && prettier --write dist/plugin.d.ts",
+    "typecheck": "yarn tsc --noEmit && yarn tsc -p ./src/main/tsconfig.json --noEmit"
   },
   "lint-staged": {
     "*.{js,ts,tsx}": "eslint --max-warnings 0 --cache",
@@ -54,7 +55,7 @@
     "cross-env": "^7.0.3",
     "css-loader": "^6.4.0",
     "dts-bundle-generator": "^5.9.0",
-    "electron": "^13",
+    "electron": "^16.0.5",
     "electron-builder": "^22.13.1",
     "eslint": "^7",
     "husky": "^7.0.2",

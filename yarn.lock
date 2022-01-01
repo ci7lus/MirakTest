@@ -2125,14 +2125,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@electron/get@npm:^1.0.1":
-  version: 1.13.0
-  resolution: "@electron/get@npm:1.13.0"
+"@electron/get@npm:^1.13.0":
+  version: 1.13.1
+  resolution: "@electron/get@npm:1.13.1"
   dependencies:
     debug: ^4.1.1
     env-paths: ^2.2.0
     fs-extra: ^8.1.0
-    global-agent: ^2.0.2
+    global-agent: ^3.0.0
     global-tunnel-ng: ^2.7.1
     got: ^9.6.0
     progress: ^2.0.3
@@ -2143,7 +2143,7 @@ __metadata:
       optional: true
     global-tunnel-ng:
       optional: true
-  checksum: a5158bb2f81ed68491d1ece5f4acfb9d497dbec1f126d0db2212c2fa6b2851a752900fd24b7620cd2e23563a356127134366027e7a98993f035c6d0c8e643577
+  checksum: ea9863b73e8aedefb19cfe9b849c585b8bda29e11b90189b115680da4e9ab0167405efe63e5d141da2d13cde24eacacfde62f730f2730d047e58819fe69352f8
   languageName: node
   linkType: hard
 
@@ -5434,13 +5434,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"core-js@npm:^3.6.5":
-  version: 3.9.1
-  resolution: "core-js@npm:3.9.1"
-  checksum: fb21fb37deaac0964ebf3f51eebe990eaf39fd239c35d36f5c4c7510ffca85fd96d3a89f0ee8059b4f1c0e773e434b6148e0565a760f0c20b3c5cda7329c2ba5
-  languageName: node
-  linkType: hard
-
 "core-util-is@npm:1.0.2, core-util-is@npm:~1.0.0":
   version: 1.0.2
   resolution: "core-util-is@npm:1.0.2"
@@ -6193,16 +6186,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"electron@npm:^13":
-  version: 13.6.3
-  resolution: "electron@npm:13.6.3"
+"electron@npm:^16.0.5":
+  version: 16.0.5
+  resolution: "electron@npm:16.0.5"
   dependencies:
-    "@electron/get": ^1.0.1
+    "@electron/get": ^1.13.0
     "@types/node": ^14.6.2
     extract-zip: ^1.0.3
   bin:
     electron: cli.js
-  checksum: 5b59ee21076773c3f0417a522338fc0db70af30672f72152df100268c71536defa0af257b69421cf17daf34b1c8a1280c78f0f5e82feee5d4e27e68e48b42f30
+  checksum: 5b24d00e165d74d8039ac85646fb5953e3755bd503e0ffb27fe3a72c7f8acf8449fc661f51a1a8b42387e311aa44f161105796e13ed45ace4a3d8e0e586ece38
   languageName: node
   linkType: hard
 
@@ -7356,18 +7349,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"global-agent@npm:^2.0.2":
-  version: 2.1.12
-  resolution: "global-agent@npm:2.1.12"
+"global-agent@npm:^3.0.0":
+  version: 3.0.0
+  resolution: "global-agent@npm:3.0.0"
   dependencies:
     boolean: ^3.0.1
-    core-js: ^3.6.5
     es6-error: ^4.1.1
     matcher: ^3.0.0
     roarr: ^2.15.3
     semver: ^7.3.2
     serialize-error: ^7.0.1
-  checksum: 220c30f0ee19bf0a32a286d94b5d23c11b4f1c0a029b68a6ba22c25e0e9409dbe5e9e19e724cb4dd68e7be64f5fc5fd04cb0a897361f8e2fdda571438ecc37ad
+  checksum: 75074d80733b4bd5386c47f5df028e798018025beac0ab310e9908c72bf5639e408203e7bca0130d5ee01b5f4abc6d34385d96a9f950ea5fe1979bb431c808f7
   languageName: node
   linkType: hard
 
@@ -9969,7 +9961,7 @@ __metadata:
     css-loader: ^6.4.0
     dayjs: ^1.10.7
     dts-bundle-generator: ^5.9.0
-    electron: ^13
+    electron: ^16.0.5
     electron-builder: ^22.13.1
     electron-store: ^8.0.1
     eslint: ^7

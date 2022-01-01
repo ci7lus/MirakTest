@@ -63,7 +63,7 @@ jobs:
           yarn lint:eslint
       - name: Typecheck
         run: |
-          yarn tsc
+          yarn typecheck
   build:
     needs: lint
 
