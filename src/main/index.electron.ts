@@ -108,8 +108,6 @@ const init = () => {
 
 app.on("ready", () => init())
 
-app.allowRendererProcessReuse = false
-
 app.on("window-all-closed", () => {
   if (watching) {
     watching.close()
@@ -560,8 +558,6 @@ const openWindow = ({
         preload: `${__dirname}/src/main/preload.js`,
         contextIsolation: true,
         nodeIntegration: false,
-        enableRemoteModule: false,
-        worldSafeExecuteJavaScript: true,
       },
       backgroundColor,
       ...args,

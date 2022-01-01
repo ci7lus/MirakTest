@@ -23,7 +23,8 @@
     "format:prettier": "prettier --write './src/**/*.{js,ts,tsx}'",
     "lint:eslint": "eslint --max-warnings 0 --cache './src/**/*.{js,ts,tsx}'",
     "format:eslint": "eslint './src/**/*.{js,ts,tsx}' --cache --fix",
-    "build:dts-plugin": "yarn dts-bundle-generator --export-referenced-types=false --external-inlines=electron -o dist/plugin.d.ts --no-check src/types/plugin.ts && ts-node setLicenseInDts.ts && prettier --write dist/plugin.d.ts"
+    "build:dts-plugin": "yarn dts-bundle-generator --export-referenced-types=false --external-inlines=electron -o dist/plugin.d.ts --no-check src/types/plugin.ts && ts-node setLicenseInDts.ts && prettier --write dist/plugin.d.ts",
+    "typecheck": "yarn tsc --noEmit && yarn tsc -p ./src/main/tsconfig.json --noEmit"
   },
   "lint-staged": {
     "*.{js,ts,tsx}": "eslint --max-warnings 0 --cache",
@@ -54,8 +55,9 @@
     "cross-env": "^7.0.3",
     "css-loader": "^6.4.0",
     "dts-bundle-generator": "^5.9.0",
-    "electron": "^12.2.2",
+    "electron": "^16.0.5",
     "electron-builder": "^22.13.1",
+    "eslint": "^7",
     "husky": "^7.0.2",
     "jest": "^27.2.5",
     "lint-staged": "^11.2.3",
@@ -95,15 +97,16 @@
     "react-use": "^17.3.1",
     "recoil": "^0.4.1",
     "stream-json": "^1.7.3",
-    "webchimera.js": "^0.5.2",
+    "webchimera.js": "patch:webchimera.js@^0.5.2#patches/webchimera.js+0.5.2.patch",
     "zod": "^3.9.8"
-  },
-  "peerDependencies": {
-    "eslint": "^7.32.0"
   },
   "cmake-js": {
     "runtime": "electron",
     "runtimeVersion": "12.1.2"
   },
-  "browserslist": "electron 12.0.0"
+  "browserslist": "electron 12.0.0",
+  "packageManager": "yarn@3.1.1",
+  "peerDependencies": {
+    "eslint": "*"
+  }
 }
