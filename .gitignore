@@ -116,3 +116,5 @@ lib
 build
 vlc_libs
 VLC.app
+.yarn/*
+!.yarn/releases 
