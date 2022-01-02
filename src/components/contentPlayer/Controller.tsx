@@ -58,7 +58,7 @@ export const CoiledController: React.VFC<{}> = () => {
   const isSeekable = useRecoilValue(contentPlayerIsSeekableAtom)
 
   const services = useRecoilValue(mirakurunServicesAtom)
-  const [selectedService, setSelectedService] = useRecoilState(
+  const setSelectedService = useSetRecoilState(
     globalContentPlayerSelectedServiceFamily(window.id ?? -1)
   )
 
@@ -235,10 +235,10 @@ export const CoiledController: React.VFC<{}> = () => {
           }`}
         >
           <div className="flex items-center space-x-4 pb-2">
-            {selectedService?.logoData && (
+            {service?.logoData && (
               <img
                 className="flex-shrink-0 h-6 rounded-md overflow-hidden"
-                src={`data:image/png;base64,${selectedService.logoData}`}
+                src={`data:image/png;base64,${service.logoData}`}
               />
             )}
             <div className="relative text-gray-200 overflow-hidden">
