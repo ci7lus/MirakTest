@@ -1,34 +1,43 @@
-$ARCH = "x64"
-$OS_NAME = "win"
-$RUNTIME = "electron"
-$RUNTIME_VER = "12.0.9"
-$VLC_VER = "3.0.11"
-$WCJS_VER = "0.5.2"
+$LIBVLC_VER = "3.0.16"
+$LIBVLC_VER_EXTRA = "3"
+$OS_NAME = "windows"
 
-function InsertAfter ([string]$file, [string]$needle, [string]$text, [string]$encoding = "utf8NoBOM") {
-    $data = Get-Content "$file"
-    $lnum = $(Select-String -pattern "$needle" -path "$file" | ForEach-Object { $_.ToString().split(":")[2] } ) - 1
-    If ($lnum -ne -1) {
-        $data[$lnum] = $data[$lnum] + "`n$text"
-        $data -Join "`n" | Out-File "$file" -Encoding "$encoding" -NoNewline
+# Setup WebChimera.js
+Set-Location "node_modules\webchimera.js"
+
+function TryRemove {
+    param($file)
+    if (Test-Path $file) {
+        Remove-Item $file -Force -Recurse
     }
 }
 
-function ReplaceOne ([string]$file, [string]$needle, [string]$text, [string]$encoding = "utf8NoBOM") {
-    $data = Get-Content "$file" | ForEach-Object { $_ -replace "$needle", "$text" }
-    $data -Join "`n" | Out-File "$file" -Encoding "$encoding" -NoNewline
+function onExit {
+    TryRemove ".\.yarn"
+    TryRemove ".\node_modules"
+    TryRemove ".\build"
+    TryRemove ".\deps\vlc-${LIBVLC_VER}"
+    TryRemove ".\yarn.lock"
+    Set-Location "..\.."
 }
 
-# Setup WebChimera.js
-Set-Location "node_modules"
-Invoke-WebRequest -Uri "https://github.com/RSATom/WebChimera.js/releases/download/v${WCJS_VER}/WebChimera.js_v${WCJS_VER}_${RUNTIME}_v${RUNTIME_VER}_VLC_v${VLC_VER}_${ARCH}_${OS_NAME}.zip" -OutFile "wcjs.zip"
-Expand-Archive -Path ".\wcjs.zip" -DestinationPath "." -Force
-Remove-Item ".\wcjs.zip"
+Register-EngineEvent PowerShell.Exiting -Action {
+    onExit
+}
+onExit
+Set-Location "node_modules\webchimera.js"
+
+Invoke-WebRequest -Uri "https://github.com/vivid-lapin/vlc-miraktest/releases/download/${LIBVLC_VER}.${LIBVLC_VER_EXTRA}/vlc-${OS_NAME}-${LIBVLC_VER}.zip" -OutFile "libvlc.zip"
+Expand-Archive -Path ".\libvlc.zip" -DestinationPath ".\deps\vlc-${LIBVLC_VER}" -Force
+Remove-Item ".\libvlc.zip"
+Write-Output "nodeLinker: node-modules" | Set-Content ".\.yarnrc.yml"
+Write-Output "" | Set-Content ".\yarn.lock"
+yarn install
+node rebuild.js
 @"
     module.exports = {
         ...require('./WebChimera.js.node'),
         path: __dirname.replace('app.asar', 'app.asar.unpacked')
     }
-"@ | Set-Content ".\webchimera.js\index.js"
-
-Set-Location ".."
+"@ | Set-Content ".\index.js"
+Copy-Item .\build\Release\WebChimera.js.node .
