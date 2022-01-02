@@ -4,33 +4,33 @@
  */
 
 import fs from "fs"
-import * as yarn from "@yarnpkg/lockfile"
+import yaml from "yaml"
 import pkg from "./package.json"
 
 type Package = {
   version: string
-  resolved: string
-  integrity: string
-  dependencies?: { [key: string]: string }
+  resolution: string
+  dependencies: { [version: string]: string }
 }
 
 const excludes = ["cmake-js"]
-const targets = ["webchimera.js", "font-list", "electron-store"] as const
+const targets = ["font-list", "electron-store"] as const
 const dependencies = { ...pkg.dependencies, ...pkg.devDependencies }
 const targetWithVersion = targets.map(
-  (depName) => `${depName}@${dependencies[depName]}`
+  (depName) => `${depName}@npm:${dependencies[depName]}`
 )
 const file = fs.readFileSync("yarn.lock", "utf8")
-const lock = yarn.parse(file)
-if (lock.type !== "success") throw new Error(lock.type)
+const lock: { [key: string]: Package } = yaml.parse(file)
+const packages = Object.fromEntries(
+  Object.entries(lock)
+    .map(([key, value]) => key.split(",").map((key) => [key.trim(), value]))
+    .flat()
+)
 const deps: string[] = []
 const deps_dedupe: string[] = []
-const packages = lock.object as {
-  [key: string]: Package
-}
 const pickPackage = (dep: Package) => {
   Object.entries(dep.dependencies || {}).map(([packageName, version]) => {
-    const key = `${packageName}@${version}`
+    const key = `${packageName}@npm:${version}`
     if (!deps_dedupe.includes(key) && !excludes.includes(packageName)) {
       deps.push(packageName)
       deps_dedupe.push(key)

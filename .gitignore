@@ -118,3 +118,4 @@ vlc_libs
 VLC.app
 .yarn/*
 !.yarn/releases 
+!.yarn/plugins
