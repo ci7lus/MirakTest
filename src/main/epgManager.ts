@@ -15,11 +15,7 @@ const registerSchema = $.object({
 
 export type RegisterSchema = $.infer<typeof registerSchema>
 
-const unregisterSchema = $.object({
-  url: $.string(),
-})
-
-export type UnregisterSchema = $.infer<typeof unregisterSchema>
+export type UnregisterSchema = string
 
 const querySchema = $.object({
   startAt: $.number().optional(),
@@ -114,12 +110,12 @@ export class EPGManager {
   }
 
   unregister(_payload: unknown) {
-    const payload = unregisterSchema.parse(_payload)
-    const stream = this.connections.get(payload.url)
-    const hostname = new URL(payload.url).hostname
+    const url = $.string().parse(_payload)
+    const stream = this.connections.get(url)
+    const hostname = new URL(url).hostname
     if (stream) {
       stream.destroy()
-      this.connections.delete(payload.url)
+      this.connections.delete(url)
       console.info(
         `[epgmanager] 番組イベントストリームを切断しました: ${hostname}`
       )
