@@ -17,6 +17,10 @@ module.exports = {
     require("tailwind-scrollbar"),
   ],
   theme: {
+    gradientColorStops: (theme) => ({
+      ...theme("colors"),
+      blackOpacity: "rgba(0, 0, 0, var(--tw-bg-opacity))",
+    }),
     extend: {
       cursor: {
         none: "none",

@@ -230,7 +230,7 @@ export const CoiledController: React.VFC<{}> = () => {
         )}
       >
         <div
-          className={`select-none transition-opacity duration-150 ease-in-out pt-3 p-4 pb-6 bg-gradient-to-b bg-opacity-50 from-black to-transparent ${
+          className={`select-none transition-opacity duration-150 ease-in-out pt-3 p-4 pb-4 bg-gradient-to-b bg-opacity-60 from-blackOpacity to-transparent ${
             isVisible ? "opacity-100" : "opacity-0"
           }`}
         >
@@ -265,7 +265,7 @@ export const CoiledController: React.VFC<{}> = () => {
           </div>
         </div>
         <div
-          className={`flex flex-col text-gray-100 select-none transition-opacity duration-150 ease-in-out w-full p-2 bg-gradient-to-t from-black to-transparent ${
+          className={`flex flex-col text-gray-100 select-none transition-opacity duration-150 ease-in-out w-full p-2 bg-gradient-to-t bg-opacity-60 from-blackOpacity to-transparent ${
             isVisible ? "opacity-100" : "opacity-0"
           }`}
           onDoubleClick={(e) => e.stopPropagation()}
