@@ -131,16 +131,23 @@ export const ControllerSidebar: React.FC<{
                     "pointer-events-none"
                   )}
                 >
-                  <div className={clsx("flex", "space-x-2", "items-center")}>
+                  <div
+                    className={clsx(
+                      "flex",
+                      "space-x-2",
+                      "items-center",
+                      "overflow-hidden",
+                      "w-full",
+                      "truncate"
+                    )}
+                  >
                     {service.logoData && (
                       <img
                         className={clsx("h-6", "rounded-md", "flex-shrink-0")}
                         src={`data:image/jpeg;base64,${service.logoData}`}
                       />
                     )}
-                    <h3 className={clsx("flex-shrink-0", "truncate")}>
-                      {service.name}
-                    </h3>
+                    <h3 className={clsx("flex-shrink-0")}>{service.name}</h3>
                   </div>
                   {current?.name && (
                     <div className={clsx(service.logoData ? "mt-2" : "mt-1")}>
