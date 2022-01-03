@@ -250,10 +250,18 @@ const buildAppMenu = ({
 const userDataDir = app.getPath("userData")
 const pluginsDir = path.join(userDataDir, "plugins")
 const pluginData = new Map<string, PluginDatum>()
-const pluginLoader = async (fileName: string) => {
-  const filePath = path.join(pluginsDir, fileName)
-  const content = await fs.promises.readFile(filePath, "utf8")
-  return { content, filePath, fileName }
+const getPluginFileAbsolutePath = (fileName: string) => {
+  return path.join(pluginsDir, fileName)
+}
+const pluginLoader = async (fileName: string): Promise<PluginDatum | false> => {
+  const filePath = getPluginFileAbsolutePath(fileName)
+  try {
+    const content = await fs.promises.readFile(filePath, "utf8")
+    return { content, filePath, fileName }
+  } catch (e) {
+    console.error(e)
+    return false
+  }
 }
 const pluginsVMContext = vm.createContext({ console })
 const promises = new Proxy(fs.promises, {
@@ -332,11 +340,13 @@ const loadPlugins = async () => {
     await fs.promises.mkdir(pluginsDir)
   }
   const files = await fs.promises.readdir(pluginsDir)
-  for (const plugin of await Promise.all(
-    files
-      .filter((filePath) => filePath.endsWith(".plugin.js"))
-      .map(pluginLoader)
-  )) {
+  for await (const plugin of (
+    await Promise.all(
+      files
+        .filter((filePath) => filePath.endsWith(".plugin.js"))
+        .map(pluginLoader)
+    )
+  ).filter((plugin): plugin is PluginDatum => !!plugin)) {
     pluginData.set(plugin.fileName, plugin)
     console.info(`[Plugin] ロードしました: ${plugin.fileName}`)
   }
@@ -423,11 +433,20 @@ const loadPlugins = async () => {
       if (!fileName.endsWith(".plugin.js")) {
         return
       }
+      const datum = await pluginLoader(fileName)
+      if (datum) {
+        const loadedDatum = pluginData.get(fileName)
+        if (loadedDatum && loadedDatum.content === datum.content) {
+          console.info(
+            `[Plugin] ファイル内容に変更がないのでスキップします: ${fileName}`
+          )
+          return
+        }
+      }
       await vm.runInContext("destroyPlugin", pluginsVMContext)(fileName)
       pluginData.delete(fileName)
-      if (eventType === "change") {
+      if (datum) {
         try {
-          const datum = await pluginLoader(fileName)
           pluginData.set(fileName, datum)
           console.info(`[Plugin] ロードしました: ${datum.fileName}`)
           await moduleLoader(datum.fileName, datum.content)
