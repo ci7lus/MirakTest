@@ -2,6 +2,13 @@ $LIBVLC_VER = "3.0.16"
 $LIBVLC_VER_EXTRA = "3"
 $OS_NAME = "windows"
 
+$ELECTRON_VERSION = (yarn run --silent electron --version) | Out-String
+
+$Env:YARN_ENABLE_IMMUTABLE_INSTALLS = "false"
+$Env:npm_config_wcjs_runtime = "electron"
+$Env:npm_config_wcjs_runtime_version = $ELECTRON_VERSION.Replace("v", "") -replace "`t|`n|`r",""
+$Env:npm_config_wcjs_arch = "x64"
+
 # Setup WebChimera.js
 Set-Location "node_modules\webchimera.js"
 

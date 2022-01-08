@@ -137,18 +137,16 @@ jobs:
         run: sudo apt-get install cmake=3.16.3-1ubuntu1 libvlc-dev=3.0.9.2-1
       - name: Install
         run: yarn
-      - name: Build webchimera.js
+      - name: Build webchimera.js (unix like)
         if: runner.os != 'Windows'
         run: ./setup_wcjs.sh
-      - name: VLC related libs are licensed under LGPL and GPLv2
+      - name: Setup libvlc (darwin) VLC related libs are licensed under LGPL and GPLv2
         if: runner.os == 'macOS'
         run: ./setup_libvlc_mac.sh
-      - name: Setup WebChiemra.js
+      - name: Build WebChiemra.js (windows)
         if: runner.os == 'Windows'
         run: pwsh ./setup_wcjs.ps1
-        env:
-          YARN_ENABLE_IMMUTABLE_INSTALLS: "false"
-      - name: Setup libvlc
+      - name: Setup libvlc (windows) VLC related libs are licensed under LGPL and GPLv2
         if: runner.os == 'Windows'
         run: pwsh ./setup_libvlc.ps1
       - name: Set nightly version
