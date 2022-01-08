@@ -804,10 +804,8 @@ ipcMain.handle(SET_WINDOW_CONTENT_BOUNDS, (event, bounds) => {
   BrowserWindow.fromWebContents(event.sender)?.setContentBounds(bounds)
 })
 
-ipcMain.handle(REQUEST_DIALOG, async () => {
-  return await dialog.showOpenDialog({
-    properties: ["openFile", "openDirectory"],
-  })
+ipcMain.handle(REQUEST_DIALOG, async (_, args) => {
+  return await dialog.showOpenDialog(args)
 })
 
 ipcMain.handle(REQUEST_CONFIRM_DIALOG, async (event, message, buttons) => {
