@@ -23,7 +23,10 @@ import fontList from "font-list"
 import WebChimeraJs from "webchimera.js"
 import pkg from "../../package.json"
 import { globalContentPlayerPlayingContentFamilyKey } from "../../src/atoms/globalFamilyKeys"
-import { globalActiveContentPlayerIdAtomKey } from "../../src/atoms/globalKeys"
+import {
+  globalActiveContentPlayerIdAtomKey,
+  globalLastEpgUpdatedAtomKey,
+} from "../../src/atoms/globalKeys"
 import {
   REQUEST_CONFIRM_DIALOG,
   ON_WINDOW_MOVED,
@@ -819,4 +822,12 @@ ipcMain.handle(REQUEST_CONFIRM_DIALOG, async (event, message, buttons) => {
   )
 })
 
-new EPGManager(ipcMain)
+new EPGManager(ipcMain, () => {
+  const value = Date.now()
+  // 生Recoil
+  states[globalLastEpgUpdatedAtomKey] = value
+  recoilStateUpdate(0, {
+    key: globalLastEpgUpdatedAtomKey,
+    value,
+  })
+})

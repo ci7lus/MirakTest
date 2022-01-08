@@ -3,6 +3,7 @@ import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil"
 import {
   contentPlayerIsPlayingAtom,
   contentPlayerKeyForRestorationAtom,
+  lastEpgUpdatedAtom,
 } from "../../atoms/contentPlayer"
 import {
   contentPlayerServiceSelector,
@@ -194,6 +195,7 @@ export const MirakurunManager: React.VFC<{}> = () => {
   }, [selectedService])
 
   const now = useNow()
+  const lastEpgUpdated = useRecoilValue(lastEpgUpdatedAtom)
 
   // programs/playingContent.service->playingContent.programの反映
   useEffect(() => {
@@ -206,7 +208,7 @@ export const MirakurunManager: React.VFC<{}> = () => {
         serviceId: service.serviceId,
         networkId: service.networkId,
         startAtLessThan: unix,
-        endAtMoreThan: unix,
+        endAtMoreThan: unix + 1,
       })
       .then((programs) => {
         const program = programs.slice(0).pop()
@@ -220,6 +222,6 @@ export const MirakurunManager: React.VFC<{}> = () => {
           )
         }
       })
-  }, [service, now])
+  }, [service, now, lastEpgUpdated])
   return <></>
 }

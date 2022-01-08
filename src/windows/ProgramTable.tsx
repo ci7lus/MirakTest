@@ -6,6 +6,7 @@ import { globalContentPlayerSelectedServiceFamily } from "../atoms/globalFamilie
 import { globalActiveContentPlayerIdSelector } from "../atoms/globalSelectors"
 import { mirakurunServicesAtom } from "../atoms/mirakurun"
 import { mirakurunSetting } from "../atoms/settings"
+import { CoiledEpgUpdatedObserver } from "../components/global/EpgUpdatedObserver"
 import { ScrollArea } from "../components/programTable/ScrollArea"
 import { WeekdaySelector } from "../components/programTable/WeekdaySelector"
 import { useNow } from "../hooks/date"
@@ -35,6 +36,7 @@ export const CoiledProgramTable: React.VFC<{}> = () => {
         "text-lg"
       )}
     >
+      <CoiledEpgUpdatedObserver />
       <div
         className={clsx(
           "w-full",

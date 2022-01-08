@@ -2,6 +2,8 @@ import clsx from "clsx"
 import dayjs from "dayjs"
 import React, { useEffect, useState } from "react"
 import { ChevronsRight } from "react-feather"
+import { useRecoilValue } from "recoil"
+import { lastEpgUpdatedAtom } from "../../../atoms/contentPlayer"
 import { useNow } from "../../../hooks/date"
 import { ChannelType, Program, Service } from "../../../infra/mirakurun/api"
 
@@ -21,6 +23,7 @@ export const ControllerSidebar: React.FC<{
   )
   const now = useNow()
   const [queriedPrograms, setQueriedPrograms] = useState<Program[]>([])
+  const lastEpgUpdated = useRecoilValue(lastEpgUpdatedAtom)
   useEffect(() => {
     const unix = now.unix() * 1000
     window.Preload.public.epgManager
@@ -49,7 +52,7 @@ export const ControllerSidebar: React.FC<{
         })
         setQueriedPrograms([...programs.filter(filter), ...filtered])
       })
-  }, [now])
+  }, [now, lastEpgUpdated])
   return (
     <div
       className={clsx(

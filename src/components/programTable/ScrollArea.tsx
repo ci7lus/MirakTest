@@ -2,6 +2,8 @@ import clsx from "clsx"
 import dayjs from "dayjs"
 import React, { useEffect, useRef, useState } from "react"
 import { useQuery } from "react-query"
+import { useRecoilValue } from "recoil"
+import { lastEpgUpdatedAtom } from "../../atoms/contentPlayer"
 import { useNow } from "../../hooks/date"
 import { Service } from "../../infra/mirakurun/api"
 import { MirakurunSetting } from "../../types/setting"
@@ -20,8 +22,9 @@ export const ScrollArea: React.FC<{
   const now = useNow()
   const displayStartAt = dayjs().startOf("hour").add(add, "day")
   const displayStartTimeInString = displayStartAt.format()
+  const lastEpgUpdated = useRecoilValue(lastEpgUpdatedAtom)
   const { error, data } = useQuery(
-    ["mirakurun-programs", displayStartTimeInString],
+    ["mirakurun-programs", displayStartTimeInString, lastEpgUpdated],
     () =>
       window.Preload.public.epgManager.query({
         startAtLessThan: displayStartAt.clone().add(1, "day").unix() * 1000,

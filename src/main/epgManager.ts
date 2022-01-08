@@ -1,5 +1,5 @@
 import type { Readable } from "stream"
-import type { IpcMain } from "electron"
+import { IpcMain } from "electron"
 import { chain } from "stream-chain"
 import { parser } from "stream-json"
 import { streamArray } from "stream-json/streamers/StreamArray"
@@ -33,7 +33,7 @@ export class EPGManager {
   connections = new Map<string, Readable>()
   programs = new Map<number, Program>()
 
-  constructor(ipcMain: IpcMain) {
+  constructor(ipcMain: IpcMain, private onEpgUpdate: () => void) {
     ipcMain.handle(EPG_MANAGER.REGISTER, (_, arg) => this.register(arg))
     ipcMain.handle(EPG_MANAGER.UNREGISTER, (_, arg) => this.unregister(arg))
     ipcMain.handle(EPG_MANAGER.QUERY, (_, arg) => this.query(arg))
@@ -58,6 +58,7 @@ export class EPGManager {
       for (const program of programs) {
         this.programs.set(program.id, program)
       }
+      this.onEpgUpdate()
       const connect = async () => {
         console.info(
           `[epgmanager] 番組イベントストリームへ接続します: ${hostname}`
@@ -84,10 +85,12 @@ export class EPGManager {
             case EventType.Create:
             case EventType.Update: {
               this.programs.set(program.id, program)
+              this.onEpgUpdate()
               break
             }
             case EventType.Remove: {
               this.programs.delete(program.id)
+              this.onEpgUpdate()
               break
             }
           }

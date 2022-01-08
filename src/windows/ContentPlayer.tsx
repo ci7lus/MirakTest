@@ -13,6 +13,7 @@ import { MirakurunManager } from "../components/contentPlayer/MirakurunManager"
 import { CoiledProgramTitleManager } from "../components/contentPlayer/ProgramTitleManager"
 import { CoiledSubtitleRenderer } from "../components/contentPlayer/SubtitleRenderer"
 import { CoiledVideoPlayer } from "../components/contentPlayer/VideoPlayer"
+import { CoiledEpgUpdatedObserver } from "../components/global/EpgUpdatedObserver"
 import { Splash } from "../components/global/Splash"
 
 export const CoiledContentPlayer: React.VFC<{}> = () => {
@@ -74,6 +75,7 @@ export const CoiledContentPlayer: React.VFC<{}> = () => {
   return (
     <>
       <MirakurunManager />
+      <CoiledEpgUpdatedObserver />
       <CoiledProgramTitleManager />
       <div className="w-full h-screen bg-gray-900 text-gray-100 flex items-center justify-center">
         <div className="relative w-full h-full overflow-hidden">

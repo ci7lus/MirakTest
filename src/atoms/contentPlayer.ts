@@ -104,3 +104,8 @@ export const contentPlayerKeyForRestorationAtom =
     key: `${prefix}.keyForRestoration`,
     default: null,
   })
+
+export const lastEpgUpdatedAtom = atom<number>({
+  key: `${prefix}.lastEpgUpdated`,
+  default: 0,
+})
