@@ -95,6 +95,7 @@ export class EPGManager {
             }
           }
         })
+        pipeline.on("error", (err) => console.error(err))
         stream.on("close", async () => {
           pipeline.destroy()
           console.info(`[epgmanager] 切断されました: ${hostname}`)
