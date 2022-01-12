@@ -3,6 +3,7 @@ import React, { memo, useState } from "react"
 import { Genre, SubGenre } from "../../constants/genre"
 import { GenreColors } from "../../constants/genreColor"
 import { Program, Service } from "../../infra/mirakurun/api"
+import { convertVariationSelectedClosed } from "../../utils/enclosed"
 
 export const ProgramItem: React.FC<{
   program: Program
@@ -46,9 +47,9 @@ export const ProgramItem: React.FC<{
       } border border-gray-400 cursor-pointer select-none content-visibility-auto contain-paint transition-maxHeight ${
         isHovering && "z-50"
       }`}
-      title={[program.name, program.description]
-        .filter((s) => !!s)
-        .join("\n\n")}
+      title={convertVariationSelectedClosed(
+        [program.name, program.description].filter((s) => !!s).join("\n\n")
+      )}
       onMouseEnter={() => setIsHovering(true)}
       onMouseLeave={() => setIsHovering(false)}
     >

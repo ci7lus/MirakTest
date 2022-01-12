@@ -5,6 +5,7 @@ import {
   contentPlayerProgramSelector,
   contentPlayerServiceSelector,
 } from "../../atoms/contentPlayerSelectors"
+import { convertVariationSelectedClosed } from "../../utils/enclosed"
 
 export const CoiledProgramTitleManager: React.VFC<{}> = () => {
   const service = useRecoilValue(contentPlayerServiceSelector)
@@ -13,7 +14,8 @@ export const CoiledProgramTitleManager: React.VFC<{}> = () => {
 
   useEffect(() => {
     const title = [program?.name, service?.name].filter((s) => s).join(" - ")
-    setTitle(title.trim() ? title : null)
+    const variationSelected = convertVariationSelectedClosed(title).trim()
+    setTitle(variationSelected || null)
   }, [program, service])
 
   useEffect(() => {
