@@ -172,12 +172,19 @@ export const PluginLoader: React.VFC<{
               openedPlugins.push(plugin)
             }
           } catch (error) {
-            console.error("[Plugin] 読み込みエラー:", error)
+            console.error(
+              "[Plugin] 読み込みエラー:",
+              pluginDatum.filePath,
+              error
+            )
           }
         })
       )
       await Promise.all(
         openedPlugins.map(async (plugin) => {
+          console.info(
+            `[Plugin] セットアップ中: ${plugin.name} (${plugin.id}, ${plugin.version})`
+          )
           try {
             await plugin.setup({ plugins: openedPlugins })
             plugin.sharedAtoms
