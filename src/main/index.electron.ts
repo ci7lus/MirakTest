@@ -437,15 +437,23 @@ const loadPlugins = async () => {
         return
       }
       const datum = await pluginLoader(fileName)
+      let isReload = false
       if (datum) {
         const loadedDatum = pluginData.get(fileName)
-        if (loadedDatum && loadedDatum.content === datum.content) {
-          console.info(
-            `[Plugin] ファイル内容に変更がないのでスキップします: ${fileName}`
-          )
-          return
+        if (loadedDatum) {
+          isReload = true
+          if (loadedDatum.content === datum.content) {
+            console.info(
+              `[Plugin] ファイル内容に変更がないのでスキップします: ${fileName}`
+            )
+            return
+          }
         }
       }
+      const pluginDisplay = await vm.runInContext(
+        "getPluginDisplay",
+        pluginsVMContext
+      )(fileName)
       await vm.runInContext("destroyPlugin", pluginsVMContext)(fileName)
       pluginData.delete(fileName)
       if (datum) {
@@ -453,12 +461,28 @@ const loadPlugins = async () => {
           pluginData.set(fileName, datum)
           console.info(`[Plugin] ロードしました: ${datum.fileName}`)
           await moduleLoader(datum.fileName, datum.content)
-          await vm.runInContext("setupPlugin", pluginsVMContext)(fileName)
+          const pluginDisplay = await vm.runInContext(
+            "setupPlugin",
+            pluginsVMContext
+          )(fileName)
+          new Notification({
+            title: pluginDisplay
+              ? isReload
+                ? "プラグインを再読み込みしました"
+                : "プラグインを読み込みました"
+              : "プラグインの読み込みに失敗した可能性があります",
+            body: pluginDisplay || fileName,
+          }).show()
         } catch (e) {
           console.error(e, fileName)
           await vm.runInContext("destroyPlugin", pluginsVMContext)(fileName)
           pluginData.delete(fileName)
         }
+      } else {
+        new Notification({
+          title: "プラグインを読み込み解除しました",
+          body: pluginDisplay,
+        }).show()
       }
       vm.runInContext("setAppMenu", pluginsVMContext)(setAppMenu)
     }

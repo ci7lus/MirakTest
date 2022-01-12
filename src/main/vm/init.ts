@@ -75,6 +75,7 @@ const setupPlugin = async (fileName: string) => {
     console.info(
       `[Plugin] ${fileName} を ${plugin.name}(${plugin.id}) として読み込みました`
     )
+    return `${plugin.name} (${plugin.id}, ${fileName})`
   } catch (error) {
     console.error("[Plugin] setup 中にエラーが発生しました:", plugin.id, error)
     try {
@@ -106,4 +107,11 @@ const destroyPlugin = async (fileName: string) => {
     openedPlugins.delete(fileName)
     console.info(`[Plugin] ${fileName} を読み込み解除しました`)
   }
+}
+const getPluginDisplay = (fileName: string) => {
+  const instance = plugins.get(fileName) || openedPlugins.get(fileName)
+  if (!instance) {
+    return fileName
+  }
+  return `${instance.name} (${instance.id}, ${fileName})`
 }
