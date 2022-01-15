@@ -705,8 +705,17 @@ const openWindow = ({
     if (isDev) {
       window.webContents.session.webRequest.onBeforeSendHeaders(
         (details, callback) => {
+          const requestHeaders = {
+            ...details.requestHeaders,
+          }
+          if (
+            requestHeaders.Origin &&
+            !details.url.startsWith("ws://localhost:")
+          ) {
+            delete requestHeaders.Origin
+          }
           callback({
-            requestHeaders: { Origin: "*", ...details.requestHeaders },
+            requestHeaders,
           })
         }
       )
@@ -724,7 +733,13 @@ const openWindow = ({
               responseHeaders[key] = value
             }
           }
-          callback({ responseHeaders })
+          callback({
+            responseHeaders,
+            statusLine:
+              details.method === "OPTIONS"
+                ? details.statusLine.split(" ")[0] + " 200"
+                : details.statusLine,
+          })
         }
       )
     }
