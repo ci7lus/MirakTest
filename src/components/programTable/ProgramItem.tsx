@@ -4,6 +4,7 @@ import { Genre, SubGenre } from "../../constants/genre"
 import { GenreColors } from "../../constants/genreColor"
 import { Program, Service } from "../../infra/mirakurun/api"
 import { convertVariationSelectedClosed } from "../../utils/enclosed"
+import { EscapeEnclosed } from "../common/EscapeEnclosed"
 
 export const ProgramItem: React.FC<{
   program: Program
@@ -54,7 +55,7 @@ export const ProgramItem: React.FC<{
       onMouseLeave={() => setIsHovering(false)}
     >
       <p className="whitespace-pre-wrap leading-snug">
-        {startAt.format("HH:mm")} {program.name}
+        {startAt.format("HH:mm")} <EscapeEnclosed str={program.name || ""} />
       </p>
       <p
         className="whitespace-pre-wrap pt-1 px-2 pb-2 text-xs text-gray-600"

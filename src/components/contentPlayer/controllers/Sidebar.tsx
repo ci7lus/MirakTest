@@ -6,6 +6,7 @@ import { useRecoilValue } from "recoil"
 import { lastEpgUpdatedAtom } from "../../../atoms/contentPlayer"
 import { useNow } from "../../../hooks/date"
 import { ChannelType, Program, Service } from "../../../infra/mirakurun/api"
+import { EscapeEnclosed } from "../../common/EscapeEnclosed"
 
 export const ControllerSidebar: React.FC<{
   isVisible: boolean
@@ -155,7 +156,7 @@ export const ControllerSidebar: React.FC<{
                   {current?.name && (
                     <div className={clsx(service.logoData ? "mt-2" : "mt-1")}>
                       <h4 className={clsx("text-lg", "leading-snug")}>
-                        {current.name}
+                        <EscapeEnclosed str={current.name || ""} />
                       </h4>
                       <p>
                         {dayjs(current.startAt).format("HH:mm")}〜
@@ -165,8 +166,13 @@ export const ControllerSidebar: React.FC<{
                         ({Math.floor(current.duration / 1000 / 60)}分間)
                       </p>
                       <p className={clsx("my-1", "text-sm")}>
-                        {current.description?.trim() ||
-                          Object.values(current.extended || {}).shift()}
+                        <EscapeEnclosed
+                          str={
+                            current.description?.trim() ||
+                            Object.values(current.extended || {}).shift() ||
+                            ""
+                          }
+                        />
                       </p>
                     </div>
                   )}
@@ -177,7 +183,8 @@ export const ControllerSidebar: React.FC<{
                       <span>
                         {dayjs(next.startAt).format("HH:mm")}〜
                         {dayjs(next.startAt + next.duration).format("HH:mm")}{" "}
-                        {next.name} ({Math.floor(next.duration / 1000 / 60)}
+                        <EscapeEnclosed str={next.name || ""} /> (
+                        {Math.floor(next.duration / 1000 / 60)}
                         分間)
                       </span>
                     </div>

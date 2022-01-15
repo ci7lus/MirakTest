@@ -1,5 +1,5 @@
 // https://github.com/l3tnun/EPGStation/blob/7949ffe4b4e3b79c896181e0f95526409818330f/src/util/StrUtil.ts#L10
-export const ENCLOSED_CHARACTERS_TABLE = {
+export const ENCLOSED_CHARACTERS_TABLE: { [key: string]: string } = {
   "\u{1f14a}": "HV",
   "\u{1f13f}": "P",
   "\u{1f14c}": "SD",

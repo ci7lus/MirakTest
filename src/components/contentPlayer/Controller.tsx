@@ -26,6 +26,7 @@ import { globalContentPlayerSelectedServiceFamily } from "../../atoms/globalFami
 import { mirakurunServicesAtom } from "../../atoms/mirakurun"
 import { controllerSetting, experimentalSetting } from "../../atoms/settings"
 import { useRefFromState } from "../../hooks/ref"
+import { EscapeEnclosed } from "../common/EscapeEnclosed"
 import { AudioChannelSelector } from "./controllers/AudioChannelSelector"
 import { AudioTrackSelector } from "./controllers/AudioTrackSelector"
 import { FullScreenToggleButton } from "./controllers/FullScreenToggleButton"
@@ -244,8 +245,8 @@ export const CoiledController: React.VFC<{}> = () => {
             <div className="relative text-gray-200 overflow-hidden">
               {program ? (
                 <div className="flex flex-col">
-                  <h2 className="font-semibold text-2xl truncate">
-                    {program.name}
+                  <h2 className="font-semibold text-2xl truncate align-middle">
+                    <EscapeEnclosed str={program.name || ""} />
                   </h2>
                   <div className="flex space-x-3 font-normal text-lg truncate">
                     {serviceLabel ? <p>{serviceLabel}</p> : <></>}
