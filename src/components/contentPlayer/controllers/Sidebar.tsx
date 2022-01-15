@@ -6,6 +6,7 @@ import { useRecoilValue } from "recoil"
 import { lastEpgUpdatedAtom } from "../../../atoms/contentPlayer"
 import { useNow } from "../../../hooks/date"
 import { ChannelType, Program, Service } from "../../../infra/mirakurun/api"
+import { convertVariationSelectedClosed } from "../../../utils/enclosed"
 import { EscapeEnclosed } from "../../common/EscapeEnclosed"
 
 export const ControllerSidebar: React.FC<{
@@ -106,6 +107,96 @@ export const ControllerSidebar: React.FC<{
           ))}
         </div>
         <div className={clsx("overflow-auto")}>
+          <div
+            className={clsx("grid", "grid-cols-2", "gap-2", "lg:grid-cols-3")}
+          >
+            {Object.values(
+              targetServices.reduce(
+                (services: Record<string, Service[]>, service) => {
+                  const identifier =
+                    service.channel?.type === "CS"
+                      ? service.id
+                      : service.remoteControlKeyId ??
+                        service.channel?.channel ??
+                        service.id
+                  if (!identifier) {
+                    return services
+                  }
+                  if (!services[identifier]) {
+                    services[identifier] = [service]
+                  } else {
+                    services[identifier].push(service)
+                  }
+                  return services
+                },
+                {}
+              )
+            )
+              .sort(
+                (a, b) =>
+                  (a[0].remoteControlKeyId ?? a[0].serviceId) -
+                  (b[0].remoteControlKeyId ?? b[0].serviceId)
+              )
+              .map((services) => {
+                const service = services[0]
+                const programs = queriedPrograms
+                  .filter(
+                    (program) =>
+                      program.serviceId === service.serviceId &&
+                      program.networkId === service.networkId
+                  )
+                  .sort((a, b) => a.startAt - b.startAt)
+                const current = programs?.[0]
+                return (
+                  <button
+                    key={service.id}
+                    type="button"
+                    className={clsx(
+                      "bg-gray-800",
+                      "bg-opacity-70",
+                      "rounded-md",
+                      "flex",
+                      "flex-col",
+                      "truncate",
+                      "p-1",
+                      "cursor-pointer"
+                    )}
+                    onClick={(e) => {
+                      e.preventDefault()
+                      setService(service)
+                    }}
+                    title={convertVariationSelectedClosed(
+                      [(service.name, current?.name)]
+                        .filter((s) => s)
+                        .join("\n")
+                    )}
+                  >
+                    <span
+                      className={clsx(
+                        "flex",
+                        "space-x-2",
+                        "pointer-events-none"
+                      )}
+                    >
+                      {service.logoData && (
+                        <img
+                          className={clsx("h-6", "rounded-md", "flex-shrink-0")}
+                          src={`data:image/jpeg;base64,${service.logoData}`}
+                        />
+                      )}
+                      <span className={clsx("flex-shrink-0")}>
+                        {service.remoteControlKeyId} {service.name}
+                      </span>
+                    </span>
+                    {current?.name && (
+                      <span className={clsx("pointer-events-none")}>
+                        <EscapeEnclosed str={current.name || ""} />
+                      </span>
+                    )}
+                  </button>
+                )
+              })}
+          </div>
           {targetServices.map((service) => {
             const programs = queriedPrograms
               .filter(
