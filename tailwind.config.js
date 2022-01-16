@@ -2,7 +2,11 @@ module.exports = {
   purge: {
     enabled: process.env.NODE_ENV === "production",
     mode: "all",
-    content: ["./index.html", "./src/**/*.{ts,tsx,scss}"],
+    content: [
+      "./index.html",
+      "./src/**/*.{ts,tsx,scss}",
+      "./node_modules/react-multi-carousel/lib/styles.css",
+    ],
     whitelist: [],
     whitelistPatterns: [],
   },

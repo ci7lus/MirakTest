@@ -10125,6 +10125,7 @@ __metadata:
     react: ^17.0.2
     react-dom: ^17.0.2
     react-feather: ^2.0.9
+    react-multi-carousel: ^2.6.5
     react-query: ^3.32.3
     react-refresh: ^0.11.0
     react-resize-detector: ^6.7.6
@@ -11596,6 +11597,13 @@ __metadata:
   version: 17.0.1
   resolution: "react-is@npm:17.0.1"
   checksum: 5e6945a286367894d11b24f41a0065607ba62bdac0df0b567294b2e299c037e3641434e66f9be30536b8c47f7ad94d44e633feb2ba25959c2c42423844e6c2f1
+  languageName: node
+  linkType: hard
+
+"react-multi-carousel@npm:^2.6.5":
+  version: 2.6.5
+  resolution: "react-multi-carousel@npm:2.6.5"
+  checksum: 2ba44029a8c197320e5e536ee341a5bff492761de6a82e7335a719a11bc56b1d8fee2aa0854de2bcad67e819a2cbd7bb15ebf6ae1db9caf5d056b3f04e917806
   languageName: node
   linkType: hard
 

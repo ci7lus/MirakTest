@@ -32,7 +32,7 @@ export const nodeConfiguration: webpack.RuleSetRule = {
 }
 
 export const scssConfiguration: webpack.RuleSetRule = {
-  test: /\.scss$/,
+  test: /\.s?css$/,
   use: [
     {
       loader: MiniCSSExtractPlugin.loader,

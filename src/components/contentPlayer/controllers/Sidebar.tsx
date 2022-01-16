@@ -1,13 +1,54 @@
 import clsx from "clsx"
-import dayjs from "dayjs"
-import React, { useEffect, useState } from "react"
-import { ChevronsRight } from "react-feather"
+import React, { useEffect, useMemo, useState } from "react"
+import { ChevronLeft, ChevronRight } from "react-feather"
+import Carousel from "react-multi-carousel"
 import { useRecoilValue } from "recoil"
 import { lastEpgUpdatedAtom } from "../../../atoms/contentPlayer"
 import { useNow } from "../../../hooks/date"
 import { ChannelType, Program, Service } from "../../../infra/mirakurun/api"
 import { convertVariationSelectedClosed } from "../../../utils/enclosed"
 import { EscapeEnclosed } from "../../common/EscapeEnclosed"
+import { SidebarServiceDetail } from "./SidebarServiceDetail"
+
+import "react-multi-carousel/lib/styles.css"
+
+const RightArrow = ({ onClick }: { onClick: () => void }) => {
+  return (
+    <button
+      className={clsx(
+        "absolute",
+        "bg-gray-800",
+        "bg-opacity-50",
+        "cursor-pointer",
+        "right-0",
+        "p-2",
+        "rounded-md"
+      )}
+      onClick={onClick}
+    >
+      <ChevronRight className={clsx("pointer-events-none")} size={24} />
+    </button>
+  )
+}
+
+const LeftArrow = ({ onClick }: { onClick: () => void }) => {
+  return (
+    <button
+      className={clsx(
+        "absolute",
+        "bg-gray-800",
+        "bg-opacity-50",
+        "cursor-pointer",
+        "left-0",
+        "p-2",
+        "rounded-md"
+      )}
+      onClick={onClick}
+    >
+      <ChevronLeft className={clsx("pointer-events-none")} size={24} />
+    </button>
+  )
+}
 
 export const ControllerSidebar: React.FC<{
   isVisible: boolean
@@ -20,8 +61,34 @@ export const ControllerSidebar: React.FC<{
   const [selectedType, setSelectedType] = useState<ChannelType | undefined>(
     serviceTypes?.[0]
   )
-  const targetServices = services.filter(
-    (service) => service.channel?.type === selectedType
+  const targetServices = useMemo(
+    () =>
+      Object.values(
+        services
+          .filter((service) => service.channel?.type === selectedType)
+          .reduce((services: Record<string, Service[]>, service) => {
+            const identifier =
+              service.channel?.type === "CS"
+                ? service.id
+                : service.remoteControlKeyId ??
+                  service.channel?.channel ??
+                  service.id
+            if (!identifier) {
+              return services
+            }
+            if (!services[identifier]) {
+              services[identifier] = [service]
+            } else {
+              services[identifier].push(service)
+            }
+            return services
+          }, {})
+      ).sort(
+        (a, b) =>
+          (a[0].remoteControlKeyId ?? a[0].serviceId) -
+          (b[0].remoteControlKeyId ?? b[0].serviceId)
+      ),
+    [selectedType, services]
   )
   const now = useNow()
   const [queriedPrograms, setQueriedPrograms] = useState<Program[]>([])
@@ -110,131 +177,40 @@ export const ControllerSidebar: React.FC<{
           <div
             className={clsx("grid", "grid-cols-2", "gap-2", "lg:grid-cols-3")}
           >
-            {Object.values(
-              targetServices.reduce(
-                (services: Record<string, Service[]>, service) => {
-                  const identifier =
-                    service.channel?.type === "CS"
-                      ? service.id
-                      : service.remoteControlKeyId ??
-                        service.channel?.channel ??
-                        service.id
-                  if (!identifier) {
-                    return services
-                  }
-                  if (!services[identifier]) {
-                    services[identifier] = [service]
-                  } else {
-                    services[identifier].push(service)
-                  }
-                  return services
-                },
-                {}
-              )
-            )
-              .sort(
-                (a, b) =>
-                  (a[0].remoteControlKeyId ?? a[0].serviceId) -
-                  (b[0].remoteControlKeyId ?? b[0].serviceId)
-              )
-              .map((services) => {
-                const service = services[0]
-                const programs = queriedPrograms
-                  .filter(
-                    (program) =>
-                      program.serviceId === service.serviceId &&
-                      program.networkId === service.networkId
-                  )
-                  .sort((a, b) => a.startAt - b.startAt)
-                const current = programs?.[0]
-                return (
-                  <button
-                    key={service.id}
-                    type="button"
-                    className={clsx(
-                      "bg-gray-800",
-                      "bg-opacity-70",
-                      "rounded-md",
-                      "flex",
-                      "flex-col",
-                      "truncate",
-                      "p-1",
-                      "cursor-pointer"
-                    )}
-                    onClick={(e) => {
-                      e.preventDefault()
-                      setService(service)
-                    }}
-                    title={convertVariationSelectedClosed(
-                      [(service.name, current?.name)]
-                        .filter((s) => s)
-                        .join("\n")
-                    )}
-                  >
-                    <span
-                      className={clsx(
-                        "flex",
-                        "space-x-2",
-                        "pointer-events-none"
-                      )}
-                    >
-                      {service.logoData && (
-                        <img
-                          className={clsx("h-6", "rounded-md", "flex-shrink-0")}
-                          src={`data:image/jpeg;base64,${service.logoData}`}
-                        />
-                      )}
-                      <span className={clsx("flex-shrink-0")}>
-                        {service.remoteControlKeyId} {service.name}
-                      </span>
-                    </span>
-                    {current?.name && (
-                      <span className={clsx("pointer-events-none")}>
-                        <EscapeEnclosed str={current.name || ""} />
-                      </span>
-                    )}
-                  </button>
+            {targetServices.map((services) => {
+              const service = services[0]
+              const programs = queriedPrograms
+                .filter(
+                  (program) =>
+                    program.serviceId === service.serviceId &&
+                    program.networkId === service.networkId
                 )
-              })}
-          </div>
-          {targetServices.map((service) => {
-            const programs = queriedPrograms
-              .filter(
-                (program) =>
-                  program.serviceId === service.serviceId &&
-                  program.networkId === service.networkId
-              )
-              .sort((a, b) => a.startAt - b.startAt)
-            const current = programs?.[0]
-            const next = programs?.[1]
-            return (
-              <a
-                key={service.id}
-                onClick={(e) => {
-                  e.preventDefault()
-                  setService(service)
-                }}
-                className={clsx("cursor-pointer")}
-              >
-                <div
+                .sort((a, b) => a.startAt - b.startAt)
+              const current = programs?.[0]
+              return (
+                <button
+                  key={"button" + service.id}
+                  type="button"
                   className={clsx(
-                    "p-3",
-                    "rounded-md",
                     "bg-gray-800",
                     "bg-opacity-70",
-                    "mt-2",
-                    "pointer-events-none"
+                    "rounded-md",
+                    "flex",
+                    "flex-col",
+                    "truncate",
+                    "p-1",
+                    "cursor-pointer"
+                  )}
+                  onClick={(e) => {
+                    e.preventDefault()
+                    setService(service)
+                  }}
+                  title={convertVariationSelectedClosed(
+                    [service.name, current?.name].filter((s) => s).join("\n")
                   )}
                 >
-                  <div
-                    className={clsx(
-                      "flex",
-                      "space-x-2",
-                      "items-center",
-                      "overflow-hidden",
-                      "w-full",
-                      "truncate"
-                    )}
+                  <span
+                    className={clsx("flex", "space-x-2", "pointer-events-none")}
                   >
                     {service.logoData && (
                       <img
@@ -242,46 +218,59 @@ export const ControllerSidebar: React.FC<{
                         src={`data:image/jpeg;base64,${service.logoData}`}
                       />
                     )}
-                    <h3 className={clsx("flex-shrink-0")}>{service.name}</h3>
-                  </div>
+                    <span className={clsx("flex-shrink-0")}>
+                      {service.remoteControlKeyId} {service.name}
+                    </span>
+                  </span>
                   {current?.name && (
-                    <div className={clsx(service.logoData ? "mt-2" : "mt-1")}>
-                      <h4 className={clsx("text-lg", "leading-snug")}>
-                        <EscapeEnclosed str={current.name || ""} />
-                      </h4>
-                      <p>
-                        {dayjs(current.startAt).format("HH:mm")}〜
-                        {dayjs(current.startAt + current.duration).format(
-                          "HH:mm"
-                        )}{" "}
-                        ({Math.floor(current.duration / 1000 / 60)}分間)
-                      </p>
-                      <p className={clsx("my-1", "text-sm")}>
-                        <EscapeEnclosed
-                          str={
-                            current.description?.trim() ||
-                            Object.values(current.extended || {}).shift() ||
-                            ""
-                          }
-                        />
-                      </p>
-                    </div>
+                    <span className={clsx("pointer-events-none")}>
+                      <EscapeEnclosed str={current.name || ""} />
+                    </span>
                   )}
-                  {next?.name && (
-                    <div className={clsx("text-sm")}>
-                      Next
-                      <ChevronsRight size="1rem" className={clsx("inline")} />
-                      <span>
-                        {dayjs(next.startAt).format("HH:mm")}〜
-                        {dayjs(next.startAt + next.duration).format("HH:mm")}{" "}
-                        <EscapeEnclosed str={next.name || ""} /> (
-                        {Math.floor(next.duration / 1000 / 60)}
-                        分間)
-                      </span>
-                    </div>
-                  )}
-                </div>
-              </a>
+                </button>
+              )
+            })}
+          </div>
+          {targetServices.map((services) => {
+            if (services.length < 2) {
+              const service = services[0]
+              return (
+                <SidebarServiceDetail
+                  key={service.id}
+                  service={service}
+                  queriedPrograms={queriedPrograms}
+                  setService={setService}
+                />
+              )
+            }
+            return (
+              <Carousel
+                key={services[0].id + "s"}
+                responsive={{
+                  desktop: {
+                    breakpoint: { max: Infinity, min: -1 },
+                    items: 1,
+                    partialVisibilityGutter: 30,
+                  },
+                }}
+                showDots={false}
+                ssr={false}
+                renderArrowsWhenDisabled={false}
+                partialVisible={true}
+                // @ts-expect-error type is not assignable
+                customRightArrow={<RightArrow />}
+                // @ts-expect-error type is not assignable
+                customLeftArrow={<LeftArrow />}
+              >
+                {services.map((service) => (
+                  <SidebarServiceDetail
+                    key={service.id}
+                    service={service}
+                    queriedPrograms={queriedPrograms}
+                    setService={setService}
+                  />
+                ))}
+              </Carousel>
             )
           })}
         </div>
