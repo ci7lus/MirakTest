@@ -5,6 +5,7 @@ export const VLCLogFilter = (s: string) => {
     s.startsWith("picture might be displayed late") ||
     s.startsWith("More than") ||
     s.startsWith("buffer too late") ||
+    s.startsWith("discontinuity received 0") ||
     // gnutls
     s.startsWith("in DATA (0x00) frame of") ||
     s.startsWith("out WINDOW_UPDATE (0x08) frame ")
@@ -74,8 +75,6 @@ export const VLCLogFilter = (s: string) => {
     return { category: "es_out_program_epg" } as const
   } else if (s.startsWith("PMTCallBack called for program")) {
     return { category: "PMTCallBack_called_for_program" } as const
-  } else if (s.startsWith("discontinuity received 0")) {
-    return { category: "discontinuity_received_0" } as const
   } else if (s.startsWith("end of stream")) {
     return { category: "end_of_stream" } as const
   } else if (s.startsWith("EOF reached")) {

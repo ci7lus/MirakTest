@@ -329,8 +329,7 @@ export const CoiledVideoPlayer: React.VFC<{}> = memo(() => {
           break
         case "received_first_picture":
         case "es_out_program_epg":
-        case "PMTCallBack_called_for_program":
-        case "discontinuity_received_0": {
+        case "PMTCallBack_called_for_program": {
           // ほどほどの頻度
           console.debug(message)
           setAudioTracks(window.Preload.webchimera.getAudioTracks())
