@@ -1,6 +1,7 @@
 import clsx from "clsx"
 import dayjs from "dayjs"
 import React, { memo, useState } from "react"
+// import Marquee from "react-fast-marquee"
 import { ChevronsRight } from "react-feather"
 import { Service, Program } from "../../../infra/mirakurun/api"
 import { EscapeEnclosed } from "../../common/EscapeEnclosed"
@@ -24,6 +25,7 @@ export const SidebarServiceDetail = memo(
       .sort((a, b) => a.startAt - b.startAt)
     const current = programs?.[0]
     const next = programs?.[1]
+    const [, /*isHovering*/ setIsHovering] = useState(false)
     const [whenMouseDown, setWhenMouseDown] = useState(0)
     return (
       <a
@@ -35,6 +37,8 @@ export const SidebarServiceDetail = memo(
           }
         }}
         onClick={(e) => e.preventDefault()}
+        onMouseEnter={() => setIsHovering(true)}
+        onMouseLeave={() => setIsHovering(false)}
         className={clsx("cursor-pointer")}
       >
         <div
@@ -65,6 +69,15 @@ export const SidebarServiceDetail = memo(
                 src={`data:image/jpeg;base64,${service.logoData}`}
               />
             )}
+            {/*// TODO: https://github.com/justin-chu/react-fast-marquee/issues/32
+            <Marquee
+              play={isHovering}
+              gradient={false}
+              className={clsx("flex-shrink-0")}
+              speed={40}
+            >
+              {service.name}
+            </Marquee>*/}
             <h3 className={clsx("flex-shrink-0")}>{service.name}</h3>
           </div>
           {current?.name && (

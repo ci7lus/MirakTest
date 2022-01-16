@@ -10124,6 +10124,7 @@ __metadata:
     prettier: ^2.4.1
     react: ^17.0.2
     react-dom: ^17.0.2
+    react-fast-marquee: ^1.3.1
     react-feather: ^2.0.9
     react-multi-carousel: ^2.6.5
     react-query: ^3.32.3
@@ -11572,6 +11573,16 @@ __metadata:
   peerDependencies:
     react: 17.0.2
   checksum: 1c1eaa3bca7c7228d24b70932e3d7c99e70d1d04e13bb0843bbf321582bc25d7961d6b8a6978a58a598af2af496d1cedcfb1bf65f6b0960a0a8161cb8dab743c
+  languageName: node
+  linkType: hard
+
+"react-fast-marquee@npm:^1.3.1":
+  version: 1.3.1
+  resolution: "react-fast-marquee@npm:1.3.1"
+  peerDependencies:
+    react: ^16.8.0 || ^17.0.0
+    react-dom: ^16.8.0 || ^17.0.0
+  checksum: 8802ca2529b6bdecef0693456695f7c4e9b8d680fce33d8f48b15947232e37100b9ee06bac00339ad03e1fc17261adc3ac8709bb68c083acda657d819c7599dd
   languageName: node
   linkType: hard
 

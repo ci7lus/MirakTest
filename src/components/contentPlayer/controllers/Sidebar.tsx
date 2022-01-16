@@ -1,54 +1,12 @@
 import clsx from "clsx"
 import React, { useEffect, useMemo, useState } from "react"
-import { ChevronLeft, ChevronRight } from "react-feather"
-import Carousel from "react-multi-carousel"
 import { useRecoilValue } from "recoil"
 import { lastEpgUpdatedAtom } from "../../../atoms/contentPlayer"
 import { useNow } from "../../../hooks/date"
 import { ChannelType, Program, Service } from "../../../infra/mirakurun/api"
-import { convertVariationSelectedClosed } from "../../../utils/enclosed"
-import { EscapeEnclosed } from "../../common/EscapeEnclosed"
+import { SidebarServiceCarousel } from "./SidebarServiceCarousel"
 import { SidebarServiceDetail } from "./SidebarServiceDetail"
-
-import "react-multi-carousel/lib/styles.css"
-
-const RightArrow = ({ onClick }: { onClick: () => void }) => {
-  return (
-    <button
-      className={clsx(
-        "absolute",
-        "bg-gray-800",
-        "bg-opacity-50",
-        "cursor-pointer",
-        "right-0",
-        "p-2",
-        "rounded-md"
-      )}
-      onClick={onClick}
-    >
-      <ChevronRight className={clsx("pointer-events-none")} size={24} />
-    </button>
-  )
-}
-
-const LeftArrow = ({ onClick }: { onClick: () => void }) => {
-  return (
-    <button
-      className={clsx(
-        "absolute",
-        "bg-gray-800",
-        "bg-opacity-50",
-        "cursor-pointer",
-        "left-0",
-        "p-2",
-        "rounded-md"
-      )}
-      onClick={onClick}
-    >
-      <ChevronLeft className={clsx("pointer-events-none")} size={24} />
-    </button>
-  )
-}
+import { SidebarServiceQuickButton } from "./SidebarServiceQuickButton"
 
 export const ControllerSidebar: React.FC<{
   isVisible: boolean
@@ -188,46 +146,12 @@ export const ControllerSidebar: React.FC<{
                 .sort((a, b) => a.startAt - b.startAt)
               const current = programs?.[0]
               return (
-                <button
+                <SidebarServiceQuickButton
                   key={"button" + service.id}
-                  type="button"
-                  className={clsx(
-                    "bg-gray-800",
-                    "bg-opacity-70",
-                    "rounded-md",
-                    "flex",
-                    "flex-col",
-                    "truncate",
-                    "p-1",
-                    "cursor-pointer"
-                  )}
-                  onClick={(e) => {
-                    e.preventDefault()
-                    setService(service)
-                  }}
-                  title={convertVariationSelectedClosed(
-                    [service.name, current?.name].filter((s) => s).join("\n")
-                  )}
-                >
-                  <span
-                    className={clsx("flex", "space-x-2", "pointer-events-none")}
-                  >
-                    {service.logoData && (
-                      <img
-                        className={clsx("h-6", "rounded-md", "flex-shrink-0")}
-                        src={`data:image/jpeg;base64,${service.logoData}`}
-                      />
-                    )}
-                    <span className={clsx("flex-shrink-0")}>
-                      {service.remoteControlKeyId} {service.name}
-                    </span>
-                  </span>
-                  {current?.name && (
-                    <span className={clsx("pointer-events-none")}>
-                      <EscapeEnclosed str={current.name || ""} />
-                    </span>
-                  )}
-                </button>
+                  service={service}
+                  setService={setService}
+                  program={current}
+                />
               )
             })}
           </div>
@@ -244,33 +168,12 @@ export const ControllerSidebar: React.FC<{
               )
             }
             return (
-              <Carousel
+              <SidebarServiceCarousel
                 key={services[0].id + "s"}
-                responsive={{
-                  desktop: {
-                    breakpoint: { max: Infinity, min: -1 },
-                    items: 1,
-                    partialVisibilityGutter: 30,
-                  },
-                }}
-                showDots={false}
-                ssr={false}
-                renderArrowsWhenDisabled={false}
-                partialVisible={true}
-                // @ts-expect-error type is not assignable
-                customRightArrow={<RightArrow />}
-                // @ts-expect-error type is not assignable
-                customLeftArrow={<LeftArrow />}
-              >
-                {services.map((service) => (
-                  <SidebarServiceDetail
-                    key={service.id}
-                    service={service}
-                    queriedPrograms={queriedPrograms}
-                    setService={setService}
-                  />
-                ))}
-              </Carousel>
+                services={services}
+                queriedPrograms={queriedPrograms}
+                setService={setService}
+              />
             )
           })}
         </div>
