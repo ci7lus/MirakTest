@@ -273,6 +273,7 @@ export const CoiledVideoPlayer: React.VFC<{}> = memo(() => {
       preserveDrawingBuffer: true,
     })
     const args = [
+      process.env.NODE_ENV !== "production" ? "-vvv" : "",
       0 <= (experimental.vlcNetworkCaching ?? -1)
         ? `--network-caching=${experimental.vlcNetworkCaching}`
         : "",
