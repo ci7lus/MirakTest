@@ -182,9 +182,17 @@ jobs:
           path: |
             build/*.dmg
             build/*.exe
-            build/*.zip
+            build/*-win.zip
             build/*.AppImage
             build/*.tar.gz
+          if-no-files-found: ignore
+      - name: Upload build-image artifact (mac zip)
+        uses: actions/upload-artifact@v2
+        if: runner.os == 'macOS'
+        with:
+          name: ${{ runner.os }}-build-image-maczip
+          path: |
+            build/*-mac.zip
           if-no-files-found: ignore
       - name: Build dts for plugin
         if: runner.os == 'Linux'
