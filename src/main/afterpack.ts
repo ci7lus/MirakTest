@@ -2,7 +2,7 @@ import child from "child_process"
 import fs from "fs"
 import path from "path"
 import axios from "axios"
-import type { Arch, Target, Packager } from "electron-builder"
+import { Arch, Target, Packager } from "electron-builder"
 import glob from "glob"
 
 // https://www.electron.build/configuration/configuration#afterpack
@@ -29,7 +29,11 @@ exports.default = async (ctx: AfterPackContext) => {
   let dest = "./build"
   if (ctx.electronPlatformName === "darwin") {
     const src = path.resolve("./vlc_libs/")
-    dest = path.resolve("./build/mac/MirakTest.app/Contents/Frameworks/")
+    dest = path.resolve(
+      `./build/mac${
+        ctx.arch === Arch.arm64 ? "-arm64" : ""
+      }/MirakTest.app/Contents/Frameworks/`
+    )
 
     if (!fs.existsSync(src) || !fs.existsSync(dest)) {
       console.info("ファイルが存在しません、スキップします")
@@ -45,7 +49,11 @@ exports.default = async (ctx: AfterPackContext) => {
     for (const file of files) {
       await exec(`cp -Ra ${file} ${dest}`)
     }
-    dest = path.resolve("./build/mac/MirakTest.app/Contents/")
+    dest = path.resolve(
+      `./build/mac${
+        ctx.arch === Arch.arm64 ? "-arm64" : ""
+      }/MirakTest.app/Contents/`
+    )
   } else if (ctx.electronPlatformName === "win32") {
     dest = path.resolve("./build/win-unpacked/")
   }
