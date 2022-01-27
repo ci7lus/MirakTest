@@ -10,11 +10,12 @@ export const exists = async (filePath: string) =>
       .then((stat) => res(stat.isFile() || stat.isDirectory()))
       .catch(() => res(false))
   })
-export const isChildOfHome = (filePath: string) => {
+export const isChildOf = (filePath: string, parent: string) => {
   // https://stackoverflow.com/questions/37521893/determine-if-a-path-is-subdirectory-of-another-in-node-js
-  const relative = path.relative(homeDir, filePath)
+  const relative = path.relative(parent, filePath)
   return relative && !relative.startsWith("..") && !path.isAbsolute(relative)
 }
+export const isChildOfHome = (filePath: string) => isChildOf(filePath, homeDir)
 export const isHidden = (filePath: string) => {
   return filePath.split(/\/|\\/).some((part) => part.startsWith("."))
 }

@@ -27,6 +27,7 @@ import {
   globalActiveContentPlayerIdAtomKey,
   globalLastEpgUpdatedAtomKey,
 } from "../../src/atoms/globalKeys"
+import { screenshotSettingAtomKey } from "../../src/atoms/settingsKey"
 import {
   REQUEST_CONFIRM_DIALOG,
   ON_WINDOW_MOVED,
@@ -46,6 +47,7 @@ import {
   TOGGLE_ALWAYS_ON_TOP,
   TOGGLE_FULL_SCREEN,
   UPDATE_IS_PLAYING_STATE,
+  REQUEST_SCREENSHOT_BASE_PATH,
 } from "../../src/constants/ipc"
 import { ROUTES } from "../../src/constants/routes"
 import {
@@ -55,6 +57,7 @@ import {
 } from "../../src/types/ipc"
 import { AppInfo, InitPlugin, PluginInMainArgs } from "../../src/types/plugin"
 import { InitialData, ObjectLiteral, PluginDatum } from "../../src/types/struct"
+import { ScreenshotSetting } from "../types/setting"
 import { FORBIDDEN_MODULES } from "./constants"
 import { generateContentPlayerContextMenu } from "./contextmenu"
 import { EPGManager } from "./epgManager"
@@ -71,9 +74,7 @@ const blockerIdBycontentPlayerWindow: { [key: number]: number | null } = {}
 
 const isDev = process.env.NODE_ENV === "development"
 
-let store: Store<{
-  [key: typeof CONTENT_PLAYER_BOUNDS]: Rectangle
-}> | null = null
+let store: Store | null = null
 
 let display: Electron.Display | null = null
 
@@ -97,7 +98,7 @@ const init = () => {
 
   Store.initRenderer()
   // store/bounds定義を引っ張ってくると目に見えて容量が増えるので決め打ち
-  const _store = new Store<{ [key: typeof CONTENT_PLAYER_BOUNDS]: Rectangle }>({
+  const _store = new Store({
     // @ts-expect-error workaround for conf's Project name could not be inferred. Please specify the `projectName` option.
     projectName: pkg.name,
   })
@@ -576,8 +577,7 @@ const openWindow = ({
         x = bounds.x + 30
         y = bounds.y + 30
       } else if (display) {
-        const bounds: Rectangle | null =
-          store?.get(CONTENT_PLAYER_BOUNDS) || null
+        const bounds = (store?.get(CONTENT_PLAYER_BOUNDS) as Rectangle) || null
         width = bounds?.width || Math.ceil(1280 / display.scaleFactor)
         height = bounds?.height || Math.ceil(720 / display.scaleFactor)
         x = bounds?.x
@@ -856,6 +856,13 @@ ipcMain.handle(REQUEST_CONFIRM_DIALOG, async (event, message, buttons) => {
       buttons,
       type: "question",
     }
+  )
+})
+
+ipcMain.handle(REQUEST_SCREENSHOT_BASE_PATH, async () => {
+  return (
+    (store?.get(screenshotSettingAtomKey) as ScreenshotSetting)?.basePath ||
+    null
   )
 })
 

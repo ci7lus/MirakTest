@@ -27,6 +27,7 @@ import {
   TOGGLE_ALWAYS_ON_TOP,
   TOGGLE_FULL_SCREEN,
   UPDATE_IS_PLAYING_STATE,
+  REQUEST_SCREENSHOT_BASE_PATH,
 } from "../constants/ipc"
 import {
   EPGManagerRegisterArg,
@@ -36,7 +37,7 @@ import {
 } from "../types/ipc"
 import { store } from "../utils/store"
 import { QuerySchema } from "./epgManager"
-import { exists, isChildOfHome, isHidden } from "./fsUtils"
+import { exists, isChildOf, isChildOfHome, isHidden } from "./fsUtils"
 
 let wc: WebChimera.Player | null = null
 
@@ -245,6 +246,9 @@ const preload: Preload = {
       ipcRenderer.off(ON_WINDOW_MOVED, listener)
     }
   },
+  requestScreenshotBasePath() {
+    return ipcRenderer.invoke(REQUEST_SCREENSHOT_BASE_PATH)
+  },
   public: {
     epgManager: {
       register: (arg: EPGManagerRegisterArg) => {
@@ -316,11 +320,15 @@ const preload: Preload = {
     requestConfirmDialog(message, buttons) {
       return ipcRenderer.invoke(REQUEST_CONFIRM_DIALOG, message, buttons)
     },
-    async writeFile(path, buffer) {
+    async writeFile({ path, buffer }) {
+      const screenshotPath = await preload.requestScreenshotBasePath()
       const isNotChild = !isChildOfHome(path)
       const isAlreadyExists = await exists(path)
       const isHiddenFile = isHidden(path)
-      if (isNotChild || isAlreadyExists || isHiddenFile) {
+      if (
+        (!screenshotPath || !isChildOf(path, screenshotPath)) &&
+        (isNotChild || isAlreadyExists || isHiddenFile)
+      ) {
         const ask = await preload.public.requestConfirmDialog(
           `「${path}」${
             isHiddenFile

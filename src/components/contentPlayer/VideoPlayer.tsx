@@ -219,7 +219,10 @@ export const CoiledVideoPlayer: React.VFC<{}> = memo(() => {
               .join("_")
             const fileName = `${baseName}.png`
             const filePath = path.join(screenshot.basePath, fileName)
-            await window.Preload.public.writeFile(filePath, buffer)
+            await window.Preload.public.writeFile({
+              path: filePath,
+              buffer,
+            })
             console.info(`キャプチャを保存しました:`, filePath)
             window.Preload.public.showNotification(
               {

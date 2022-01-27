@@ -75,10 +75,11 @@ export type Preload = {
   }
   onUpdateIsPlayingState: (listener: (isPlaying: boolean) => void) => () => void
   onWindowMoved: (listener: () => void) => () => void
+  requestScreenshotBasePath: () => Promise<string>
   public: {
     setWindowAspect: (aspect: number) => void
     isDirectoryExists: (path: string) => Promise<boolean>
-    writeFile: (path: string, buffer: ArrayBuffer) => Promise<boolean>
+    writeFile: (_: { path: string; buffer: ArrayBuffer }) => Promise<boolean>
     writeArrayBufferToClipboard: (buffer: ArrayBuffer) => void
     requestDialog: (
       arg: Electron.OpenDialogOptions

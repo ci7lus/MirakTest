@@ -8,6 +8,7 @@ import type {
   ScreenshotSetting,
   SubtitleSetting,
 } from "../types/setting"
+import { screenshotSettingAtomKey } from "./settingsKey"
 
 const prefix = `${pkg.name}.settings`
 
@@ -39,7 +40,7 @@ export const subtitleSetting = atom<SubtitleSetting>({
 })
 
 export const screenshotSetting = atom<ScreenshotSetting>({
-  key: `${prefix}.screenshot`,
+  key: screenshotSettingAtomKey,
   default: {
     saveAsAFile: true,
     includeSubtitle: true,
