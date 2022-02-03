@@ -1,6 +1,7 @@
 import clsx from "clsx"
 import React, { memo } from "react"
 import { Service, Program } from "../../../infra/mirakurun/api"
+import { ServiceWithLogoData } from "../../../types/mirakurun"
 import { convertVariationSelectedClosed } from "../../../utils/enclosed"
 import { EscapeEnclosed } from "../../common/EscapeEnclosed"
 
@@ -10,7 +11,7 @@ export const SidebarServiceQuickButton = memo(
     setService,
     program,
   }: {
-    service: Service
+    service: ServiceWithLogoData
     setService: (s: Service) => void
     program: Program | undefined
   }) => {

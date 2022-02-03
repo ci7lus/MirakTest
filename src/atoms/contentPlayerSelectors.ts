@@ -1,6 +1,7 @@
 import { selector } from "recoil"
 import pkg from "../../package.json"
-import { Program, Service } from "../infra/mirakurun/api"
+import { Program } from "../infra/mirakurun/api"
+import { ServiceWithLogoData } from "../types/mirakurun"
 import {
   contentPlayerAudioTracksAtom,
   contentPlayerIsSeekableAtom,
@@ -72,15 +73,16 @@ export const contentPlayerUrlSelector = selector<string | null>({
   },
 })
 
-export const contentPlayerServiceSelector = selector<Service | null>({
-  key: `${prefix}.service`,
-  get: ({ get }) => {
-    const content = get(
-      globalContentPlayerPlayingContentFamily(window.id ?? -1)
-    )
-    return content?.service || null
-  },
-})
+export const contentPlayerServiceSelector =
+  selector<ServiceWithLogoData | null>({
+    key: `${prefix}.service`,
+    get: ({ get }) => {
+      const content = get(
+        globalContentPlayerPlayingContentFamily(window.id ?? -1)
+      )
+      return content?.service || null
+    },
+  })
 
 export const contentPlayerProgramSelector = selector<Program | null>({
   key: `${prefix}.program`,

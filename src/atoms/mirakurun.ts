@@ -1,7 +1,9 @@
 import { atom } from "recoil"
 import pkg from "../../package.json"
-import { Service } from "../infra/mirakurun/api"
-import { MirakurunCompatibilityTypes } from "../types/mirakurun"
+import {
+  MirakurunCompatibilityTypes,
+  ServiceWithLogoData,
+} from "../types/mirakurun"
 
 const prefix = `${pkg.name}.mirakurun`
 
@@ -16,7 +18,7 @@ export const mirakurunVersionAtom = atom<string | null>({
   default: null,
 })
 
-export const mirakurunServicesAtom = atom<Service[] | null>({
+export const mirakurunServicesAtom = atom<ServiceWithLogoData[] | null>({
   key: `${prefix}.services`,
   default: null,
 })

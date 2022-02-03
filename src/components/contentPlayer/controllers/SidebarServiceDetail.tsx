@@ -4,6 +4,7 @@ import React, { memo, useState } from "react"
 // import Marquee from "react-fast-marquee"
 import { ChevronsRight } from "react-feather"
 import { Service, Program } from "../../../infra/mirakurun/api"
+import { ServiceWithLogoData } from "../../../types/mirakurun"
 import { EscapeEnclosed } from "../../common/EscapeEnclosed"
 
 export const SidebarServiceDetail = memo(
@@ -12,7 +13,7 @@ export const SidebarServiceDetail = memo(
     queriedPrograms,
     setService,
   }: {
-    service: Service
+    service: ServiceWithLogoData
     queriedPrograms: Program[]
     setService: (s: Service) => void
   }) => {

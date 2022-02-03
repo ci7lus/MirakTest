@@ -1,3 +1,4 @@
+import { encode as arrayBufferToBase64 } from "base64-arraybuffer"
 import React, { useEffect, useRef, useState } from "react"
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil"
 import {
@@ -25,6 +26,7 @@ import {
   Service,
   ServicesApiAxiosParamCreator,
 } from "../../infra/mirakurun/api"
+import { ServiceWithLogoData } from "../../types/mirakurun"
 
 export const MirakurunManager: React.VFC<{}> = () => {
   const mirakurunSettingValue = useRecoilValue(mirakurunSetting)
@@ -89,17 +91,37 @@ export const MirakurunManager: React.VFC<{}> = () => {
       url: mirakurun.baseUrl,
       userAgent: navigator.userAgent,
     })
-    let services: Service[]
+    let services: ServiceWithLogoData[]
     try {
       const servicesReq = await mirakurun.services.getServices()
-      setServices(
-        servicesReq.data.filter(
-          (service) =>
-            !mirakurunSettingValue.isEnableServiceTypeFilter ||
-            service.type === 0x01 // デジタルTVサービス https://github.com/DBCTRADO/LibISDB/blob/ae14668bfc601d1b94851e666c82fe409afd8f31/LibISDB/LibISDBConsts.hpp#L122
-        )
+      const filteredServices = servicesReq.data.filter(
+        (service) =>
+          !mirakurunSettingValue.isEnableServiceTypeFilter ||
+          service.type === 0x01 // デジタルTVサービス https://github.com/DBCTRADO/LibISDB/blob/ae14668bfc601d1b94851e666c82fe409afd8f31/LibISDB/LibISDBConsts.hpp#L122
       )
-      services = servicesReq.data
+      const servicesWithLogo = await Promise.all(
+        filteredServices.map(async (service) => {
+          if (!service.hasLogoData) {
+            return service
+          }
+          try {
+            const logo = await mirakurun.services.getLogoImage(service.id, {
+              responseType: "arraybuffer",
+            })
+            return {
+              ...service,
+              logoData: arrayBufferToBase64(
+                logo.data as unknown as ArrayBuffer
+              ),
+            } as ServiceWithLogoData
+          } catch (error) {
+            console.error("ロゴの取得に失敗しました", service)
+            return service
+          }
+        })
+      )
+      setServices(servicesWithLogo)
+      services = servicesWithLogo
     } catch (error) {
       console.error(error)
       window.Preload.public.showNotification({
