@@ -19,8 +19,8 @@ macOS / Linux / Windows 版ビルドを [Releases](https://github.com/ci7lus/Mir
 
 #### macOS での実行
 
-dmg をマウントして app を Applications にコピーします。<br />
-Intel / M1 mac (Rosetta 2) 上で動作する macOS Catalina / Big Sur / Monterey での動作を確認しています。<br />
+対応するアーキテクチャの dmg をダウンロード後、マウントして app を Applications にコピーします。<br />
+Intel / M1 mac (aarch64) 上で動作する macOS Monterey での動作を確認しています。<br />
 標準では字幕の表示に [Rounded M+ 1m for ARIB](https://github.com/xtne6f/TVCaptionMod2/blob/3cc6c1767595e1973473124e892a57c7693c2154/TVCaptionMod2_Readme.txt#L49-L50) を指定しています。[ダウンロードはこちら](https://github.com/ci7lus/MirakTest/files/6555741/rounded-mplus-1m-arib.ttf.zip)。
 
 #### Linux (debian) での実行
