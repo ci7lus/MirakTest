@@ -1,4 +1,7 @@
 import type { Readable } from "stream"
+import dayjs from "dayjs"
+import timezone from "dayjs/plugin/timezone"
+import utc from "dayjs/plugin/utc"
 import { IpcMain } from "electron"
 import { chain } from "stream-chain"
 import { parser } from "stream-json"
@@ -7,6 +10,9 @@ import * as $ from "zod"
 import { EPG_MANAGER } from "../constants/ipc"
 import { MirakurunAPI } from "../infra/mirakurun"
 import { Event, Program, EventType } from "../infra/mirakurun/api"
+
+dayjs.extend(utc)
+dayjs.extend(timezone)
 
 const registerSchema = $.object({
   userAgent: $.string(),
@@ -37,6 +43,15 @@ export class EPGManager {
     ipcMain.handle(EPG_MANAGER.REGISTER, (_, arg) => this.register(arg))
     ipcMain.handle(EPG_MANAGER.UNREGISTER, (_, arg) => this.unregister(arg))
     ipcMain.handle(EPG_MANAGER.QUERY, (_, arg) => this.query(arg))
+
+    setInterval(() => {
+      const startOfHour = dayjs().tz("Asia/Tokyo").startOf("hour").unix() * 1000
+      const result = Array.from(this.programs.values())
+        .filter((program) => program.startAt + program.duration < startOfHour)
+        .map((program) => this.programs.delete(program.id))
+        .filter((b) => b)
+      console.info(`[epgmanager] 番組情報を削除しました: ${result.length}`)
+    }, 1000 * 60 * 60)
   }
 
   async register(_payload: unknown) {
