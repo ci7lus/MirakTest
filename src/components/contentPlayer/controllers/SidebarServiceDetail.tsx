@@ -39,11 +39,11 @@ export const SidebarServiceDetail = memo(
         onClick={(e) => e.preventDefault()}
         onMouseEnter={() => setIsHovering(true)}
         onMouseLeave={() => setIsHovering(false)}
-        className={clsx("cursor-pointer")}
+        className={clsx("cursor-pointer", "w-full")}
       >
         <div
           className={clsx(
-            "p-3",
+            "p-4",
             "rounded-md",
             "bg-gray-800",
             "bg-opacity-70",
@@ -90,7 +90,7 @@ export const SidebarServiceDetail = memo(
                 {dayjs(current.startAt + current.duration).format("HH:mm")} (
                 {Math.floor(current.duration / 1000 / 60)}分間)
               </p>
-              <p className={clsx("my-1", "text-sm")}>
+              <p className={clsx("my-1", "text-sm", "px-2")}>
                 <EscapeEnclosed
                   str={
                     current.description?.trim() ||
@@ -103,7 +103,7 @@ export const SidebarServiceDetail = memo(
           )}
           {next?.name && (
             <div className={clsx("text-sm")}>
-              Next
+              次の番組
               <ChevronsRight size="1rem" className={clsx("inline")} />
               <span>
                 {dayjs(next.startAt).format("HH:mm")}〜

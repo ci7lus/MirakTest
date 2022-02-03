@@ -131,7 +131,7 @@ export const ControllerSidebar: React.FC<{
             </button>
           ))}
         </div>
-        <div className={clsx("overflow-auto")}>
+        <div className={clsx("overflow-auto", "pr-2")}>
           <div
             className={clsx("grid", "grid-cols-2", "gap-2", "lg:grid-cols-3")}
           >
