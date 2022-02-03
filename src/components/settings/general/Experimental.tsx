@@ -10,10 +10,6 @@ export const ExperimentalSettingForm: React.VFC<{
   const [isWindowDragMoveEnabled, setIsWindowDragMoveEnabled] = useState(
     experimentalSetting.isWindowDragMoveEnabled
   )
-  const [
-    isProgramDetailInServiceSelectorEnabled,
-    setIsProgramDetailInServiceSelectorEnabled,
-  ] = useState(experimentalSetting.isProgramDetailInServiceSelectorEnabled)
   const [vlcNetworkCaching, setVlcNetworkCaching] = useState(
     experimentalSetting.vlcNetworkCaching
   )
@@ -23,30 +19,13 @@ export const ExperimentalSettingForm: React.VFC<{
   useEffect(() => {
     setExperimentalSetting({
       isWindowDragMoveEnabled,
-      isProgramDetailInServiceSelectorEnabled,
       vlcNetworkCaching,
       isVlcAvCodecHwAny,
     })
-  }, [
-    isWindowDragMoveEnabled,
-    isProgramDetailInServiceSelectorEnabled,
-    vlcNetworkCaching,
-    isVlcAvCodecHwAny,
-  ])
+  }, [isWindowDragMoveEnabled, vlcNetworkCaching, isVlcAvCodecHwAny])
   return (
     <div>
       <p className="text-lg">試験的な設定</p>
-      <label className="block mt-4">
-        <span>サービスセレクターに番組情報を表示する</span>
-        <input
-          type="checkbox"
-          className="block mt-2 form-checkbox"
-          checked={isProgramDetailInServiceSelectorEnabled || false}
-          onChange={() =>
-            setIsProgramDetailInServiceSelectorEnabled((enabled) => !enabled)
-          }
-        />
-      </label>
       <label className="block mt-4">
         <span>ウィンドウをドラッグで移動する</span>
         <input

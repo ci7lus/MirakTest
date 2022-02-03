@@ -21,7 +21,6 @@ export type ScreenshotSetting = {
 
 export type ExperimentalSetting = {
   isWindowDragMoveEnabled: boolean
-  isProgramDetailInServiceSelectorEnabled: boolean
   isVlcAvCodecHwAny: boolean
   vlcNetworkCaching: number
 }
