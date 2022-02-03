@@ -13,16 +13,31 @@ export const ScreenshotSettingForm: React.VFC<{
     screenshotSetting.includeSubtitle
   )
   const [basePath, setBasePath] = useState(screenshotSetting.basePath)
+  const [keepQuality, setKeepQuality] = useState(screenshotSetting.keepQuality)
   useDebounce(
     () => {
-      setScreenshotSetting({ saveAsAFile, basePath, includeSubtitle })
+      setScreenshotSetting({
+        saveAsAFile,
+        basePath,
+        includeSubtitle,
+        keepQuality,
+      })
     },
     100,
-    [saveAsAFile, basePath, includeSubtitle]
+    [saveAsAFile, basePath, includeSubtitle, keepQuality]
   )
   return (
     <div>
       <p className="text-lg">スクリーンショットの設定</p>
+      <label className="block mt-4">
+        <span>スクリーンショットを圧縮しない</span>
+        <input
+          type="checkbox"
+          className="block mt-2 form-checkbox"
+          checked={keepQuality}
+          onChange={() => setKeepQuality((enabled) => !enabled)}
+        />
+      </label>
       <label className="block mt-4">
         <span>ファイルに保存する</span>
         <input

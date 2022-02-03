@@ -44,6 +44,7 @@ export const screenshotSetting = atom<ScreenshotSetting>({
   default: {
     saveAsAFile: true,
     includeSubtitle: true,
+    keepQuality: true,
   },
 })
 

@@ -191,7 +191,11 @@ export const CoiledVideoPlayer: React.VFC<{}> = memo(() => {
           )
         }
         const blob = await new Promise<Blob | null>((res) =>
-          contentCanvas.toBlob((blob) => res(blob), "image/png", 1)
+          contentCanvas.toBlob(
+            (blob) => res(blob),
+            screenshot.keepQuality ? "image/png" : "image/jpeg",
+            screenshot.keepQuality ? 1 : 0.95
+          )
         )
         if (!blob) throw new Error("blob")
         const buffer = await blob.arrayBuffer()
@@ -217,7 +221,9 @@ export const CoiledVideoPlayer: React.VFC<{}> = memo(() => {
             ]
               .filter((s) => s)
               .join("_")
-            const fileName = `${baseName}.png`
+            const fileName = `${baseName}.${
+              screenshot.keepQuality ? "png" : "jpg"
+            }`
             const filePath = path.join(screenshot.basePath, fileName)
             await window.Preload.public.writeFile({
               path: filePath,

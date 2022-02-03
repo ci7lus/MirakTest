@@ -17,6 +17,7 @@ export type ScreenshotSetting = {
   saveAsAFile: boolean
   includeSubtitle: boolean
   basePath?: string
+  keepQuality: boolean
 }
 
 export type ExperimentalSetting = {
