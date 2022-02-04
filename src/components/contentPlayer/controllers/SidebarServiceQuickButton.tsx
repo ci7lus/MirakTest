@@ -25,8 +25,9 @@ export const SidebarServiceQuickButton = memo(
           "flex",
           "flex-col",
           "truncate",
-          "p-1",
-          "cursor-pointer"
+          "p-2",
+          "cursor-pointer",
+          "overflow-hidden"
         )}
         onClick={(e) => {
           e.preventDefault()
@@ -36,19 +37,35 @@ export const SidebarServiceQuickButton = memo(
           [service.name, program?.name].filter((s) => s).join("\n")
         )}
       >
-        <span className={clsx("flex", "space-x-2", "pointer-events-none")}>
+        <span
+          className={clsx(
+            "flex",
+            "space-x-2",
+            "pointer-events-none",
+            "overflow-hidden",
+            "w-full"
+          )}
+        >
           {service.logoData && (
             <img
               className={clsx("h-6", "rounded-md", "flex-shrink-0")}
               src={`data:image/jpeg;base64,${service.logoData}`}
             />
           )}
-          <span className={clsx("flex-shrink-0")}>
+          <span className={clsx("w-full", "truncate", "text-left")}>
             {service.remoteControlKeyId} {service.name}
           </span>
         </span>
         {program?.name && (
-          <span className={clsx("pointer-events-none")}>
+          <span
+            className={clsx(
+              "pointer-events-none",
+              "truncate",
+              "w-full",
+              "mt-1",
+              "text-left"
+            )}
+          >
             <EscapeEnclosed str={program.name || ""} />
           </span>
         )}

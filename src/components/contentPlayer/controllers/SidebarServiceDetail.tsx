@@ -49,8 +49,7 @@ export const SidebarServiceDetail = memo(
             "bg-gray-800",
             "bg-opacity-70",
             "mt-2",
-            "pointer-events-none",
-            "mx-1"
+            "pointer-events-none"
           )}
         >
           <div
