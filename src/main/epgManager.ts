@@ -37,6 +37,7 @@ export type QuerySchema = $.infer<typeof querySchema>
 export class EPGManager {
   processing = new Map<string, boolean>()
   connections = new Map<string, Readable>()
+  intervals = new Map<string, NodeJS.Timeout>()
   programs = new Map<number, Program>()
 
   constructor(ipcMain: IpcMain, private onEpgUpdate: () => void) {
@@ -56,7 +57,11 @@ export class EPGManager {
 
   async register(_payload: unknown) {
     const payload = registerSchema.parse(_payload)
-    if (this.processing.has(payload.url) || this.connections.has(payload.url)) {
+    if (
+      this.processing.has(payload.url) ||
+      this.connections.has(payload.url) ||
+      this.intervals.has(payload.url)
+    ) {
       return
     }
     this.processing.set(payload.url, true)
@@ -66,14 +71,17 @@ export class EPGManager {
     })
     const hostname = new URL(payload.url).hostname
     try {
-      console.info(`[epgmanager] 番組情報を取得します: ${hostname}`)
-      const programs = await client.programs
-        .getPrograms()
-        .then((res) => res.data)
-      for (const program of programs) {
-        this.programs.set(program.id, program)
+      const fetchPrograms = async () => {
+        console.info(`[epgmanager] 番組情報を取得します: ${hostname}`)
+        const programs = await client.programs
+          .getPrograms()
+          .then((res) => res.data)
+        for (const program of programs) {
+          this.programs.set(program.id, program)
+        }
+        this.onEpgUpdate()
       }
-      this.onEpgUpdate()
+      await fetchPrograms()
       const connect = async () => {
         console.info(
           `[epgmanager] 番組イベントストリームへ接続します: ${hostname}`
@@ -86,10 +94,16 @@ export class EPGManager {
           }
         )
         const statusCode = claimStream.status.toString()
-        if (statusCode.startsWith("4")) {
+        if (!statusCode.startsWith("2")) {
           console.info(
             `[epgmanager] 番組イベントストリームに対応していません: ${statusCode} / ${hostname}`
           )
+          if (400 <= claimStream.status) {
+            this.intervals.set(
+              payload.url,
+              setInterval(fetchPrograms, 1000 * 60 * 60)
+            )
+          }
           return
         }
         const stream = claimStream.data as unknown as Readable
@@ -138,6 +152,12 @@ export class EPGManager {
       console.info(
         `[epgmanager] 番組イベントストリームを切断しました: ${hostname}`
       )
+    }
+    const interval = this.intervals.get(url)
+    if (interval) {
+      clearInterval(interval)
+      this.intervals.delete(url)
+      console.info(`[epgmanager] 番組情報の定期取得を解除しました: ${hostname}`)
     }
   }
 
