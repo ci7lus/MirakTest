@@ -23,6 +23,7 @@ import {
   contentPlayerVolumeAtom,
 } from "../../atoms/contentPlayer"
 import {
+  contentPlayerProgramSelector,
   contentPlayerServiceSelector,
   contentPlayerUrlSelector,
 } from "../../atoms/contentPlayerSelectors"
@@ -104,6 +105,8 @@ export const CoiledVideoPlayer: React.VFC<{}> = memo(() => {
   const [audioChannel, setAudioChannel] = useRecoilState(
     contentPlayerAudioChannelAtom
   )
+  const program = useRecoilValue(contentPlayerProgramSelector)
+  const programRef = useRefFromState(program)
   const audioChannelRef = useRefFromState(audioChannel)
   useEffect(() => {
     if (!window.Preload.webchimera.isOk()) return
@@ -268,6 +271,11 @@ export const CoiledVideoPlayer: React.VFC<{}> = memo(() => {
     contentPlayerIsSeekableAtom
   )
   const isSeekableRef = useRefFromState(isSeekable)
+  const [isAudioSelectedWithDualMono, setIsAudioSelectedWithDualMono] =
+    useState(false)
+  const isAudioSelectedWithDualMonoRef = useRefFromState(
+    isAudioSelectedWithDualMono
+  )
   useEffect(() => setPlayingPosition(position), [position])
   useEffect(() => {
     if (!window.Preload.webchimera.isOk()) return
@@ -340,12 +348,41 @@ export const CoiledVideoPlayer: React.VFC<{}> = memo(() => {
         case "received_first_picture":
         case "es_out_program_epg":
         case "PMTCallBack_called_for_program": {
-          // ほどほどの頻度
+          // ほどほどの頻度、番組切り替わり後など
           console.debug(message)
           setAudioTracks(window.Preload.webchimera.getAudioTracks())
           const audioChannel = window.Preload.webchimera.getAudioChannel()
-          if (audioChannel !== audioChannelRef.current) {
-            setAudioChannel(audioChannel)
+          if (experimental.isDualMonoAutoAdjustEnabled) {
+            if (programRef.current?.audios?.[0]?.componentType === 2) {
+              // デュアルモノのため1->3
+              if (!isAudioSelectedWithDualMonoRef.current) {
+                console.info("デュアルモノを検出しました")
+                if (audioChannelRef.current === 1) {
+                  setAudioChannel(3)
+                  setIsAudioSelectedWithDualMono(true)
+                }
+              }
+            } else {
+              // デュアルモノではない
+              if (isAudioSelectedWithDualMonoRef.current) {
+                console.info("デュアルモノを抜けます")
+                setIsAudioSelectedWithDualMono(false)
+                // デュアルモノになっているため3->1
+                if (audioChannelRef.current === 3) {
+                  setAudioChannel(1)
+                }
+              }
+            }
+            const selectedAudioChannel = audioChannelRef.current
+            if (audioChannel !== 0 && audioChannel !== selectedAudioChannel) {
+              console.info(
+                "オーディオチャンネルを整合します:",
+                audioChannel,
+                "->",
+                selectedAudioChannel
+              )
+              window.Preload.webchimera.setAudioChannel(selectedAudioChannel)
+            }
           }
           if (
             pcr_i_first !== 0 &&
@@ -374,9 +411,16 @@ export const CoiledVideoPlayer: React.VFC<{}> = memo(() => {
         setIsSubtitleEnabled(false)
       }
       setAribSubtitleData(null)
-      setAudioChannel(0)
       setAudioTrack(1)
+      if (
+        isAudioSelectedWithDualMonoRef.current &&
+        audioChannelRef.current === 3
+      ) {
+        setIsAudioSelectedWithDualMono(false)
+        setAudioChannel(1)
+      }
       setIsErrorEncounted(false)
+      setIsAudioSelectedWithDualMono(false)
     })
     window.Preload.webchimera.onEncounteredError(() => {
       window.Preload.public.showNotification({

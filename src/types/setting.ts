@@ -24,4 +24,5 @@ export type ExperimentalSetting = {
   isWindowDragMoveEnabled: boolean
   isVlcAvCodecHwAny: boolean
   vlcNetworkCaching: number
+  isDualMonoAutoAdjustEnabled: boolean
 }

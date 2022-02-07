@@ -54,5 +54,6 @@ export const experimentalSetting = atom<ExperimentalSetting>({
     isWindowDragMoveEnabled: false,
     isVlcAvCodecHwAny: false,
     vlcNetworkCaching: -1,
+    isDualMonoAutoAdjustEnabled: true,
   },
 })

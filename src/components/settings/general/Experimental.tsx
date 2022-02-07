@@ -16,16 +16,36 @@ export const ExperimentalSettingForm: React.VFC<{
   const [isVlcAvCodecHwAny, setIsVlcAvCodecHwAny] = useState(
     experimentalSetting.isVlcAvCodecHwAny
   )
+  const [isDualMonoAutoAdjustEnabled, setIsDualMonoAutoAdjustEnabled] =
+    useState(experimentalSetting.isDualMonoAutoAdjustEnabled)
   useEffect(() => {
     setExperimentalSetting({
       isWindowDragMoveEnabled,
       vlcNetworkCaching,
       isVlcAvCodecHwAny,
+      isDualMonoAutoAdjustEnabled,
     })
-  }, [isWindowDragMoveEnabled, vlcNetworkCaching, isVlcAvCodecHwAny])
+  }, [
+    isWindowDragMoveEnabled,
+    vlcNetworkCaching,
+    isVlcAvCodecHwAny,
+    isDualMonoAutoAdjustEnabled,
+  ])
   return (
     <div>
       <p className="text-lg">試験的な設定</p>
+      <label className="block mt-4">
+        <span>デュアルモノを自動で切り替える</span>
+        <input
+          type="checkbox"
+          className="block mt-2 form-checkbox"
+          checked={isDualMonoAutoAdjustEnabled}
+          onChange={() => setIsDualMonoAutoAdjustEnabled((enabled) => !enabled)}
+        />
+        <p className="text-sm text-gray-300 mt-2">
+          左右で言語が異なる音声を流している番組を検知した際に、自動で切り替えます。
+        </p>
+      </label>
       <label className="block mt-4">
         <span>ウィンドウをドラッグで移動する</span>
         <input
