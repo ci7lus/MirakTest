@@ -75,4 +75,9 @@ exports.default = async (ctx: AfterPackContext) => {
     path.join(dest, "./LICENSE.VLC-COPYRING.LIB.txt"),
     COPYRING_LIB.data
   )
+  if (ctx.electronPlatformName === "darwin" && ctx.arch === Arch.arm64) {
+    // aarch64のみappをcodesignしなおす
+    console.info("codesignを実行します")
+    await exec("codesign --force --deep -s - ./build/mac-arm64/MirakTest.app")
+  }
 }
