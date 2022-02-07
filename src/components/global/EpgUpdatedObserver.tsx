@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react"
-import { useDebounce } from "react-use"
+import { useThrottleFn } from "react-use"
 import { useRecoilValue, useSetRecoilState } from "recoil"
 import { lastEpgUpdatedAtom } from "../../atoms/contentPlayer"
 import { globalLastEpgUpdatedAtom } from "../../atoms/global"
@@ -18,15 +18,15 @@ export const CoiledEpgUpdatedObserver = () => {
     console.info("番組表が更新されました:", globalLastEpgUpdated)
   }, [globalLastEpgUpdated])
   // 継続更新
-  useDebounce(
-    () => {
-      if (globalLastEpgUpdated === 0 || isFirst === true) {
+  useThrottleFn(
+    (globalLastEpgUpdated) => {
+      if (globalLastEpgUpdated === 0) {
         return
       }
       setLastEpgUpdated(globalLastEpgUpdated)
       console.info("番組表が更新されました:", globalLastEpgUpdated)
     },
-    1000 * 10,
+    1000 * 30,
     [globalLastEpgUpdated]
   )
   return <></>
