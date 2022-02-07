@@ -86,9 +86,13 @@ export const SidebarServiceDetail = memo(
                 <EscapeEnclosed str={current.name || ""} />
               </h4>
               <p>
-                {dayjs(current.startAt).format("HH:mm")}〜
-                {dayjs(current.startAt + current.duration).format("HH:mm")} (
-                {Math.floor(current.duration / 1000 / 60)}分間)
+                {`${dayjs(current.startAt).format("HH:mm")}〜${
+                  current.duration !== 1
+                    ? `${dayjs(current.startAt + current.duration).format(
+                        "HH:mm"
+                      )} (${Math.floor(current.duration / 1000 / 60)}分間)`
+                    : "（終了時間未定）"
+                }`}
               </p>
               <p className={clsx("my-1", "text-sm", "px-2")}>
                 <EscapeEnclosed
@@ -106,8 +110,11 @@ export const SidebarServiceDetail = memo(
               次の番組
               <ChevronsRight size="1rem" className={clsx("inline")} />
               <span>
-                {dayjs(next.startAt).format("HH:mm")}〜
-                {dayjs(next.startAt + next.duration).format("HH:mm")}{" "}
+                {`${dayjs(next.startAt).format("HH:mm")}〜${
+                  current.duration !== 1
+                    ? dayjs(next.startAt + next.duration).format("HH:mm")
+                    : "（終了時間未定）"
+                } `}
                 <EscapeEnclosed str={next.name || ""} /> (
                 {Math.floor(next.duration / 1000 / 60)}
                 分間)

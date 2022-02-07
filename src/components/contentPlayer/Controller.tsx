@@ -251,7 +251,9 @@ export const CoiledController: React.VFC<{}> = () => {
                   <div className="flex space-x-3 font-normal text-lg truncate">
                     {serviceLabel ? <p>{serviceLabel}</p> : <></>}
                     <p>
-                      {startAt} 〜 {endAt}
+                      {`${startAt}〜${
+                        program.duration !== 1 ? endAt : "（終了時間未定）"
+                      }`}
                     </p>
                   </div>
                 </div>

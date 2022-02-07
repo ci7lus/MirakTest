@@ -233,11 +233,14 @@ export const MirakurunManager: React.VFC<{}> = () => {
         endAtMoreThan: unix + 1,
       })
       .then((programs) => {
-        const program = programs.slice(0).pop()
+        const program = programs
+          .filter((program) => program.name)
+          .slice(0)
+          .shift()
         if (program) {
           setPlayingContent((prev) =>
             prev
-              ? prev.program?.id === program.id
+              ? JSON.stringify(prev.program) === JSON.stringify(program)
                 ? prev
                 : { ...prev, program }
               : null

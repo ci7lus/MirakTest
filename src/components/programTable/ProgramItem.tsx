@@ -16,7 +16,15 @@ export const ProgramItem: React.FC<{
   const displayStartTime = dayjs(displayStartTimeInString)
   const diffInMinutes = startAt.diff(displayStartTime, "minute")
   const top = (diffInMinutes / 60) * 180
-  const duration = program.duration / 1000
+  // 終了時間未定の場合はdurationが1になるので表示長さを調節する
+  const duration =
+    program.duration === 1
+      ? // 既に開始済みの番組
+        startAt.isBefore(displayStartTime)
+        ? displayStartTime.clone().add(1, "hour").diff(startAt, "seconds")
+        : // 未来の長さ未定番組はとりあえず1時間にする
+          60 * 60
+      : program.duration / 1000
   const height = (duration / 3600) * 180
 
   const firstGenre = program.genres?.[0]
@@ -46,10 +54,23 @@ export const ProgramItem: React.FC<{
       className={`absolute truncate w-40 ${
         genreColor || "bg-gray-100"
       } border border-gray-400 cursor-pointer select-none content-visibility-auto contain-paint transition-maxHeight ${
-        isHovering && "z-50"
+        (isHovering || program.duration === 1) && "z-50"
       }`}
       title={convertVariationSelectedClosed(
-        [program.name, program.description].filter((s) => !!s).join("\n\n")
+        [
+          program.name,
+          `${startAt.format("HH:mm")}〜${
+            program.duration !== 1
+              ? startAt
+                  .clone()
+                  .add(program.duration, "miliseconds")
+                  .format("HH:mm")
+              : "（終了時間未定）"
+          }`.trim(),
+          program.description,
+        ]
+          .filter((s) => !!s)
+          .join("\n\n")
       )}
       onMouseEnter={() => setIsHovering(true)}
       onMouseLeave={() => setIsHovering(false)}

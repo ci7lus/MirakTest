@@ -48,7 +48,12 @@ export class EPGManager {
     setInterval(() => {
       const startOfHour = dayjs().tz("Asia/Tokyo").startOf("hour").unix() * 1000
       const result = Array.from(this.programs.values())
-        .filter((program) => program.startAt + program.duration < startOfHour)
+        .filter(
+          (program) =>
+            // durationが1の場合は終了時間未定
+            program.duration !== 1 &&
+            program.startAt + program.duration < startOfHour
+        )
         .map((program) => this.programs.delete(program.id))
         .filter((b) => b)
       console.info(`[epgmanager] 番組情報を削除しました: ${result.length}`)
@@ -168,9 +173,12 @@ export class EPGManager {
         (!query.serviceId || program.serviceId === query.serviceId) &&
         (!query.networkId || program.networkId === query.networkId) &&
         (!query.startAt || query.startAt <= program.startAt) &&
-        (!query.endAt || program.startAt + program.duration <= query.endAt) &&
+        (!query.endAt ||
+          program.duration === 1 ||
+          program.startAt + program.duration <= query.endAt) &&
         (!query.startAtLessThan || program.startAt <= query.startAtLessThan) &&
         (!query.endAtMoreThan ||
+          program.duration === 1 ||
           query.endAtMoreThan <= program.startAt + program.duration)
     )
   }

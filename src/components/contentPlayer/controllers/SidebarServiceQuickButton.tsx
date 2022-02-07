@@ -1,4 +1,5 @@
 import clsx from "clsx"
+import dayjs from "dayjs"
 import React, { memo } from "react"
 import { Service, Program } from "../../../infra/mirakurun/api"
 import { ServiceWithLogoData } from "../../../types/mirakurun"
@@ -34,7 +35,22 @@ export const SidebarServiceQuickButton = memo(
           setService(service)
         }}
         title={convertVariationSelectedClosed(
-          [service.name, program?.name].filter((s) => s).join("\n")
+          [
+            service.name,
+            program
+              ? `${program.name}\n${dayjs(program.startAt).format("HH:mm")}〜${
+                  program.duration !== 1
+                    ? dayjs(program.startAt)
+                        .clone()
+                        .add(program.duration, "miliseconds")
+                        .format("HH:mm")
+                    : "（終了時間未定）"
+                }`.trim()
+              : null,
+            program?.description,
+          ]
+            .filter((s) => !!s)
+            .join("\n\n")
         )}
       >
         <span
