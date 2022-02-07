@@ -1,9 +1,6 @@
 import React from "react"
-import {
-  SerializableParam,
-  useRecoilTransactionObserver_UNSTABLE,
-  useRecoilValue,
-} from "recoil"
+import { useRecoilTransactionObserver_UNSTABLE, useRecoilValue } from "recoil"
+import type { SerializableParam } from "recoil"
 import {
   globalSharedAtomsAtom,
   globalStoredAtomsAtom,

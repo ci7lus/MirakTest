@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react"
-import { useSetRecoilState, SetterOrUpdater } from "recoil"
+import { useSetRecoilState } from "recoil"
+import type { SetterOrUpdater } from "recoil"
 import { ALL_ATOMS, ALL_FAMILIES } from "../../atoms"
 import { SerializableKV } from "../../types/ipc"
 import { Atom, AtomFamily } from "../../types/plugin"

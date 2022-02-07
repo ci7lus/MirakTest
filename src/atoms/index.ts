@@ -1,4 +1,4 @@
-import { RecoilState, RecoilValueReadOnly } from "recoil"
+import type { RecoilState, RecoilValueReadOnly } from "recoil"
 import * as contentPlayer from "./contentPlayer"
 import * as contentPlayerSelectors from "./contentPlayerSelectors"
 import * as global from "./global"

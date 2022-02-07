@@ -14,6 +14,7 @@ import { contentPlayerServiceSelector } from "../../atoms/contentPlayerSelectors
 import { subtitleSetting } from "../../atoms/settings"
 import { SUBTITLE_DEFAULT_FONT } from "../../constants/font"
 import { tryBase64ToUint8Array } from "../../utils/string"
+import { getAribb24Configuration } from "../../utils/subtitle"
 
 export const CoiledSubtitleRenderer: React.VFC<{}> = memo(() => {
   const canvasRef = useRef<HTMLCanvasElement>(null)
@@ -79,14 +80,13 @@ export const CoiledSubtitleRenderer: React.VFC<{}> = memo(() => {
     if (!ctx) return
     const font = setting.font || SUBTITLE_DEFAULT_FONT
     latestTimer.current = setTimeout(() => {
-      provider.render({
-        canvas,
-        useStrokeText: true,
-        keepAspectRatio: true,
-        normalFont: font,
-        gaijiFont: font,
-        drcsReplacement: true,
-      })
+      provider.render(
+        getAribb24Configuration({
+          canvas,
+          normalFont: font,
+          gaijiFont: font,
+        })
+      )
       setDisplayingAribSubtitleData(decoded)
       displayingSubtitle.current = aribSubtitleData.data
       if (estimate.endTime === Number.POSITIVE_INFINITY) return

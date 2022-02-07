@@ -34,6 +34,7 @@ import {
 } from "../../atoms/settings"
 import { SUBTITLE_DEFAULT_FONT } from "../../constants/font"
 import { useRefFromState } from "../../hooks/ref"
+import { getAribb24Configuration } from "../../utils/subtitle"
 import { VideoRenderer } from "../../utils/videoRenderer"
 import { VLCLogFilter } from "../../utils/vlc"
 
@@ -177,14 +178,13 @@ export const CoiledVideoPlayer: React.VFC<{}> = memo(() => {
           subtitleCanvas.width = contentCanvas.width
           const provider = new CanvasProvider(displayingAribSubtitleData, 0)
           const font = setting.font || SUBTITLE_DEFAULT_FONT
-          provider.render({
-            canvas: subtitleCanvas,
-            useStrokeText: true,
-            keepAspectRatio: true,
-            normalFont: font,
-            gaijiFont: font,
-            drcsReplacement: true,
-          })
+          provider.render(
+            getAribb24Configuration({
+              canvas: subtitleCanvas,
+              normalFont: font,
+              gaijiFont: font,
+            })
+          )
           context.drawImage(
             subtitleCanvas,
             0,

@@ -1,5 +1,6 @@
 import { useEffect, useRef } from "react"
-import { MutableSnapshot, RecoilState, useRecoilValue } from "recoil"
+import { useRecoilValue } from "recoil"
+import type { MutableSnapshot, RecoilState } from "recoil"
 import { ALL_ATOMS, ALL_FAMILIES } from "../atoms"
 import {
   globalFontsAtom,
