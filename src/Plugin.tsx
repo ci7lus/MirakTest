@@ -7,6 +7,7 @@ import {
   contentPlayerIsPlayingAtom,
   contentPlayerPositionUpdateTriggerAtom,
   contentPlayerScreenshotTriggerAtom,
+  contentPlayerSpeedAtom,
   contentPlayerVolumeAtom,
 } from "./atoms/contentPlayer"
 import {
@@ -108,6 +109,7 @@ export const PluginLoader: React.VFC<{
         contentPlayerProgramSelector,
         contentPlayerIsPlayingAtom,
         contentPlayerVolumeAtom,
+        contentPlayerSpeedAtom,
         contentPlayerAudioChannelAtom,
         contentPlayerAudioTrackAtom,
         contentPlayerAudioTracksSelector,

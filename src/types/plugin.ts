@@ -77,6 +77,7 @@ export type PluginInRendererArgs = {
     contentPlayerProgramSelector: Recoil.RecoilValueReadOnly<Program | null>
     contentPlayerIsPlayingAtom: Recoil.RecoilState<boolean>
     contentPlayerVolumeAtom: Recoil.RecoilState<number>
+    contentPlayerSpeedAtom: Recoil.RecoilState<number>
     contentPlayerAudioChannelAtom: Recoil.RecoilState<number>
     contentPlayerAudioTrackAtom: Recoil.RecoilState<number>
     contentPlayerAudioTracksSelector: Recoil.RecoilValueReadOnly<string[]>
