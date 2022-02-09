@@ -63,6 +63,7 @@ export type Preload = {
     setAudioTrack: (track: number) => void
     setPosition: (position: number) => void
     getAudioTracks: () => string[]
+    setSpeed: (speed: number) => void
   }
   requestInitialData: () => Promise<InitialData>
   recoilStateUpdate: (_: SerializableKV) => Promise<void>

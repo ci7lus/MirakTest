@@ -17,6 +17,7 @@ import {
   contentPlayerPositionUpdateTriggerAtom,
   contentPlayerScreenshotTriggerAtom,
   contentPlayerScreenshotUrlAtom,
+  contentPlayerSpeedAtom,
   contentPlayerSubtitleEnabledAtom,
   contentPlayerTotAtom,
   contentPlayerTsFirstPcrAtom,
@@ -94,6 +95,13 @@ export const CoiledVideoPlayer: React.VFC<{}> = memo(() => {
     window.Preload.webchimera.setVolume(volume)
     console.info("音量変更:", volume)
   }, [volume])
+
+  const [speed, setSpeed] = useRecoilState(contentPlayerSpeedAtom)
+  useEffect(() => {
+    if (!window.Preload.webchimera.isOk()) return
+    window.Preload.webchimera.setSpeed(speed)
+    console.info("速度変更:", speed)
+  }, [speed])
 
   const [isSubtitleEnabled, setIsSubtitleEnabled] = useRecoilState(
     contentPlayerSubtitleEnabledAtom
@@ -421,6 +429,7 @@ export const CoiledVideoPlayer: React.VFC<{}> = memo(() => {
       }
       setIsErrorEncounted(false)
       setIsAudioSelectedWithDualMono(false)
+      setSpeed(1)
     })
     window.Preload.webchimera.onEncounteredError(() => {
       window.Preload.public.showNotification({

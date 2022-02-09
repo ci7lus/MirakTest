@@ -201,6 +201,12 @@ const preload: Preload = {
       }
       wc.audio.track = track
     },
+    setSpeed(speed) {
+      if (!wc) {
+        throw new Error("wc is not initialized")
+      }
+      wc.input.rate = speed
+    },
   },
   requestInitialData() {
     return ipcRenderer.invoke(REQUEST_INITIAL_DATA)

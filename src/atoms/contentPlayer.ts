@@ -33,6 +33,11 @@ export const contentPlayerVolumeAtom = atom<number>({
   default: 100,
 })
 
+export const contentPlayerSpeedAtom = atom<number>({
+  key: `${prefix}.speed`,
+  default: 1,
+})
+
 export const contentPlayerAudioChannelAtom = atom<number>({
   key: `${prefix}.audioChannel`,
   default: VLCAudioChannel.Stereo,

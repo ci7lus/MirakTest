@@ -15,6 +15,7 @@ import {
   contentPlayerPlayingTimeAtom,
   contentPlayerPositionUpdateTriggerAtom,
   contentPlayerScreenshotTriggerAtom,
+  contentPlayerSpeedAtom,
   contentPlayerSubtitleEnabledAtom,
   contentPlayerVolumeAtom,
 } from "../../atoms/contentPlayer"
@@ -34,6 +35,7 @@ import { PlayToggleButton } from "./controllers/PlayToggleButton"
 import { CoiledScreenshotButton } from "./controllers/ScreenshotButton"
 import { SeekableControl } from "./controllers/SeekableControl"
 import { ControllerSidebar } from "./controllers/Sidebar"
+import { SpeedSelector } from "./controllers/SpeedSelector"
 import { SubtitleToggleButton } from "./controllers/SubtitleToggleButton"
 import { VolumeSlider } from "./controllers/VolumeSlider"
 
@@ -67,6 +69,8 @@ export const CoiledController: React.VFC<{}> = () => {
     contentPlayerSubtitleEnabledAtom
   )
   const [volume, setVolume] = useRecoilState(contentPlayerVolumeAtom)
+
+  const [speed, setSpeed] = useRecoilState(contentPlayerSpeedAtom)
 
   const [audioTrack, setAudioTrack] = useRecoilState(
     contentPlayerAudioTrackAtom
@@ -325,16 +329,47 @@ export const CoiledController: React.VFC<{}> = () => {
                   "rounded-md"
                 )}
               >
-                <AudioChannelSelector
-                  audioChannel={audioChannel}
-                  setAudioChannel={setAudioChannel}
-                />
+                <label>
+                  <span
+                    className={clsx(
+                      "block",
+                      "mb-1",
+                      "text-sm",
+                      "text-gray-300"
+                    )}
+                  >
+                    オーディオチャンネル
+                  </span>
+                  <AudioChannelSelector
+                    audioChannel={audioChannel}
+                    setAudioChannel={setAudioChannel}
+                  />
+                </label>
                 {3 <= audioTracks.length && (
                   <AudioTrackSelector
                     audioTrack={audioTrack}
                     setAudioTrack={setAudioTrack}
                     audioTracks={audioTracks}
                   />
+                )}
+                {isSeekable && (
+                  <label>
+                    <span
+                      className={clsx(
+                        "block",
+                        "mb-1",
+                        "text-sm",
+                        "text-gray-300"
+                      )}
+                    >
+                      再生速度
+                    </span>
+                    <SpeedSelector
+                      isSeekable={isSeekable}
+                      speed={speed}
+                      setSpeed={setSpeed}
+                    />
+                  </label>
                 )}
               </Popover.Panel>
             </Popover>

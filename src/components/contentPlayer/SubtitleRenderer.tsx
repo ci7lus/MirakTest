@@ -7,6 +7,7 @@ import {
   contentPlayerDisplayingAribSubtitleDataAtom,
   contentPlayerPlayingTimeAtom,
   contentPlayerPositionUpdateTriggerAtom,
+  contentPlayerSpeedAtom,
   contentPlayerSubtitleEnabledAtom,
   contentPlayerTsFirstPcrAtom,
 } from "../../atoms/contentPlayer"
@@ -19,6 +20,7 @@ import { getAribb24Configuration } from "../../utils/subtitle"
 export const CoiledSubtitleRenderer: React.VFC<{}> = memo(() => {
   const canvasRef = useRef<HTMLCanvasElement>(null)
 
+  const speed = useRecoilValue(contentPlayerSpeedAtom)
   const isSubtitleEnabled = useRecoilValue(contentPlayerSubtitleEnabledAtom)
   const setDisplayingAribSubtitleData = useSetRecoilState(
     contentPlayerDisplayingAribSubtitleDataAtom
@@ -95,8 +97,8 @@ export const CoiledSubtitleRenderer: React.VFC<{}> = memo(() => {
         ctx.clearRect(0, 0, canvas.width, canvas.height)
         displayingSubtitle.current = ""
         setDisplayingAribSubtitleData(null)
-      }, (estimate.endTime - estimate.startTime) * 1000)
-    }, estimate.startTime * 1000)
+      }, ((estimate.endTime - estimate.startTime) / speed) * 1000)
+    }, (estimate.startTime / speed) * 1000)
   }, [aribSubtitleData])
 
   return (
