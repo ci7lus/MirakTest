@@ -41,12 +41,8 @@ import { VLCLogFilter } from "../../utils/vlc"
 
 export const CoiledVideoPlayer: React.VFC<{}> = memo(() => {
   const canvasRef = useRef<HTMLCanvasElement>(null)
-  const containerRef = useRef<HTMLDivElement>(null)
 
   const [aspect, setAspect] = useState(16 / 9)
-  const [width, setWidth] = useState(1280)
-  const height = Math.ceil(width / aspect)
-
   useEffect(() => {
     if (process.platform === "darwin") {
       window.Preload.public.setWindowAspect(aspect)
@@ -321,6 +317,7 @@ export const CoiledVideoPlayer: React.VFC<{}> = memo(() => {
         case "resize":
           console.debug(message)
           if (parsed.width && parsed.height) {
+            const { width, height } = parsed
             const aspect = width / height
             setAspect(aspect)
             console.info(`Aspect: ${aspect}(${width} / ${height})`)
@@ -462,20 +459,15 @@ export const CoiledVideoPlayer: React.VFC<{}> = memo(() => {
       setPosition(position)
     })
     window.Preload.webchimera.setVolume(volume)
-    const onResize = () => {
-      if (!containerRef.current) return
-      setWidth(containerRef.current.clientWidth)
-    }
-    window.addEventListener("resize", onResize)
-    onResize()
     return () => {
-      window.removeEventListener("resize", onResize)
       window.Preload.webchimera.destroy()
     }
   }, [])
   return (
-    <div className="w-full" ref={containerRef}>
-      <canvas style={{ width, height }} ref={canvasRef}></canvas>
-    </div>
+    <canvas
+      className="w-full"
+      style={{ aspectRatio: aspect.toString() }}
+      ref={canvasRef}
+    />
   )
 })
