@@ -1,6 +1,6 @@
 import { CanvasProvider } from "aribb24.js"
 import clsx from "clsx"
-import React, { memo, useEffect, useRef, useState } from "react"
+import React, { memo, useEffect, useRef } from "react"
 import { useRecoilValue, useSetRecoilState } from "recoil"
 import {
   contentPlayerAribSubtitleDataAtom,
@@ -39,22 +39,6 @@ export const CoiledSubtitleRenderer: React.VFC<{}> = memo(() => {
     canvas.getContext("2d")?.clearRect(0, 0, canvas.width, canvas.height)
   }, [selectedService, positionUpdateTrigger])
   const setting = useRecoilValue(subtitleSetting)
-
-  const [height, setHeight] = useState("100%")
-  // 画面リサイズ時にキャンバスも追従させる
-  useEffect(() => {
-    const canvas = canvasRef.current
-    if (!canvas) return
-    const onResize = () => {
-      const { width } = canvas.getBoundingClientRect()
-      setHeight(`${Math.ceil(width / 1.777777778)}px`)
-    }
-    onResize()
-    window.addEventListener("resize", onResize)
-    return () => {
-      window.removeEventListener("resize", onResize)
-    }
-  }, [])
 
   // 字幕ペイロード更新時にパースしたデータをレンダリングする
   const aribSubtitleData = useRecoilValue(contentPlayerAribSubtitleDataAtom)
@@ -110,7 +94,7 @@ export const CoiledSubtitleRenderer: React.VFC<{}> = memo(() => {
         "w-full",
         !isSubtitleEnabled && "opacity-0"
       )}
-      style={{ height }}
+      style={{ aspectRatio: "16/9" }}
       ref={canvasRef}
     ></canvas>
   )
