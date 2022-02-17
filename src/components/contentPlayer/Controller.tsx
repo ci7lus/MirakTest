@@ -2,7 +2,7 @@ import { Popover } from "@headlessui/react"
 import clsx from "clsx"
 import dayjs from "dayjs"
 import React, { useCallback, useEffect, useRef, useState } from "react"
-import { ChevronRight, PauseCircle, PlayCircle, Settings } from "react-feather"
+import { ChevronLeft, PauseCircle, PlayCircle, Settings } from "react-feather"
 import { useDebounce } from "react-use"
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil"
 import {
@@ -408,9 +408,15 @@ export const CoiledController: React.VFC<{}> = () => {
             onClick={() => setIsSidebarOpen((o) => !o)}
             onMouseDown={(e) => e.stopPropagation()}
           >
-            <ChevronRight
+            <ChevronLeft
               width="3rem"
-              className={clsx("pointer-events-none")}
+              className={clsx(
+                "pointer-events-none",
+                "transform",
+                "duration-300",
+                "transition-transform",
+                isSidebarOpen && "rotate-180"
+              )}
             />
           </button>
         </div>
@@ -426,6 +432,7 @@ export const CoiledController: React.VFC<{}> = () => {
         {services && (
           <ControllerSidebar
             isVisible={isVisible || isSidebarOpen}
+            setIsSidebarOpen={setIsSidebarOpen}
             services={services}
             setService={setSelectedService}
           />

@@ -1,5 +1,6 @@
 import clsx from "clsx"
-import React, { useEffect, useMemo, useState } from "react"
+import React, { useEffect, useMemo, useRef, useState } from "react"
+import { useClickAway } from "react-use"
 import { useRecoilValue } from "recoil"
 import { lastEpgUpdatedAtom } from "../../../atoms/contentPlayer"
 import { useNow } from "../../../hooks/date"
@@ -12,7 +13,10 @@ export const ControllerSidebar: React.FC<{
   isVisible: boolean
   services: Service[]
   setService: (service: Service) => unknown
-}> = ({ isVisible, services, setService }) => {
+  setIsSidebarOpen: (b: boolean) => unknown
+}> = ({ isVisible, services, setService, setIsSidebarOpen }) => {
+  const ref = useRef<HTMLDivElement>(null)
+  useClickAway(ref, () => setIsSidebarOpen(false))
   const serviceTypes = Array.from(
     new Set(services.map((service) => service.channel?.type).filter((s) => s))
   )
@@ -82,6 +86,7 @@ export const ControllerSidebar: React.FC<{
   }, [now, lastEpgUpdated])
   return (
     <div
+      ref={ref}
       className={clsx(
         "w-full",
         "h-full",
