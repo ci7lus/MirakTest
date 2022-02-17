@@ -141,7 +141,7 @@ export const ScrollArea: React.FC<{
           <div
             className={clsx(
               "flex",
-              "pl-4",
+              "pl-6",
               "sticky",
               "flex-shrink-0",
               "text-gray-100",
@@ -158,7 +158,7 @@ export const ScrollArea: React.FC<{
         <div className={clsx("flex", "w-max", "pr-5", "pb-5")}>
           <div
             className={
-              "sticky left-0 h-full bg-gray-700 text-gray-200 font-bold pointer-events-none w-4 flex-shrink-0 z-10"
+              "sticky left-0 h-full bg-gray-700 text-gray-200 font-bold pointer-events-none w-6 flex-shrink-0 z-10"
             }
           >
             <HourIndicator
