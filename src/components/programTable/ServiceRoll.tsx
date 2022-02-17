@@ -15,7 +15,7 @@ export const ServiceRoll: React.FC<{
       "relative",
       "h-max",
       "content-visibility-auto",
-      "w-40",
+      "w-48",
       "flex-shrink-0"
     )}
     style={{

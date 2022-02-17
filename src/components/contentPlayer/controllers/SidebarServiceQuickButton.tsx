@@ -36,7 +36,10 @@ export const SidebarServiceQuickButton = memo(
         }}
         title={convertVariationSelectedClosed(
           [
-            service.name,
+            [
+              service.remoteControlKeyId ?? service.serviceId,
+              service.name,
+            ].join(" "),
             program
               ? `${program.name}\n${dayjs(program.startAt).format("HH:mm")}〜${
                   program.duration !== 1
@@ -57,6 +60,7 @@ export const SidebarServiceQuickButton = memo(
           className={clsx(
             "flex",
             "space-x-2",
+            "items-center",
             "pointer-events-none",
             "overflow-hidden",
             "w-full"
@@ -68,8 +72,8 @@ export const SidebarServiceQuickButton = memo(
               src={`data:image/jpeg;base64,${service.logoData}`}
             />
           )}
-          <span className={clsx("w-full", "truncate", "text-left")}>
-            {service.remoteControlKeyId} {service.name}
+          <span className={clsx("w-full", "truncate", "text-left", "text-sm")}>
+            {service.remoteControlKeyId ?? service.serviceId} {service.name}
           </span>
         </span>
         {program?.name && (
@@ -79,7 +83,8 @@ export const SidebarServiceQuickButton = memo(
               "truncate",
               "w-full",
               "mt-1",
-              "text-left"
+              "text-left",
+              "text-sm"
             )}
           >
             <EscapeEnclosed str={program.name || ""} />

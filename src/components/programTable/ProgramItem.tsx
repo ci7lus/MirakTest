@@ -51,7 +51,7 @@ export const ProgramItem: React.FC<{
         containIntrinsicSize: `10rem ${calcHeight}px`,
         maxHeight: isHovering ? `${180 * 24}px` : `${calcHeight}px`,
       }}
-      className={`absolute truncate w-40 ${
+      className={`absolute truncate w-48 ${
         genreColor || "bg-gray-100"
       } border border-gray-400 cursor-pointer select-none content-visibility-auto contain-paint transition-maxHeight ${
         (isHovering || program.duration === 1) && "z-50"
