@@ -1,5 +1,6 @@
+import { Dialog } from "@headlessui/react"
 import clsx from "clsx"
-import React, { useEffect, useState } from "react"
+import React, { useEffect, useMemo, useState } from "react"
 import { useSetRecoilState, useRecoilValue } from "recoil"
 import pkg from "../../package.json"
 import { globalContentPlayerSelectedServiceFamily } from "../atoms/globalFamilies"
@@ -7,9 +8,11 @@ import { globalActiveContentPlayerIdSelector } from "../atoms/globalSelectors"
 import { mirakurunServicesAtom } from "../atoms/mirakurun"
 import { mirakurunSetting } from "../atoms/settings"
 import { CoiledEpgUpdatedObserver } from "../components/global/EpgUpdatedObserver"
+import { ProgramModal } from "../components/programTable/ProgramModal"
 import { ScrollArea } from "../components/programTable/ScrollArea"
 import { WeekdaySelector } from "../components/programTable/WeekdaySelector"
 import { useNow } from "../hooks/date"
+import { Program } from "../types/plugin"
 
 export const CoiledProgramTable: React.VFC<{}> = () => {
   const now = useNow()
@@ -20,6 +23,16 @@ export const CoiledProgramTable: React.VFC<{}> = () => {
   )
   const services = useRecoilValue(mirakurunServicesAtom)
   const mirakurunSettingValue = useRecoilValue(mirakurunSetting)
+  const [selectedProgram, setSelectedProgram] = useState<Program | null>(null)
+  const selectedService = useMemo(
+    () =>
+      services?.find(
+        (service) =>
+          service.serviceId === selectedProgram?.serviceId &&
+          service.networkId === selectedProgram.networkId
+      ),
+    [selectedProgram]
+  )
 
   useEffect(() => {
     window.Preload.public.setWindowTitle(`番組表 - ${pkg.productName}`)
@@ -63,10 +76,41 @@ export const CoiledProgramTable: React.VFC<{}> = () => {
           services={services}
           add={add}
           setService={setSelectedService}
+          setSelectedProgram={setSelectedProgram}
         />
       ) : (
         <p>URLが設定されていません</p>
       )}
+      <Dialog
+        className={clsx(
+          "fixed",
+          "z-20",
+          "inset-0",
+          "flex",
+          "justify-center",
+          "items-center"
+        )}
+        open={!!selectedProgram}
+        onClose={() => setSelectedProgram(null)}
+      >
+        <Dialog.Overlay
+          className={clsx(
+            "fixed",
+            "z-20",
+            "inset-0",
+            "overflow-auto",
+            "bg-black",
+            "bg-opacity-50"
+          )}
+        />
+        {selectedProgram && selectedService && (
+          <ProgramModal
+            program={selectedProgram}
+            service={selectedService}
+            setSelectedProgram={setSelectedProgram}
+          />
+        )}
+      </Dialog>
     </div>
   )
 }

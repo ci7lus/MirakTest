@@ -8,7 +8,14 @@ export const ServiceRoll: React.FC<{
   programs: Program[]
   displayStartTimeInString: string
   hourHeight: number
-}> = ({ service, programs, displayStartTimeInString, hourHeight }) => (
+  setSelectedProgram: (program: Program | null) => void
+}> = ({
+  service,
+  programs,
+  displayStartTimeInString,
+  hourHeight,
+  setSelectedProgram,
+}) => (
   <div
     id={service.id.toString()}
     className={clsx(
@@ -30,6 +37,7 @@ export const ServiceRoll: React.FC<{
         program={program}
         service={service}
         displayStartTimeInString={displayStartTimeInString}
+        setSelectedProgram={setSelectedProgram}
       />
     ))}
   </div>

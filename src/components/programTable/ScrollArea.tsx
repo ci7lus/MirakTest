@@ -5,7 +5,7 @@ import { useQuery } from "react-query"
 import { useRecoilValue } from "recoil"
 import { lastEpgUpdatedAtom } from "../../atoms/contentPlayer"
 import { useNow } from "../../hooks/date"
-import { Service } from "../../infra/mirakurun/api"
+import { Program, Service } from "../../infra/mirakurun/api"
 import { MirakurunSetting } from "../../types/setting"
 import { HourIndicator } from "./HourIndicator"
 import { ServiceRoll } from "./ServiceRoll"
@@ -18,7 +18,8 @@ export const ScrollArea: React.FC<{
   services: Service[] | null
   add: number
   setService: (service: Service) => void
-}> = ({ services, add, setService }) => {
+  setSelectedProgram: (program: Program | null) => void
+}> = ({ services, add, setService, setSelectedProgram }) => {
   const now = useNow()
   const displayStartAt = dayjs().startOf("hour").add(add, "day")
   const displayStartTimeInString = displayStartAt.format()
@@ -190,6 +191,7 @@ export const ScrollArea: React.FC<{
                   programs={filteredPrograms}
                   displayStartTimeInString={displayStartTimeInString}
                   hourHeight={HOUR_HEIGHT}
+                  setSelectedProgram={setSelectedProgram}
                 />
               )
             })}
