@@ -346,11 +346,23 @@ export const CoiledController: React.VFC<{}> = () => {
                   />
                 </label>
                 {3 <= audioTracks.length && (
-                  <AudioTrackSelector
-                    audioTrack={audioTrack}
-                    setAudioTrack={setAudioTrack}
-                    audioTracks={audioTracks}
-                  />
+                  <label>
+                    <span
+                      className={clsx(
+                        "block",
+                        "mb-1",
+                        "text-sm",
+                        "text-gray-300"
+                      )}
+                    >
+                      オーディオトラック
+                    </span>
+                    <AudioTrackSelector
+                      audioTrack={audioTrack}
+                      setAudioTrack={setAudioTrack}
+                      audioTracks={audioTracks}
+                    />
+                  </label>
                 )}
                 {isSeekable && (
                   <label>

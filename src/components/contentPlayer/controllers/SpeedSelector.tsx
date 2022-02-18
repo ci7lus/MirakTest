@@ -20,6 +20,7 @@ export const SpeedSelector = ({
     setIsInvalid(false)
     setSpeed(local)
   }, [local])
+  useEffect(() => setLocal(speed), [speed])
   return (
     <input
       type="number"
