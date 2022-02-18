@@ -32,9 +32,7 @@ export const ControllerSidebar: React.FC<{
             const identifier =
               service.channel?.type === "CS"
                 ? service.id
-                : service.remoteControlKeyId ??
-                  service.channel?.channel ??
-                  service.id
+                : service.channel?.channel ?? service.id
             if (!identifier) {
               return services
             }
