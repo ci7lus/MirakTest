@@ -42,6 +42,8 @@ export const ProgramItem: React.FC<{
 
     const calcHeight = 0 < top ? height : height + top
 
+    const [whenMouseDown, setWhenMouseDown] = useState(0)
+
     return (
       <div
         id={`${service.id}-${program.id}`}
@@ -77,7 +79,12 @@ export const ProgramItem: React.FC<{
         )}
         onMouseEnter={() => setIsHovering(true)}
         onMouseLeave={() => setIsHovering(false)}
-        onClick={() => setSelectedProgram(program)}
+        onMouseDown={() => setWhenMouseDown(performance.now())}
+        onMouseUp={() => {
+          if (performance.now() - whenMouseDown < 200) {
+            setSelectedProgram(program)
+          }
+        }}
       >
         <p className="whitespace-pre-wrap leading-snug pointer-events-none">
           {startAt.format("HH:mm")} <EscapeEnclosed str={program.name || ""} />
