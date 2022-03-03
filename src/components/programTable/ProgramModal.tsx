@@ -12,7 +12,7 @@ export const ProgramModal = ({
   service,
   setSelectedProgram,
 }: {
-  program: Program
+  program: Program & { _pf?: boolean }
   service: ServiceWithLogoData
   setSelectedProgram: (program: Program | null) => void
 }) => {
@@ -64,6 +64,7 @@ export const ProgramModal = ({
               {genre}
             </span>
           ))}
+          {program._pf && <p>EIT[p/f] による更新</p>}
         </p>
         <Dialog.Description className={clsx("mt-2", "whitespace-pre-wrap")}>
           <EscapeEnclosed str={program.description || ""} />
