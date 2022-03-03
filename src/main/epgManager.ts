@@ -39,6 +39,7 @@ export class EPGManager {
   connections = new Map<string, Readable>()
   intervals = new Map<string, NodeJS.Timeout>()
   programs = new Map<number, Program>()
+  userAgent: string | null = null
 
   constructor(ipcMain: IpcMain, private onEpgUpdate: () => void) {
     ipcMain.handle(EPG_MANAGER.REGISTER, (_, arg) => this.register(arg))
@@ -58,6 +59,47 @@ export class EPGManager {
         .filter((b) => b)
       console.info(`[epgmanager] 番組情報を削除しました: ${result.length}`)
     }, 1000 * 60 * 60)
+    // 5分毎に終了時間未定の番組の更新を確認
+    // TODO: ただMirakurunそのものが終了時間未定の番組を拾えない場合が多いのであまり対策にならない
+    // https://github.com/ci7lus/MirakTest/issues/42
+    setInterval(async () => {
+      const userAgent = this.userAgent
+      if (!userAgent) {
+        return
+      }
+      const tbaPrograms = Array.from(this.programs.values()).filter(
+        (program) => program.duration === 1
+      )
+      const mirakuruns = Array.from(
+        new Set([...this.connections.keys(), ...this.intervals.keys()])
+      )
+      if (mirakuruns.length === 0) {
+        return
+      }
+      const api = new MirakurunAPI({
+        baseUrl: mirakuruns[0],
+        userAgent,
+      })
+      for (const program of tbaPrograms) {
+        console.info(
+          `[epgmanager] 終了時間未定の番組情報の更新を試みます: ${program.id} (${program.name})`
+        )
+        const gotProgram = await api.programs.getProgram(program.id, {
+          validateStatus: () => true,
+        })
+        if (gotProgram.status === 200) {
+          console.info(
+            `[epgmanager] ${program.id} (${program.name}) の番組情報を更新します`
+          )
+          this.programs.set(program.id, gotProgram.data)
+        } else {
+          console.info(
+            `[epgmanager] ${program.id} (${program.name}) は既に終了しています`
+          )
+          this.programs.delete(program.id)
+        }
+      }
+    }, 1000 * 60 * 5)
   }
 
   async register(_payload: unknown) {
@@ -69,6 +111,7 @@ export class EPGManager {
     ) {
       return
     }
+    this.userAgent = payload.userAgent
     this.processing.set(payload.url, true)
     const client = new MirakurunAPI({
       baseUrl: payload.url,
