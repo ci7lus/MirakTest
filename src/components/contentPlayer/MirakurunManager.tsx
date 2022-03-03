@@ -6,10 +6,7 @@ import {
   contentPlayerKeyForRestorationAtom,
   lastEpgUpdatedAtom,
 } from "../../atoms/contentPlayer"
-import {
-  contentPlayerServiceSelector,
-  contentPlayerUrlSelector,
-} from "../../atoms/contentPlayerSelectors"
+import { contentPlayerServiceSelector } from "../../atoms/contentPlayerSelectors"
 import {
   globalContentPlayerPlayingContentFamily,
   globalContentPlayerSelectedServiceFamily,
@@ -40,7 +37,6 @@ export const MirakurunManager: React.VFC<{}> = () => {
   const [selectedService, setSelectedService] = useRecoilState(
     globalContentPlayerSelectedServiceFamily(window.id ?? -1)
   )
-  const url = useRecoilValue(contentPlayerUrlSelector)
   const [lastSelectedServiceId, setLastSelectedServiceId] = useRecoilState(
     contentPlayerKeyForRestorationAtom
   )
@@ -183,23 +179,15 @@ export const MirakurunManager: React.VFC<{}> = () => {
     ).getServiceStream(service.id)
     const requestUrl =
       mirakurunSettingValue.baseUrl + getServiceStreamRequest.url
-    const update = () => {
-      setPlayingContent({
-        contentType: "Mirakurun",
-        url: requestUrl,
-        service: service,
-      })
-      setLastSelectedServiceId({
-        contentType: "Mirakurun",
-        serviceId: service.id,
-      })
-    }
-    if (url && mirakurunSettingValue.isEnableWaitForSingleTuner) {
-      setPlayingContent(null)
-      setTimeout(update, 1000)
-    } else {
-      update()
-    }
+    setPlayingContent({
+      contentType: "Mirakurun",
+      url: requestUrl,
+      service: service,
+    })
+    setLastSelectedServiceId({
+      contentType: "Mirakurun",
+      serviceId: service.id,
+    })
   }
 
   // selectedService（切り替え先サービス）->serviceへの反映発火

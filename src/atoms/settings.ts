@@ -15,7 +15,6 @@ const prefix = `${pkg.name}.settings`
 export const mirakurunSetting = atom<MirakurunSetting>({
   key: `${prefix}.mirakurun`,
   default: {
-    isEnableWaitForSingleTuner: false,
     isEnableServiceTypeFilter: true,
   },
 })

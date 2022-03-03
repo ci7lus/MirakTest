@@ -5,9 +5,6 @@ import { mirakurunSetting, mirakurunUrlHistory } from "../../atoms/settings"
 export const MirakurunSettingForm: React.VFC<{}> = () => {
   const [mirakurun, setMirakurun] = useRecoilState(mirakurunSetting)
   const [url, setUrl] = useState(mirakurun.baseUrl)
-  const [isEnableWaitForSingleTuner, setIsEnableWaitForSingleTuner] = useState(
-    mirakurun.isEnableWaitForSingleTuner
-  )
   const [isEnableServiceTypeFilter, setIsEnableServiceTypeFilter] = useState(
     mirakurun.isEnableServiceTypeFilter
   )
@@ -30,7 +27,6 @@ export const MirakurunSettingForm: React.VFC<{}> = () => {
           }
           return {
             baseUrl: url || undefined,
-            isEnableWaitForSingleTuner,
             isEnableServiceTypeFilter,
           }
         })
@@ -59,15 +55,6 @@ export const MirakurunSettingForm: React.VFC<{}> = () => {
           className="block mt-2 form-checkbox"
           checked={isEnableServiceTypeFilter || false}
           onChange={() => setIsEnableServiceTypeFilter((enabled) => !enabled)}
-        />
-      </label>
-      <label className="block my-4">
-        <span>チャンネル切り替え前に待機する（シングルチューナー向け）</span>
-        <input
-          type="checkbox"
-          className="block mt-2 form-checkbox"
-          checked={isEnableWaitForSingleTuner || false}
-          onChange={() => setIsEnableWaitForSingleTuner((enabled) => !enabled)}
         />
       </label>
       <button
