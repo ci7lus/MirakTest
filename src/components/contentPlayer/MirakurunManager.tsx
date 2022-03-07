@@ -93,7 +93,8 @@ export const MirakurunManager: React.VFC<{}> = () => {
       const filteredServices = servicesReq.data.filter(
         (service) =>
           !mirakurunSettingValue.isEnableServiceTypeFilter ||
-          service.type === 0x01 // デジタルTVサービス https://github.com/DBCTRADO/LibISDB/blob/ae14668bfc601d1b94851e666c82fe409afd8f31/LibISDB/LibISDBConsts.hpp#L122
+          service.type === 0x01 || // デジタルTVサービス https://github.com/DBCTRADO/LibISDB/blob/ae14668bfc601d1b94851e666c82fe409afd8f31/LibISDB/LibISDBConsts.hpp#L122
+          service.type === 0xad // 超高精細度4K専用TVサービス https://github.com/DBCTRADO/LibISDB/blob/e8f2bedcd3b5a860085623d6813387fccdac91c2/LibISDB/LibISDBConsts.hpp#L138
       )
       const servicesWithLogo = await Promise.all(
         filteredServices.map(async (service) => {
