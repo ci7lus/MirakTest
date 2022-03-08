@@ -78,6 +78,8 @@ exports.default = async (ctx: AfterPackContext) => {
   if (ctx.electronPlatformName === "darwin" && ctx.arch === Arch.arm64) {
     // aarch64のみappをcodesignしなおす
     console.info("codesignを実行します")
-    await exec("codesign --force --deep -s - ./build/mac-arm64/MirakTest.app")
+    await exec(
+      "codesign --force --deep -s - -i - ./build/mac-arm64/MirakTest.app"
+    )
   }
 }
