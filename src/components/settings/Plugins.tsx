@@ -15,13 +15,14 @@ export const CoiledPluginsSetting: React.VFC<{}> = () => {
               {plugin.name} {plugin.version}
               {plugin.authorUrl ? (
                 <a
-                  className={clsx("text-sm", "text-gray-300", "ml-1")}
+                  className={clsx("text-sm", "text-blue-400", "ml-2")}
                   href={plugin.authorUrl}
+                  target="_blank"
                 >
                   {plugin.author}
                 </a>
               ) : (
-                <span className={clsx("text-sm", "text-gray-300", "ml-1")}>
+                <span className={clsx("text-sm", "text-gray-300", "ml-2")}>
                   {plugin.author}
                 </span>
               )}
