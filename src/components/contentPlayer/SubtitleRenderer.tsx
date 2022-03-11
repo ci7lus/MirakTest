@@ -17,7 +17,9 @@ import { SUBTITLE_DEFAULT_FONT } from "../../constants/font"
 import { tryBase64ToUint8Array } from "../../utils/string"
 import { getAribb24Configuration } from "../../utils/subtitle"
 
-export const CoiledSubtitleRenderer: React.VFC<{}> = memo(() => {
+export const CoiledSubtitleRenderer: React.VFC<{
+  internalPlayingTimeRef: React.MutableRefObject<number>
+}> = memo(({ internalPlayingTimeRef }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null)
 
   const speed = useRecoilValue(contentPlayerSpeedAtom)
@@ -58,7 +60,8 @@ export const CoiledSubtitleRenderer: React.VFC<{}> = memo(() => {
     const decoded = tryBase64ToUint8Array(aribSubtitleData.data)
     if (!decoded) return
     const fromZero = ((aribSubtitleData.pts * 9) / 100 - firstPcr) / 90_000
-    const pts = fromZero - playingTime / 1000
+    const pts =
+      fromZero - (internalPlayingTimeRef.current || playingTime) / 1000
     const provider = new CanvasProvider(decoded, pts)
     const estimate = provider.render()
     if (!estimate) return

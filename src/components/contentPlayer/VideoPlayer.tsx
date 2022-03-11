@@ -39,7 +39,9 @@ import { getAribb24Configuration } from "../../utils/subtitle"
 import { VideoRenderer } from "../../utils/videoRenderer"
 import { VLCLogFilter } from "../../utils/vlc"
 
-export const CoiledVideoPlayer: React.VFC<{}> = memo(() => {
+export const CoiledVideoPlayer: React.VFC<{
+  internalPlayingTimeRef: React.MutableRefObject<number>
+}> = memo(({ internalPlayingTimeRef }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null)
 
   const [aspect, setAspect] = useState(16 / 9)
@@ -306,10 +308,11 @@ export const CoiledVideoPlayer: React.VFC<{}> = memo(() => {
     let pcr_i_first = 0
     let last = 0
     window.Preload.webchimera.onTimeChanged((time) => {
-      if (300 < Math.abs(time - last)) {
+      if (100 < Math.abs(time - last)) {
         setPlayingTime(time)
         last = time
       }
+      internalPlayingTimeRef.current = time
     })
     window.Preload.webchimera.onLogMessage((_level, message) => {
       const parsed = VLCLogFilter(message)

@@ -1,4 +1,4 @@
-import React, { useEffect } from "react"
+import React, { useEffect, useRef } from "react"
 import { useRecoilValue, useSetRecoilState } from "recoil"
 import pkg from "../../package.json"
 import {
@@ -22,6 +22,7 @@ export const CoiledContentPlayer: React.VFC<{}> = () => {
     globalActiveContentPlayerIdAtom
   )
   const setIsPlaying = useSetRecoilState(contentPlayerIsPlayingAtom)
+  const internalPlayingTimeRef = useRef(-1)
 
   useEffect(() => {
     // 16:9以下の比率になったら戻し、ウィンドウサイズを保存する
@@ -92,7 +93,9 @@ export const CoiledContentPlayer: React.VFC<{}> = () => {
             id="VideoPlayer"
             className="absolute top-0 left-0 w-full h-full flex items-center justify-center"
           >
-            <CoiledVideoPlayer />
+            <CoiledVideoPlayer
+              internalPlayingTimeRef={internalPlayingTimeRef}
+            />
           </div>
           <div
             id="OnPlayerComponents"
@@ -104,7 +107,9 @@ export const CoiledContentPlayer: React.VFC<{}> = () => {
             id="SubtitleRenderer"
             className="absolute top-0 left-0 w-full h-full flex items-center justify-center"
           >
-            <CoiledSubtitleRenderer />
+            <CoiledSubtitleRenderer
+              internalPlayingTimeRef={internalPlayingTimeRef}
+            />
           </div>
           <div
             id="OnSubtitleComponents"
