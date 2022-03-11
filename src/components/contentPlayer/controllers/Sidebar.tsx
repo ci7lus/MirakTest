@@ -17,8 +17,14 @@ export const ControllerSidebar: React.FC<{
 }> = ({ isVisible, services, setService, setIsSidebarOpen }) => {
   const ref = useRef<HTMLDivElement>(null)
   useClickAway(ref, () => setIsSidebarOpen(false))
-  const serviceTypes = Array.from(
-    new Set(services.map((service) => service.channel?.type).filter((s) => s))
+  const serviceTypes = useMemo(
+    () =>
+      Array.from(
+        new Set(
+          services.map((service) => service.channel?.type).filter((s) => s)
+        )
+      ),
+    [services]
   )
   const [selectedType, setSelectedType] = useState<ChannelType | undefined>(
     serviceTypes?.[0]
