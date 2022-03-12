@@ -300,7 +300,9 @@ export const CoiledVideoPlayer: React.VFC<{
       0 <= (experimental.vlcNetworkCaching ?? -1)
         ? `--network-caching=${experimental.vlcNetworkCaching}`
         : "",
-      experimental.isVlcAvCodecHwAny === true ? "--avcodec-hw=any" : "",
+      `--avcodec-hw=${
+        experimental.isVlcAvCodecHwAny === true ? "any" : "none"
+      }`,
       `--http-user-agent=${pkg.productName}/${pkg.version}`,
     ].filter((s) => s)
     console.info("VLC Args:", args)
