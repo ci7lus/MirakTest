@@ -35,7 +35,7 @@ type WebGLRenderingContextWithYUVTexture = WebGLRenderingContext & {
 export class VideoRenderer {
   gl: WebGLRenderingContextWithYUVTexture
   constructor(
-    public canvas: HTMLCanvasElement,
+    public canvas: OffscreenCanvas,
     options?: { preserveDrawingBuffer?: boolean }
   ) {
     const glContext = setupCanvas(canvas, options)
@@ -137,7 +137,7 @@ class Texture {
 }
 
 function setupCanvas(
-  canvas: HTMLCanvasElement,
+  canvas: OffscreenCanvas,
   options?: { preserveDrawingBuffer?: boolean }
 ) {
   const _gl = canvas.getContext("webgl", {

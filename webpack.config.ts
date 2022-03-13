@@ -8,6 +8,7 @@ import {
   imageLoaderConfiguration,
   scssConfiguration,
   nodeConfiguration,
+  workerConfiguration,
 } from "./webpack-loaders"
 
 type MultiConfigurationFactory = (
@@ -30,6 +31,7 @@ const factory: MultiConfigurationFactory = (_, args) => {
       module: {
         rules: [
           babelLoaderConfiguration(isDev),
+          workerConfiguration,
           assetLoaderConfiguration,
           imageLoaderConfiguration,
           scssConfiguration,
@@ -70,7 +72,11 @@ const factory: MultiConfigurationFactory = (_, args) => {
         }),
         // TODO: 型 'import("node_modules/tapable/tapable").SyncBailHook<[import("node_modules/webpack/types").Compilation], boolean, import("node_modules/tapable/tapable").UnsetAdditionalOptions>' を型 'import("node_modules/tapable/tapable").SyncBailHook<[import("node_modules/@types/mini-css-extract-plugin/node_modules/webpack/types").Compilation], boolean, import("node_modules/tapable/tapab...' に割り当てることはできません。ts(2322)
         new MiniCSSExtractPlugin() as never,
-        isDev ? new ReactRefreshWebpackPlugin() : (undefined as never),
+        isDev
+          ? new ReactRefreshWebpackPlugin({
+              exclude: [/\.worker\.ts$/, /videoRenderer\.ts$/],
+            })
+          : (undefined as never),
       ].filter((p: unknown) => p),
     },
   ]

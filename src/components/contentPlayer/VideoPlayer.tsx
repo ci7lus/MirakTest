@@ -3,6 +3,8 @@ import { CanvasProvider } from "aribb24.js"
 import dayjs from "dayjs"
 import React, { memo, useEffect, useRef, useState } from "react"
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil"
+// eslint-disable-next-line import/no-unresolved
+import RendererWorker from "worker-loader!../../utils/renderer.worker"
 import pkg from "../../../package.json"
 import {
   contentPlayerAribSubtitleDataAtom,
@@ -36,7 +38,6 @@ import {
 import { SUBTITLE_DEFAULT_FONT } from "../../constants/font"
 import { useRefFromState } from "../../hooks/ref"
 import { getAribb24Configuration } from "../../utils/subtitle"
-import { VideoRenderer } from "../../utils/videoRenderer"
 import { VLCLogFilter } from "../../utils/vlc"
 
 export const CoiledVideoPlayer: React.VFC<{
@@ -292,9 +293,14 @@ export const CoiledVideoPlayer: React.VFC<{
   useEffect(() => {
     const canvas = canvasRef.current
     if (!canvas) return
-    const renderContext = new VideoRenderer(canvas, {
-      preserveDrawingBuffer: true,
-    })
+    const offscreen = canvas.transferControlToOffscreen()
+    const worker: Worker = new RendererWorker()
+    worker.postMessage(
+      {
+        canvas: offscreen,
+      },
+      [offscreen]
+    )
     const args = [
       process.env.NODE_ENV !== "production" ? "-vvv" : "",
       0 <= (experimental.vlcNetworkCaching ?? -1)
@@ -411,8 +417,16 @@ export const CoiledVideoPlayer: React.VFC<{
       }
     })
     window.Preload.webchimera.onFrameReady(
-      (frame, width, height, uOffset, vOffset) => {
-        renderContext.render(frame, width, height, uOffset, vOffset)
+      (videoFrame, width, height, uOffset, vOffset) => {
+        //renderContext.render(frame, width, height, uOffset, vOffset)
+        const render = { width, height, uOffset, vOffset }
+        worker.postMessage(
+          {
+            render,
+            videoFrame,
+          },
+          []
+        )
       }
     )
     window.Preload.webchimera.onMediaChanged(() => {
@@ -437,7 +451,7 @@ export const CoiledVideoPlayer: React.VFC<{
       window.Preload.public.showNotification({
         title: "映像の受信に失敗しました",
       })
-      renderContext.fillTransparent()
+      //renderContext.fillTransparent()
       setIsErrorEncounted(true)
     })
     window.Preload.webchimera.onStopped(() => {

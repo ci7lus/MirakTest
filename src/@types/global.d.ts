@@ -13,3 +13,11 @@ declare global {
   // eslint-disable-next-line no-var
   declare var Recoil: typeof _Recoil
 }
+
+declare module "worker-loader!*" {
+  class WebpackWorker extends Worker {
+    constructor()
+  }
+
+  export default WebpackWorker
+}

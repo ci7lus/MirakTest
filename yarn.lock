@@ -3075,6 +3075,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/offscreencanvas@npm:^2019.6.4":
+  version: 2019.6.4
+  resolution: "@types/offscreencanvas@npm:2019.6.4"
+  checksum: ea05348b49cb0dc082fadf7ccc283e53c03ecf9b94c5ee096fce447edfcb563f6c060714609b72cee7848ea24589aa56297144a2b3a89a833e6ea24eaaa96da9
+  languageName: node
+  linkType: hard
+
 "@types/parse-json@npm:^4.0.0":
   version: 4.0.0
   resolution: "@types/parse-json@npm:4.0.0"
@@ -10154,6 +10161,7 @@ __metadata:
     "@pmmmwh/react-refresh-webpack-plugin": ^0.5.4
     "@tailwindcss/custom-forms": ^0.2.1
     "@types/mini-css-extract-plugin": ^2.5.1
+    "@types/offscreencanvas": ^2019.6.4
     "@types/react": ^17.0.39
     "@types/react-dom": ^17.0.11
     "@types/stream-json": ^1.7.2
@@ -10206,6 +10214,7 @@ __metadata:
     webpack: ^5.68.0
     webpack-cli: ^4.9.2
     webpack-dev-server: ^4.7.4
+    worker-loader: ^3.0.8
     zod: ^3.11.6
   peerDependencies:
     eslint: "*"
@@ -14390,6 +14399,18 @@ __metadata:
   version: 1.2.3
   resolution: "word-wrap@npm:1.2.3"
   checksum: 30b48f91fcf12106ed3186ae4fa86a6a1842416df425be7b60485de14bec665a54a68e4b5156647dec3a70f25e84d270ca8bc8cd23182ed095f5c7206a938c1f
+  languageName: node
+  linkType: hard
+
+"worker-loader@npm:^3.0.8":
+  version: 3.0.8
+  resolution: "worker-loader@npm:3.0.8"
+  dependencies:
+    loader-utils: ^2.0.0
+    schema-utils: ^3.0.0
+  peerDependencies:
+    webpack: ^4.0.0 || ^5.0.0
+  checksum: 84f4a7eeb2a1d8b9704425837e017c91eedfae67ac89e0b866a2dcf283323c1dcabe0258196278b7d5fd0041392da895c8a0c59ddf3a94f1b2e003df68ddfec3
   languageName: node
   linkType: hard
 

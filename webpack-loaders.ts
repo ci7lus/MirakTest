@@ -5,6 +5,7 @@ export const babelLoaderConfiguration: (b: boolean) => webpack.RuleSetRule = (
   isDev
 ) => ({
   test: [/\.tsx?$/, /\.ts$/, /\.js$/],
+  exclude: [/\.worker\.ts$/, /videoRenderer\.ts$/],
   use: {
     loader: "babel-loader",
     options: {
@@ -66,4 +67,28 @@ export const imageLoaderConfiguration: webpack.RuleSetRule = {
 export const assetLoaderConfiguration: webpack.RuleSetRule = {
   test: /\.(ttf)$/,
   type: "asset/resource",
+}
+
+export const workerConfiguration: webpack.RuleSetRule = {
+  test: [/\.worker\.ts$/, /videoRenderer\.ts$/],
+  use: [
+    {
+      loader: "babel-loader",
+      options: {
+        cacheDirectory: true,
+        presets: [
+          ["@babel/preset-env", { targets: { electron: "16" } }],
+          "@babel/preset-typescript",
+          "@babel/preset-react",
+        ],
+        plugins: [
+          "@babel/plugin-transform-runtime",
+          ["@babel/plugin-transform-typescript", { isTSX: true }],
+          "@babel/plugin-transform-react-jsx",
+          "@babel/plugin-proposal-class-properties",
+          "@babel/plugin-transform-modules-commonjs",
+        ].filter((s) => s),
+      },
+    },
+  ],
 }
