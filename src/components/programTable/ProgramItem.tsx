@@ -1,7 +1,7 @@
 import dayjs from "dayjs"
 import React, { memo, useState } from "react"
-import { Genre, SubGenre } from "../../constants/genre"
 import { GenreColors } from "../../constants/genreColor"
+import { Genre, SubGenre } from "../../constants/program"
 import { Program, Service } from "../../infra/mirakurun/api"
 import { convertVariationSelectedClosed } from "../../utils/enclosed"
 import { EscapeEnclosed } from "../common/EscapeEnclosed"

@@ -315,7 +315,7 @@ export const SubGenre: { [key: number]: { [key: number]: string } } = {
   },
 }
 
-export const VideoComponentType = {
+export const VideoComponentType: Record<number, string> = {
   0x01: "480i(525i), アスペクト比4:3",
   0x02: "480i(525i), アスペクト比16:9 パンベクトルあり",
   0x03: "480i(525i), アスペクト比16:9 パンベクトルなし",
@@ -351,7 +351,7 @@ export const VideoComponentType = {
   0xf4: "180p アスペクト比 > 16:9",
 }
 
-export const AudioComponentType = {
+export const AudioComponentType: Record<number, string> = {
   0b00000: "将来使用のためリザーブ",
   0b00001: "1/0モード(シングルモノ)",
   0b00010: "1/0 + 1/0モード(デュアルモノ)",
@@ -386,7 +386,7 @@ export const AudioComponentType = {
   0b11111: "将来使用のためリザーブ",
 }
 
-export const AudioSamplingRate = {
+export const AudioSamplingRate: Record<number, string> = {
   16000: "16kHz",
   22050: "22.05kHz",
   24000: "24kHz",

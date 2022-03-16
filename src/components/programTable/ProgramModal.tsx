@@ -2,7 +2,13 @@ import { Dialog } from "@headlessui/react"
 import clsx from "clsx"
 import dayjs from "dayjs"
 import React from "react"
-import { Genre, SubGenre } from "../../constants/genre"
+import {
+  Genre,
+  SubGenre,
+  VideoComponentType,
+  AudioComponentType,
+  AudioSamplingRate,
+} from "../../constants/program"
 import { Program } from "../../infra/mirakurun/api"
 import { ServiceWithLogoData } from "../../types/mirakurun"
 import { EscapeEnclosed } from "../common/EscapeEnclosed"
@@ -64,7 +70,6 @@ export const ProgramModal = ({
               {genre}
             </span>
           ))}
-          {program._pf && <p>EIT[p/f] による更新</p>}
         </p>
         <Dialog.Description className={clsx("mt-2", "whitespace-pre-wrap")}>
           <EscapeEnclosed str={program.description || ""} />
@@ -80,6 +85,19 @@ export const ProgramModal = ({
             </>
           ))}
         </div>
+        <p className={clsx("mt-2", "text-gray-400")}>
+          {program._pf && <p>EIT[p/f] による更新</p>}
+          {program.video?.componentType !== undefined && (
+            <p>{VideoComponentType[program.video?.componentType]}</p>
+          )}
+          {program.audios?.[0].componentType !== undefined && (
+            <p>{AudioComponentType[program.audios?.[0].componentType]}</p>
+          )}
+          {program.audios?.[0].samplingRate !== undefined && (
+            <p>{AudioSamplingRate[program.audios?.[0].samplingRate ?? 0]}</p>
+          )}
+          <p>{program.isFree ? "無料放送" : "有料放送"}</p>
+        </p>
       </div>
 
       <button
