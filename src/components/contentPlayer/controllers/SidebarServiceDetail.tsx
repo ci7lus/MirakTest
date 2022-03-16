@@ -91,7 +91,7 @@ export const SidebarServiceDetail = memo(
                     ? `${dayjs(current.startAt + current.duration).format(
                         "HH:mm"
                       )} (${Math.floor(current.duration / 1000 / 60)}分間)`
-                    : "（終了時間未定）"
+                    : ""
                 }`}
               </p>
               <p className={clsx("my-1", "text-sm", "px-2")}>
@@ -113,11 +113,12 @@ export const SidebarServiceDetail = memo(
                 {`${dayjs(next.startAt).format("HH:mm")}〜${
                   current.duration !== 1
                     ? dayjs(next.startAt + next.duration).format("HH:mm")
-                    : "（終了時間未定）"
+                    : ""
                 } `}
-                <EscapeEnclosed str={next.name || ""} /> (
-                {Math.floor(next.duration / 1000 / 60)}
-                分間)
+                <EscapeEnclosed str={next.name || ""} />
+                {next.duration !== 1
+                  ? `${Math.floor(next.duration / 1000 / 60)}分間)`
+                  : ""}
               </span>
             </div>
           )}

@@ -61,7 +61,7 @@ export const ProgramModal = ({
               ? `${dayjs(program.startAt + program.duration).format(
                   "HH:mm"
                 )} (${Math.floor(program.duration / 1000 / 60)}分間)`
-              : "（終了時間未定）"
+              : ""
           }`}
         </p>
         <p className={clsx("mt-2", "text-gray-300")}>

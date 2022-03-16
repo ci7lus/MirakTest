@@ -47,7 +47,7 @@ export const SidebarServiceQuickButton = memo(
                         .clone()
                         .add(program.duration, "miliseconds")
                         .format("HH:mm")
-                    : "（終了時間未定）"
+                    : ""
                 }`.trim()
               : null,
             program?.description,
