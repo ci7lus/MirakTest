@@ -101,10 +101,6 @@ export const generateContentPlayerContextMenu = (
       ...plugins,
       ...pluginSeparator,
       {
-        label: "再読み込み",
-        role: "reload",
-      },
-      {
         label: "ウィンドウを閉じる",
         role: "close",
       },
