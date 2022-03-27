@@ -28,6 +28,7 @@ import {
   TOGGLE_FULL_SCREEN,
   UPDATE_IS_PLAYING_STATE,
   REQUEST_SCREENSHOT_BASE_PATH,
+  ON_SCREENSHOT_REQUEST,
 } from "../constants/ipc"
 import {
   EPGManagerRegisterArg,
@@ -250,6 +251,12 @@ const preload: Preload = {
     })
     return () => {
       ipcRenderer.off(ON_WINDOW_MOVED, listener)
+    }
+  },
+  onScreenshotRequest(listener) {
+    ipcRenderer.on(ON_SCREENSHOT_REQUEST, () => listener())
+    return () => {
+      ipcRenderer.off(ON_SCREENSHOT_REQUEST, listener)
     }
   },
   requestScreenshotBasePath() {

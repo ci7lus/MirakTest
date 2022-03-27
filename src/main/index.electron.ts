@@ -17,6 +17,7 @@ import electron, {
   dialog,
   powerSaveBlocker,
   Notification,
+  globalShortcut,
 } from "electron"
 import Store from "electron-store"
 import fontList from "font-list"
@@ -48,6 +49,7 @@ import {
   TOGGLE_FULL_SCREEN,
   UPDATE_IS_PLAYING_STATE,
   REQUEST_SCREENSHOT_BASE_PATH,
+  ON_SCREENSHOT_REQUEST,
 } from "../../src/constants/ipc"
 import { ROUTES } from "../../src/constants/routes"
 import {
@@ -108,6 +110,15 @@ const init = () => {
   openWindow({
     name: ROUTES["ContentPlayer"],
   })
+
+  globalShortcut.register("Option+S", () => {
+    const activeId = states[globalActiveContentPlayerIdAtomKey]
+    if (typeof activeId !== "number") {
+      return
+    }
+    const window = BrowserWindow.fromId(activeId)
+    window?.webContents.send(ON_SCREENSHOT_REQUEST, performance.now())
+  })
 }
 
 app.on("ready", () => init())
@@ -117,6 +128,7 @@ app.on("window-all-closed", () => {
     watching.close()
     watching = null
   }
+  globalShortcut.unregister("Option+S")
   app.quit()
 })
 
@@ -134,7 +146,7 @@ const buildAppMenu = ({
     },
   ]
   if (process.platform !== "darwin") {
-    fileSubMenu?.push(
+    fileSubMenu.push(
       {
         type: "separator",
       },

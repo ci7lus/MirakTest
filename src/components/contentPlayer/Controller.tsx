@@ -118,7 +118,7 @@ export const CoiledController: React.VFC<{}> = () => {
   )
   useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "s" && (e.metaKey === true || e.ctrlKey === true)) {
+      if (e.key === "s") {
         setScreenshotTrigger(performance.now())
       } else if (e.key === "ArrowUp") {
         // 音量+10
@@ -141,6 +141,14 @@ export const CoiledController: React.VFC<{}> = () => {
     window.addEventListener("keydown", onKeyDown)
     return () => {
       window.removeEventListener("keydown", onKeyDown)
+    }
+  }, [])
+  useEffect(() => {
+    const off = window.Preload.onScreenshotRequest(() =>
+      setScreenshotTrigger(performance.now())
+    )
+    return () => {
+      off()
     }
   }, [])
 

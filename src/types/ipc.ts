@@ -76,6 +76,7 @@ export type Preload = {
   }
   onUpdateIsPlayingState: (listener: (isPlaying: boolean) => void) => () => void
   onWindowMoved: (listener: () => void) => () => void
+  onScreenshotRequest: (listener: () => void) => () => void
   requestScreenshotBasePath: () => Promise<string>
   public: {
     setWindowAspect: (aspect: number) => void
