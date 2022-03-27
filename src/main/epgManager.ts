@@ -60,46 +60,7 @@ export class EPGManager {
       console.info(`[epgmanager] 番組情報を削除しました: ${result.length}`)
     }, 1000 * 60 * 60)
     // 5分毎に終了時間未定の番組の更新を確認
-    // TODO: ただMirakurunそのものが終了時間未定の番組を拾えない場合が多いのであまり対策にならない
-    // https://github.com/ci7lus/MirakTest/issues/42
-    setInterval(async () => {
-      const userAgent = this.userAgent
-      if (!userAgent) {
-        return
-      }
-      const tbaPrograms = Array.from(this.programs.values()).filter(
-        (program) => program.duration === 1
-      )
-      const mirakuruns = Array.from(
-        new Set([...this.connections.keys(), ...this.intervals.keys()])
-      )
-      if (mirakuruns.length === 0) {
-        return
-      }
-      const api = new MirakurunAPI({
-        baseUrl: mirakuruns[0],
-        userAgent,
-      })
-      for (const program of tbaPrograms) {
-        console.info(
-          `[epgmanager] 終了時間未定の番組情報の更新を試みます: ${program.id} (${program.name})`
-        )
-        const gotProgram = await api.programs.getProgram(program.id, {
-          validateStatus: () => true,
-        })
-        if (gotProgram.status === 200) {
-          console.info(
-            `[epgmanager] ${program.id} (${program.name}) の番組情報を更新します`
-          )
-          this.programs.set(program.id, gotProgram.data)
-        } else {
-          console.info(
-            `[epgmanager] ${program.id} (${program.name}) は既に終了しています`
-          )
-          this.programs.delete(program.id)
-        }
-      }
-    }, 1000 * 60 * 5)
+    setInterval(this.checkEndOfTbaProgram, 1000 * 60 * 5)
   }
 
   async register(_payload: unknown) {
@@ -130,6 +91,11 @@ export class EPGManager {
         this.onEpgUpdate()
       }
       await fetchPrograms()
+      this.intervals.set(
+        payload.url,
+        setInterval(fetchPrograms, 1000 * 60 * 60 * 6) // 6時間毎に全更新
+      )
+      this.checkEndOfTbaProgram()
       const connect = async () => {
         console.info(
           `[epgmanager] 番組イベントストリームへ接続します: ${hostname}`
@@ -139,6 +105,7 @@ export class EPGManager {
           undefined,
           {
             responseType: "stream",
+            validateStatus: () => true,
           }
         )
         const statusCode = claimStream.status.toString()
@@ -146,12 +113,14 @@ export class EPGManager {
           console.info(
             `[epgmanager] 番組イベントストリームに対応していません: ${statusCode} / ${hostname}`
           )
-          if (400 <= claimStream.status) {
-            this.intervals.set(
-              payload.url,
-              setInterval(fetchPrograms, 1000 * 60 * 60)
-            )
+          const currentInterval = this.intervals.get(payload.url)
+          if (currentInterval) {
+            clearInterval(currentInterval)
           }
+          this.intervals.set(
+            payload.url,
+            setInterval(fetchPrograms, 1000 * 60 * 60) // 6->1時間毎に全更新
+          )
           return
         }
         const stream = claimStream.data as unknown as Readable
@@ -224,5 +193,73 @@ export class EPGManager {
           program.duration === 1 ||
           query.endAtMoreThan <= program.startAt + program.duration)
     )
+  }
+
+  // TODO: https://github.com/ci7lus/MirakTest/issues/42
+  async checkEndOfTbaProgram() {
+    const userAgent = this.userAgent
+    if (!userAgent) {
+      return
+    }
+    const timestamp = dayjs().tz("Asia/Tokyo").unix() * 1000
+    const snapshot = Array.from(this.programs.values())
+    const tbaPrograms = Object.values(
+      snapshot
+        .filter((program) => program.duration === 1)
+        .reduce((arr: Record<number, Program>, cur) => {
+          if (!arr[cur.id]) {
+            arr[cur.id] = cur
+          }
+          return arr
+        }, {})
+    )
+    const mirakuruns = Array.from(
+      new Set([...this.connections.keys(), ...this.intervals.keys()])
+    )
+    if (mirakuruns.length === 0) {
+      return
+    }
+    const api = new MirakurunAPI({
+      baseUrl: mirakuruns[0],
+      userAgent,
+    })
+    for (const program of tbaPrograms) {
+      console.info(
+        `[epgmanager] 終了時間未定の番組情報の更新を試みます: ${program.id} (${program.name})`
+      )
+      const gotProgram = await api.programs.getProgram(program.id, {
+        validateStatus: () => true,
+      })
+      if (gotProgram.status === 200) {
+        console.info(
+          `[epgmanager] ${program.id} (${program.name}) の番組情報を更新します`
+        )
+        this.programs.set(program.id, gotProgram.data)
+      } else {
+        console.info(
+          `[epgmanager] ${program.id} (${program.name}) は既に終了しています`
+        )
+        this.programs.delete(program.id)
+        this.onEpgUpdate()
+        continue
+      }
+      // 今放送中のはずの番組を探す
+      const current: (Program & { _pf?: true }) | undefined = snapshot.find(
+        (snap) =>
+          program.networkId === snap.networkId &&
+          program.serviceId === snap.serviceId &&
+          snap.startAt <= timestamp &&
+          snap.startAt + snap.duration >= timestamp &&
+          snap.duration !== 1
+      )
+      if (current?._pf) {
+        // p/f更新であれば放送中だとみなして終了未定を消す
+        console.info(
+          `[epgmanager] ${current.id} (${current.name}) は既に放送中です`
+        )
+        this.programs.delete(program.id)
+        this.onEpgUpdate()
+      }
+    }
   }
 }
