@@ -1,6 +1,7 @@
 import {
   contentPlayerBoundsAtom,
   contentPlayerKeyForRestorationAtom,
+  contentPlayerSubtitleEnabledAtom,
   contentPlayerVolumeAtom,
 } from "../atoms/contentPlayer"
 import {
@@ -40,4 +41,5 @@ export const RECOIL_STORED_ATOM_KEYS = [
   contentPlayerVolumeAtom.key,
   contentPlayerKeyForRestorationAtom.key,
   contentPlayerBoundsAtom.key,
+  contentPlayerSubtitleEnabledAtom.key,
 ]

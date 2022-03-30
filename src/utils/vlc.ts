@@ -85,6 +85,11 @@ export const VLCLogFilter = (s: string) => {
     const m = s.match(/Buffering (\d+)%/)
     if (!m) return { category: "buffering" } as const
     return { category: "buffering", progress: parseInt(m[1]) } as const
+  } else if (s.startsWith("configured with")) {
+    return {
+      category: "configured_with",
+      isCustomized: s.includes("vlc-miraktest"),
+    } as const
   } else {
     return { category: "unknown" } as const
   }

@@ -316,6 +316,7 @@ export const CoiledVideoPlayer: React.VFC<{
       }
       internalPlayingTimeRef.current = time
     })
+    let isCustomized = false
     window.Preload.webchimera.onLogMessage((_level, message) => {
       const parsed = VLCLogFilter(message)
       switch (parsed.category) {
@@ -329,10 +330,10 @@ export const CoiledVideoPlayer: React.VFC<{
           }
           break
         case "arib_parser_was_destroyed":
-          if (pcr_i_first === 0) {
-            setIsSubtitleEnabled(false)
-          } else {
+          if (isCustomized) {
             window.Preload.webchimera.setSubtitleTrack(1)
+          } else {
+            setIsSubtitleEnabled(false)
           }
           break
         case "arib_data":
@@ -355,6 +356,11 @@ export const CoiledVideoPlayer: React.VFC<{
             setTot(parsed.tot)
           }
           break
+        case "configured_with": {
+          console.debug(message)
+          isCustomized = parsed.isCustomized || false
+          break
+        }
         case "received_first_picture":
         case "es_out_program_epg":
         case "PMTCallBack_called_for_program": {
@@ -417,7 +423,7 @@ export const CoiledVideoPlayer: React.VFC<{
     )
     window.Preload.webchimera.onMediaChanged(() => {
       setIsPlaying(true)
-      if (pcr_i_first === 0) {
+      if (!isCustomized) {
         setIsSubtitleEnabled(false)
       }
       setAribSubtitleData(null)
