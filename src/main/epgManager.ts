@@ -60,7 +60,7 @@ export class EPGManager {
       console.info(`[epgmanager] 番組情報を削除しました: ${result.length}`)
     }, 1000 * 60 * 60)
     // 5分毎に終了時間未定の番組の更新を確認
-    setInterval(this.checkEndOfTbaProgram, 1000 * 60 * 5)
+    setInterval(() => this.checkEndOfTbaProgram(), 1000 * 60 * 5)
   }
 
   async register(_payload: unknown) {
@@ -93,7 +93,7 @@ export class EPGManager {
       await fetchPrograms()
       this.intervals.set(
         payload.url,
-        setInterval(fetchPrograms, 1000 * 60 * 60 * 6) // 6時間毎に全更新
+        setInterval(() => fetchPrograms(), 1000 * 60 * 60 * 6) // 6時間毎に全更新
       )
       this.checkEndOfTbaProgram()
       const connect = async () => {
@@ -119,7 +119,7 @@ export class EPGManager {
           }
           this.intervals.set(
             payload.url,
-            setInterval(fetchPrograms, 1000 * 60 * 60) // 6->1時間毎に全更新
+            setInterval(() => fetchPrograms(), 1000 * 60 * 60) // 6->1時間毎に全更新
           )
           return
         }
@@ -202,16 +202,15 @@ export class EPGManager {
       return
     }
     const timestamp = dayjs().tz("Asia/Tokyo").unix() * 1000
-    const snapshot = Array.from(this.programs.values())
-    const tbaPrograms = Object.values(
-      snapshot
+    const snapshots = Array.from(this.programs.values())
+    const tbaPrograms = Array.from(
+      snapshots
         .filter((program) => program.duration === 1)
-        .reduce((arr: Record<number, Program>, cur) => {
-          if (!arr[cur.id]) {
-            arr[cur.id] = cur
-          }
+        .reduce((arr, cur) => {
+          arr.set(cur.id, cur)
           return arr
-        }, {})
+        }, new Map<number, Program>())
+        .values()
     )
     const mirakuruns = Array.from(
       new Set([...this.connections.keys(), ...this.intervals.keys()])
@@ -224,6 +223,17 @@ export class EPGManager {
       userAgent,
     })
     for (const program of tbaPrograms) {
+      // 24時間以上経過している番組は削除する
+      if (timestamp - program.startAt > 24 * 60 * 60 * 1000) {
+        console.info(
+          `[epgmanager] ${program.id} (${program.name}) は開始から24時間以上経過しています`,
+          timestamp,
+          program.startAt
+        )
+        this.programs.delete(program.id)
+        this.onEpgUpdate()
+        continue
+      }
       console.info(
         `[epgmanager] 終了時間未定の番組情報の更新を試みます: ${program.id} (${program.name})`
       )
@@ -244,13 +254,21 @@ export class EPGManager {
         continue
       }
       // 今放送中のはずの番組を探す
-      const current: (Program & { _pf?: true }) | undefined = snapshot.find(
-        (snap) =>
-          program.networkId === snap.networkId &&
-          program.serviceId === snap.serviceId &&
-          snap.startAt <= timestamp &&
-          snap.startAt + snap.duration >= timestamp &&
-          snap.duration !== 1
+      const sids = Array.from(
+        new Set(
+          [
+            program.serviceId,
+            ...(program.relatedItems?.map((item) => item.serviceId) || []),
+          ].filter((n): n is number => !!n)
+        )
+      )
+      const current: (Program & { _pf?: true }) | undefined = snapshots.find(
+        (snapshot) =>
+          program.networkId === snapshot.networkId &&
+          sids.includes(snapshot.serviceId) &&
+          snapshot.startAt <= timestamp &&
+          snapshot.startAt + snapshot.duration >= timestamp &&
+          snapshot.duration !== 1
       )
       if (current?._pf) {
         // p/f更新であれば放送中だとみなして終了未定を消す
