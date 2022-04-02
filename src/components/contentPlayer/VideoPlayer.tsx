@@ -1,5 +1,6 @@
 import path from "path"
 import { CanvasProvider } from "aribb24.js"
+import clsx from "clsx"
 import dayjs from "dayjs"
 import React, { memo, useEffect, useRef, useState } from "react"
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil"
@@ -476,7 +477,7 @@ export const CoiledVideoPlayer: React.VFC<{
   }, [])
   return (
     <canvas
-      className="w-full"
+      className={clsx("max-w-full", "max-h-full")}
       style={{ aspectRatio: aspect.toString() }}
       ref={canvasRef}
     />

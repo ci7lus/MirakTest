@@ -94,7 +94,8 @@ export const CoiledSubtitleRenderer: React.VFC<{
       height={1080}
       className={clsx(
         "pointer-events-none",
-        "w-full",
+        "max-w-full",
+        "max-h-full",
         !isSubtitleEnabled && "opacity-0"
       )}
       style={{ aspectRatio: "16/9" }}
