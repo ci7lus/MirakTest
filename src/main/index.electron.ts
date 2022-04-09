@@ -111,7 +111,7 @@ const init = () => {
     name: ROUTES["ContentPlayer"],
   })
 
-  globalShortcut.register("Option+S", () => {
+  globalShortcut.register("F4", () => {
     const activeId = states[globalActiveContentPlayerIdAtomKey]
     if (typeof activeId !== "number") {
       return
@@ -128,7 +128,7 @@ app.on("window-all-closed", () => {
     watching.close()
     watching = null
   }
-  globalShortcut.unregister("Option+S")
+  globalShortcut.unregister("F4")
   app.quit()
 })
 
