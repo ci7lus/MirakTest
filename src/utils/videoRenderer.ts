@@ -51,8 +51,6 @@ export class VideoRenderer {
     vOffset: number
   ) {
     if (width !== this.canvas.width || height !== this.canvas.height) {
-      this.canvas.width = width
-      this.canvas.height = height
       this.gl.viewport(
         0,
         0,

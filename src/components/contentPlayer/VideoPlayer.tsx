@@ -2,7 +2,7 @@ import path from "path"
 import { CanvasProvider } from "aribb24.js"
 import clsx from "clsx"
 import dayjs from "dayjs"
-import React, { memo, useEffect, useRef, useState } from "react"
+import React, { memo, useEffect, useMemo, useRef, useState } from "react"
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil"
 import pkg from "../../../package.json"
 import {
@@ -45,7 +45,8 @@ export const CoiledVideoPlayer: React.VFC<{
 }> = memo(({ internalPlayingTimeRef }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null)
 
-  const [aspect, setAspect] = useState(16 / 9)
+  const [size, setSize] = useState<[number, number]>([1280, 1080])
+  const aspect = useMemo(() => size[0] / size[1], [size])
   useEffect(() => {
     if (process.platform === "darwin") {
       window.Preload.public.setWindowAspect(aspect)
@@ -325,9 +326,8 @@ export const CoiledVideoPlayer: React.VFC<{
           console.debug(message)
           if (parsed.width && parsed.height) {
             const { width, height } = parsed
-            const aspect = width / height
-            setAspect(aspect)
-            console.info(`Aspect: ${aspect}(${width} / ${height})`)
+            setSize([width, height])
+            console.info(`Aspect: ${width / height}(${width} / ${height})`)
           }
           break
         case "arib_parser_was_destroyed":
@@ -479,6 +479,8 @@ export const CoiledVideoPlayer: React.VFC<{
     <canvas
       className={clsx("max-w-full", "max-h-full")}
       style={{ aspectRatio: aspect.toString() }}
+      width={size[0]}
+      height={size[1]}
       ref={canvasRef}
     />
   )
