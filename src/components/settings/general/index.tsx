@@ -31,7 +31,33 @@ export const CoiledGeneralSetting: React.VFC<{}> = () => {
         setCoiledControllerSetting(controller)
         setCoiledSubtitle(subtitle)
         setCoiledScreenshotSetting(screenshot)
-        setCoiledExperimentalSetting(experimental)
+        setCoiledExperimentalSetting((prev) => {
+          if (
+            prev.globalScreenshotAccelerator !==
+            experimental.globalScreenshotAccelerator
+          ) {
+            window.Preload.updateGlobalScreenshotAccelerator(
+              experimental.globalScreenshotAccelerator || false
+            ).then((isOk) => {
+              if (isOk) {
+                window.Preload.public.showNotification({
+                  title: experimental.globalScreenshotAccelerator
+                    ? `グローバルスクリーンショットキーの設定に${
+                        isOk ? "成功" : "失敗"
+                      }しました`
+                    : "グローバルスクリーンショットキーの設定を解除しました",
+                  body: isOk
+                    ? experimental.globalScreenshotAccelerator
+                      ? `新しいキーは「${experimental.globalScreenshotAccelerator}」です`
+                      : undefined
+                    : `キーとして${experimental.globalScreenshotAccelerator}は使用できません`,
+                })
+              } else {
+              }
+            })
+          }
+          return experimental
+        })
       }}
     >
       <div className="flex flex-col space-y-8">

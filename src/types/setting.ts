@@ -24,4 +24,5 @@ export type ExperimentalSetting = {
   isVlcAvCodecHwAny: boolean
   vlcNetworkCaching: number
   isDualMonoAutoAdjustEnabled: boolean
+  globalScreenshotAccelerator: string | false
 }

@@ -28,7 +28,10 @@ import {
   globalActiveContentPlayerIdAtomKey,
   globalLastEpgUpdatedAtomKey,
 } from "../../src/atoms/globalKeys"
-import { screenshotSettingAtomKey } from "../../src/atoms/settingsKey"
+import {
+  experimentalSettingAtomKey,
+  screenshotSettingAtomKey,
+} from "../../src/atoms/settingsKey"
 import {
   REQUEST_CONFIRM_DIALOG,
   ON_WINDOW_MOVED,
@@ -50,6 +53,7 @@ import {
   UPDATE_IS_PLAYING_STATE,
   REQUEST_SCREENSHOT_BASE_PATH,
   ON_SCREENSHOT_REQUEST,
+  UPDATE_GLOBAL_SCREENSHOT_ACCELERATOR,
 } from "../../src/constants/ipc"
 import { ROUTES } from "../../src/constants/routes"
 import {
@@ -59,7 +63,7 @@ import {
 } from "../../src/types/ipc"
 import { AppInfo, InitPlugin, PluginInMainArgs } from "../../src/types/plugin"
 import { InitialData, ObjectLiteral, PluginDatum } from "../../src/types/struct"
-import { ScreenshotSetting } from "../types/setting"
+import { ExperimentalSetting, ScreenshotSetting } from "../types/setting"
 import { FORBIDDEN_MODULES } from "./constants"
 import { generateContentPlayerContextMenu } from "./contextmenu"
 import { EPGManager } from "./epgManager"
@@ -84,6 +88,30 @@ let fonts: string[] = []
 
 let watching: fs.FSWatcher | null = null
 
+let globalScreenshotAccelerator: string | false = false
+const registerGlobalScreenshotAccelerator = (accelerator: string | false) => {
+  if (globalScreenshotAccelerator) {
+    globalShortcut.unregister(globalScreenshotAccelerator)
+    globalScreenshotAccelerator = false
+  }
+  if (accelerator === false) {
+    return true
+  }
+  const result = globalShortcut.register(accelerator, () => {
+    const activeId = states[globalActiveContentPlayerIdAtomKey]
+    if (typeof activeId !== "number") {
+      return
+    }
+    const window = BrowserWindow.fromId(activeId)
+    window?.webContents.send(ON_SCREENSHOT_REQUEST, performance.now())
+  })
+  if (result) {
+    globalScreenshotAccelerator = accelerator
+    return true
+  }
+  return false
+}
+
 const init = () => {
   if (process.platform == "win32" && WebChimeraJs.path) {
     const VLCPluginPath = path.join(WebChimeraJs.path, "plugins")
@@ -105,19 +133,29 @@ const init = () => {
     projectName: pkg.name,
   })
   store = _store
+
+  const experimentalSetting = _store.get(
+    experimentalSettingAtomKey
+  ) as ExperimentalSetting | null
+  const isOk = registerGlobalScreenshotAccelerator(
+    experimentalSetting?.globalScreenshotAccelerator || false
+  )
+  if (isOk) {
+    console.info(
+      "globalScreenshotAcceleratorを設定しました",
+      experimentalSetting?.globalScreenshotAccelerator
+    )
+  } else {
+    console.info(
+      "globalScreenshotAcceleratorの設定に失敗しました",
+      experimentalSetting?.globalScreenshotAccelerator
+    )
+  }
+
   const _display = screen.getPrimaryDisplay()
   display = _display
   openWindow({
     name: ROUTES["ContentPlayer"],
-  })
-
-  globalShortcut.register("F4", () => {
-    const activeId = states[globalActiveContentPlayerIdAtomKey]
-    if (typeof activeId !== "number") {
-      return
-    }
-    const window = BrowserWindow.fromId(activeId)
-    window?.webContents.send(ON_SCREENSHOT_REQUEST, performance.now())
   })
 }
 
@@ -877,6 +915,22 @@ ipcMain.handle(REQUEST_SCREENSHOT_BASE_PATH, async () => {
     null
   )
 })
+
+ipcMain.handle(
+  UPDATE_GLOBAL_SCREENSHOT_ACCELERATOR,
+  (_, accelerator: string | false) => {
+    const isOk = registerGlobalScreenshotAccelerator(accelerator)
+    if (isOk) {
+      console.info("globalScreenshotAcceleratorを更新しました", accelerator)
+    } else {
+      console.info(
+        "globalScreenshotAcceleratorの更新に失敗しました",
+        accelerator
+      )
+    }
+    return isOk
+  }
+)
 
 new EPGManager(ipcMain, () => {
   const value = Date.now()

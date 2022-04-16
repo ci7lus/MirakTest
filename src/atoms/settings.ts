@@ -8,7 +8,10 @@ import type {
   ScreenshotSetting,
   SubtitleSetting,
 } from "../types/setting"
-import { screenshotSettingAtomKey } from "./settingsKey"
+import {
+  experimentalSettingAtomKey,
+  screenshotSettingAtomKey,
+} from "./settingsKey"
 
 const prefix = `${pkg.name}.settings`
 
@@ -48,11 +51,12 @@ export const screenshotSetting = atom<ScreenshotSetting>({
 })
 
 export const experimentalSetting = atom<ExperimentalSetting>({
-  key: `${prefix}.experimental`,
+  key: experimentalSettingAtomKey,
   default: {
     isWindowDragMoveEnabled: false,
     isVlcAvCodecHwAny: false,
     vlcNetworkCaching: -1,
     isDualMonoAutoAdjustEnabled: true,
+    globalScreenshotAccelerator: false,
   },
 })

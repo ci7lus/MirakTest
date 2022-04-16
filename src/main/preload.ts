@@ -29,6 +29,7 @@ import {
   UPDATE_IS_PLAYING_STATE,
   REQUEST_SCREENSHOT_BASE_PATH,
   ON_SCREENSHOT_REQUEST,
+  UPDATE_GLOBAL_SCREENSHOT_ACCELERATOR,
 } from "../constants/ipc"
 import {
   EPGManagerRegisterArg,
@@ -261,6 +262,12 @@ const preload: Preload = {
   },
   requestScreenshotBasePath() {
     return ipcRenderer.invoke(REQUEST_SCREENSHOT_BASE_PATH)
+  },
+  async updateGlobalScreenshotAccelerator(accelerator) {
+    return await ipcRenderer.invoke(
+      UPDATE_GLOBAL_SCREENSHOT_ACCELERATOR,
+      accelerator
+    )
   },
   public: {
     epgManager: {

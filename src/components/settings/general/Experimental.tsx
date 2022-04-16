@@ -1,5 +1,11 @@
+import clsx from "clsx"
 import React, { useEffect, useState } from "react"
+import { Command } from "react-feather"
 import { ExperimentalSetting } from "../../../types/setting"
+
+const META_KEYS = ["Control", "Shift", "Meta", "Alt"]
+
+const ESCAPE = ["Escape", "Enter", "Backspace", "Delete", " "]
 
 export const ExperimentalSettingForm: React.VFC<{
   experimentalSetting: ExperimentalSetting
@@ -18,19 +24,24 @@ export const ExperimentalSettingForm: React.VFC<{
   )
   const [isDualMonoAutoAdjustEnabled, setIsDualMonoAutoAdjustEnabled] =
     useState(experimentalSetting.isDualMonoAutoAdjustEnabled)
+  const [globalScreenshotAccelerator, setGlobalScreenshotAccelerator] =
+    useState(experimentalSetting.globalScreenshotAccelerator)
   useEffect(() => {
     setExperimentalSetting({
       isWindowDragMoveEnabled,
       vlcNetworkCaching,
       isVlcAvCodecHwAny,
       isDualMonoAutoAdjustEnabled,
+      globalScreenshotAccelerator,
     })
   }, [
     isWindowDragMoveEnabled,
     vlcNetworkCaching,
     isVlcAvCodecHwAny,
     isDualMonoAutoAdjustEnabled,
+    globalScreenshotAccelerator,
   ])
+  const [isKeyboradCaptureing, setIsKeyboardCaptureing] = useState(false)
   return (
     <div>
       <p className="text-lg">試験的な設定</p>
@@ -96,6 +107,80 @@ export const ExperimentalSettingForm: React.VFC<{
           <code className="font-mono bg-gray-500 mx-1">--avcodec-hw=any</code>
           を指定します。効果は不明の上に、gstreamerを用いる一部ディストリビューションでは動作が不安定になる可能性があります。
         </p>
+      </label>
+      <label className="block mt-4">
+        <span>グローバルスクリーンショットキー</span>
+        <input
+          type="checkbox"
+          className="block mt-2 form-checkbox"
+          checked={globalScreenshotAccelerator !== false}
+          onChange={() =>
+            setGlobalScreenshotAccelerator((accelerator) =>
+              typeof accelerator !== "string" ? "F4" : false
+            )
+          }
+        />
+        <p className="text-sm text-gray-300 mt-2">
+          他のアプリにフォーカスがあってもスクリーンショットを撮ることができますが、適用中はすべての入力が吸い取られます。
+        </p>
+        {globalScreenshotAccelerator !== false && (
+          <>
+            <div className="flex justify-center flex-grow">
+              <input
+                type="text"
+                placeholder="F4"
+                className={clsx(
+                  "block mt-2 form-input rounded-l-md w-full text-gray-900 focus:outline-none cursor-text"
+                )}
+                value={globalScreenshotAccelerator || ""}
+                onChange={(e) => setGlobalScreenshotAccelerator(e.target.value)}
+                spellCheck={false}
+              />
+              <button
+                className={clsx(
+                  `px-4 py-2 mt-2 rounded-r-md flex items-center justify-center bg-gray-100 text-gray-900 focus:outline-none cursor-pointer`,
+                  isKeyboradCaptureing && "bg-gray-400 cursor-not-allowed"
+                )}
+                disabled={isKeyboradCaptureing}
+                onClick={() => {
+                  const capture = (e: KeyboardEvent) => {
+                    e.preventDefault()
+                    if (!ESCAPE.includes(e.key)) {
+                      setGlobalScreenshotAccelerator(() =>
+                        [
+                          e.altKey && "Alt",
+                          e.metaKey
+                            ? "CommandOrControl"
+                            : e.ctrlKey && "Control",
+                          e.shiftKey && "Shift",
+                          META_KEYS.includes(e.key)
+                            ? " "
+                            : e.code.replace("Key", ""),
+                        ]
+                          .filter((s) => s)
+                          .join("+")
+                          .trim()
+                      )
+                    }
+                    if (!META_KEYS.includes(e.key)) {
+                      document.removeEventListener("keydown", capture)
+                      setIsKeyboardCaptureing(false)
+                    }
+                  }
+                  document.addEventListener("keydown", capture)
+                  setIsKeyboardCaptureing(true)
+                }}
+                type="button"
+              >
+                <Command className="pointer-events-none" size="1.75rem" />
+              </button>
+            </div>
+            <p className="text-sm text-gray-300 mt-2">
+              <Command size=".75rem" className="inline" />{" "}
+              を押してキーコンビネーションをキャプチャできます。Esc/Backspace/Enterなどでキャンセルできます。
+            </p>
+          </>
+        )}
       </label>
     </div>
   )
