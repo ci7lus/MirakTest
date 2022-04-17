@@ -27,7 +27,10 @@
     "typecheck": "yarn tsc --noEmit && yarn tsc -p ./src/main/tsconfig.json --noEmit"
   },
   "lint-staged": {
-    "*.{js,ts,tsx}": "eslint --max-warnings 0 --cache",
+    "*.{js,ts,tsx}": [
+      "eslint --max-warnings 0 --cache",
+      "bash -c 'tsc --noEmit'"
+    ],
     "*.{js,ts,tsx,md}": "prettier"
   },
   "devDependencies": {
