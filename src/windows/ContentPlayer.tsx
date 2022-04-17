@@ -26,22 +26,29 @@ export const CoiledContentPlayer: React.VFC<{}> = () => {
 
   useEffect(() => {
     // 16:9以下の比率になったら戻し、ウィンドウサイズを保存する
-    const onResizedOrMoved = async () => {
-      const bounds = await window.Preload.public.requestWindowContentBounds()
-      if (!bounds) {
-        return
+    let timer: NodeJS.Timeout | null = null
+    const onResizedOrMoved = () => {
+      if (timer) {
+        clearTimeout(timer)
       }
-      const min = Math.ceil((bounds.width / 16) * 9)
-      if (process.platform === "darwin" && bounds.height < min) {
-        const targetBounds = {
-          ...bounds,
-          height: min,
+      timer = setTimeout(async () => {
+        timer = null
+        const bounds = await window.Preload.public.requestWindowContentBounds()
+        if (!bounds) {
+          return
         }
-        window.Preload.public.setWindowContentBounds(targetBounds)
-        setBounds(targetBounds)
-      } else {
-        setBounds(bounds)
-      }
+        const min = Math.ceil((bounds.width / 16) * 9)
+        if (process.platform === "darwin" && bounds.height < min) {
+          const targetBounds = {
+            ...bounds,
+            height: min,
+          }
+          window.Preload.public.setWindowContentBounds(targetBounds)
+          setBounds(targetBounds)
+        } else {
+          setBounds(bounds)
+        }
+      }, 500)
     }
     window.addEventListener("resize", onResizedOrMoved)
     const onWindowMoved = window.Preload.onWindowMoved(() => onResizedOrMoved())
@@ -61,6 +68,9 @@ export const CoiledContentPlayer: React.VFC<{}> = () => {
       window.removeEventListener("focus", onFocus)
       onUpdateIsPlayingState()
       onWindowMoved()
+      if (timer) {
+        clearTimeout(timer)
+      }
     }
   }, [])
   // タイトル
