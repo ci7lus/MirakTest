@@ -2,8 +2,16 @@
 @tailwind components;
 @tailwind utilities;
 
-html {
-  font-size: clamp(14px, 1.25vw, 100%);
+@media screen and (max-width: 720px) {
+  html {
+    font-size: 14px;
+  }
+}
+
+@media screen and (max-width: 360px) {
+  html {
+    font-size: 12px;
+  }
 }
 
 *,
