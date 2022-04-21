@@ -53,16 +53,16 @@ export const MirakurunManager: React.VFC<{}> = () => {
         playingContent.contentType !== "Mirakurun") ||
       isPlaying
     try {
-      const version = await mirakurun.version.checkVersion()
+      const status = await mirakurun.status.getStatus()
       let message: string
-      if (typeof version.data === "string") {
+      if (typeof status.data === "string") {
         setCompatibility("Mirakc")
-        setVersion(version.data)
-        message = `Mirakc (${version.data})`
-      } else if (typeof version.data.current === "string") {
+        setVersion(status.data)
+        message = `Mirakc (${status.data})`
+      } else if (typeof status.data.version === "string") {
         setCompatibility("Mirakurun")
-        setVersion(version.data.current || null)
-        message = `Mirakurun (${version.data.current})`
+        setVersion(status.data.version || null)
+        message = `Mirakurun (${status.data.version})`
       } else {
         throw new Error()
       }
