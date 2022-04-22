@@ -50,10 +50,10 @@ export const ProgramModal = ({
       )}
     >
       <div className={clsx("overflow-auto")}>
-        <Dialog.Title className={clsx("text-2xl")}>
+        <Dialog.Title className={clsx("text-2xl", "select-text")}>
           <EscapeEnclosed str={program.name || ""} />
         </Dialog.Title>
-        <p className={clsx("mt-2", "text-gray-300")}>
+        <p className={clsx("mt-2", "text-gray-300", "select-text")}>
           {`${service.remoteControlKeyId || service.serviceId} ${service.name}`}
           <br />
           {`${dayjs(program.startAt).format("HH:mm")}〜${
@@ -66,12 +66,14 @@ export const ProgramModal = ({
         </p>
         <p className={clsx("mt-2", "text-gray-300")}>
           {genres.map((genre) => (
-            <span key={genre} className={clsx("block")}>
+            <span key={genre} className={clsx("block", "select-text")}>
               {genre}
             </span>
           ))}
         </p>
-        <Dialog.Description className={clsx("mt-2", "whitespace-pre-wrap")}>
+        <Dialog.Description
+          className={clsx("mt-2", "whitespace-pre-wrap", "select-text")}
+        >
           <EscapeEnclosed str={program.description || ""} />
         </Dialog.Description>
 
@@ -81,7 +83,9 @@ export const ProgramModal = ({
               <h4 className={clsx("text-lg", "mt-2", "text-gray-300")}>
                 {name}
               </h4>
-              <p className={clsx("mt-1", "whitespace-pre-wrap")}>{desc}</p>
+              <p className={clsx("mt-1", "whitespace-pre-wrap", "select-text")}>
+                {desc}
+              </p>
             </>
           ))}
         </div>
