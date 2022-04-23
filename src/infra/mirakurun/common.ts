@@ -184,6 +184,9 @@ export const createRequestFunction = function (
         [url.username, url.password].filter((s) => s).join(":")
       )}`
     }
+    if (configuration?.userAgent) {
+      headers["user-agent"] = configuration.userAgent
+    }
     axiosRequestArgs.headers = Object.assign(
       axiosRequestArgs.headers || {},
       headers

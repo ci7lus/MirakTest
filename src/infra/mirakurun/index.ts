@@ -43,6 +43,7 @@ export class MirakurunAPI {
   getConfigure() {
     return new Configuration({
       basePath: this.baseUrl,
+      userAgent: this.userAgent,
     })
   }
 
