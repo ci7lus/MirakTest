@@ -2,18 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-@media screen and (max-width: 720px) {
-  html {
-    font-size: 14px;
-  }
-}
-
-@media screen and (max-width: 360px) {
-  html {
-    font-size: 12px;
-  }
-}
-
 *,
 a,
 button {

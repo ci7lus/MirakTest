@@ -21,6 +21,28 @@ export const Router: React.VFC<{}> = () => {
     window.Preload.public.showWindow()
     return () => window.removeEventListener("hashchange", onHashChange)
   }, [])
+  useEffect(() => {
+    const root = document.querySelector<HTMLHtmlElement>(":root")
+    if (!root) {
+      return
+    }
+    let timer: NodeJS.Timeout | null = null
+    const onResize = () => {
+      if (timer) {
+        clearTimeout(timer)
+      }
+      timer = setTimeout(() => {
+        // clamp(14px, 1.25vw, 100%);
+        // max(14px, min(1.25vw, 16px))
+        root.style.fontSize =
+          Math.max(14, Math.min((window.innerWidth / 100) * 1.25, 16)) + "px"
+        timer = null
+      }, 50)
+    }
+    window.addEventListener("resize", onResize)
+    onResize()
+    return () => window.removeEventListener("resize", onResize)
+  }, [])
   if (hash === ROUTES["ContentPlayer"]) {
     return <CoiledContentPlayer />
   } else if (hash === ROUTES["Settings"]) {
