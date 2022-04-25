@@ -205,6 +205,13 @@ export const MirakurunManager: React.VFC<{}> = () => {
     updateService(selectedService).catch(console.error)
   }, [selectedService])
 
+  // 他コンテンツタイプを挟むと同じサービスに復帰できないのの対策
+  useEffect(() => {
+    if (playingContent && playingContent.contentType !== "Mirakurun") {
+      setSelectedService(null)
+    }
+  }, [playingContent])
+
   const now = useNow()
   const lastEpgUpdated = useRecoilValue(lastEpgUpdatedAtom)
 
