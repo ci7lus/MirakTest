@@ -166,7 +166,7 @@ app.on("window-all-closed", () => {
     watching.close()
     watching = null
   }
-  globalShortcut.unregister("F4")
+  registerGlobalScreenshotAccelerator(false)
   app.quit()
 })
 
