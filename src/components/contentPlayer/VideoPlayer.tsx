@@ -201,26 +201,23 @@ export const CoiledVideoPlayer: React.VFC<{
             contentCanvas.height
           )
         }
-        const [png, jpeg] = await Promise.all([
-          new Promise<Blob | null>((res) =>
-            contentCanvas.toBlob((blob) => res(blob), "image/png", 1)
-          ),
-          new Promise<Blob | null>((res) =>
-            contentCanvas.toBlob((blob) => res(blob), "image/jpeg", 0.95)
-          ),
-        ])
-        if (!jpeg || !png) {
-          throw new Error("blob")
-        }
-        const pngBuffer = await png.arrayBuffer()
+        const blob = await new Promise<Blob | null>((res) =>
+          contentCanvas.toBlob(
+            (blob) => res(blob),
+            screenshot.keepQuality ? "image/png" : "image/jpeg",
+            screenshot.keepQuality ? 1 : 0.95
+          )
+        )
+        if (!blob) throw new Error("blob")
+        const buffer = await blob.arrayBuffer()
         try {
-          window.Preload.public.writeArrayBufferToClipboard(pngBuffer)
+          window.Preload.public.writeArrayBufferToClipboard(buffer)
         } catch (error) {
           console.error(error)
         }
 
         try {
-          const url = URL.createObjectURL(screenshot.keepQuality ? png : jpeg)
+          const url = URL.createObjectURL(blob)
           setScreenshotUrl(url)
         } catch (error) {
           console.error(error)
@@ -241,9 +238,7 @@ export const CoiledVideoPlayer: React.VFC<{
             const filePath = path.join(screenshot.basePath, fileName)
             await window.Preload.public.writeFile({
               path: filePath,
-              buffer: screenshot.keepQuality
-                ? pngBuffer
-                : await jpeg.arrayBuffer(),
+              buffer,
             })
             console.info(`キャプチャを保存しました:`, filePath)
             window.Preload.public.showNotification(
