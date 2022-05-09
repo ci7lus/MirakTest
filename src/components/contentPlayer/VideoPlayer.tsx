@@ -45,7 +45,7 @@ export const CoiledVideoPlayer: React.VFC<{
 }> = memo(({ internalPlayingTimeRef }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null)
 
-  const [size, setSize] = useState<[number, number]>([1280, 1080])
+  const [size, setSize] = useState<[number, number]>([1920, 1080])
   const aspect = useMemo(() => size[0] / size[1], [size])
   useEffect(() => {
     if (process.platform === "darwin") {
