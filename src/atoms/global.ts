@@ -8,6 +8,7 @@ import {
   globalActiveContentPlayerIdAtomKey,
   globalContentPlayerIdsAtomKey,
   globalLastEpgUpdatedAtomKey,
+  globalDisabledPluginFileNamesAtomKey,
 } from "./globalKeys"
 
 const prefix = `${pkg.name}.global`
@@ -40,4 +41,9 @@ export const globalFontsAtom = atom<string[]>({
 export const globalLastEpgUpdatedAtom = atom<number>({
   key: globalLastEpgUpdatedAtomKey,
   default: 0,
+})
+
+export const globalDisabledPluginFileNamesAtom = atom<string[]>({
+  key: globalDisabledPluginFileNamesAtomKey,
+  default: [],
 })

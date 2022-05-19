@@ -8,7 +8,10 @@ import {
   globalContentPlayerPlayingContentFamilyKey,
   globalContentPlayerSelectedServiceFamilyKey,
 } from "../atoms/globalFamilyKeys"
-import { globalActiveContentPlayerIdAtomKey } from "../atoms/globalKeys"
+import {
+  globalActiveContentPlayerIdAtomKey,
+  globalDisabledPluginFileNamesAtomKey,
+} from "../atoms/globalKeys"
 import { mirakurunServicesAtom } from "../atoms/mirakurun"
 import {
   controllerSetting,
@@ -29,6 +32,7 @@ export const RECOIL_SHARED_ATOM_KEYS = [
   globalActiveContentPlayerIdAtomKey,
   globalContentPlayerPlayingContentFamilyKey,
   globalContentPlayerSelectedServiceFamilyKey,
+  globalDisabledPluginFileNamesAtomKey,
 ]
 
 export const RECOIL_STORED_ATOM_KEYS = [
@@ -42,4 +46,5 @@ export const RECOIL_STORED_ATOM_KEYS = [
   contentPlayerKeyForRestorationAtom.key,
   contentPlayerBoundsAtom.key,
   contentPlayerSubtitleEnabledAtom.key,
+  globalDisabledPluginFileNamesAtomKey,
 ]

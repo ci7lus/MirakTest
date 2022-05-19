@@ -27,6 +27,7 @@ import { globalContentPlayerPlayingContentFamilyKey } from "../../src/atoms/glob
 import {
   globalActiveContentPlayerIdAtomKey,
   globalLastEpgUpdatedAtomKey,
+  globalDisabledPluginFileNamesAtomKey,
 } from "../../src/atoms/globalKeys"
 import {
   experimentalSettingAtomKey,
@@ -85,6 +86,7 @@ let store: Store | null = null
 let display: Electron.Display | null = null
 
 let fonts: string[] = []
+let disabledPluginFileNames: string[] = []
 
 let watching: fs.FSWatcher | null = null
 
@@ -112,7 +114,7 @@ const registerGlobalScreenshotAccelerator = (accelerator: string | false) => {
   return false
 }
 
-const init = () => {
+const init = async () => {
   if (process.platform == "win32" && WebChimeraJs.path) {
     const VLCPluginPath = path.join(WebChimeraJs.path, "plugins")
     console.info("win32 detected, VLC_PLUGIN_PATH:", VLCPluginPath)
@@ -151,6 +153,16 @@ const init = () => {
       experimentalSetting?.globalScreenshotAccelerator
     )
   }
+
+  disabledPluginFileNames =
+    (_store.get(globalDisabledPluginFileNamesAtomKey) as string[] | null) || []
+  console.info(
+    "以下の名前に合致するプラグインを無視します:",
+    disabledPluginFileNames
+  )
+  await loadPlugins({ ignoreFileNames: disabledPluginFileNames }).catch(
+    console.error
+  )
 
   const _display = screen.getPrimaryDisplay()
   display = _display
@@ -378,7 +390,11 @@ const esmToCjs = async (code: string) => {
   }
   return transformed.code
 }
-const loadPlugins = async () => {
+const loadPlugins = async ({
+  ignoreFileNames,
+}: {
+  ignoreFileNames: string[]
+}) => {
   const sandboxJsInit = await fs.promises.readFile(
     `${__dirname}/src/main/vm/init.js`,
     "utf8"
@@ -470,13 +486,15 @@ const loadPlugins = async () => {
     await vm.runInContext("setupModule", pluginsVMContext)(fileName, mod, args)
   }
   await Promise.all(
-    Array.from(pluginData.values()).map(async ({ fileName, content }) => {
-      try {
-        await moduleLoader(fileName, content)
-      } catch (error) {
-        console.error(error)
-      }
-    })
+    Array.from(pluginData.values())
+      .filter(({ fileName }) => !ignoreFileNames.find((n) => n === fileName))
+      .map(async ({ fileName, content }) => {
+        try {
+          await moduleLoader(fileName, content)
+        } catch (error) {
+          console.error(error)
+        }
+      })
   )
   await vm.runInContext(sandboxJsSetup, pluginsVMContext)
   vm.runInContext("setAppMenu", pluginsVMContext)(setAppMenu)
@@ -539,7 +557,6 @@ const loadPlugins = async () => {
     }
   )
 }
-loadPlugins().catch(console.error)
 
 ipcMain.handle(REQUEST_INITIAL_DATA, (event) => {
   const data: InitialData = {
@@ -547,6 +564,7 @@ ipcMain.handle(REQUEST_INITIAL_DATA, (event) => {
     states,
     fonts,
     windowId: BrowserWindow.fromWebContents(event.sender)?.id ?? -1,
+    disabledPluginFileNames,
   }
   return data
 })

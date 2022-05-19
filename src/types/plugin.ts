@@ -178,6 +178,10 @@ export type PluginDefineInRenderer = PluginMeta & {
   }
 }
 
+export type InternalPluginDefineInRenderer = PluginDefineInRenderer & {
+  fileName: string
+}
+
 export type PluginDefineInMain = PluginMeta & {
   setup: ({
     plugins,

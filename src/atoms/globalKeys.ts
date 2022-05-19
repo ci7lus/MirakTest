@@ -7,3 +7,5 @@ export const globalActiveContentPlayerIdAtomKey = `${prefix}.activeContentPlayer
 export const globalContentPlayerIdsAtomKey = `${prefix}.contentPlayerIds`
 
 export const globalLastEpgUpdatedAtomKey = `${prefix}.lastEpgUpdated`
+
+export const globalDisabledPluginFileNamesAtomKey = `${prefix}.disabledPluginFileNames`

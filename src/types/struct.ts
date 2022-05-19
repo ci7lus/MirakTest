@@ -13,6 +13,7 @@ export type PluginDatum = {
 export type InitialData = {
   states: ObjectLiteral
   pluginData: PluginDatum[]
+  disabledPluginFileNames: string[]
   fonts: string[]
   windowId: number
 }

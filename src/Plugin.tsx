@@ -45,9 +45,9 @@ import {
 } from "./types/ipc"
 import {
   InitPlugin,
-  PluginDefineInRenderer,
   PluginInRendererArgs,
   DefineAtom,
+  InternalPluginDefineInRenderer,
 } from "./types/plugin"
 import { ObjectLiteral, PluginDatum } from "./types/struct"
 import { pluginValidator } from "./utils/plugin"
@@ -56,7 +56,8 @@ export const PluginLoader: React.VFC<{
   states: ObjectLiteral
   pluginData: PluginDatum[]
   fonts: string[]
-}> = ({ states, pluginData, fonts }) => {
+  disabledPluginFileNames: string[]
+}> = ({ states, pluginData, fonts, disabledPluginFileNames }) => {
   const [isLoading, setIsLoading] = useState(true)
   const [sharedAtoms, setSharedAtoms] = useState(RECOIL_SHARED_ATOM_KEYS)
   const [storedAtoms, setStoredAtoms] = useState(RECOIL_STORED_ATOM_KEYS)
@@ -127,14 +128,16 @@ export const PluginLoader: React.VFC<{
         mirakurunServicesSelector,
       },
     }
+    window.pluginData = pluginData
+    window.disabledPluginFileNames = disabledPluginFileNames
     ;(async () => {
       const atoms: DefineAtom[] = []
-      const plugins: PluginDefineInRenderer[] = []
+      const plugins: InternalPluginDefineInRenderer[] = []
       console.info(
         "pluginPaths:",
         pluginData.map((plugin) => plugin.filePath)
       )
-      const openedPlugins: PluginDefineInRenderer[] = []
+      const openedPlugins: InternalPluginDefineInRenderer[] = []
       await Promise.all(
         pluginData.map(async (pluginDatum) => {
           try {
@@ -171,7 +174,7 @@ export const PluginLoader: React.VFC<{
                   `すべての露出した atom のキーは \`plugins.\` から開始する必要があります: ${plugin.id}`
                 )
               }
-              openedPlugins.push(plugin)
+              openedPlugins.push({ ...plugin, fileName: pluginDatum.fileName })
             }
           } catch (error) {
             console.error(
@@ -183,80 +186,84 @@ export const PluginLoader: React.VFC<{
         })
       )
       await Promise.all(
-        openedPlugins.map(async (plugin) => {
-          console.info(
-            `[Plugin] セットアップ中: ${plugin.name} (${plugin.id}, ${plugin.version})`
+        openedPlugins
+          .filter(
+            (plugin) => !disabledPluginFileNames.includes(plugin.fileName)
           )
-          try {
-            await plugin.setup({ plugins: openedPlugins })
-            plugin.sharedAtoms
-              .map((atomDef) =>
-                "key" in atomDef
-                  ? atomDef
-                  : { ...atomDef, key: atomDef.atom.key }
-              )
-              .forEach((atom) => {
-                const mached = atoms.find((_atom) =>
-                  _atom.type === "atom"
-                    ? _atom.atom.key === atom.key
-                    : _atom.key === atom.key
-                )
-                if (!mached) {
-                  atoms.push(atom)
-                }
-                setSharedAtoms((atoms) => [...atoms, atom.key])
-              })
-            plugin.storedAtoms
-              .map((atomDef) =>
-                "key" in atomDef
-                  ? atomDef
-                  : { ...atomDef, key: atomDef.atom.key }
-              )
-              .forEach((atom) => {
-                const mached = atoms.find((_atom) =>
-                  _atom.type === "atom"
-                    ? _atom.atom.key === atom.key
-                    : _atom.key === atom.key
-                )
-                if (!mached) {
-                  atoms.push(atom)
-                }
-                setStoredAtoms((atoms) => [...atoms, atom.key])
-              })
-            plugin.exposedAtoms
-              .map((atomDef) =>
-                "key" in atomDef
-                  ? atomDef
-                  : { ...atomDef, key: atomDef.atom.key }
-              )
-              .forEach((atom) => {
-                const mached = atoms.find((_atom) =>
-                  _atom.type === "atom"
-                    ? _atom.atom.key === atom.key
-                    : _atom.key === atom.key
-                )
-                if (!mached) {
-                  atoms.push(atom)
-                }
-              })
-            plugins.push(plugin)
-          } catch (error) {
-            console.error(
-              "[Plugin] setup 中にエラーが発生しました:",
-              plugin.id,
-              error
+          .map(async (plugin) => {
+            console.info(
+              `[Plugin] セットアップ中: ${plugin.name} (${plugin.id}, ${plugin.version})`
             )
             try {
-              await plugin.destroy()
+              await plugin.setup({ plugins: openedPlugins })
+              plugin.sharedAtoms
+                .map((atomDef) =>
+                  "key" in atomDef
+                    ? atomDef
+                    : { ...atomDef, key: atomDef.atom.key }
+                )
+                .forEach((atom) => {
+                  const mached = atoms.find((_atom) =>
+                    _atom.type === "atom"
+                      ? _atom.atom.key === atom.key
+                      : _atom.key === atom.key
+                  )
+                  if (!mached) {
+                    atoms.push(atom)
+                  }
+                  setSharedAtoms((atoms) => [...atoms, atom.key])
+                })
+              plugin.storedAtoms
+                .map((atomDef) =>
+                  "key" in atomDef
+                    ? atomDef
+                    : { ...atomDef, key: atomDef.atom.key }
+                )
+                .forEach((atom) => {
+                  const mached = atoms.find((_atom) =>
+                    _atom.type === "atom"
+                      ? _atom.atom.key === atom.key
+                      : _atom.key === atom.key
+                  )
+                  if (!mached) {
+                    atoms.push(atom)
+                  }
+                  setStoredAtoms((atoms) => [...atoms, atom.key])
+                })
+              plugin.exposedAtoms
+                .map((atomDef) =>
+                  "key" in atomDef
+                    ? atomDef
+                    : { ...atomDef, key: atomDef.atom.key }
+                )
+                .forEach((atom) => {
+                  const mached = atoms.find((_atom) =>
+                    _atom.type === "atom"
+                      ? _atom.atom.key === atom.key
+                      : _atom.key === atom.key
+                  )
+                  if (!mached) {
+                    atoms.push(atom)
+                  }
+                })
+              plugins.push(plugin)
             } catch (error) {
               console.error(
-                "[Plugin] destroy 中にエラーが発生しました:",
+                "[Plugin] setup 中にエラーが発生しました:",
                 plugin.id,
                 error
               )
+              try {
+                await plugin.destroy()
+              } catch (error) {
+                console.error(
+                  "[Plugin] destroy 中にエラーが発生しました:",
+                  plugin.id,
+                  error
+                )
+              }
             }
-          }
-        })
+          })
       )
       window.plugins = plugins
       window.atoms = atoms
