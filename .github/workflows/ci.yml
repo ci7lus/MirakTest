@@ -72,13 +72,16 @@ jobs:
           - x86_64-unknown-linux-gnu
           - x86_64-pc-windows-gnu
           - x86_64-apple-darwin
+          - x86_64-apple-darwin-as-aarch64
         include:
           - target: x86_64-unknown-linux-gnu
             os: ubuntu-20.04
           - target: x86_64-pc-windows-gnu
             os: windows-2019
           - target: x86_64-apple-darwin
-            os: macos-10.15
+            os: macos-12
+          - target: x86_64-apple-darwin-as-aarch64
+            os: macos-12
 
     runs-on: ${{ matrix.os }}
 
@@ -127,9 +130,9 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-electron-
       - name: Download VLC
-        if: runner.os == 'macOS'
+        if: runner.os == 'macOS' && matrix.target == 'x86_64-apple-darwin'
         run: |
-          wget https://github.com/vivid-lapin/vlc-miraktest/releases/download/3.0.16.3/vlc-3.0.16.dmg -O /tmp/vlc.dmg
+          wget -q https://github.com/vivid-lapin/vlc-miraktest/releases/download/3.0.16.3/vlc-3.0.16.dmg -O /tmp/vlc.dmg
           hdiutil mount /tmp/vlc.dmg
           cp -Ra "/Volumes/VLC media player/VLC.app" /Applications
       - name: Install deps
@@ -138,10 +141,10 @@ jobs:
       - name: Install
         run: yarn
       - name: Build webchimera.js (unix like)
-        if: runner.os != 'Windows'
+        if: runner.os != 'Windows' && matrix.target != 'x86_64-apple-darwin-as-aarch64'
         run: ./setup_wcjs.sh
       - name: Setup libvlc (darwin) VLC related libs are licensed under LGPL and GPLv2
-        if: runner.os == 'macOS'
+        if: runner.os == 'macOS' && matrix.target == 'x86_64-apple-darwin'
         run: ./setup_libvlc_mac.sh
       - name: Build WebChiemra.js (windows)
         if: runner.os == 'Windows'
@@ -149,6 +152,11 @@ jobs:
       - name: Setup libvlc (windows) VLC related libs are licensed under LGPL and GPLv2
         if: runner.os == 'Windows'
         run: pwsh ./setup_libvlc.ps1
+      - name: Setup libvlc (aarch64)
+        if: matrix.target == 'x86_64-apple-darwin-as-aarch64'
+        run: |
+          wget -q https://github.com/vivid-lapin/vlc-miraktest/releases/download/3.0.17.2/vlc-miraktest-aarch64.zip -O /tmp/vlc.zip
+          unzip -qo /tmp/vlc.zip
       - name: Set nightly version
         if: ${{ github.event_name != 'release' && (!github.event.inputs.override_version || github.event.inputs.override_version == 'true') }}
         run: yarn ts-node setPackageVersion.ts
@@ -160,25 +168,30 @@ jobs:
           SHA1: ${{ github.sha }}
           OS: ${{ runner.os }}
       - name: Build
+        if: matrix.target != 'x86_64-apple-darwin-as-aarch64'
         run: yarn build
+      - name: Build (as aarch64)
+        if: matrix.target == 'x86_64-apple-darwin-as-aarch64'
+        run: yarn build --mac --arm64
       - name: Upload build artifact
         uses: actions/upload-artifact@v2
         with:
-          name: ${{ runner.os }}-build
+          name: ${{ matrix.target }}-build
           path: |
             build
             !build/mac/MirakTest.app
+            !build/mac-*/MirakTest.app
             !build/*-unpacked
           if-no-files-found: ignore
       - name: Upload dist artifact
         uses: actions/upload-artifact@v2
         with:
-          name: ${{ runner.os }}-dist
+          name: ${{ matrix.target }}-dist
           path: dist
       - name: Upload build-image artifact
         uses: actions/upload-artifact@v2
         with:
-          name: ${{ runner.os }}-build-image
+          name: ${{ matrix.target }}-build-image
           path: |
             build/*.dmg
             build/*.exe
@@ -190,7 +203,7 @@ jobs:
         uses: actions/upload-artifact@v2
         if: runner.os == 'macOS'
         with:
-          name: ${{ runner.os }}-build-image-maczip
+          name: ${{ matrix.target }}-build-image-maczip
           path: |
             build/*-mac.zip
           if-no-files-found: ignore

@@ -15,5 +15,7 @@ rm -rf vlc_libs/vlc/share/lua/playlist/*.luac
 rm -rf node_modules/electron/dist/Electron.app/Contents/Frameworks/libvlc*.dylib
 rm -rf node_modules/electron/dist/Electron.app/Contents/Frameworks/vlc
 for d in vlc_libs/*; do cp -Ra $d node_modules/electron/dist/Electron.app/Contents/Frameworks; done
+curl -sL https://raw.githubusercontent.com/videolan/vlc/master/COPYING > vlc_libs/COPYING
+curl -sL https://raw.githubusercontent.com/videolan/vlc/master/COPYING.LIB > vlc_libs/COPYING.LIB
 curl -sL https://raw.githubusercontent.com/videolan/vlc/master/COPYING > node_modules/electron/dist/Electron.app/Contents/VLC-COPYING
 curl -sL https://raw.githubusercontent.com/videolan/vlc/master/COPYING.LIB > node_modules/electron/dist/Electron.app/Contents/VLC-COPYING.LIB
