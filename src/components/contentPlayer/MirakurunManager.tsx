@@ -55,10 +55,16 @@ export const MirakurunManager: React.VFC<{}> = () => {
     try {
       const status = await mirakurun.status.getStatus()
       let message: string
-      if (typeof status.data === "string") {
+      // mirakcのstatusの返り値は{}
+      if (Object.keys(status.data).length === 0) {
+        const checkVersion = await mirakurun.version.checkVersion()
+        const version =
+          typeof checkVersion.data === "string"
+            ? checkVersion.data
+            : checkVersion.data.current || null
         setCompatibility("Mirakc")
-        setVersion(status.data)
-        message = `Mirakc (${status.data})`
+        setVersion(version)
+        message = `Mirakc (${version})`
       } else if (typeof status.data.version === "string") {
         setCompatibility("Mirakurun")
         setVersion(status.data.version || null)
