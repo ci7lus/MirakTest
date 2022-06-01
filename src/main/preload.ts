@@ -217,11 +217,12 @@ const preload: Preload = {
     return ipcRenderer.invoke(RECOIL_STATE_UPDATE, arg)
   },
   onRecoilStateUpdate: (listener: (arg: SerializableKV) => void) => {
-    ipcRenderer.on(RECOIL_STATE_UPDATE, (_, arg) => {
+    const _listener = (_: unknown, arg: SerializableKV) => {
       listener(arg)
-    })
+    }
+    ipcRenderer.addListener(RECOIL_STATE_UPDATE, _listener)
     return () => {
-      ipcRenderer.off(RECOIL_STATE_UPDATE, listener)
+      ipcRenderer.removeListener(RECOIL_STATE_UPDATE, _listener)
     }
   },
   updateIsPlayingState: (arg) => {
