@@ -10302,7 +10302,8 @@ __metadata:
     react-resize-detector: ^7.0.0
     react-spring-carousel-js: ^1.9.32
     react-use: ^17.3.2
-    recoil: ^0.7.2
+    recoil: ^0.7.3-alpha.2
+    recoil-sync: ^0.0.1-alpha.2
     sass: ^1.50.0
     sass-loader: ^12.6.0
     stream-json: ^1.7.4
@@ -10311,7 +10312,7 @@ __metadata:
     tailwindcss-textshadow: ^2.1.3
     ts-node: ^10.7.0
     type-fest: ^2.12.2
-    typescript: ^4.6.3
+    typescript: ^4.7.2
     webchimera.js: "patch:webchimera.js@^0.5.2#patches/webchimera.js+0.5.2.patch"
     webpack: ^5.72.0
     webpack-cli: ^4.9.2
@@ -11873,9 +11874,20 @@ __metadata:
   languageName: node
   linkType: hard
 
-"recoil@npm:^0.7.2":
-  version: 0.7.2
-  resolution: "recoil@npm:0.7.2"
+"recoil-sync@npm:^0.0.1-alpha.2":
+  version: 0.0.1-alpha.2
+  resolution: "recoil-sync@npm:0.0.1-alpha.2"
+  dependencies:
+    transit-js: ^0.8.874
+  peerDependencies:
+    recoil: ">=0.7.0"
+  checksum: f718f5b2de4a77100d3b778f2aef71f29c506cd1cc216cddc49920940fbe16093643264ec095cd03a3f8e3468ef6ec6f907965e41c30a8c88a4c7794a8f8f549
+  languageName: node
+  linkType: hard
+
+"recoil@npm:^0.7.3-alpha.2":
+  version: 0.7.3-alpha.2
+  resolution: "recoil@npm:0.7.3-alpha.2"
   dependencies:
     hamt_plus: 1.0.2
   peerDependencies:
@@ -11885,7 +11897,7 @@ __metadata:
       optional: true
     react-native:
       optional: true
-  checksum: 2ad0c2052fd33ee358e3b448fd36ea6d4b37e69ace65ff44124605171c4794e4f167215209731aac3d45d42ea9f4c67e9c5a0704ff04ab94b64bcca96d5f59a3
+  checksum: 3af4b8ef88f0602515bd2730a8dba12f9aa866db5ce1310e5dc8a431b2e5bd4b5e16b9bc9b2e496b0024b78ece80ebfd61797eb4e64b6cbc62e4e23833d02c6a
   languageName: node
   linkType: hard
 
@@ -13597,6 +13609,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"transit-js@npm:^0.8.874":
+  version: 0.8.874
+  resolution: "transit-js@npm:0.8.874"
+  checksum: a1d3a78a0ce926320ba32cdd59a74104e1b440855497753b91f8e71831302b23adfb21416cdba30153305cf41cf96b75421a607a1799b676572fe6072ee04798
+  languageName: node
+  linkType: hard
+
 "traverse@npm:>=0.3.0 <0.4":
   version: 0.3.9
   resolution: "traverse@npm:0.3.9"
@@ -13828,13 +13847,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@npm:^4.6.3":
-  version: 4.6.3
-  resolution: "typescript@npm:4.6.3"
+"typescript@npm:^4.7.2":
+  version: 4.7.2
+  resolution: "typescript@npm:4.7.2"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
-  checksum: 255bb26c8cb846ca689dd1c3a56587af4f69055907aa2c154796ea28ee0dea871535b1c78f85a6212c77f2657843a269c3a742d09d81495b97b914bf7920415b
+  checksum: 5163585e6b56410f77d5483b698d9489bbee8902c99029eb70cf6d21525a186530ce19a00951af84eefd4a131cc51d0959f5118e25e70ab61f45ac4057dbd1ef
   languageName: node
   linkType: hard
 
@@ -13848,13 +13867,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@patch:typescript@^4.6.3#~builtin<compat/typescript>":
-  version: 4.6.3
-  resolution: "typescript@patch:typescript@npm%3A4.6.3#~builtin<compat/typescript>::version=4.6.3&hash=493e53"
+"typescript@patch:typescript@^4.7.2#~builtin<compat/typescript>":
+  version: 4.7.2
+  resolution: "typescript@patch:typescript@npm%3A4.7.2#~builtin<compat/typescript>::version=4.7.2&hash=493e53"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
-  checksum: fe6bdc1afb2f145ddb7b0a3a31f96352209f6a5704d97f038414ea22ff9d8dd42f32cfb6652e30458d7d958d2d4e85de2df11c574899c6f750a6b3c0e90a3a76
+  checksum: 09d93fc0983d38eadd9b0427f790b49b4437f45002a87d447be3fbe53120880e87a91dd03e1d900498f99205d6e0b7c9784fe41fca11d56f4bbce371f74bb160
   languageName: node
   linkType: hard
 

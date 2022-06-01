@@ -22,22 +22,28 @@ export type CustomComponent = {
   component: React.VFC<{}>
 }
 
+/** すべてのウィンドウに展開される。見えない。 */
 export type OnBackgroundComponent = {
   position: "onBackground"
-} & CustomComponent // すべてのウィンドウに展開される。見えない。
+} & CustomComponent
 
-export type OnSplashComponent = { position: "onSplash" } & CustomComponent // ほぼ見えない。バックグラウンド実行用などに
+/** ほぼ見えない。バックグラウンド実行用などに */
+export type OnSplashComponent = { position: "onSplash" } & CustomComponent
 
+/** プラグイン設定画面 */
 export type OnSettingComponent = {
   position: "onSetting"
   label: string
-} & CustomComponent // 設定画面
+} & CustomComponent
 
-export type OnPlayerComponent = { position: "onPlayer" } & CustomComponent // プレイヤーの上、字幕より後ろ
+/** プレイヤーの上、字幕より後ろ */
+export type OnPlayerComponent = { position: "onPlayer" } & CustomComponent
 
-export type OnSubtitleComponent = { position: "onSubtitle" } & CustomComponent // 字幕より上、コントローラーより後ろ
+/** 字幕より上、コントローラーより後ろ */
+export type OnSubtitleComponent = { position: "onSubtitle" } & CustomComponent
 
-export type OnForwardComponent = { position: "onForward" } & CustomComponent // 一番前、pointer-events: noneのため触りたい場合は該当部分だけautoにしておくこと
+/** 一番前、pointer-events: noneのため触りたい場合は該当部分だけautoにしておくこと */
+export type OnForwardComponent = { position: "onForward" } & CustomComponent
 
 export type ComponentWithPosition =
   | OnBackgroundComponent
@@ -96,6 +102,12 @@ export type PluginInRendererArgs = {
     mirakurunVersionSelector: Recoil.RecoilValueReadOnly<string | null>
     mirakurunServicesSelector: Recoil.RecoilValueReadOnly<Service[] | null>
   }
+  constants: {
+    recoil: {
+      sharedKey: string
+      storedKey: string
+    }
+  }
 }
 
 export type InitPluginInRenderer = (
@@ -140,7 +152,7 @@ export type AtomFamily<A = any, T = any> = {
 export type DefineAtom = Atom | AtomFamily
 
 export type PluginMeta = {
-  // 推奨 id フォーマット: `plugins.${authorNamespace}.${pluginNamespace}` or `io.github.c..`(java 形式)
+  /** 推奨 id フォーマット: `plugins.${authorNamespace}.${pluginNamespace}` or `io.github.c..`(java 形式) */
   id: string
   name: string
   version: string
@@ -148,7 +160,8 @@ export type PluginMeta = {
   authorUrl?: string
   description: string
   url?: string
-  destroy: () => void | Promise<void> // 現時点で正しく実行される保証はない、セットアップが正常に終了していなくても呼ばれる点に注意
+  /** 現時点で正しく実行される保証はない、セットアップが正常に終了していなくても呼ばれる点に注意 */
+  destroy: () => void | Promise<void>
 }
 
 export type PluginDefineInRenderer = PluginMeta & {
@@ -157,17 +170,23 @@ export type PluginDefineInRenderer = PluginMeta & {
   }: {
     plugins: PluginDefineInRenderer[]
   }) => void | Promise<void>
-  // 重要: atom の key は `plugins.${authorNamespace}.${pluginNamespace}.` から開始、大きくルールに反する atom （`plugins.`から開始しない）を露出したプラグインはロードされない
-  exposedAtoms: DefineAtom[] // 他のプラグインと連携するとか
-  sharedAtoms: DefineAtom[] // ウィンドウ間で共有する（シリアライズ可能にすること）
-  storedAtoms: DefineAtom[] // 保存する（シリアライズ可能にすること）
-  // コンポーネントとウィンドウは shadowRoot に展開されるので、各自独自に CSS をバンドルしないとスタイリングが初期化される点に注意する
+  /** 他のプラグインと連携するとか
+   * 重要: atom の key は `plugins.${authorNamespace}.${pluginNamespace}.` から開始、大きくルールに反する atom （`plugins.`から開始しない）を露出したプラグインはロードされない */
+  exposedAtoms: DefineAtom[]
+  /** ウィンドウ間で共有する Atom（シリアライズ可能にすること）
+   * @deprecated 後方互換性のためのフィールドです、同時に Atom に syncEffect も設定してください */
+  sharedAtoms: DefineAtom[]
+  /** 保存する Atom（シリアライズ可能にすること）。
+   * @deprecated 後方互換性のためのフィールドです、同時に Atom に syncEffect も設定してください */
+  storedAtoms: DefineAtom[]
+  /** コンポーネントとウィンドウは shadowRoot に展開されるので、各自独自に CSS をバンドルしないとスタイリングが初期化される点に注意する */
   components: ComponentWithPosition[]
   windows: {
-    [key: string]: React.VFC<{}> // カスタム画面、hash を key に
+    /** カスタム画面、hash を key に */
+    [key: string]: React.VFC<{}>
   }
   _experimental_feature__service?: {
-    // テレビサービス（構想中）
+    /** テレビサービス（構想中） */
     contentType: string
     restoreByKey: (
       arg: unknown

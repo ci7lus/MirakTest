@@ -34,8 +34,8 @@ import {
 } from "./atoms/mirakurunSelectors"
 import { Splash } from "./components/global/Splash"
 import {
-  RECOIL_SHARED_ATOM_KEYS,
-  RECOIL_STORED_ATOM_KEYS,
+  RECOIL_SYNC_SHARED_KEY,
+  RECOIL_SYNC_STORED_KEY,
 } from "./constants/recoil"
 import { ROUTES } from "./constants/routes"
 import {
@@ -59,8 +59,6 @@ export const PluginLoader: React.VFC<{
   disabledPluginFileNames: string[]
 }> = ({ states, pluginData, fonts, disabledPluginFileNames }) => {
   const [isLoading, setIsLoading] = useState(true)
-  const [sharedAtoms, setSharedAtoms] = useState(RECOIL_SHARED_ATOM_KEYS)
-  const [storedAtoms, setStoredAtoms] = useState(RECOIL_STORED_ATOM_KEYS)
   useEffect(() => {
     if (isLoading === false) {
       return
@@ -127,6 +125,12 @@ export const PluginLoader: React.VFC<{
         mirakurunVersionSelector,
         mirakurunServicesSelector,
       },
+      constants: {
+        recoil: {
+          storedKey: RECOIL_SYNC_STORED_KEY,
+          sharedKey: RECOIL_SYNC_SHARED_KEY,
+        },
+      },
     }
     window.pluginData = pluginData
     window.disabledPluginFileNames = disabledPluginFileNames
@@ -158,11 +162,7 @@ export const PluginLoader: React.VFC<{
                 `[Plugin] 読込中: ${plugin.name} (${plugin.id}, ${plugin.version})`
               )
               if (
-                ![
-                  ...plugin.storedAtoms,
-                  ...plugin.sharedAtoms,
-                  ...plugin.exposedAtoms,
-                ].every(
+                !plugin.exposedAtoms.every(
                   (atomDef) =>
                     (atomDef.type === "atom" &&
                       atomDef.atom.key.startsWith("plugins.")) ||
@@ -196,40 +196,6 @@ export const PluginLoader: React.VFC<{
             )
             try {
               await plugin.setup({ plugins: openedPlugins })
-              plugin.sharedAtoms
-                .map((atomDef) =>
-                  "key" in atomDef
-                    ? atomDef
-                    : { ...atomDef, key: atomDef.atom.key }
-                )
-                .forEach((atom) => {
-                  const mached = atoms.find((_atom) =>
-                    _atom.type === "atom"
-                      ? _atom.atom.key === atom.key
-                      : _atom.key === atom.key
-                  )
-                  if (!mached) {
-                    atoms.push(atom)
-                  }
-                  setSharedAtoms((atoms) => [...atoms, atom.key])
-                })
-              plugin.storedAtoms
-                .map((atomDef) =>
-                  "key" in atomDef
-                    ? atomDef
-                    : { ...atomDef, key: atomDef.atom.key }
-                )
-                .forEach((atom) => {
-                  const mached = atoms.find((_atom) =>
-                    _atom.type === "atom"
-                      ? _atom.atom.key === atom.key
-                      : _atom.key === atom.key
-                  )
-                  if (!mached) {
-                    atoms.push(atom)
-                  }
-                  setStoredAtoms((atoms) => [...atoms, atom.key])
-                })
               plugin.exposedAtoms
                 .map((atomDef) =>
                   "key" in atomDef
@@ -273,12 +239,5 @@ export const PluginLoader: React.VFC<{
   if (isLoading) {
     return <Splash />
   }
-  return (
-    <StateRoot
-      states={states}
-      sharedAtoms={sharedAtoms}
-      storedAtoms={storedAtoms}
-      fonts={fonts}
-    />
-  )
+  return <StateRoot states={states} fonts={fonts} />
 }

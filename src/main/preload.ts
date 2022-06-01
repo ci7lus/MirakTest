@@ -235,6 +235,9 @@ const preload: Preload = {
     set: (key: string, value: unknown) => {
       store.set(key, value)
     },
+    delete: (key) => {
+      store.delete(key as never)
+    },
     openConfig() {
       store.openInEditor()
     },

@@ -1,5 +1,7 @@
 import { atom } from "recoil"
+import { syncEffect, refine as $ } from "recoil-sync"
 import pkg from "../../package.json"
+import { RECOIL_SYNC_SHARED_KEY } from "../constants/recoil"
 import {
   MirakurunCompatibilityTypes,
   ServiceWithLogoData,
@@ -21,4 +23,10 @@ export const mirakurunVersionAtom = atom<string | null>({
 export const mirakurunServicesAtom = atom<ServiceWithLogoData[] | null>({
   key: `${prefix}.services`,
   default: null,
+  effects: [
+    syncEffect({
+      storeKey: RECOIL_SYNC_SHARED_KEY,
+      refine: $.nullable($.array($.mixed())),
+    }),
+  ],
 })
