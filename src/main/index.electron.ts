@@ -18,6 +18,7 @@ import electron, {
   powerSaveBlocker,
   Notification,
   globalShortcut,
+  session,
 } from "electron"
 import Store from "electron-store"
 import fontList from "font-list"
@@ -119,6 +120,12 @@ const init = async () => {
     const VLCPluginPath = path.join(WebChimeraJs.path, "plugins")
     console.info("win32 detected, VLC_PLUGIN_PATH:", VLCPluginPath)
     process.env["VLC_PLUGIN_PATH"] = VLCPluginPath
+  }
+
+  const REACT_EXT_PATH = process.env.REACT_EXT_PATH
+  if (REACT_EXT_PATH) {
+    await session.defaultSession.loadExtension(REACT_EXT_PATH)
+    console.info("React Dev Tool Loaded:", REACT_EXT_PATH)
   }
 
   fontList
