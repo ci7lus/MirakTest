@@ -9,6 +9,8 @@ import { ObjectLiteral } from "../../types/struct"
 export const RecoilSharedSync: React.FC<{ initialStates: ObjectLiteral }> = ({
   initialStates,
 }) => {
+  const eventRef = useRef(new EventTarget())
+  const eventName = "recoil-shared-sync-from-main"
   const statesRef = useRef(new Map(Object.entries(initialStates)))
   const broadcastChannelRef = useRef<BroadcastChannel | null>(null)
   useEffect(() => {
@@ -49,17 +51,26 @@ export const RecoilSharedSync: React.FC<{ initialStates: ObjectLiteral }> = ({
         }
       }
       broadcastChannel.addEventListener("message", listener)
-      const onPayloadFromMain = (payload: SerializableKV) => {
-        if (!payload.key) return
-        const { key, value } = payload
+      const onPayloadFromMain = (event: Event) => {
+        const { key, value } = (event as CustomEvent).detail
         updateItem(key, value)
       }
-      const off = window.Preload.onRecoilStateUpdate(onPayloadFromMain)
+      eventRef.current.addEventListener(eventName, onPayloadFromMain)
       return () => {
+        eventRef.current.removeEventListener(eventName, onPayloadFromMain)
         broadcastChannel.removeEventListener("message", listener)
-        off()
       }
     },
   })
+  useEffect(() => {
+    const onPayloadFromMain = (payload: SerializableKV) =>
+      eventRef.current.dispatchEvent(
+        new CustomEvent(eventName, {
+          detail: payload,
+        })
+      )
+    const off = window.Preload.onRecoilStateUpdate(onPayloadFromMain)
+    return () => off()
+  }, [])
   return null
 }
