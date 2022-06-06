@@ -2271,9 +2271,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@electron/get@npm:^1.13.0":
-  version: 1.13.1
-  resolution: "@electron/get@npm:1.13.1"
+"@electron/get@npm:^1.14.1":
+  version: 1.14.1
+  resolution: "@electron/get@npm:1.14.1"
   dependencies:
     debug: ^4.1.1
     env-paths: ^2.2.0
@@ -2289,7 +2289,7 @@ __metadata:
       optional: true
     global-tunnel-ng:
       optional: true
-  checksum: ea9863b73e8aedefb19cfe9b849c585b8bda29e11b90189b115680da4e9ab0167405efe63e5d141da2d13cde24eacacfde62f730f2730d047e58819fe69352f8
+  checksum: 21fec5e82bbee8f9fa183b46e05675b137c3130c7999d3b2b34a0047d1a06ec3c76347b9bbdb9911ba9b2123697804e360a15dda9db614c0226d5d4dcc4d6d15
   languageName: node
   linkType: hard
 
@@ -6475,16 +6475,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"electron@npm:^18.0.4":
-  version: 18.0.4
-  resolution: "electron@npm:18.0.4"
+"electron@npm:^19.0.3":
+  version: 19.0.3
+  resolution: "electron@npm:19.0.3"
   dependencies:
-    "@electron/get": ^1.13.0
+    "@electron/get": ^1.14.1
     "@types/node": ^16.11.26
     extract-zip: ^1.0.3
   bin:
     electron: cli.js
-  checksum: 9016ef1eac0351a930df8d2ad9e13d8dab09cffa8d417285769bec0ffc726211c724c8fb07d312f25e2b6c6f45d661b428d8c35824a1acf36980c8775b9a3612
+  checksum: 9f1a310a9e18b228f6702871b18ebb12ea1b87250833dfb17ddc3ce23120e73763a23c46b9a84e39c63666bea52323fb08a7e2faebd142fb9aa519eccf125e90
   languageName: node
   linkType: hard
 
@@ -10277,7 +10277,7 @@ __metadata:
     css-loader: ^6.7.1
     dayjs: ^1.11.1
     dts-bundle-generator: ^5.9.0
-    electron: ^18.0.4
+    electron: ^19.0.3
     electron-builder: ^23.0.3
     electron-store: ^8.0.1
     eslint: ^8.8.0

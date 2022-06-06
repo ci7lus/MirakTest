@@ -3,7 +3,8 @@ export ELECTRON_VER="$(yarn run --silent electron --version | sed -e "s/v//")"
 export BUILD_DIR="./build/Release"
 export npm_config_wcjs_runtime=electron
 export npm_config_wcjs_runtime_version=$ELECTRON_VER
-export npm_config_wcjs_arch=x64
+export npm_config_wcjs_arch="$(arch | sed -e "s/i386/x64/")"
+export ELECTRON_MIRROR="https://artifacts.electronjs.org/headers/dist"
 export OS_NAME="$(uname)"
 cd node_modules/webchimera.js
 

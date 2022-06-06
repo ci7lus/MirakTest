@@ -57,7 +57,7 @@
     "cross-env": "^7.0.3",
     "css-loader": "^6.7.1",
     "dts-bundle-generator": "^5.9.0",
-    "electron": "^18.0.4",
+    "electron": "^19.0.3",
     "electron-builder": "^23.0.3",
     "eslint": "^8.8.0",
     "husky": "^7.0.4",
@@ -106,10 +106,6 @@
     "stream-json": "^1.7.4",
     "webchimera.js": "patch:webchimera.js@^0.5.2#patches/webchimera.js+0.5.2.patch",
     "zod": "^3.14.4"
-  },
-  "cmake-js": {
-    "runtime": "electron",
-    "runtimeVersion": "18.0.4"
   },
   "browserslist": "chrome 100",
   "packageManager": "yarn@3.1.1",

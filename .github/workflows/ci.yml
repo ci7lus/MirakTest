@@ -125,6 +125,7 @@ jobs:
             ~/Library/Caches/electron/
             ~/.cache/electron
             ~/.cache/electron-builder
+            ~/.cmake-js
             $XDG_CACHE_HOME
           key: ${{ runner.os }}-electron-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
@@ -132,7 +133,7 @@ jobs:
       - name: Download VLC
         if: runner.os == 'macOS' && matrix.target == 'x86_64-apple-darwin'
         run: |
-          wget -q https://github.com/vivid-lapin/vlc-miraktest/releases/download/3.0.16.3/vlc-3.0.16.dmg -O /tmp/vlc.dmg
+          wget -q https://github.com/vivid-lapin/vlc-miraktest/releases/download/3.0.17.2/vlc-3.0.17.2-x86_64.dmg -O /tmp/vlc.dmg
           hdiutil mount /tmp/vlc.dmg
           cp -Ra "/Volumes/VLC media player/VLC.app" /Applications
       - name: Install deps
@@ -155,7 +156,7 @@ jobs:
       - name: Setup libvlc (aarch64)
         if: matrix.target == 'x86_64-apple-darwin-as-aarch64'
         run: |
-          wget -q https://github.com/vivid-lapin/vlc-miraktest/releases/download/3.0.17.2/vlc-miraktest-aarch64.zip -O /tmp/vlc.zip
+          wget -q https://github.com/vivid-lapin/vlc-miraktest/releases/download/3.0.17.2/vlc-miraktest-aarch64-v19.0.3.zip -O /tmp/vlc.zip
           unzip -qo /tmp/vlc.zip
       - name: Set nightly version
         if: ${{ github.event_name != 'release' && (!github.event.inputs.override_version || github.event.inputs.override_version == 'true') }}
