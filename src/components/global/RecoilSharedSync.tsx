@@ -24,11 +24,11 @@ export const RecoilSharedSync: React.FC<{ initialStates: ObjectLiteral }> = ({
   useRecoilSync({
     storeKey: RECOIL_SYNC_SHARED_KEY,
     read: (key) => {
-      const state = statesRef.current
-      if (!state.has(key)) {
+      const value = statesRef.current.get(key)
+      if (typeof value === "undefined") {
         return new DefaultValue()
       }
-      return state.get(key)
+      return value
     },
     write: ({ diff }) => {
       broadcastChannelRef.current?.postMessage(diff)
