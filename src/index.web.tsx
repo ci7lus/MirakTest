@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react"
 import ReactDOM from "react-dom"
 import Recoil from "recoil"
+import RecoilSync from "recoil-sync"
 import { PluginLoader } from "./Plugin"
 import { Splash } from "./components/global/Splash"
 import { InitialData } from "./types/struct"
@@ -8,6 +9,7 @@ import "./index.scss"
 
 global.React = React
 global.Recoil = Recoil
+global.RecoilSync = RecoilSync
 
 const WebRoot: React.VFC<{}> = () => {
   const [unmounted, setUnmounted] = useState(false)

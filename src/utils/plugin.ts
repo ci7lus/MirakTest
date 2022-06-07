@@ -11,8 +11,6 @@ export const pluginValidator = $.object({
   setup: $.function(),
   destroy: $.function(),
   exposedAtoms: $.array($.any()),
-  sharedAtoms: $.array($.any()),
-  storedAtoms: $.array($.any()),
   components: $.array($.any()),
   windows: $.object({}),
   contextMenu: $.object({}).optional(),

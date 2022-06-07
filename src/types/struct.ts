@@ -1,6 +1,6 @@
 import { ROUTES } from "../constants/routes"
 
-export type ObjectLiteral<T = unknown> = { [key: string]: T }
+export type ObjectLiteral<T = unknown> = Record<string, T>
 
 export type Routes = keyof typeof ROUTES | (string & {})
 

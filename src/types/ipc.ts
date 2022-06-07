@@ -72,6 +72,7 @@ export type Preload = {
   store: {
     set: <T = unknown>(key: string, value: T) => void
     get: <T = unknown>(key: string) => T
+    delete: (key: string) => void
     openConfig: () => void
   }
   onUpdateIsPlayingState: (listener: (isPlaying: boolean) => void) => () => void

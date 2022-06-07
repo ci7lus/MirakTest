@@ -1,5 +1,7 @@
 import { atom } from "recoil"
+import { syncEffect, refine as $ } from "recoil-sync"
 import pkg from "../../package.json"
+import { RECOIL_SYNC_STORED_KEY } from "../constants/recoil"
 import type {
   AribSubtitleData,
   ContentPlayerKeyForRestoration,
@@ -16,11 +18,23 @@ export const contentPlayerTitleAtom = atom<string | null>({
 export const contentPlayerBoundsAtom = atom<Electron.Rectangle | null>({
   key: `${prefix}.bounds`,
   default: null,
+  effects: [
+    syncEffect({
+      storeKey: RECOIL_SYNC_STORED_KEY,
+      refine: $.nullable($.mixed()),
+    }),
+  ],
 })
 
 export const contentPlayerSubtitleEnabledAtom = atom<boolean>({
   key: `${prefix}.subtitleEnabled`,
   default: false,
+  effects: [
+    syncEffect({
+      storeKey: RECOIL_SYNC_STORED_KEY,
+      refine: $.boolean(),
+    }),
+  ],
 })
 
 export const contentPlayerIsPlayingAtom = atom<boolean>({
@@ -31,6 +45,9 @@ export const contentPlayerIsPlayingAtom = atom<boolean>({
 export const contentPlayerVolumeAtom = atom<number>({
   key: `${prefix}.volume`,
   default: 100,
+  effects: [
+    syncEffect({ storeKey: RECOIL_SYNC_STORED_KEY, refine: $.number() }),
+  ],
 })
 
 export const contentPlayerSpeedAtom = atom<number>({
@@ -108,6 +125,17 @@ export const contentPlayerKeyForRestorationAtom =
   atom<ContentPlayerKeyForRestoration | null>({
     key: `${prefix}.keyForRestoration`,
     default: null,
+    effects: [
+      syncEffect({
+        storeKey: RECOIL_SYNC_STORED_KEY,
+        refine: $.nullable(
+          $.object({
+            contentType: $.string(),
+            serviceId: $.number(),
+          })
+        ),
+      }),
+    ],
   })
 
 export const lastEpgUpdatedAtom = atom<number>({

@@ -18,6 +18,7 @@ import electron, {
   powerSaveBlocker,
   Notification,
   globalShortcut,
+  session,
 } from "electron"
 import Store from "electron-store"
 import fontList from "font-list"
@@ -119,6 +120,12 @@ const init = async () => {
     const VLCPluginPath = path.join(WebChimeraJs.path, "plugins")
     console.info("win32 detected, VLC_PLUGIN_PATH:", VLCPluginPath)
     process.env["VLC_PLUGIN_PATH"] = VLCPluginPath
+  }
+
+  const REACT_EXT_PATH = process.env.REACT_EXT_PATH
+  if (REACT_EXT_PATH) {
+    await session.defaultSession.loadExtension(REACT_EXT_PATH)
+    console.info("React Dev Tool Loaded:", REACT_EXT_PATH)
   }
 
   fontList
@@ -593,15 +600,14 @@ ipcMain.handle(UPDATE_IS_PLAYING_STATE, (event, isPlaying: boolean) => {
 const states: ObjectLiteral<unknown> = {}
 const statesHash: ObjectLiteral<string> = {}
 
-const recoilStateUpdate = (source: number, payload: SerializableKV) => {
+const recoilStateUpdate = (payload: SerializableKV) => {
   for (const window of BrowserWindow.getAllWindows()) {
-    if (window.webContents.id === source) continue
     window.webContents.send(RECOIL_STATE_UPDATE, payload)
   }
 }
 
 const updateContentPlayerIds = () => {
-  recoilStateUpdate(-1, {
+  recoilStateUpdate({
     key: GLOBAL_CONTENT_PLAYER_IDS,
     value: contentPlayerWindows.map((w) => w.id),
   })
@@ -616,7 +622,6 @@ ipcMain.handle(RECOIL_STATE_UPDATE, (event, payload: SerializableKV) => {
   if (hash !== statesHash[key]) {
     statesHash[key] = hash
     states[key] = value
-    recoilStateUpdate(event.sender.id, payload)
   }
 })
 
@@ -840,7 +845,7 @@ const openWindow = ({
           const value = contentPlayerWindows.slice(0).shift()?.id ?? null
           // 生Recoil
           states[globalActiveContentPlayerIdAtomKey] = value
-          recoilStateUpdate(_id, {
+          recoilStateUpdate({
             key: globalActiveContentPlayerIdAtomKey,
             value,
           })
@@ -950,11 +955,18 @@ ipcMain.handle(
   }
 )
 
+let lastEpgUpdated = 0
+
 new EPGManager(ipcMain, () => {
-  const value = Date.now()
+  const value = Math.floor(performance.now())
+  // 5秒に1回のみ
+  if (value - lastEpgUpdated < 5000) {
+    return
+  }
+  lastEpgUpdated = value
   // 生Recoil
   states[globalLastEpgUpdatedAtomKey] = value
-  recoilStateUpdate(0, {
+  recoilStateUpdate({
     key: globalLastEpgUpdatedAtomKey,
     value,
   })
