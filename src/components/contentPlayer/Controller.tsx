@@ -116,6 +116,7 @@ export const CoiledController: React.VFC<{}> = () => {
   const setScreenshotTrigger = useSetRecoilState(
     contentPlayerScreenshotTriggerAtom
   )
+  const [seekRequest, setSeekRequest] = useState<number | null>(null)
   useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {
       if (e.key === "s") {
@@ -134,8 +135,14 @@ export const CoiledController: React.VFC<{}> = () => {
             ? controller.volumeRange[0]
             : volume - 10
         )
+      } else if (e.key === "ArrowRight") {
+        setSeekRequest(30_000)
+      } else if (e.key === "ArrowLeft") {
+        setSeekRequest(-10_000)
       } else if (e.key === "m") {
         setVolume((volume) => (0 < volume ? 0 : 100))
+      } else if (e.key === " ") {
+        setIsPlaying((isPlaying) => !isPlaying)
       } else if (e.key === "Escape") {
         window.Preload.public.exitFullScreen()
       }
@@ -292,6 +299,8 @@ export const CoiledController: React.VFC<{}> = () => {
               position={position}
               setPosition={setPosition}
               duration={program?.duration}
+              seekRequest={seekRequest}
+              setSeekRequest={setSeekRequest}
             />
           ) : (
             <></>
