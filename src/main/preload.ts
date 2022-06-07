@@ -30,6 +30,7 @@ import {
   REQUEST_SCREENSHOT_BASE_PATH,
   ON_SCREENSHOT_REQUEST,
   UPDATE_GLOBAL_SCREENSHOT_ACCELERATOR,
+  EXIT_FULL_SCREEN,
 } from "../constants/ipc"
 import {
   EPGManagerRegisterArg,
@@ -309,6 +310,9 @@ const preload: Preload = {
     },
     toggleFullScreen() {
       ipcRenderer.invoke(TOGGLE_FULL_SCREEN)
+    },
+    exitFullScreen() {
+      ipcRenderer.invoke(EXIT_FULL_SCREEN)
     },
     toggleAlwaysOnTop() {
       ipcRenderer.invoke(TOGGLE_ALWAYS_ON_TOP)

@@ -56,6 +56,7 @@ import {
   REQUEST_SCREENSHOT_BASE_PATH,
   ON_SCREENSHOT_REQUEST,
   UPDATE_GLOBAL_SCREENSHOT_ACCELERATOR,
+  EXIT_FULL_SCREEN,
 } from "../../src/constants/ipc"
 import { ROUTES } from "../../src/constants/routes"
 import {
@@ -890,6 +891,14 @@ ipcMain.handle(TOGGLE_FULL_SCREEN, (event) => {
     return
   }
   window.setFullScreen(!window.isFullScreen())
+})
+
+ipcMain.handle(EXIT_FULL_SCREEN, (event) => {
+  const window = BrowserWindow.fromWebContents(event.sender)
+  if (!window) {
+    return
+  }
+  window.setFullScreen(false)
 })
 
 ipcMain.handle(SHOW_NOTIFICATION, (_, arg, path) => {

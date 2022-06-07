@@ -136,6 +136,8 @@ export const CoiledController: React.VFC<{}> = () => {
         )
       } else if (e.key === "m") {
         setVolume((volume) => (0 < volume ? 0 : 100))
+      } else if (e.key === "Escape") {
+        window.Preload.public.exitFullScreen()
       }
     }
     window.addEventListener("keydown", onKeyDown)

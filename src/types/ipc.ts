@@ -97,6 +97,7 @@ export type Preload = {
     requestAppPath: (name: string) => Promise<string>
     requestCursorScreenPoint: () => Promise<Electron.Rectangle>
     toggleFullScreen: () => void
+    exitFullScreen: () => void
     showNotification: (
       arg: Electron.NotificationConstructorOptions,
       path?: string
