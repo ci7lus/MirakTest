@@ -57,18 +57,20 @@ export const ExperimentalSettingForm: React.VFC<{
           左右で言語が異なる音声を流している番組を検知した際に、自動で切り替えます。
         </p>
       </label>
-      <label className="block mt-4">
-        <span>ウィンドウをドラッグで移動する</span>
-        <input
-          type="checkbox"
-          className="block mt-2 form-checkbox"
-          checked={isWindowDragMoveEnabled || false}
-          onChange={() => setIsWindowDragMoveEnabled((enabled) => !enabled)}
-        />
-        <p className="text-sm text-gray-300 mt-2">
-          ドラッグでウィンドウを移動できるようになりますが、たまに判定がおかしくなってウィンドウを離せなくなります。ウィンドウのどこかを左クリックで治まります。
-        </p>
-      </label>
+      {process.platform !== "darwin" && (
+        <label className="block mt-4">
+          <span>ウィンドウをドラッグで移動する</span>
+          <input
+            type="checkbox"
+            className="block mt-2 form-checkbox"
+            checked={isWindowDragMoveEnabled || false}
+            onChange={() => setIsWindowDragMoveEnabled((enabled) => !enabled)}
+          />
+          <p className="text-sm text-gray-300 mt-2">
+            ドラッグでウィンドウを移動できるようになりますが、たまに判定がおかしくなってウィンドウを離せなくなります。ウィンドウのどこかを左クリックで治まります。
+          </p>
+        </label>
+      )}
       <label className="block mt-4">
         <span>VLC network caching</span>
         <input

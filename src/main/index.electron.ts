@@ -57,6 +57,7 @@ import {
   ON_SCREENSHOT_REQUEST,
   UPDATE_GLOBAL_SCREENSHOT_ACCELERATOR,
   EXIT_FULL_SCREEN,
+  SET_WINDOW_BUTTON_VISIBILITY,
 } from "../../src/constants/ipc"
 import { ROUTES } from "../../src/constants/routes"
 import {
@@ -680,6 +681,15 @@ const openWindow = ({
         nodeIntegration: false,
       },
       backgroundColor,
+      titleBarStyle:
+        process.platform === "darwin" && name === ROUTES.ContentPlayer
+          ? "hiddenInset"
+          : undefined,
+      titleBarOverlay:
+        process.platform === "darwin" && name === ROUTES.ContentPlayer
+          ? true
+          : undefined,
+      autoHideMenuBar: process.platform !== "win32" ? true : undefined,
       ...args,
     })
     const [, contentHeight] = window.getContentSize()
@@ -899,6 +909,14 @@ ipcMain.handle(EXIT_FULL_SCREEN, (event) => {
     return
   }
   window.setFullScreen(false)
+})
+
+ipcMain.handle(SET_WINDOW_BUTTON_VISIBILITY, (event, visibility: boolean) => {
+  const window = BrowserWindow.fromWebContents(event.sender)
+  if (!window || process.platform !== "darwin") {
+    return
+  }
+  window.setWindowButtonVisibility(visibility)
 })
 
 ipcMain.handle(SHOW_NOTIFICATION, (_, arg, path) => {

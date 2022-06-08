@@ -31,6 +31,7 @@ import {
   ON_SCREENSHOT_REQUEST,
   UPDATE_GLOBAL_SCREENSHOT_ACCELERATOR,
   EXIT_FULL_SCREEN,
+  SET_WINDOW_BUTTON_VISIBILITY,
 } from "../constants/ipc"
 import {
   EPGManagerRegisterArg,
@@ -273,6 +274,9 @@ const preload: Preload = {
       UPDATE_GLOBAL_SCREENSHOT_ACCELERATOR,
       accelerator
     )
+  },
+  setWindowButtonVisibility(v) {
+    return ipcRenderer.invoke(SET_WINDOW_BUTTON_VISIBILITY, v)
   },
   public: {
     epgManager: {

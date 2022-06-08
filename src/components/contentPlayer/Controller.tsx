@@ -54,6 +54,9 @@ export const CoiledController: React.VFC<{}> = () => {
     2500,
     [lastCurMoved]
   )
+  useEffect(() => {
+    window.Preload.setWindowButtonVisibility(isVisible)
+  }, [isVisible])
 
   const [isPlaying, setIsPlaying] = useRecoilState(contentPlayerIsPlayingAtom)
   const position = useRecoilValue(contentPlayerPlayingPositionAtom)
@@ -216,7 +219,9 @@ export const CoiledController: React.VFC<{}> = () => {
         if (
           e.button === 2 ||
           !document.hasFocus() ||
-          !experimental.isWindowDragMoveEnabled
+          !experimental.isWindowDragMoveEnabled ||
+          // macOSではネイティブのフレームレスを使うようになったので有効にならないように
+          process.platform === "darwin"
         ) {
           cancelMoveWindow()
           return
@@ -248,15 +253,19 @@ export const CoiledController: React.VFC<{}> = () => {
           "transition-width",
           !isVisible && "cursor-none",
           isSidebarOpen ? "w-2/3" : "w-full",
-          "relative"
+          "relative",
+          "app-region-drag"
         )}
       >
         <div
-          className={`select-none transition-opacity duration-150 ease-in-out pt-3 p-4 pb-4 bg-gradient-to-b bg-opacity-60 from-blackOpacity to-transparent ${
+          className={`select-none transition-opacity duration-150 ease-in-out pt-3 p-4 pb-6 bg-gradient-to-b bg-opacity-60 from-blackOpacity to-transparent ${
             isVisible ? "opacity-100" : "opacity-0"
           }`}
         >
-          <div className="flex items-center space-x-4 pb-2">
+          <div
+            className="flex items-center space-x-4"
+            style={{ paddingTop: "calc(env(titlebar-area-height) - 1.2rem)" }}
+          >
             {service?.logoData && (
               <img
                 className="flex-shrink-0 h-6 rounded-md overflow-hidden"
@@ -305,7 +314,7 @@ export const CoiledController: React.VFC<{}> = () => {
           ) : (
             <></>
           )}
-          <div className="flex space-x-2">
+          <div className="flex space-x-2 app-region-no-drag">
             <PlayToggleButton
               isPlaying={isPlaying}
               setIsPlaying={setIsPlaying}

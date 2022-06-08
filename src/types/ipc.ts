@@ -80,6 +80,7 @@ export type Preload = {
   onScreenshotRequest: (listener: () => void) => () => void
   requestScreenshotBasePath: () => Promise<string>
   updateGlobalScreenshotAccelerator: (a: string | false) => Promise<boolean>
+  setWindowButtonVisibility: (v: boolean) => void
   public: {
     setWindowAspect: (aspect: number) => void
     isDirectoryExists: (path: string) => Promise<boolean>
