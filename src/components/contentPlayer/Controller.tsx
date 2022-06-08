@@ -219,7 +219,9 @@ export const CoiledController: React.VFC<{}> = () => {
         if (
           e.button === 2 ||
           !document.hasFocus() ||
-          !experimental.isWindowDragMoveEnabled
+          !experimental.isWindowDragMoveEnabled ||
+          // macOSではネイティブのフレームレスを使うようになったので有効にならないように
+          process.platform === "darwin"
         ) {
           cancelMoveWindow()
           return
