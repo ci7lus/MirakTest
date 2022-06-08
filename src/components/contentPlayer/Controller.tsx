@@ -314,7 +314,7 @@ export const CoiledController: React.VFC<{}> = () => {
           ) : (
             <></>
           )}
-          <div className="flex space-x-2">
+          <div className="flex space-x-2 app-region-no-drag">
             <PlayToggleButton
               isPlaying={isPlaying}
               setIsPlaying={setIsPlaying}
