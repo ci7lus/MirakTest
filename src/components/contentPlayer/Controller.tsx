@@ -441,7 +441,8 @@ export const CoiledController: React.VFC<{}> = () => {
               "py-3",
               "focus:outline-none",
               "cursor-pointer",
-              "pointer-events-auto"
+              "pointer-events-auto",
+              "rounded-l-md"
             )}
             onClick={() => setIsSidebarOpen((o) => !o)}
             onMouseDown={(e) => e.stopPropagation()}
