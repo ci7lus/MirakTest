@@ -54,6 +54,9 @@ export const CoiledController: React.VFC<{}> = () => {
     2500,
     [lastCurMoved]
   )
+  useEffect(() => {
+    window.Preload.setWindowButtonVisibility(isVisible)
+  }, [isVisible])
 
   const [isPlaying, setIsPlaying] = useRecoilState(contentPlayerIsPlayingAtom)
   const position = useRecoilValue(contentPlayerPlayingPositionAtom)
