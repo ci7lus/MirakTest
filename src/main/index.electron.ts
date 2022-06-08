@@ -681,8 +681,14 @@ const openWindow = ({
       },
       backgroundColor,
       titleBarStyle:
-        name === ROUTES["ContentPlayer"] ? "hiddenInset" : undefined,
-      titleBarOverlay: name === ROUTES["ContentPlayer"] ? true : undefined,
+        process.platform === "darwin" && name === ROUTES.ContentPlayer
+          ? "hiddenInset"
+          : undefined,
+      titleBarOverlay:
+        process.platform === "darwin" && name === ROUTES.ContentPlayer
+          ? true
+          : undefined,
+      autoHideMenuBar: process.platform !== "win32" ? true : undefined,
       ...args,
     })
     const [, contentHeight] = window.getContentSize()
