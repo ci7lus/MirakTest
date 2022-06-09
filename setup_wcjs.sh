@@ -3,7 +3,10 @@ export ELECTRON_VER="$(yarn run --silent electron --version | sed -e "s/v//")"
 export BUILD_DIR="./build/Release"
 export npm_config_wcjs_runtime=electron
 export npm_config_wcjs_runtime_version=$ELECTRON_VER
-export npm_config_wcjs_arch="$(arch | sed -e "s/i386/x64/")"
+npm_config_wcjs_arch=${npm_config_wcjs_arch:-}
+if [[ -z "${npm_config_wcjs_arch}" ]]; then
+  export npm_config_wcjs_arch="$(arch | sed -e "s/i386/x64/")"
+fi
 export ELECTRON_MIRROR="https://artifacts.electronjs.org/headers/dist"
 export OS_NAME="$(uname)"
 cd node_modules/webchimera.js
@@ -34,5 +37,6 @@ YARN_ENABLE_IMMUTABLE_INSTALLS=false yarn install
 if ! grep -q rebuild.js package.json; then
   node rebuild.js
 fi
+file ./build/Release/WebChimera.js.node
 mv ./build/Release/WebChimera.js.node .
 echo "module.exports = require('./WebChimera.js.node')" > index.js
