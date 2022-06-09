@@ -24,3 +24,17 @@ button {
 .app-region-no-drag {
   -webkit-app-region: no-drag;
 }
+
+@font-face {
+  font-family: "WadaLabMaruGo2004ARIBKakomi";
+  src: url("../assets/WadaLabMaruGo2004ARIBKakomi.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+}
+
+.WadaLabMaruGo2004ARIBKakomi {
+  font-family: WadaLabMaruGo2004ARIBKakomi, ui-sans-serif, system-ui,
+    -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue",
+    Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji",
+    "Segoe UI Symbol", "Noto Color Emoji";
+}
