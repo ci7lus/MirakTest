@@ -6,6 +6,7 @@ export type MirakurunSetting = {
 
 export type ControllerSetting = {
   volumeRange: [number, number]
+  isVolumeWheelDisabled: boolean
 }
 
 export type SubtitleSetting = {

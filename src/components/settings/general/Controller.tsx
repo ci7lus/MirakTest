@@ -8,14 +8,18 @@ export const ControllerSettingForm: React.VFC<{
 }> = ({ controllerSetting, setControllerSetting }) => {
   const [min, setMin] = useState(controllerSetting.volumeRange[0])
   const [max, setMax] = useState(controllerSetting.volumeRange[1])
+  const [isVolumeWheelDisabled, setIsVolumeWheelDisabled] = useState(
+    controllerSetting.isVolumeWheelDisabled
+  )
   useDebounce(
     () => {
       setControllerSetting({
         volumeRange: [min, max],
+        isVolumeWheelDisabled,
       })
     },
     100,
-    [min, max]
+    [min, max, isVolumeWheelDisabled]
   )
   return (
     <div>
@@ -54,6 +58,15 @@ export const ControllerSettingForm: React.VFC<{
             max={200}
           />
         </div>
+      </label>
+      <label className="block mt-4">
+        <span>ホイールでの音量変更を無効化する</span>
+        <input
+          type="checkbox"
+          className="block mt-2 form-checkbox"
+          checked={isVolumeWheelDisabled || false}
+          onChange={() => setIsVolumeWheelDisabled((i) => !i)}
+        />
       </label>
     </div>
   )

@@ -55,13 +55,15 @@ export const mirakurunUrlHistory = atom<string[]>({
 })
 
 const controllerSettingRefine = $.object({
-  volumeRange: $.array($.number()),
+  volumeRange: $.withDefault($.array($.number()), [0, 150]),
+  isVolumeWheelDisabled: $.withDefault($.boolean(), false),
 })
 
 export const controllerSetting = atom<ControllerSetting>({
   key: `${prefix}.controller`,
   default: {
     volumeRange: [0, 150],
+    isVolumeWheelDisabled: false,
   },
   effects: [
     syncEffect({

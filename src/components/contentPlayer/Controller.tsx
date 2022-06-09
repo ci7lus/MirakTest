@@ -232,7 +232,9 @@ export const CoiledController: React.VFC<{}> = () => {
       onMouseUp={cancelMoveWindow}
       onContextMenu={cancelMoveWindow}
       onWheel={(e) => {
-        if (e.deltaX !== 0) return
+        if (controller.isVolumeWheelDisabled === true || e.deltaX !== 0) {
+          return
+        }
         setIsVisible(true)
         setLastCurMoved(new Date().getSeconds())
         setVolume((volume) => {
