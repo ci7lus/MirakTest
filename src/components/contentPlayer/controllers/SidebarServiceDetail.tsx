@@ -108,7 +108,7 @@ export const SidebarServiceDetail = memo(
           {next?.name && (
             <div className={clsx("text-sm")}>
               次の番組
-              <ChevronsRight size="1rem" className={clsx("inline")} />
+              <ChevronsRight size="1rem" className={clsx("inline", "mb-0.5")} />
               <span>
                 {`${dayjs(next.startAt).format("HH:mm")}〜${
                   current.duration !== 1
@@ -117,7 +117,7 @@ export const SidebarServiceDetail = memo(
                 } `}
                 <EscapeEnclosed str={next.name || ""} />
                 {next.duration !== 1
-                  ? `${Math.floor(next.duration / 1000 / 60)}分間)`
+                  ? ` (${Math.floor(next.duration / 1000 / 60)}分間)`
                   : ""}
               </span>
             </div>
