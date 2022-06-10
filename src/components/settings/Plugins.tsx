@@ -27,7 +27,7 @@ export const CoiledPluginsSetting: React.FC<{}> = () => {
           >
             <input
               type="checkbox"
-              className="block form-checkbox text-lg p-3 mr-3 ml-1 cursor-pointer flex-shrink-0"
+              className="block form-checkbox text-lg p-3 mr-3 ml-1 cursor-pointer shrink-0"
               checked={!disabledFileNames.includes(plugin.fileName)}
               onChange={() => {
                 let copied = structuredClone(disabledFileNames)
@@ -104,7 +104,7 @@ export const CoiledPluginsSetting: React.FC<{}> = () => {
           >
             <input
               type="checkbox"
-              className="block form-checkbox text-lg p-3 mr-3 text-red-600 ml-1 cursor-pointer flex-shrink-0"
+              className="block form-checkbox text-lg p-3 mr-3 text-red-600 ml-1 cursor-pointer shrink-0"
               checked={!disabledFileNames.includes(plugin)}
               onChange={() => {
                 let copied = structuredClone(disabledFileNames)

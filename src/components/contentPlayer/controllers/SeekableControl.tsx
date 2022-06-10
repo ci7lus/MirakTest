@@ -49,7 +49,7 @@ export const SeekableControl: React.FC<{
       <div className="w-full flex items-center space-x-2 px-2">
         <div
           className={clsx(
-            "flex-shrink-0",
+            "shrink-0",
             "text-base",
             "font-bold",
             "font-mono",

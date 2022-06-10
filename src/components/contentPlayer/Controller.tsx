@@ -270,7 +270,7 @@ export const CoiledController: React.FC<{}> = () => {
           >
             {service?.logoData && (
               <img
-                className="flex-shrink-0 h-6 rounded-md overflow-hidden"
+                className="shrink-0 h-6 rounded-md overflow-hidden"
                 src={`data:image/png;base64,${service.logoData}`}
               />
             )}

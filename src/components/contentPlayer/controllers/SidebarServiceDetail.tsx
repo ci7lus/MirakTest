@@ -65,7 +65,7 @@ export const SidebarServiceDetail = memo(
           >
             {service.logoData && (
               <img
-                className={clsx("h-6", "rounded-md", "flex-shrink-0")}
+                className={clsx("h-6", "rounded-md", "shrink-0")}
                 src={`data:image/jpeg;base64,${service.logoData}`}
               />
             )}
@@ -73,12 +73,12 @@ export const SidebarServiceDetail = memo(
             <Marquee
               play={isHovering}
               gradient={false}
-              className={clsx("flex-shrink-0")}
+              className={clsx("shrink-0")}
               speed={40}
             >
               {service.name}
             </Marquee>*/}
-            <h3 className={clsx("flex-shrink-0")}>{service.name}</h3>
+            <h3 className={clsx("shrink-0")}>{service.name}</h3>
           </div>
           {current?.name && (
             <div className={clsx(service.logoData ? "mt-2" : "mt-1")}>

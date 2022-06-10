@@ -61,9 +61,7 @@ export const CoiledProgramTable: React.FC<{}> = () => {
           "space-x-4"
         )}
       >
-        <h1
-          className={clsx("text-2xl", "font-semibold", "flex-shrink-0", "pl-2")}
-        >
+        <h1 className={clsx("text-2xl", "font-semibold", "shrink-0", "pl-2")}>
           番組表
         </h1>
         <div className={clsx()}>

@@ -21,7 +21,7 @@ export const WeekdaySelector: React.FC<{
         <button
           key={i}
           className={clsx(
-            "flex-shrink-0",
+            "shrink-0",
             "text-center",
             "p-2",
             "border-r-2",

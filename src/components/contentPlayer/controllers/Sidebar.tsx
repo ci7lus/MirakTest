@@ -111,7 +111,7 @@ export const ControllerSidebar: React.FC<{
             "overflow-auto",
             "flex",
             "pb-2",
-            "flex-shrink-0",
+            "shrink-0",
             "scrollbar-thin"
           )}
           onWheel={(e) => {

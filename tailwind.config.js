@@ -1,23 +1,16 @@
 module.exports = {
-  purge: {
-    enabled: process.env.NODE_ENV === "production",
-    mode: "all",
-    content: [
-      "./index.html",
-      "./src/**/*.{ts,tsx,scss}",
-      "./node_modules/react-multi-carousel/lib/styles.css",
-    ],
-    whitelist: [],
-    whitelistPatterns: [],
-  },
+  content: [
+    "./index.html",
+    "./src/**/*.{ts,tsx,scss}",
+    "./node_modules/react-multi-carousel/lib/styles.css",
+  ],
   future: {
     removeDeprecatedGapUtilities: true,
     purgeLayersByDefault: true,
   },
-  darkMode: "media",
   plugins: [
     require("tailwindcss-textshadow"),
-    require("@tailwindcss/custom-forms"),
+    require("@tailwindcss/forms"),
     require("tailwind-scrollbar"),
   ],
   theme: {
