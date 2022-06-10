@@ -26,6 +26,9 @@ export const ExperimentalSettingForm: React.VFC<{
     useState(experimentalSetting.isDualMonoAutoAdjustEnabled)
   const [globalScreenshotAccelerator, setGlobalScreenshotAccelerator] =
     useState(experimentalSetting.globalScreenshotAccelerator)
+  const [isCodeBlack, setIsCodeBlack] = useState(
+    experimentalSetting.isCodeBlack
+  )
   useEffect(() => {
     setExperimentalSetting({
       isWindowDragMoveEnabled,
@@ -33,6 +36,7 @@ export const ExperimentalSettingForm: React.VFC<{
       isVlcAvCodecHwAny,
       isDualMonoAutoAdjustEnabled,
       globalScreenshotAccelerator,
+      isCodeBlack,
     })
   }, [
     isWindowDragMoveEnabled,
@@ -40,6 +44,7 @@ export const ExperimentalSettingForm: React.VFC<{
     isVlcAvCodecHwAny,
     isDualMonoAutoAdjustEnabled,
     globalScreenshotAccelerator,
+    isCodeBlack,
   ])
   const [isKeyboradCaptureing, setIsKeyboardCaptureing] = useState(false)
   return (
@@ -183,6 +188,19 @@ export const ExperimentalSettingForm: React.VFC<{
             </p>
           </>
         )}
+      </label>
+      <label className="block mt-4">
+        <span>背景色を黒にする</span>
+        <input
+          type="checkbox"
+          className="block mt-2 form-checkbox"
+          checked={isCodeBlack}
+          onChange={() => setIsCodeBlack((enabled) => !enabled)}
+        />
+        <p className="text-sm text-gray-300 mt-2">
+          背景色を黒(<code className="font-mono bg-black mx-1">#00000</code>
+          )にします。再起動後に反映されます。
+        </p>
       </label>
     </div>
   )

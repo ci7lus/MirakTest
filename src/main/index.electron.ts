@@ -73,7 +73,7 @@ import { generateContentPlayerContextMenu } from "./contextmenu"
 import { EPGManager } from "./epgManager"
 import { exists, isChildOfHome, isHidden } from "./fsUtils"
 
-const backgroundColor = "#111827"
+let backgroundColor = "#111827"
 
 const contentPlayerWindows: BrowserWindow[] = []
 
@@ -161,6 +161,9 @@ const init = async () => {
       "globalScreenshotAcceleratorの設定に失敗しました",
       experimentalSetting?.globalScreenshotAccelerator
     )
+  }
+  if (experimentalSetting?.isCodeBlack === true) {
+    backgroundColor = "#000000"
   }
 
   disabledPluginFileNames =

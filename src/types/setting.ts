@@ -26,4 +26,5 @@ export type ExperimentalSetting = {
   vlcNetworkCaching: number
   isDualMonoAutoAdjustEnabled: boolean
   globalScreenshotAccelerator: string | false
+  isCodeBlack: boolean
 }

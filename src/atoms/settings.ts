@@ -133,6 +133,7 @@ const experimentalSettingRefine = $.object({
     $.or($.string(), $.boolean()),
     false
   ),
+  isCodeBlack: $.withDefault($.boolean(), false),
 })
 
 export const experimentalSetting = atom<ExperimentalSetting>({
@@ -143,6 +144,7 @@ export const experimentalSetting = atom<ExperimentalSetting>({
     vlcNetworkCaching: -1,
     isDualMonoAutoAdjustEnabled: true,
     globalScreenshotAccelerator: false,
+    isCodeBlack: false,
   },
   effects: [
     syncEffect({
