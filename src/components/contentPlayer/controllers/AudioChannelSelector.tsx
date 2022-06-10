@@ -1,7 +1,7 @@
 import React, { memo } from "react"
 import { VLCAudioChannel, VLCAudioChannelTranslated } from "../../../utils/vlc"
 
-export const AudioChannelSelector: React.VFC<{
+export const AudioChannelSelector: React.FC<{
   audioChannel: number
   setAudioChannel: React.Dispatch<React.SetStateAction<number>>
 }> = memo(({ audioChannel, setAudioChannel }) => (

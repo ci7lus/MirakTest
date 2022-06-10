@@ -40,7 +40,7 @@ import { getAribb24Configuration } from "../../utils/subtitle"
 import { VideoRenderer } from "../../utils/videoRenderer"
 import { VLCLogFilter } from "../../utils/vlc"
 
-export const CoiledVideoPlayer: React.VFC<{
+export const CoiledVideoPlayer: React.FC<{
   internalPlayingTimeRef: React.MutableRefObject<number>
 }> = memo(({ internalPlayingTimeRef }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null)

@@ -14,7 +14,7 @@ import { WeekdaySelector } from "../components/programTable/WeekdaySelector"
 import { useNow } from "../hooks/date"
 import { Program } from "../types/plugin"
 
-export const CoiledProgramTable: React.VFC<{}> = () => {
+export const CoiledProgramTable: React.FC<{}> = () => {
   const now = useNow()
   const [add, setAdd] = useState(0)
   const activePlayerId = useRecoilValue(globalActiveContentPlayerIdSelector)

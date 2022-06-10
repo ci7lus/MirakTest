@@ -1,7 +1,7 @@
 import React from "react"
 import { Maximize } from "react-feather"
 
-export const FullScreenToggleButton: React.VFC<{ toggle: Function }> = ({
+export const FullScreenToggleButton: React.FC<{ toggle: Function }> = ({
   toggle,
 }) => {
   return (

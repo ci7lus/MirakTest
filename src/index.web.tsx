@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react"
 import ReactDOM from "react-dom"
+import { createRoot } from "react-dom/client"
 import Recoil from "recoil"
 import RecoilSync from "recoil-sync"
 import { PluginLoader } from "./Plugin"
@@ -11,7 +12,7 @@ global.React = React
 global.Recoil = Recoil
 global.RecoilSync = RecoilSync
 
-const WebRoot: React.VFC<{}> = () => {
+const WebRoot: React.FC<{}> = () => {
   const [unmounted, setUnmounted] = useState(false)
   useEffect(() => {
     const app = document.getElementById("app")
@@ -38,4 +39,5 @@ const WebRoot: React.VFC<{}> = () => {
   return <PluginLoader {...initialData} />
 }
 
-ReactDOM.render(<WebRoot />, document.getElementById("app"))
+// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+createRoot(document.getElementById("app")!).render(<WebRoot />)

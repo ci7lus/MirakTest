@@ -2,7 +2,7 @@ import React, { useState } from "react"
 import { useDebounce } from "react-use"
 import { ControllerSetting } from "../../../types/setting"
 
-export const ControllerSettingForm: React.VFC<{
+export const ControllerSettingForm: React.FC<{
   controllerSetting: ControllerSetting
   setControllerSetting: React.Dispatch<React.SetStateAction<ControllerSetting>>
 }> = ({ controllerSetting, setControllerSetting }) => {

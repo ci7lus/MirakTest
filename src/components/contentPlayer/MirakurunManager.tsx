@@ -25,7 +25,7 @@ import {
 } from "../../infra/mirakurun/api"
 import { ServiceWithLogoData } from "../../types/mirakurun"
 
-export const MirakurunManager: React.VFC<{}> = () => {
+export const MirakurunManager: React.FC<{}> = () => {
   const mirakurunSettingValue = useRecoilValue(mirakurunSetting)
   const setCompatibility = useSetRecoilState(mirakurunCompatibilityAtom)
   const setVersion = useSetRecoilState(mirakurunVersionAtom)

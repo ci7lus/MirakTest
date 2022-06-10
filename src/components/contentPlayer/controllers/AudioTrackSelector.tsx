@@ -1,6 +1,6 @@
 import React, { memo } from "react"
 
-export const AudioTrackSelector: React.VFC<{
+export const AudioTrackSelector: React.FC<{
   audioTrack: number
   setAudioTrack: React.Dispatch<React.SetStateAction<number>>
   audioTracks: string[]

@@ -43,7 +43,7 @@ import "dayjs/locale/ja"
 
 dayjs.locale("ja")
 
-export const CoiledController: React.VFC<{}> = () => {
+export const CoiledController: React.FC<{}> = () => {
   const [isVisible, setIsVisible] = useState(false)
 
   const [lastCurMoved, setLastCurMoved] = useState(0)

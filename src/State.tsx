@@ -16,7 +16,7 @@ const queryClient = new QueryClient({
   },
 })
 
-export const StateRoot: React.VFC<{
+export const StateRoot: React.FC<{
   states: ObjectLiteral
   fonts: string[]
 }> = ({ states, fonts }) => {

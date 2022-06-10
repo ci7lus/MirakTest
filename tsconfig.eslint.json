@@ -1,5 +1,5 @@
 {
   "extends": "./tsconfig.json",
-  "include": ["src", "./tailwind.config.js", "./*.ts"],
+  "include": ["src", "./tailwind.config.js", "./*.ts", "./.eslintrc.js"],
   "exclude": ["node_modules"]
 }

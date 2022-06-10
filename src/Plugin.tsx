@@ -52,7 +52,7 @@ import {
 import { ObjectLiteral, PluginDatum } from "./types/struct"
 import { pluginValidator } from "./utils/plugin"
 
-export const PluginLoader: React.VFC<{
+export const PluginLoader: React.FC<{
   states: ObjectLiteral
   pluginData: PluginDatum[]
   fonts: string[]

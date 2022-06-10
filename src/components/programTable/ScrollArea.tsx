@@ -67,8 +67,9 @@ export const ScrollArea: React.FC<{
           "text-lg"
         )}
       >
-        読み込み中にエラーが発生しました:{" "}
-        {error instanceof Error ? error.message : error}
+        {`読み込み中にエラーが発生しました: ${
+          error instanceof Error ? error.message : error
+        }`}
       </div>
     )
   }

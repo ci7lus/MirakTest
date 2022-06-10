@@ -3,7 +3,7 @@ import React from "react"
 import { useRecoilState } from "recoil"
 import { globalDisabledPluginFileNamesAtom } from "../../atoms/global"
 
-export const CoiledPluginsSetting: React.VFC<{}> = () => {
+export const CoiledPluginsSetting: React.FC<{}> = () => {
   const [disabledFileNames, setDisabledFileNames] = useRecoilState(
     globalDisabledPluginFileNamesAtom
   )

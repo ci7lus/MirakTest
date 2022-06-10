@@ -8,7 +8,7 @@ import { CoiledContentPlayer } from "./windows/ContentPlayer"
 import { CoiledProgramTable } from "./windows/ProgramTable"
 import { Settings } from "./windows/Settings"
 
-export const Router: React.VFC<{}> = () => {
+export const Router: React.FC<{}> = () => {
   const RecoilBridge = useRecoilBridgeAcrossReactRoots_UNSTABLE()
   const [hash, setHash] = useState<Routes>("")
   useEffect(() => {

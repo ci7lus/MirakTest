@@ -4,7 +4,7 @@ import React from "react"
 import { Service } from "../../infra/mirakurun/api"
 import { ServiceWithLogoData } from "../../types/mirakurun"
 
-export const ScrollServices: React.VFC<{
+export const ScrollServices: React.FC<{
   services: ServiceWithLogoData[]
   setService: (service: Service) => void
 }> = ({ services, setService }) => {

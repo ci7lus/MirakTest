@@ -45,7 +45,7 @@ export const SidebarServiceQuickButton = memo(
                   program.duration !== 1
                     ? dayjs(program.startAt)
                         .clone()
-                        .add(program.duration, "miliseconds")
+                        .add(program.duration, "milliseconds")
                         .format("HH:mm")
                     : ""
                 }`.trim()

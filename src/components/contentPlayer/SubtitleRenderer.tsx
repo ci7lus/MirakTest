@@ -17,7 +17,7 @@ import { SUBTITLE_DEFAULT_FONT } from "../../constants/font"
 import { tryBase64ToUint8Array } from "../../utils/string"
 import { getAribb24Configuration } from "../../utils/subtitle"
 
-export const CoiledSubtitleRenderer: React.VFC<{
+export const CoiledSubtitleRenderer: React.FC<{
   internalPlayingTimeRef: React.MutableRefObject<number>
 }> = memo(({ internalPlayingTimeRef }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null)
