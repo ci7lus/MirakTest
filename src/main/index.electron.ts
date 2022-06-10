@@ -203,6 +203,13 @@ const buildAppMenu = ({
         openWindow({ name: ROUTES["ContentPlayer"], args: { show: false } }),
       accelerator: "CmdOrCtrl+N",
     },
+    {
+      type: "separator",
+    },
+    {
+      label: "ウィンドウを閉じる",
+      role: "close",
+    },
   ]
   if (process.platform !== "darwin") {
     fileSubMenu.push(
