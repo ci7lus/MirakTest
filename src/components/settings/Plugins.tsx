@@ -3,7 +3,7 @@ import React from "react"
 import { useRecoilState } from "recoil"
 import { globalDisabledPluginFileNamesAtom } from "../../atoms/global"
 
-export const CoiledPluginsSetting: React.VFC<{}> = () => {
+export const CoiledPluginsSetting: React.FC<{}> = () => {
   const [disabledFileNames, setDisabledFileNames] = useRecoilState(
     globalDisabledPluginFileNamesAtom
   )
@@ -27,7 +27,7 @@ export const CoiledPluginsSetting: React.VFC<{}> = () => {
           >
             <input
               type="checkbox"
-              className="block form-checkbox text-lg p-3 mr-3 ml-1 cursor-pointer flex-shrink-0"
+              className="block form-checkbox text-lg p-3 mr-3 ml-1 cursor-pointer shrink-0"
               checked={!disabledFileNames.includes(plugin.fileName)}
               onChange={() => {
                 let copied = structuredClone(disabledFileNames)
@@ -104,7 +104,7 @@ export const CoiledPluginsSetting: React.VFC<{}> = () => {
           >
             <input
               type="checkbox"
-              className="block form-checkbox text-lg p-3 mr-3 text-red-600 ml-1 cursor-pointer flex-shrink-0"
+              className="block form-checkbox text-lg p-3 mr-3 text-red-600 ml-1 cursor-pointer shrink-0"
               checked={!disabledFileNames.includes(plugin)}
               onChange={() => {
                 let copied = structuredClone(disabledFileNames)

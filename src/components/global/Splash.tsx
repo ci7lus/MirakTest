@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react"
 
-export const Splash: React.FC<{}> = ({ children }) => {
+export const Splash: React.FC<{ children?: React.ReactNode }> = ({
+  children,
+}) => {
   const [opacity, setOpacity] = useState(0)
   useEffect(() => {
     setOpacity(1)

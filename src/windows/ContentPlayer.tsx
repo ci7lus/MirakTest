@@ -16,7 +16,7 @@ import { CoiledVideoPlayer } from "../components/contentPlayer/VideoPlayer"
 import { CoiledEpgUpdatedObserver } from "../components/global/EpgUpdatedObserver"
 import { Splash } from "../components/global/Splash"
 
-export const CoiledContentPlayer: React.VFC<{}> = () => {
+export const CoiledContentPlayer: React.FC<{}> = () => {
   const setBounds = useSetRecoilState(contentPlayerBoundsAtom)
   const setActiveContentPlayerId = useSetRecoilState(
     globalActiveContentPlayerIdAtom

@@ -18,13 +18,7 @@ export const ServiceRoll: React.FC<{
 }) => (
   <div
     id={service.id.toString()}
-    className={clsx(
-      "relative",
-      "h-max",
-      "content-visibility-auto",
-      "w-48",
-      "flex-shrink-0"
-    )}
+    className={clsx("relative", "content-visibility-auto", "w-48", "shrink-0")}
     style={{
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-expect-error

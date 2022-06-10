@@ -3,7 +3,7 @@ import { useRecoilBridgeAcrossReactRoots_UNSTABLE } from "recoil"
 import { ComponentWithPosition } from "../../types/plugin"
 import { ComponentShadowWrapper } from "./ComponentShadowWrapper"
 
-export const PluginPositionComponents: React.VFC<{
+export const PluginPositionComponents: React.FC<{
   position: ComponentWithPosition["position"]
 }> = ({ position }) => {
   const [components, setComponents] = useState<ComponentWithPosition[] | null>(

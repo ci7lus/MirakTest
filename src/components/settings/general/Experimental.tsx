@@ -7,7 +7,7 @@ const META_KEYS = ["Control", "Shift", "Meta", "Alt"]
 
 const ESCAPE = ["Escape", "Enter", "Backspace", "Delete", " "]
 
-export const ExperimentalSettingForm: React.VFC<{
+export const ExperimentalSettingForm: React.FC<{
   experimentalSetting: ExperimentalSetting
   setExperimentalSetting: React.Dispatch<
     React.SetStateAction<ExperimentalSetting>

@@ -2,7 +2,7 @@ import React, { useState } from "react"
 import { useRecoilState } from "recoil"
 import { mirakurunSetting, mirakurunUrlHistory } from "../../atoms/settings"
 
-export const MirakurunSettingForm: React.VFC<{}> = () => {
+export const MirakurunSettingForm: React.FC<{}> = () => {
   const [mirakurun, setMirakurun] = useRecoilState(mirakurunSetting)
   const [url, setUrl] = useState(mirakurun.baseUrl)
   const [isEnableServiceTypeFilter, setIsEnableServiceTypeFilter] = useState(

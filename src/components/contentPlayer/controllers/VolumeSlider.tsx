@@ -2,7 +2,7 @@ import React, { memo, useEffect, useState } from "react"
 import { VolumeX, Volume1, Volume2 } from "react-feather"
 import { useDebounce } from "react-use"
 
-export const VolumeSlider: React.VFC<{
+export const VolumeSlider: React.FC<{
   volume: number
   setVolume: React.Dispatch<React.SetStateAction<number>>
   min: number

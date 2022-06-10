@@ -45,7 +45,7 @@ export const SidebarServiceQuickButton = memo(
                   program.duration !== 1
                     ? dayjs(program.startAt)
                         .clone()
-                        .add(program.duration, "miliseconds")
+                        .add(program.duration, "milliseconds")
                         .format("HH:mm")
                     : ""
                 }`.trim()
@@ -68,7 +68,7 @@ export const SidebarServiceQuickButton = memo(
         >
           {service.logoData && (
             <img
-              className={clsx("h-6", "rounded-md", "flex-shrink-0")}
+              className={clsx("h-6", "rounded-md", "shrink-0")}
               src={`data:image/jpeg;base64,${service.logoData}`}
             />
           )}

@@ -1,7 +1,7 @@
 import React, { memo } from "react"
 import { Type } from "react-feather"
 
-export const SubtitleToggleButton: React.VFC<{
+export const SubtitleToggleButton: React.FC<{
   subtitleEnabled: boolean
   setSubtitleEnabled: React.Dispatch<React.SetStateAction<boolean>>
 }> = memo(({ subtitleEnabled, setSubtitleEnabled }) => (

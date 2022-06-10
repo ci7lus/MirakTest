@@ -4,7 +4,7 @@ import { File } from "react-feather"
 import { useDebounce } from "react-use"
 import { ScreenshotSetting } from "../../../types/setting"
 
-export const ScreenshotSettingForm: React.VFC<{
+export const ScreenshotSettingForm: React.FC<{
   screenshotSetting: ScreenshotSetting
   setScreenshotSetting: React.Dispatch<React.SetStateAction<ScreenshotSetting>>
 }> = ({ screenshotSetting, setScreenshotSetting }) => {

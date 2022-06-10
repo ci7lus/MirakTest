@@ -1,22 +1,28 @@
 import React, { useEffect, useRef } from "react"
-import ReactDOM from "react-dom"
+import { createRoot, Root } from "react-dom/client"
 
-export const ComponentShadowWrapper: React.VFC<{
-  Component: React.VFC<{}>
+export const ComponentShadowWrapper: React.FC<{
+  Component: React.FC<{}>
   _id?: string
   className?: string
 }> = ({ Component, _id, className }) => {
   const ref = useRef<HTMLDivElement>(null)
+  const rootRef = useRef<Root>()
   useEffect(() => {
     const div = ref.current
-    if (div) {
-      let root: ShadowRoot
+    const root = rootRef.current
+    if (root) {
+      root.render(<Component />)
+    } else if (div) {
+      let shadow: ShadowRoot
       if (div.shadowRoot) {
-        root = div.shadowRoot
+        shadow = div.shadowRoot
       } else {
-        root = div.attachShadow({ mode: "open" })
+        shadow = div.attachShadow({ mode: "open" })
       }
-      ReactDOM.render(<Component />, root)
+      const root = createRoot(shadow)
+      root.render(<Component />)
+      rootRef.current = root
     }
   }, [ref, _id])
   return <div ref={ref} id={_id} className={className} />

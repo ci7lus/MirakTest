@@ -7,7 +7,7 @@ import {
 } from "../../atoms/contentPlayerSelectors"
 import { convertVariationSelectedClosed } from "../../utils/enclosed"
 
-export const CoiledProgramTitleManager: React.VFC<{}> = () => {
+export const CoiledProgramTitleManager: React.FC<{}> = () => {
   const service = useRecoilValue(contentPlayerServiceSelector)
   const program = useRecoilValue(contentPlayerProgramSelector)
   const setTitle = useSetRecoilState(contentPlayerTitleAtom)

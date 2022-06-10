@@ -3,7 +3,7 @@ import { Camera } from "react-feather"
 import { useSetRecoilState } from "recoil"
 import { contentPlayerScreenshotTriggerAtom } from "../../../atoms/contentPlayer"
 
-export const CoiledScreenshotButton: React.VFC<{}> = memo(() => {
+export const CoiledScreenshotButton: React.FC<{}> = memo(() => {
   const setScreenshotTrigger = useSetRecoilState(
     contentPlayerScreenshotTriggerAtom
   )

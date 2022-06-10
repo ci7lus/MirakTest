@@ -43,7 +43,7 @@ import "dayjs/locale/ja"
 
 dayjs.locale("ja")
 
-export const CoiledController: React.VFC<{}> = () => {
+export const CoiledController: React.FC<{}> = () => {
   const [isVisible, setIsVisible] = useState(false)
 
   const [lastCurMoved, setLastCurMoved] = useState(0)
@@ -270,7 +270,7 @@ export const CoiledController: React.VFC<{}> = () => {
           >
             {service?.logoData && (
               <img
-                className="flex-shrink-0 h-6 rounded-md overflow-hidden"
+                className="shrink-0 h-6 rounded-md overflow-hidden"
                 src={`data:image/png;base64,${service.logoData}`}
               />
             )}

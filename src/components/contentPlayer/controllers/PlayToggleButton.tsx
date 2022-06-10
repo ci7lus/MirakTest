@@ -1,7 +1,7 @@
 import React, { memo } from "react"
 import { Pause, Play } from "react-feather"
 
-export const PlayToggleButton: React.VFC<{
+export const PlayToggleButton: React.FC<{
   isPlaying: boolean
   setIsPlaying: React.Dispatch<React.SetStateAction<boolean>>
 }> = memo(({ isPlaying, setIsPlaying }) => (

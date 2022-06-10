@@ -11,7 +11,7 @@ import { ExperimentalSettingForm } from "./Experimental"
 import { ScreenshotSettingForm } from "./Screenshot"
 import { SubtitleSettingForm } from "./Subtitle"
 
-export const CoiledGeneralSetting: React.VFC<{}> = () => {
+export const CoiledGeneralSetting: React.FC<{}> = () => {
   const [coiledControllerSetting, setCoiledControllerSetting] =
     useRecoilState(controllerSetting)
   const [controller, setController] = useState(coiledControllerSetting)

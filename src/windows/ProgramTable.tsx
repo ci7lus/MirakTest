@@ -14,7 +14,7 @@ import { WeekdaySelector } from "../components/programTable/WeekdaySelector"
 import { useNow } from "../hooks/date"
 import { Program } from "../types/plugin"
 
-export const CoiledProgramTable: React.VFC<{}> = () => {
+export const CoiledProgramTable: React.FC<{}> = () => {
   const now = useNow()
   const [add, setAdd] = useState(0)
   const activePlayerId = useRecoilValue(globalActiveContentPlayerIdSelector)
@@ -61,9 +61,7 @@ export const CoiledProgramTable: React.VFC<{}> = () => {
           "space-x-4"
         )}
       >
-        <h1
-          className={clsx("text-2xl", "font-semibold", "flex-shrink-0", "pl-2")}
-        >
+        <h1 className={clsx("text-2xl", "font-semibold", "shrink-0", "pl-2")}>
           番組表
         </h1>
         <div className={clsx()}>

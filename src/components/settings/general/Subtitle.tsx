@@ -4,7 +4,7 @@ import { globalFontsAtom } from "../../../atoms/global"
 import { SUBTITLE_DEFAULT_FONT } from "../../../constants/font"
 import { SubtitleSetting } from "../../../types/setting"
 
-export const SubtitleSettingForm: React.VFC<{
+export const SubtitleSettingForm: React.FC<{
   subtitleSetting: SubtitleSetting
   setSubtitleSetting: React.Dispatch<React.SetStateAction<SubtitleSetting>>
 }> = ({ subtitleSetting, setSubtitleSetting }) => {

@@ -67,8 +67,9 @@ export const ScrollArea: React.FC<{
           "text-lg"
         )}
       >
-        読み込み中にエラーが発生しました:{" "}
-        {error instanceof Error ? error.message : error}
+        {`読み込み中にエラーが発生しました: ${
+          error instanceof Error ? error.message : error
+        }`}
       </div>
     )
   }
@@ -144,7 +145,7 @@ export const ScrollArea: React.FC<{
               "flex",
               "pl-6",
               "sticky",
-              "flex-shrink-0",
+              "shrink-0",
               "text-gray-100",
               "top-0",
               "z-20"
@@ -159,7 +160,7 @@ export const ScrollArea: React.FC<{
         <div className={clsx("flex", "w-max", "pr-5", "pb-5")}>
           <div
             className={
-              "sticky left-0 h-full bg-gray-700 text-gray-200 font-bold pointer-events-none w-6 flex-shrink-0 z-10"
+              "sticky left-0 h-full bg-gray-700 text-gray-200 font-bold pointer-events-none w-6 shrink-0 z-10"
             }
           >
             <HourIndicator
@@ -172,7 +173,7 @@ export const ScrollArea: React.FC<{
               "relative",
               "flex",
               "text-gray-900",
-              "flex-shrink-0",
+              "shrink-0",
               "w-max",
               "h-max"
             )}

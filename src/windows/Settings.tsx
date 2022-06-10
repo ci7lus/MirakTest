@@ -10,13 +10,13 @@ import { OnSettingComponent } from "../types/plugin"
 
 type Routes = "General" | "Mirakurun" | "Plugins" | (string & {})
 
-const Right: React.FC = ({ children }) => (
+const Right: React.FC<{ children: React.ReactNode }> = ({ children }) => (
   <div className="h-full w-2/3 my-4p-4 text-gray-100 overflow-auto">
     {children}
   </div>
 )
 
-const Router: React.VFC<{ route: Routes }> = ({ route }) => {
+const Router: React.FC<{ route: Routes }> = ({ route }) => {
   const RecoilBridge = useRecoilBridgeAcrossReactRoots_UNSTABLE()
   if (route === "General") {
     return (
@@ -63,7 +63,7 @@ const Router: React.VFC<{ route: Routes }> = ({ route }) => {
   }
 }
 
-export const Settings: React.VFC<{}> = () => {
+export const Settings: React.FC<{}> = () => {
   const [route, setRoute] = useState<Routes>("General")
   const [aditionalRoutes, setAditionalRoutes] = useState<[string, string][]>([])
   useEffect(() => {

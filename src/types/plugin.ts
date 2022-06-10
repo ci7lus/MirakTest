@@ -19,7 +19,7 @@ export type AppInfo = {
 
 export type CustomComponent = {
   id: string
-  component: React.VFC<{}>
+  component: React.FC<{}>
 }
 
 /** すべてのウィンドウに展開される。見えない。 */
@@ -183,7 +183,7 @@ export type PluginDefineInRenderer = PluginMeta & {
   components: ComponentWithPosition[]
   windows: {
     /** カスタム画面、hash を key に */
-    [key: string]: React.VFC<{}>
+    [key: string]: React.FC<{}>
   }
   _experimental_feature__service?: {
     /** テレビサービス（構想中） */

@@ -4,7 +4,7 @@ import React from "react"
 import { Service } from "../../infra/mirakurun/api"
 import { ServiceWithLogoData } from "../../types/mirakurun"
 
-export const ScrollServices: React.VFC<{
+export const ScrollServices: React.FC<{
   services: ServiceWithLogoData[]
   setService: (service: Service) => void
 }> = ({ services, setService }) => {
@@ -21,7 +21,7 @@ export const ScrollServices: React.VFC<{
                 "bg-gray-700",
                 "w-48",
                 "text-sm",
-                "flex-shrink-0",
+                "shrink-0",
                 "text-center",
                 "p-1",
                 "py-2",
@@ -44,7 +44,7 @@ export const ScrollServices: React.VFC<{
                   className={clsx(
                     "h-6",
                     "rounded-md",
-                    "flex-shrink-0",
+                    "shrink-0",
                     "pointer-events-none"
                   )}
                   src={`data:image/jpeg;base64,${service.logoData}`}
@@ -86,11 +86,11 @@ export const ScrollServices: React.VFC<{
               >
                 {service.logoData && (
                   <img
-                    className={clsx("h-6", "rounded-md", "flex-shrink-0")}
+                    className={clsx("h-6", "rounded-md", "shrink-0")}
                     src={`data:image/jpeg;base64,${service.logoData}`}
                   />
                 )}
-                <h3 className={clsx("flex-shrink-0")}>{`${
+                <h3 className={clsx("shrink-0")}>{`${
                   service.remoteControlKeyId ?? service.serviceId
                 } ${service.name}`}</h3>
               </div>

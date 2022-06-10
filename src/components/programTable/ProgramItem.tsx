@@ -68,7 +68,7 @@ export const ProgramItem: React.FC<{
               program.duration !== 1
                 ? startAt
                     .clone()
-                    .add(program.duration, "miliseconds")
+                    .add(program.duration, "milliseconds")
                     .format("HH:mm")
                 : ""
             }`.trim(),
