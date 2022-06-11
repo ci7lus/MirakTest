@@ -36,6 +36,11 @@ export type OnSettingComponent = {
   label: string
 } & CustomComponent
 
+/** コントローラーのポップアップに出る。小さなコンポーネントにすること */
+export type OnControllerPopupComponent = {
+  position: "OnControllerPopup"
+} & CustomComponent
+
 /** プレイヤーの上、字幕より後ろ */
 export type OnPlayerComponent = { position: "onPlayer" } & CustomComponent
 
@@ -49,6 +54,7 @@ export type ComponentWithPosition =
   | OnBackgroundComponent
   | OnSplashComponent
   | OnSettingComponent
+  | OnControllerPopupComponent
   | OnPlayerComponent
   | OnSubtitleComponent
   | OnForwardComponent

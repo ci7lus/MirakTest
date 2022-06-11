@@ -28,6 +28,7 @@ import { mirakurunServicesAtom } from "../../atoms/mirakurun"
 import { controllerSetting, experimentalSetting } from "../../atoms/settings"
 import { useRefFromState } from "../../hooks/ref"
 import { EscapeEnclosed } from "../common/EscapeEnclosed"
+import { PluginPositionComponents } from "../common/PluginPositionComponents"
 import { AudioChannelSelector } from "./controllers/AudioChannelSelector"
 import { AudioTrackSelector } from "./controllers/AudioTrackSelector"
 import { FullScreenToggleButton } from "./controllers/FullScreenToggleButton"
@@ -40,7 +41,6 @@ import { SubtitleToggleButton } from "./controllers/SubtitleToggleButton"
 import { VolumeSlider } from "./controllers/VolumeSlider"
 
 import "dayjs/locale/ja"
-
 dayjs.locale("ja")
 
 export const CoiledController: React.FC<{}> = () => {
@@ -354,7 +354,9 @@ export const CoiledController: React.FC<{}> = () => {
                   "p-3",
                   "bg-gray-700",
                   "bg-opacity-80",
-                  "rounded-md"
+                  "rounded-md",
+                  "max-h-[80vh]",
+                  "overflow-auto"
                 )}
               >
                 <label>
@@ -411,6 +413,15 @@ export const CoiledController: React.FC<{}> = () => {
                     />
                   </label>
                 )}
+                <label
+                  id="OnControllerPopupComponents"
+                  className={clsx("max-w-lg", "pb-1")}
+                >
+                  <PluginPositionComponents
+                    position="OnControllerPopup"
+                    isAbsolute={false}
+                  />
+                </label>
               </Popover.Panel>
             </Popover>
             <FullScreenToggleButton

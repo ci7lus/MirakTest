@@ -1,3 +1,4 @@
+import clsx from "clsx"
 import React, { useEffect, useState } from "react"
 import { useRecoilBridgeAcrossReactRoots_UNSTABLE } from "recoil"
 import { ComponentWithPosition } from "../../types/plugin"
@@ -5,7 +6,8 @@ import { ComponentShadowWrapper } from "./ComponentShadowWrapper"
 
 export const PluginPositionComponents: React.FC<{
   position: ComponentWithPosition["position"]
-}> = ({ position }) => {
+  isAbsolute?: boolean
+}> = ({ position, isAbsolute = true }) => {
   const [components, setComponents] = useState<ComponentWithPosition[] | null>(
     null
   )
@@ -28,7 +30,9 @@ export const PluginPositionComponents: React.FC<{
         <ComponentShadowWrapper
           _id={component.id}
           key={component.id}
-          className="absolute top-0 left-0 w-full h-full"
+          className={
+            isAbsolute ? "absolute top-0 left-0 w-full h-full" : clsx("pt-2")
+          }
           Component={() => (
             <RecoilBridge>
               <component.component />
