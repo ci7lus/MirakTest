@@ -88,7 +88,7 @@ export const CoiledContentPlayer: React.FC<{}> = () => {
       <MirakurunManager />
       <CoiledEpgUpdatedObserver />
       <CoiledProgramTitleManager />
-      <div className="w-full h-screen bg-gray-900 text-gray-100 flex items-center justify-center">
+      <div className="w-full h-screen text-gray-100 flex items-center justify-center">
         <div className="relative w-full h-full overflow-hidden">
           <div id="Splash" className="absolute top-0 left-0 w-full h-full">
             <Splash />
