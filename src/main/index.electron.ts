@@ -93,6 +93,8 @@ let disabledPluginFileNames: string[] = []
 
 let watching: fs.FSWatcher | null = null
 
+let isEnteringFullScreen = false
+
 let globalScreenshotAccelerator: string | false = false
 const registerGlobalScreenshotAccelerator = (accelerator: string | false) => {
   if (globalScreenshotAccelerator) {
@@ -795,6 +797,14 @@ const openWindow = ({
     window.on("moved", () => {
       window.webContents.send(ON_WINDOW_MOVED)
     })
+    // TODO: フルスクリーン操作周辺で信号機が消えていると消失しちゃうのの Workaround
+    window.on("enter-full-screen", () => {
+      isEnteringFullScreen = true
+      window.setWindowButtonVisibility(true)
+    })
+    window.on("leave-full-screen", () => {
+      isEnteringFullScreen = false
+    })
 
     if (isDev) {
       window.webContents.session.webRequest.onBeforeSendHeaders(
@@ -910,7 +920,13 @@ ipcMain.handle(TOGGLE_FULL_SCREEN, (event) => {
   if (!window || !window.isFullScreenable()) {
     return
   }
-  window.setFullScreen(!window.isFullScreen())
+  const isFullScreen = window.isFullScreen()
+  if (!isFullScreen) {
+    // TODO: フルスクリーン操作周辺で信号機が消えていると消失しちゃうのの Workaround
+    isEnteringFullScreen = true
+    window.setWindowButtonVisibility(true)
+  }
+  window.setFullScreen(!isFullScreen)
 })
 
 ipcMain.handle(EXIT_FULL_SCREEN, (event) => {
@@ -923,7 +939,12 @@ ipcMain.handle(EXIT_FULL_SCREEN, (event) => {
 
 ipcMain.handle(SET_WINDOW_BUTTON_VISIBILITY, (event, visibility: boolean) => {
   const window = BrowserWindow.fromWebContents(event.sender)
-  if (!window || process.platform !== "darwin") {
+  if (!window) {
+    return
+  }
+  // TODO: フルスクリーン操作周辺で信号機が消えていると消失しちゃうのの Workaround
+  if (window.isFullScreen() || isEnteringFullScreen) {
+    window.setWindowButtonVisibility(true)
     return
   }
   window.setWindowButtonVisibility(visibility)
