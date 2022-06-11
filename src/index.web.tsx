@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react"
-import ReactDOM from "react-dom"
 import { createRoot } from "react-dom/client"
 import Recoil from "recoil"
 import RecoilSync from "recoil-sync"
@@ -12,6 +11,9 @@ global.React = React
 global.Recoil = Recoil
 global.RecoilSync = RecoilSync
 
+// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+const root = createRoot(document.getElementById("app")!)
+
 const WebRoot: React.FC<{}> = () => {
   const [unmounted, setUnmounted] = useState(false)
   useEffect(() => {
@@ -19,7 +21,7 @@ const WebRoot: React.FC<{}> = () => {
     if (!app) return
     const beforeUnload = () => {
       setUnmounted(true)
-      ReactDOM.unmountComponentAtNode(app)
+      root.unmount()
     }
     window.addEventListener("beforeunload", beforeUnload)
     return () => {
@@ -39,5 +41,4 @@ const WebRoot: React.FC<{}> = () => {
   return <PluginLoader {...initialData} />
 }
 
-// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-createRoot(document.getElementById("app")!).render(<WebRoot />)
+root.render(<WebRoot />)

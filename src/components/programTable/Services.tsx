@@ -11,49 +11,44 @@ export const ScrollServices: React.FC<{
   return (
     <>
       {services.map((service, idx) => (
-        <Popover className="relative">
+        <Popover key={service.id} className="relative">
           <Popover.Button
-            className={`focus:outline-none cursor-pointer text-gray-100`}
+            className={clsx(
+              "text-gray-100",
+              "bg-gray-700",
+              "w-48",
+              "text-sm",
+              "shrink-0",
+              "text-center",
+              "p-1",
+              "py-2",
+              "cursor-pointer",
+              "border-r-2",
+              "border-gray-400",
+              "truncate",
+              "select-none",
+              "focus:outline-none",
+              "hover:bg-gray-600",
+              "flex",
+              "items-center",
+              "justify-center",
+              "space-x-2"
+            )}
           >
-            <button
-              type="button"
-              className={clsx(
-                "bg-gray-700",
-                "w-48",
-                "text-sm",
-                "shrink-0",
-                "text-center",
-                "p-1",
-                "py-2",
-                "cursor-pointer",
-                "border-r-2",
-                "border-gray-400",
-                "truncate",
-                "select-none",
-                "focus:outline-none",
-                "hover:bg-gray-600",
-                "flex",
-                "items-center",
-                "justify-center",
-                "space-x-2"
-              )}
-              key={service.id}
-            >
-              {service.logoData && (
-                <img
-                  className={clsx(
-                    "h-6",
-                    "rounded-md",
-                    "shrink-0",
-                    "pointer-events-none"
-                  )}
-                  src={`data:image/jpeg;base64,${service.logoData}`}
-                />
-              )}
-              <span className={clsx("truncate", "pointer-events-none")}>
-                {`${service.name}`}
-              </span>
-            </button>
+            {service.logoData && (
+              <img
+                className={clsx(
+                  "h-6",
+                  "rounded-md",
+                  "shrink-0",
+                  "pointer-events-none"
+                )}
+                src={`data:image/jpeg;base64,${service.logoData}`}
+              />
+            )}
+            <span className={clsx("truncate", "pointer-events-none")}>
+              {`${service.name}`}
+            </span>
           </Popover.Button>
           <Popover.Panel
             className={clsx(

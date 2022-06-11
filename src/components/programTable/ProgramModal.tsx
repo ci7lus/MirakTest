@@ -79,17 +79,17 @@ export const ProgramModal = ({
 
         <div>
           {Object.entries(program.extended || {}).map(([name, desc]) => (
-            <>
+            <React.Fragment key={name}>
               <h4 className={clsx("text-lg", "mt-2", "text-gray-300")}>
                 {name}
               </h4>
               <p className={clsx("mt-1", "whitespace-pre-wrap", "select-text")}>
                 {desc}
               </p>
-            </>
+            </React.Fragment>
           ))}
         </div>
-        <p className={clsx("mt-2", "text-gray-400")}>
+        <div className={clsx("mt-2", "text-gray-400")}>
           {program._pf && <p>EIT[p/f] による更新</p>}
           {program.video?.componentType !== undefined && (
             <p>{VideoComponentType[program.video?.componentType]}</p>
@@ -101,7 +101,7 @@ export const ProgramModal = ({
             <p>{AudioSamplingRate[program.audios?.[0].samplingRate ?? 0]}</p>
           )}
           <p>{program.isFree ? "無料放送" : "有料放送"}</p>
-        </p>
+        </div>
       </div>
 
       <button
