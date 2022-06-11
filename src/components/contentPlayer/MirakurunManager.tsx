@@ -19,11 +19,9 @@ import {
 import { mirakurunSetting } from "../../atoms/settings"
 import { useNow } from "../../hooks/date"
 import { MirakurunAPI } from "../../infra/mirakurun"
-import {
-  Service,
-  ServicesApiAxiosParamCreator,
-} from "../../infra/mirakurun/api"
+import { Service } from "../../infra/mirakurun/api"
 import { ServiceWithLogoData } from "../../types/mirakurun"
+import { generateStreamUrlForMirakurun } from "../../utils/mirakurun"
 
 export const MirakurunManager: React.FC<{}> = () => {
   const mirakurunSettingValue = useRecoilValue(mirakurunSetting)
@@ -137,6 +135,10 @@ export const MirakurunManager: React.FC<{}> = () => {
       services = []
     }
     if (!isContentPrepared) {
+      if (playingContent?.service) {
+        setSelectedService(service)
+        return
+      }
       if (lastSelectedServiceId) {
         const service = services.find(
           (service) => service.id === lastSelectedServiceId.serviceId
@@ -179,16 +181,13 @@ export const MirakurunManager: React.FC<{}> = () => {
       setPlayingContent(null)
       return
     }
-    const mirakurun = new MirakurunAPI(mirakurunSettingValue)
-
-    const getServiceStreamRequest = await ServicesApiAxiosParamCreator(
-      mirakurun.getConfigure()
-    ).getServiceStream(service.id)
-    const requestUrl =
-      mirakurunSettingValue.baseUrl + getServiceStreamRequest.url
+    const url = await generateStreamUrlForMirakurun(
+      service,
+      mirakurunSettingValue
+    )
     setPlayingContent({
       contentType: "Mirakurun",
-      url: requestUrl,
+      url,
       service: service,
     })
     setLastSelectedServiceId({
