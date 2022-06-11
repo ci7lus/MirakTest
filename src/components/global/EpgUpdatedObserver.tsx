@@ -15,7 +15,7 @@ export const CoiledEpgUpdatedObserver = () => {
     }
     setIsFirst(false)
     setLastEpgUpdated(globalLastEpgUpdated)
-    console.info("番組表が更新されました:", globalLastEpgUpdated)
+    console.debug("番組表が更新されました:", globalLastEpgUpdated)
   }, [globalLastEpgUpdated])
   // 継続更新
   useThrottleFn(
@@ -24,7 +24,7 @@ export const CoiledEpgUpdatedObserver = () => {
         return
       }
       setLastEpgUpdated(globalLastEpgUpdated)
-      console.info("番組表が更新されました:", globalLastEpgUpdated)
+      console.debug("番組表が更新されました:", globalLastEpgUpdated)
     },
     1000 * 30,
     [globalLastEpgUpdated]
