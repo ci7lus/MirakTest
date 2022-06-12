@@ -16,6 +16,7 @@ export const ControllerSidebar: React.FC<{
   setIsSidebarOpen: (b: boolean) => unknown
 }> = ({ isVisible, services, setService, setIsSidebarOpen }) => {
   const ref = useRef<HTMLDivElement>(null)
+  const scrollAreaRef = useRef<HTMLDivElement>(null)
   useClickAway(ref, () => setIsSidebarOpen(false))
   const serviceTypes = useMemo(
     () =>
@@ -56,6 +57,9 @@ export const ControllerSidebar: React.FC<{
       ),
     [selectedType, services]
   )
+  useEffect(() => {
+    scrollAreaRef.current?.scrollTo({ top: 0 })
+  }, [targetServices])
   const now = useNow()
   const [queriedPrograms, setQueriedPrograms] = useState<Program[]>([])
   const lastEpgUpdated = useRecoilValue(lastEpgUpdatedAtom)
@@ -140,7 +144,7 @@ export const ControllerSidebar: React.FC<{
             </button>
           ))}
         </div>
-        <div className={clsx("overflow-auto", "pr-2")}>
+        <div className={clsx("overflow-auto", "pr-2")} ref={scrollAreaRef}>
           <div
             className={clsx("grid", "grid-cols-2", "gap-2", "lg:grid-cols-3")}
           >
