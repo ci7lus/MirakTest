@@ -43,12 +43,18 @@ AppImage に実行権限と `--no-sandbox` をつけて実行するか、アー�
 
 下記開発手順に沿ってビルドを行うか、CI にてコミット毎にビルドが行われているので、コミットメッセージ右の緑色チェック → Artifacts からダウンロードできます（ログインが必要です）。
 
-## プラグイン
+## 機能
+
+### プラグイン
 
 プラグインを導入して機能を拡張することが出来ます。<br />
 利用できるプラグインの一覧は[こちら](https://github.com/ci7lus/MirakTest/wiki/Userland-Plugin)。<br />
 API 仕様は[plugin.ts](./src/types/plugin.ts)を参照してください。<br />
 型定義ファイル(`plugin.d.ts`)はリリースにてアプリイメージと一緒に配布しています。
+
+### 操作
+
+- [キーボードショートカット](https://github.com/ci7lus/MirakTest/wiki/%E3%82%AD%E3%83%BC%E3%83%9C%E3%83%BC%E3%83%89%E3%82%B7%E3%83%A7%E3%83%BC%E3%83%88%E3%82%AB%E3%83%83%E3%83%88)
 
 ## 開発
 
