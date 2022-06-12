@@ -6516,7 +6516,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"escape-html@npm:~1.0.3":
+"escape-html@npm:^1.0.3, escape-html@npm:~1.0.3":
   version: 1.0.3
   resolution: "escape-html@npm:1.0.3"
   checksum: 6213ca9ae00d0ab8bccb6d8d4e0a98e76237b2410302cf7df70aaa6591d509a2a37ce8998008cbecae8fc8ffaadf3fb0229535e6a145f3ce0b211d060decbb24
@@ -8218,6 +8218,27 @@ __metadata:
   version: 2.2.0
   resolution: "interpret@npm:2.2.0"
   checksum: f51efef7cb8d02da16408ffa3504cd6053014c5aeb7bb8c223727e053e4235bf565e45d67028b0c8740d917c603807aa3c27d7bd2f21bf20b6417e2bb3e5fd6e
+  languageName: node
+  linkType: hard
+
+"interweave-autolink@npm:^5.0.0":
+  version: 5.0.0
+  resolution: "interweave-autolink@npm:5.0.0"
+  peerDependencies:
+    interweave: ^13.0.0
+    react: ^16.8.0 || ^17.0.0 || ^18.0.0
+  checksum: bc876b945f771200b3f019955f7995b5fbf4b6e1e9138ea04c76a7c56690536565a18f4c3357a73c1d099b80db90dab2c9c8458429519a55651a95095e6db3fd
+  languageName: node
+  linkType: hard
+
+"interweave@npm:^13.0.0":
+  version: 13.0.0
+  resolution: "interweave@npm:13.0.0"
+  dependencies:
+    escape-html: ^1.0.3
+  peerDependencies:
+    react: ^16.8.0 || ^17.0.0 || ^18.0.0
+  checksum: 751e7da047523d96dfd7f1f411b83d02d747f3af744ae43cd3332360d92c49a66f3da841cce827f9b75e803273930e0485cf08578f97dc2bf47d05510d99131f
   languageName: node
   linkType: hard
 
@@ -10150,6 +10171,8 @@ __metadata:
     font-list: ^1.4.5
     format-duration: ^2.0.0
     husky: ^8.0.1
+    interweave: ^13.0.0
+    interweave-autolink: ^5.0.0
     jest: ^28.1.1
     js-base64: ^3.7.2
     lint-staged: ^13.0.1

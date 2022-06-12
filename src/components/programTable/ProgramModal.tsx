@@ -11,6 +11,7 @@ import {
 } from "../../constants/program"
 import { Program } from "../../infra/mirakurun/api"
 import { ServiceWithLogoData } from "../../types/mirakurun"
+import { AutoLinkedText } from "../common/AutoLinkedText"
 import { EscapeEnclosed } from "../common/EscapeEnclosed"
 
 export const ProgramModal = ({
@@ -83,8 +84,15 @@ export const ProgramModal = ({
               <h4 className={clsx("text-lg", "mt-2", "text-gray-300")}>
                 {name}
               </h4>
-              <p className={clsx("mt-1", "whitespace-pre-wrap", "select-text")}>
-                {desc}
+              <p
+                className={clsx(
+                  "mt-1",
+                  "whitespace-pre-wrap",
+                  "select-text",
+                  "programDescription"
+                )}
+              >
+                <AutoLinkedText>{desc}</AutoLinkedText>
               </p>
             </React.Fragment>
           ))}

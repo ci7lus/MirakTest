@@ -46,3 +46,10 @@ button {
   font-weight: normal;
   font-style: normal;
 }
+
+.programDescription {
+  a {
+    @apply text-blue-400;
+    @apply cursor-pointer;
+  }
+}
