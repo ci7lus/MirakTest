@@ -5,9 +5,7 @@ import { useRecoilValue } from "recoil"
 import { lastEpgUpdatedAtom } from "../../../atoms/contentPlayer"
 import { useNow } from "../../../hooks/date"
 import { ChannelType, Program, Service } from "../../../infra/mirakurun/api"
-import { SidebarServiceCarousel } from "./SidebarServiceCarousel"
-import { SidebarServiceDetail } from "./SidebarServiceDetail"
-import { SidebarServiceQuickButton } from "./SidebarServiceQuickButton"
+import { SidebarSelectedServiceList } from "./SidebarSelectedServiceList"
 
 export const ControllerSidebar: React.FC<{
   isVisible: boolean
@@ -16,7 +14,6 @@ export const ControllerSidebar: React.FC<{
   setIsSidebarOpen: (b: boolean) => unknown
 }> = ({ isVisible, services, setService, setIsSidebarOpen }) => {
   const ref = useRef<HTMLDivElement>(null)
-  const scrollAreaRef = useRef<HTMLDivElement>(null)
   useClickAway(ref, () => setIsSidebarOpen(false))
   const serviceTypes = useMemo(
     () =>
@@ -57,9 +54,6 @@ export const ControllerSidebar: React.FC<{
       ),
     [selectedType, services]
   )
-  useEffect(() => {
-    scrollAreaRef.current?.scrollTo({ top: 0 })
-  }, [targetServices])
   const now = useNow()
   const [queriedPrograms, setQueriedPrograms] = useState<Program[]>([])
   const lastEpgUpdated = useRecoilValue(lastEpgUpdatedAtom)
@@ -144,52 +138,11 @@ export const ControllerSidebar: React.FC<{
             </button>
           ))}
         </div>
-        <div className={clsx("overflow-auto", "pr-2")} ref={scrollAreaRef}>
-          <div
-            className={clsx("grid", "grid-cols-2", "gap-2", "lg:grid-cols-3")}
-          >
-            {targetServices.map((services) => {
-              const service = services[0]
-              const programs = queriedPrograms
-                .filter(
-                  (program) =>
-                    program.serviceId === service.serviceId &&
-                    program.networkId === service.networkId
-                )
-                .sort((a, b) => a.startAt - b.startAt)
-              const current = programs?.[0]
-              return (
-                <SidebarServiceQuickButton
-                  key={"button" + service.id}
-                  service={service}
-                  setService={setService}
-                  program={current}
-                />
-              )
-            })}
-          </div>
-          {targetServices.map((services) => {
-            if (services.length < 2) {
-              const service = services[0]
-              return (
-                <SidebarServiceDetail
-                  key={service.id}
-                  service={service}
-                  queriedPrograms={queriedPrograms}
-                  setService={setService}
-                />
-              )
-            }
-            return (
-              <SidebarServiceCarousel
-                key={services[0].id + "s"}
-                services={services}
-                queriedPrograms={queriedPrograms}
-                setService={setService}
-              />
-            )
-          })}
-        </div>
+        <SidebarSelectedServiceList
+          services={targetServices}
+          queriedPrograms={queriedPrograms}
+          setService={setService}
+        />
       </div>
     </div>
   )
