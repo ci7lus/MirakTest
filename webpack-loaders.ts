@@ -12,7 +12,14 @@ export const babelLoaderConfiguration: (b: boolean) => webpack.RuleSetRule = (
       presets: [
         ["@babel/preset-env", { targets: { electron: "18" } }],
         "@babel/preset-typescript",
-        "@babel/preset-react",
+        [
+          "@babel/preset-react",
+          {
+            runtime: "automatic",
+            development: isDev,
+            importSource: "@welldone-software/why-did-you-render",
+          },
+        ],
       ],
       plugins: [
         isDev && "react-refresh/babel",
