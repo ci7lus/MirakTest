@@ -125,5 +125,8 @@ export const SidebarServiceDetail = memo(
         </div>
       </a>
     )
-  }
+  },
+  (prev, next) =>
+    prev.service.id === next.service.id &&
+    prev.queriedPrograms === next.queriedPrograms
 )
