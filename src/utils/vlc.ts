@@ -90,6 +90,10 @@ export const VLCLogFilter = (s: string) => {
       category: "configured_with",
       isCustomized: s.includes("vlc-miraktest"),
     } as const
+  } else if (s.startsWith("looking for audio resampler module matching")) {
+    return {
+      category: "audio_channel_updated",
+    } as const
   } else {
     return { category: "unknown" } as const
   }

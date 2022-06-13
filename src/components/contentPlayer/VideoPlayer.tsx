@@ -362,6 +362,7 @@ export const CoiledVideoPlayer: React.FC<{
           isCustomized = parsed.isCustomized || false
           break
         }
+        case "audio_channel_updated":
         case "received_first_picture":
         case "es_out_program_epg":
         case "PMTCallBack_called_for_program": {
