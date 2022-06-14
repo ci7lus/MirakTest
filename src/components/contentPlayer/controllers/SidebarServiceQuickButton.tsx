@@ -92,5 +92,7 @@ export const SidebarServiceQuickButton = memo(
         )}
       </button>
     )
-  }
+  },
+  (prev, next) =>
+    prev.service.id === next.service.id && prev.program?.id === next.program?.id
 )

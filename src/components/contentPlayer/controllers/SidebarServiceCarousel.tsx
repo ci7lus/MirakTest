@@ -105,5 +105,9 @@ export const SidebarServiceCarousel = memo(
         )}
       </div>
     )
-  }
+  },
+  (prev, next) =>
+    prev.services.map((s) => s.id).join() ===
+      next.services.map((s) => s.id).join() &&
+    prev.queriedPrograms === next.queriedPrograms
 )

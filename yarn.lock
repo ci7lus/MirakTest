@@ -3696,6 +3696,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@welldone-software/why-did-you-render@npm:^7.0.1":
+  version: 7.0.1
+  resolution: "@welldone-software/why-did-you-render@npm:7.0.1"
+  dependencies:
+    lodash: ^4
+  peerDependencies:
+    react: ^16 || ^17 || ^18
+  checksum: 0bfc59f1f8613e7dc5fbf189305e88b01c50ee278df2c9b69082ed6abcf8d71758eb468d027235916c6126934a755d6547e9704883007236544763fffad6f48c
+  languageName: node
+  linkType: hard
+
 "@xobotyi/scrollbar-width@npm:^1.9.5":
   version: 1.9.5
   resolution: "@xobotyi/scrollbar-width@npm:1.9.5"
@@ -10154,6 +10165,7 @@ __metadata:
     "@types/react": ^18.0.12
     "@types/react-dom": ^18.0.5
     "@types/stream-json": ^1.7.2
+    "@welldone-software/why-did-you-render": ^7.0.1
     aribb24.js: ^1.9.18
     autoprefixer: ^10.4.7
     axios: ^0.27.2

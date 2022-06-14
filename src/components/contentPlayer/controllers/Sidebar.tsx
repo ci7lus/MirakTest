@@ -71,19 +71,26 @@ export const ControllerSidebar: React.FC<{
               service.serviceId === program.serviceId &&
               service.networkId === program.networkId
           )
-        const filtered = currentPrograms.filter(filter)
+        const filtered = currentPrograms.filter(filter).sort()
         const max = Math.max(
           ...filtered.map((program) => program.startAt + program.duration)
         )
         if (!max) {
-          setQueriedPrograms(filtered)
+          setQueriedPrograms((prev) =>
+            JSON.stringify(prev) === JSON.stringify(filtered) ? prev : filtered
+          )
           return
         }
         const programs = await window.Preload.public.epgManager.query({
           startAtLessThan: max,
           startAt: unix,
         })
-        setQueriedPrograms([...programs.filter(filter), ...filtered])
+        const queriedPrograms = [...programs.filter(filter), ...filtered].sort()
+        setQueriedPrograms((prev) =>
+          JSON.stringify(prev) === JSON.stringify(queriedPrograms)
+            ? prev
+            : queriedPrograms
+        )
       })
   }, [now, lastEpgUpdated])
   return (
