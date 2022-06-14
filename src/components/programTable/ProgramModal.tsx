@@ -1,7 +1,7 @@
 import { Dialog } from "@headlessui/react"
 import clsx from "clsx"
 import dayjs from "dayjs"
-import React from "react"
+import React, { useEffect, useRef } from "react"
 import {
   Genre,
   SubGenre,
@@ -32,6 +32,10 @@ export const ProgramModal = ({
         SubGenre[genre.lv1][genre.lv2]
       return [mainGenre, subGenre].filter((s) => s).join(" / ")
     }) || []
+  const ref = useRef<HTMLDivElement>(null)
+  useEffect(() => {
+    ref.current?.scrollTo({ top: 0 })
+  }, [program])
 
   return (
     <div
@@ -50,7 +54,7 @@ export const ProgramModal = ({
         "flex-col"
       )}
     >
-      <div className={clsx("overflow-auto")}>
+      <div className={clsx("overflow-auto")} ref={ref}>
         <Dialog.Title className={clsx("text-2xl", "select-text")}>
           <EscapeEnclosed str={program.name || ""} />
         </Dialog.Title>
