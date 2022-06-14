@@ -81,15 +81,22 @@ export const ProgramModal = ({
         <div>
           {Object.entries(program.extended || {}).map(([name, desc]) => (
             <React.Fragment key={name}>
-              <h4 className={clsx("text-lg", "mt-2", "text-gray-300")}>
+              <h4
+                className={clsx(
+                  "text-lg",
+                  "mt-2",
+                  "text-gray-300",
+                  "select-text"
+                )}
+              >
                 {name}
               </h4>
               <p
                 className={clsx(
                   "mt-1",
                   "whitespace-pre-wrap",
-                  "select-text",
-                  "programDescription"
+                  "programDescription",
+                  "select-text"
                 )}
               >
                 <AutoLinkedText>{desc}</AutoLinkedText>

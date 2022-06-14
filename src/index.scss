@@ -52,4 +52,8 @@ button {
     @apply text-blue-400;
     @apply cursor-pointer;
   }
+
+  * {
+    user-select: text;
+  }
 }
