@@ -181,10 +181,10 @@ export type PluginDefineInRenderer = PluginMeta & {
   exposedAtoms: DefineAtom[]
   /** ウィンドウ間で共有する Atom（シリアライズ可能にすること）
    * @deprecated 後方互換性のためのフィールドです、同時に Atom に syncEffect も設定してください */
-  sharedAtoms: DefineAtom[]
+  sharedAtoms?: DefineAtom[]
   /** 保存する Atom（シリアライズ可能にすること）。
    * @deprecated 後方互換性のためのフィールドです、同時に Atom に syncEffect も設定してください */
-  storedAtoms: DefineAtom[]
+  storedAtoms?: DefineAtom[]
   /** コンポーネントとウィンドウは shadowRoot に展開されるので、各自独自に CSS をバンドルしないとスタイリングが初期化される点に注意する */
   components: ComponentWithPosition[]
   windows: {
