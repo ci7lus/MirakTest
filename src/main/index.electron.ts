@@ -526,55 +526,58 @@ const loadPlugins = async ({
       if (!fileName.endsWith(".plugin.js")) {
         return
       }
+      const loadedDatum = pluginData.get(fileName)
+      let pluginDisplay: string | null = null
       const datum = await pluginLoader(fileName)
-      let isReload = false
-      if (datum) {
-        const loadedDatum = pluginData.get(fileName)
-        if (loadedDatum) {
-          isReload = true
-          if (loadedDatum.content === datum.content) {
-            console.info(
-              `[Plugin] ファイル内容に変更がないのでスキップします: ${fileName}`
-            )
-            return
-          }
-        }
+      if (datum && loadedDatum?.content === datum.content) {
+        console.info(
+          `[Plugin] ファイル内容に変更がないのでスキップします: ${fileName}`
+        )
+        return
       }
-      const pluginDisplay = await vm.runInContext(
-        "getPluginDisplay",
-        pluginsVMContext
-      )(fileName)
-      await vm.runInContext("destroyPlugin", pluginsVMContext)(fileName)
-      pluginData.delete(fileName)
-      if (datum) {
+      if (loadedDatum) {
         try {
-          pluginData.set(fileName, datum)
-          console.info(`[Plugin] ロードしました: ${datum.fileName}`)
-          await moduleLoader(datum.fileName, datum.content)
-          const pluginDisplay = await vm.runInContext(
-            "setupPlugin",
+          pluginDisplay = await vm.runInContext(
+            "getPluginDisplay",
             pluginsVMContext
           )(fileName)
-          new Notification({
-            title: pluginDisplay
-              ? isReload
-                ? "プラグインを再読み込みしました"
-                : "プラグインを読み込みました"
-              : "プラグインの読み込みに失敗した可能性があります",
-            body: pluginDisplay || fileName,
-          }).show()
-        } catch (e) {
-          console.error(e, fileName)
+        } catch {}
+        try {
           await vm.runInContext("destroyPlugin", pluginsVMContext)(fileName)
-          pluginData.delete(fileName)
+        } catch (error) {
+          console.error(error, fileName)
         }
-      } else {
+        pluginData.delete(fileName)
+      }
+      if (!datum) {
         new Notification({
           title: "プラグインを読み込み解除しました",
-          body: pluginDisplay,
+          body: pluginDisplay || fileName,
         }).show()
+        return
+      }
+      console.info(`[Plugin] ロードしました: ${datum.fileName}`)
+      pluginData.set(fileName, datum)
+      pluginDisplay = null
+      try {
+        await moduleLoader(datum.fileName, datum.content)
+        pluginDisplay = await vm.runInContext(
+          "setupPlugin",
+          pluginsVMContext
+        )(fileName)
+      } catch (e) {
+        console.error(e, fileName)
+        await vm.runInContext("destroyPlugin", pluginsVMContext)(fileName)
       }
       vm.runInContext("setAppMenu", pluginsVMContext)(setAppMenu)
+      new Notification({
+        title: pluginDisplay
+          ? loadedDatum
+            ? "プラグインを再読み込みしました"
+            : "プラグインを読み込みました"
+          : "プラグインの読み込みに失敗した可能性があります",
+        body: pluginDisplay || fileName,
+      }).show()
     }
   )
 }
