@@ -1,5 +1,6 @@
+import $ from "@recoiljs/refine"
 import { atomFamily } from "recoil"
-import { syncEffect, refine as $ } from "recoil-sync"
+import { syncEffect } from "recoil-sync"
 import { RECOIL_SYNC_SHARED_KEY } from "../constants/recoil"
 import { Service } from "../infra/mirakurun/api"
 

@@ -107,7 +107,7 @@
     "react-spring-carousel-js": "^1.9.32",
     "react-use": "^17.4.0",
     "recoil": "^0.7.3",
-    "recoil-sync": "^0.0.1-alpha.2",
+    "recoil-sync": "0.1.1-alpha.1",
     "stream-json": "^1.7.4",
     "webchimera.js": "patch:webchimera.js@^0.5.2#patches/webchimera.js+0.5.2.patch",
     "zod": "^3.17.3"

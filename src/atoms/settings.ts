@@ -1,5 +1,6 @@
+import $ from "@recoiljs/refine"
 import { atom } from "recoil"
-import { syncEffect, refine as $ } from "recoil-sync"
+import { syncEffect } from "recoil-sync"
 import pkg from "../../package.json"
 import { SUBTITLE_DEFAULT_FONT } from "../constants/font"
 import {

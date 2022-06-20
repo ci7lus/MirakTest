@@ -2792,6 +2792,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@recoiljs/refine@npm:0.1.1-alpha.1":
+  version: 0.1.1-alpha.1
+  resolution: "@recoiljs/refine@npm:0.1.1-alpha.1"
+  checksum: 62023cf01cef0e5fa848028ca1714b9c5c9482c568cd191a3d59ac1adcf28aede50a92f9762c1585daa246500bd204a4daf81f131e77634e8ce812bbf4a5f745
+  languageName: node
+  linkType: hard
+
 "@rushstack/eslint-patch@npm:^1.1.3":
   version: 1.1.3
   resolution: "@rushstack/eslint-patch@npm:1.1.3"
@@ -10204,7 +10211,7 @@ __metadata:
     react-spring-carousel-js: ^1.9.32
     react-use: ^17.4.0
     recoil: ^0.7.3
-    recoil-sync: ^0.0.1-alpha.2
+    recoil-sync: 0.1.1-alpha.1
     sass: ^1.52.3
     sass-loader: ^13.0.0
     stream-json: ^1.7.4
@@ -11854,14 +11861,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"recoil-sync@npm:^0.0.1-alpha.2":
-  version: 0.0.1-alpha.2
-  resolution: "recoil-sync@npm:0.0.1-alpha.2"
+"recoil-sync@npm:0.1.1-alpha.1":
+  version: 0.1.1-alpha.1
+  resolution: "recoil-sync@npm:0.1.1-alpha.1"
   dependencies:
+    "@recoiljs/refine": 0.1.1-alpha.1
     transit-js: ^0.8.874
   peerDependencies:
-    recoil: ">=0.7.0"
-  checksum: f718f5b2de4a77100d3b778f2aef71f29c506cd1cc216cddc49920940fbe16093643264ec095cd03a3f8e3468ef6ec6f907965e41c30a8c88a4c7794a8f8f549
+    recoil: ">=0.7.3"
+  checksum: 6a292c9940fe64181f099f1490dc90557a8712b74de201e37dde66b17d8073919b8f6dd801c211bddc193632984181da3858689e5d3fc7f55babb98e824501dc
   languageName: node
   linkType: hard
 

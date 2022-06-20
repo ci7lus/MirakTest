@@ -1,3 +1,4 @@
+import refine from "@recoiljs/refine"
 import React, { useEffect, useState } from "react"
 import { createRoot } from "react-dom/client"
 import Recoil from "recoil"
@@ -9,7 +10,8 @@ import "./index.scss"
 
 global.React = React
 global.Recoil = Recoil
-global.RecoilSync = RecoilSync
+const compatibilityRecoilSync = { ...RecoilSync, refine }
+global.RecoilSync = compatibilityRecoilSync
 
 if (process.env.NODE_ENV === "development") {
   // eslint-disable-next-line @typescript-eslint/no-var-requires
