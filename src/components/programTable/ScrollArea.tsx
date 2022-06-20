@@ -38,7 +38,10 @@ export const ScrollArea: React.FC<{
   )
   const [programs, setPrograms] = useState(data)
   useEffect(() => {
-    setPrograms(data?.filter((program) => program.name) || [])
+    if (data === undefined) {
+      return
+    }
+    setPrograms(data.filter((program) => program.name))
   }, [data])
   useEffect(() => {
     if (programs?.length === 0) {
