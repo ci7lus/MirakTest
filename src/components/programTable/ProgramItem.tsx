@@ -99,5 +99,8 @@ export const ProgramItem: React.FC<{
         </p>
       </div>
     )
-  }
+  },
+  (prev, next) =>
+    prev.program.id === next.program.id &&
+    prev.displayStartTimeInString === next.displayStartTimeInString
 )
