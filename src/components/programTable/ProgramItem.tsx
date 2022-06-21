@@ -102,5 +102,7 @@ export const ProgramItem: React.FC<{
   },
   (prev, next) =>
     prev.program.id === next.program.id &&
+    prev.program.startAt === next.program.startAt &&
+    prev.program.duration === next.program.duration &&
     prev.displayStartTimeInString === next.displayStartTimeInString
 )
