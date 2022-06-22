@@ -55,7 +55,7 @@ export const ProgramModal = ({
       )}
     >
       <div className={clsx("overflow-auto")} ref={ref}>
-        <Dialog.Title className={clsx("text-2xl", "select-text")}>
+        <Dialog.Title className={clsx("text-2xl", "select-text")} tabIndex={0}>
           <EscapeEnclosed str={program.name || ""} />
         </Dialog.Title>
         <p className={clsx("mt-2", "text-gray-300", "select-text")}>
