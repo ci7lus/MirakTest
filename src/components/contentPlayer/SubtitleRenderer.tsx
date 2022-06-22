@@ -64,7 +64,10 @@ export const CoiledSubtitleRenderer: React.FC<{
       fromZero - (internalPlayingTimeRef.current || playingTime) / 1000
     const provider = new CanvasProvider(decoded, pts)
     const estimate = provider.render()
-    if (!estimate) return
+    // 10秒以上先の表示は通常ではありえないので無視する
+    if (!estimate || 10 < estimate.startTime) {
+      return
+    }
     const ctx = canvas.getContext("2d")
     if (!ctx) return
     const font = setting.font || SUBTITLE_DEFAULT_FONT
