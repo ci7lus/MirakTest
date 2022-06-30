@@ -37,17 +37,7 @@ export const CoiledContentPlayer: React.FC<{}> = () => {
         if (!bounds) {
           return
         }
-        const min = Math.ceil((bounds.width / 16) * 9)
-        if (process.platform === "darwin" && bounds.height < min) {
-          const targetBounds = {
-            ...bounds,
-            height: min,
-          }
-          window.Preload.public.setWindowContentBounds(targetBounds)
-          setBounds(targetBounds)
-        } else {
-          setBounds(bounds)
-        }
+        setBounds(bounds)
       }, 500)
     }
     window.addEventListener("resize", onResizedOrMoved)
