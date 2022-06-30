@@ -94,6 +94,7 @@ export type Preload = {
       buttons: string[]
     ) => Promise<Electron.MessageBoxReturnValue>
     requestShellOpenPath: (path: string) => void
+    joinPath: (...paths: string[]) => string
     toggleAlwaysOnTop: () => void
     requestAppPath: (name: string) => Promise<string>
     requestCursorScreenPoint: () => Promise<Electron.Rectangle>

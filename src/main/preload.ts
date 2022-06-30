@@ -1,4 +1,5 @@
 import fs from "fs"
+import path from "path"
 import {
   clipboard,
   contextBridge,
@@ -301,6 +302,9 @@ const preload: Preload = {
     },
     requestShellOpenPath(path) {
       return shell.openPath(path)
+    },
+    joinPath(...paths) {
+      return path.join(...paths)
     },
     requestDialog(arg) {
       return ipcRenderer.invoke(REQUEST_DIALOG, arg)

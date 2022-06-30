@@ -1,4 +1,3 @@
-import path from "path"
 import React, { useEffect, useState } from "react"
 import { useRecoilBridgeAcrossReactRoots_UNSTABLE } from "recoil"
 import pkg from "../../package.json"
@@ -138,7 +137,7 @@ export const Settings: React.FC<{}> = () => {
                 "userData"
               )
               window.Preload.public.requestShellOpenPath(
-                path.join(userData, "plugins")
+                window.Preload.public.joinPath(userData, "plugins")
               )
             }}
           >
