@@ -478,7 +478,7 @@ export const CoiledVideoPlayer: React.FC<{
   }, [])
   return (
     <canvas
-      className={clsx("max-w-full", "max-h-full")}
+      className={clsx("object-contain", "w-full", "h-full", "block")}
       style={{ aspectRatio: aspect.toString() }}
       width={size[0]}
       height={size[1]}
