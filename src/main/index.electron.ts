@@ -137,7 +137,7 @@ const init = async () => {
     .then((ls) => {
       fonts = ls
     })
-    .catch(console.error)
+    .catch(console.warn)
 
   Store.initRenderer()
   // store/bounds定義を引っ張ってくると目に見えて容量が増えるので決め打ち
