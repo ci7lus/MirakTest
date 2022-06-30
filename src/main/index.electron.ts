@@ -803,7 +803,9 @@ const openWindow = ({
     // TODO: フルスクリーン操作周辺で信号機が消えていると消失しちゃうのの Workaround
     window.on("enter-full-screen", () => {
       isEnteringFullScreen = true
-      window.setWindowButtonVisibility(true)
+      if (window.setWindowButtonVisibility) {
+        window.setWindowButtonVisibility(true)
+      }
     })
     window.on("leave-full-screen", () => {
       isEnteringFullScreen = false
@@ -931,7 +933,9 @@ ipcMain.handle(TOGGLE_FULL_SCREEN, (event) => {
   if (!isFullScreen) {
     // TODO: フルスクリーン操作周辺で信号機が消えていると消失しちゃうのの Workaround
     isEnteringFullScreen = true
-    window.setWindowButtonVisibility(true)
+    if (window.setWindowButtonVisibility) {
+      window.setWindowButtonVisibility(true)
+    }
   }
   window.setFullScreen(!isFullScreen)
 })
@@ -951,10 +955,14 @@ ipcMain.handle(SET_WINDOW_BUTTON_VISIBILITY, (event, visibility: boolean) => {
   }
   // TODO: フルスクリーン操作周辺で信号機が消えていると消失しちゃうのの Workaround
   if (window.isFullScreen() || isEnteringFullScreen) {
-    window.setWindowButtonVisibility(true)
+    if (window.setWindowButtonVisibility) {
+      window.setWindowButtonVisibility(true)
+    }
     return
   }
-  window.setWindowButtonVisibility(visibility)
+  if (window.setWindowButtonVisibility) {
+    window.setWindowButtonVisibility(visibility)
+  }
 })
 
 ipcMain.handle(SHOW_NOTIFICATION, (_, arg, path) => {
