@@ -731,7 +731,9 @@ const openWindow = ({
 
       // Windows/Linux は上下が見切れるのでアスペクト比を制限しない
       if (process.platform === "darwin") {
-        window.setAspectRatio(16 / 9)
+        if (!isDev) {
+          window.setAspectRatio(16 / 9)
+        }
         if (contentPlayerWindows.length === 0) {
           window.setSize(width, height + headerSize)
           const [xPos, yPos] = window.getPosition()
@@ -898,8 +900,12 @@ ipcMain.handle(SET_WINDOW_TITLE, (event, title) => {
   BrowserWindow.fromWebContents(event.sender)?.setTitle(title)
 })
 
-ipcMain.handle(SET_WINDOW_ASPECT, (event, aspect) =>
-  BrowserWindow.fromWebContents(event.sender)?.setAspectRatio(aspect)
+ipcMain.handle(
+  SET_WINDOW_ASPECT,
+  (event, aspect) =>
+    !isDev &&
+    process.platform === "darwin" &&
+    BrowserWindow.fromWebContents(event.sender)?.setAspectRatio(aspect)
 )
 
 ipcMain.handle(SET_WINDOW_POSITION, (event, x, y) => {
