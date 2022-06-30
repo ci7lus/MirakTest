@@ -484,9 +484,7 @@ const loadPlugins = async ({
     },
   }
   const setAppMenu = (pluginMenus: Electron.MenuItemConstructorOptions[]) => {
-    if (0 < pluginMenus.length) {
-      Menu.setApplicationMenu(buildAppMenu({ pluginMenus }))
-    }
+    Menu.setApplicationMenu(buildAppMenu({ pluginMenus }))
   }
   const moduleLoader = async (fileName: string, code: string) => {
     const ctx = vm.createContext({
