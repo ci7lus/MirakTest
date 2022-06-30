@@ -237,6 +237,7 @@ export const MirakurunManager: React.FC<{}> = () => {
         const program = programs
           .filter((program) => program.name)
           .slice(0)
+          .sort((a, b) => a.startAt - b.startAt)
           .shift()
         if (program) {
           setPlayingContent((prev) =>
