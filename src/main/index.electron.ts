@@ -155,12 +155,12 @@ const init = async () => {
   )
   if (isOk) {
     console.info(
-      "globalScreenshotAcceleratorを設定しました",
+      "Configured globalScreenshotAccelerator:",
       experimentalSetting?.globalScreenshotAccelerator
     )
   } else {
     console.info(
-      "globalScreenshotAcceleratorの設定に失敗しました",
+      "Configuration of globalScreenshotAccelerator failed:",
       experimentalSetting?.globalScreenshotAccelerator
     )
   }
@@ -171,7 +171,7 @@ const init = async () => {
   disabledPluginFileNames =
     (_store.get(globalDisabledPluginFileNamesAtomKey) as string[] | null) || []
   console.info(
-    "以下の名前に合致するプラグインを無視します:",
+    "Ignore plug-ins matching the following names:",
     disabledPluginFileNames
   )
   await loadPlugins({ ignoreFileNames: disabledPluginFileNames }).catch(
@@ -382,7 +382,7 @@ const pluginRequire = (fileName: string) => (s: string) => {
   if (["buffer", "console", "process", "timers"].includes(s)) {
     return require(/* webpackIgnore: true */ s)
   }
-  console.info(`[Plugin] "${fileName}"が"${s}"を要求しています`)
+  console.info(`[Plugin] ${fileName}" requesting "${s}".`)
   if (s === "electron") {
     return electron
   }
@@ -439,10 +439,10 @@ const loadPlugins = async ({
     )
   ).filter((plugin): plugin is PluginDatum => !!plugin)) {
     pluginData.set(plugin.fileName, plugin)
-    console.info(`[Plugin] ロードしました: ${plugin.fileName}`)
+    console.info(`[Plugin] Loaded: ${plugin.fileName}`)
   }
   console.info(
-    "[Plugin] 初期ロードプラグイン:",
+    "[Plugin] Initial load plugins:",
     Array.from(pluginData.values()).map((p) => p.filePath)
   )
   const appInfo: AppInfo = { name: pkg.productName, version: pkg.version }
@@ -529,7 +529,7 @@ const loadPlugins = async ({
       const datum = await pluginLoader(fileName)
       if (datum && loadedDatum?.content === datum.content) {
         console.info(
-          `[Plugin] ファイル内容に変更がないのでスキップします: ${fileName}`
+          `[Plugin] Skip since there is no change in the file contents: ${fileName}`
         )
         return
       }
@@ -554,7 +554,7 @@ const loadPlugins = async ({
         }).show()
         return
       }
-      console.info(`[Plugin] ロードしました: ${datum.fileName}`)
+      console.info(`[Plugin] Loaded: ${datum.fileName}`)
       pluginData.set(fileName, datum)
       pluginDisplay = null
       try {
@@ -1017,12 +1017,9 @@ ipcMain.handle(
   (_, accelerator: string | false) => {
     const isOk = registerGlobalScreenshotAccelerator(accelerator)
     if (isOk) {
-      console.info("globalScreenshotAcceleratorを更新しました", accelerator)
+      console.info("Updated globalScreenshotAccelerator:", accelerator)
     } else {
-      console.info(
-        "globalScreenshotAcceleratorの更新に失敗しました",
-        accelerator
-      )
+      console.info("Failed to update globalScreenshotAccelerator:", accelerator)
     }
     return isOk
   }
