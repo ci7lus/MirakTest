@@ -1,5 +1,5 @@
 import fs from "fs"
-import { builtinModules } from "module"
+import { builtinModules, findSourceMap, SourceMap } from "module"
 import path from "path"
 import timers from "timers"
 import vm from "vm"
@@ -378,6 +378,14 @@ const promises = new Proxy(fs.promises, {
       return target[name](path, ...args)
     },
 })
+const fakeModule = (fileName: string) => ({
+  builtinModules: builtinModules.filter(
+    (mod) => !FORBIDDEN_MODULES.includes(mod)
+  ),
+  createRequire: () => pluginRequire(fileName),
+  findSourceMap,
+  SourceMap,
+})
 const pluginRequire = (fileName: string) => (s: string) => {
   if (["buffer", "console", "process", "timers"].includes(s)) {
     return require(/* webpackIgnore: true */ s)
@@ -391,6 +399,9 @@ const pluginRequire = (fileName: string) => (s: string) => {
   }
   if (s === "fs/promises") {
     return promises
+  }
+  if (s === "module") {
+    return fakeModule(fileName)
   }
   if (
     s.startsWith("_") ||
