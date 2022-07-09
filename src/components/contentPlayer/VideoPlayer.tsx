@@ -3,6 +3,7 @@ import { CanvasProvider } from "aribb24.js"
 import clsx from "clsx"
 import dayjs from "dayjs"
 import React, { memo, useEffect, useMemo, useRef, useState } from "react"
+import { useDebounce } from "react-use"
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil"
 import pkg from "../../../package.json"
 import {
@@ -46,7 +47,19 @@ export const CoiledVideoPlayer: React.FC<{
   const canvasRef = useRef<HTMLCanvasElement>(null)
 
   const [size, setSize] = useState<[number, number]>([1920, 1080])
-  const aspect = useMemo(() => size[0] / size[1], [size])
+  useDebounce(
+    () => {
+      console.info("画面サイズ変更:", size)
+      setDebouncedSize(size)
+    },
+    10,
+    [size]
+  )
+  const [debouncedSize, setDebouncedSize] = useState(size)
+  const aspect = useMemo(
+    () => debouncedSize[0] / debouncedSize[1],
+    [debouncedSize]
+  )
   useEffect(() => {
     if (process.platform === "darwin") {
       window.Preload.public.setWindowAspect(aspect)
@@ -480,8 +493,8 @@ export const CoiledVideoPlayer: React.FC<{
     <canvas
       className={clsx("object-contain", "w-full", "h-full", "block")}
       style={{ aspectRatio: aspect.toString() }}
-      width={size[0]}
-      height={size[1]}
+      width={debouncedSize[0]}
+      height={debouncedSize[1]}
       ref={canvasRef}
     />
   )
