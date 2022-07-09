@@ -24,7 +24,6 @@ brew install --cask ci7lus/miraktest/miraktest
 ```
 
 Intel / Apple Silicon mac (aarch64) 上で動作する macOS Monterey での動作を確認しています。<br />
-字幕の指定は `"Hiragino Maru Gothic ProN", "Rounded M+ 1m for ARIB"` を推奨します。
 
 #### Windows での実行
 

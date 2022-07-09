@@ -26,18 +26,18 @@ button {
 }
 
 @font-face {
-  font-family: "WadaLabMaruGo2004ARIBKakomi";
+  font-family: "AribEnclosedFontFace";
   src: url("../assets/rounded-mplus-1m-arib.woff2") format("woff2");
   font-weight: normal;
   font-style: normal;
   unicode-range: U+1f13f-225, U+26bf, U+3299;
 }
 
-.WadaLabMaruGo2004ARIBKakomi {
-  font-family: WadaLabMaruGo2004ARIBKakomi, ui-sans-serif, system-ui,
-    -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue",
-    Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji",
-    "Segoe UI Symbol", "Noto Color Emoji";
+.AribEnclosedFontFace {
+  font-family: "Windows TV MaruGothic", "ヒラギノTV丸ゴS", AribEnclosedFontFace,
+    ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif,
+    "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
 }
 
 @font-face {

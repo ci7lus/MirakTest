@@ -8,11 +8,7 @@ export const EscapeEnclosed = memo(({ str }: { str: string }) => (
       if (ENCLOSED_CHARACTERS.includes(char)) {
         return (
           <span
-            className={clsx(
-              "WadaLabMaruGo2004ARIBKakomi",
-              "mx-0.5",
-              "select-text"
-            )}
+            className={clsx("AribEnclosedFontFace", "mx-0.5", "select-text")}
             key={idx}
           >
             {char}
