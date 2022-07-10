@@ -80,7 +80,7 @@ export const CoiledGeneralSetting: React.FC<{}> = () => {
       </div>
       <button
         type="submit"
-        className="bg-gray-100 text-gray-800 p-2 px-2 my-4 rounded-md focus:outline-none cursor-pointer"
+        className="bg-gray-100 text-gray-800 p-2 px-2 my-4 rounded-md focus:outline-none"
       >
         保存
       </button>

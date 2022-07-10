@@ -95,7 +95,7 @@ export const Settings: React.FC<{}> = () => {
           <button
             key={key}
             type="button"
-            className={`focus:outline-none cursor-pointer p-4 border-b border-gray-400 text-left ${
+            className={`focus:outline-none p-4 border-b border-gray-400 text-left ${
               route === key && "bg-blue-500"
             }`}
             onClick={() => setRoute(key)}
@@ -113,7 +113,7 @@ export const Settings: React.FC<{}> = () => {
             key={pluginId}
             title={pluginId}
             type="button"
-            className={`focus:outline-none cursor-pointer p-4 border-b border-gray-400 text-left ${
+            className={`focus:outline-none p-4 border-b border-gray-400 text-left ${
               route === pluginId && "bg-blue-500"
             }`}
             onClick={() => setRoute(pluginId)}
@@ -123,7 +123,7 @@ export const Settings: React.FC<{}> = () => {
         ))}
         <div className="flex flex-col items-center justify-center space-y-2 pb-4 pt-6">
           <a
-            className="text-blue-400 hover:underline text-sm cursor-pointer"
+            className="text-blue-400 hover:underline text-sm"
             onClick={() => {
               window.Preload.store.openConfig()
             }}
@@ -131,7 +131,7 @@ export const Settings: React.FC<{}> = () => {
             設定ファイルを開く
           </a>
           <a
-            className="text-blue-400 hover:underline text-sm cursor-pointer"
+            className="text-blue-400 hover:underline text-sm"
             onClick={async () => {
               const userData = await window.Preload.public.requestAppPath(
                 "userData"

@@ -24,12 +24,10 @@ export const ScrollServices: React.FC<{
               "text-center",
               "p-1",
               "py-2",
-              "cursor-pointer",
               "border-r-2",
               "border-gray-400",
               "truncate",
               "select-none",
-              "focus:outline-none",
               "hover:bg-gray-600",
               "flex",
               "items-center",
@@ -133,7 +131,6 @@ export const ScrollServices: React.FC<{
               }}
               className={clsx(
                 "p-1",
-                "cursor-pointer",
                 "bg-gray-800",
                 "bg-opacity-70",
                 "rounded-md"

@@ -63,7 +63,7 @@ export const ScreenshotSettingForm: React.FC<{
             type="text"
             placeholder="/Users/User/Pictures"
             className={clsx(
-              "block mt-2 form-input rounded-l-md w-full text-gray-900 focus:outline-none cursor-pointer",
+              "block mt-2 form-input rounded-l-md w-full text-gray-900 focus:outline-none",
               !saveAsAFile && "bg-gray-600"
             )}
             value={basePath || ""}
@@ -73,7 +73,7 @@ export const ScreenshotSettingForm: React.FC<{
           />
           <button
             className={clsx(
-              `px-4 py-2 mt-2 rounded-r-md flex items-center justify-center bg-gray-100 text-gray-900 focus:outline-none cursor-pointer`,
+              `px-4 py-2 mt-2 rounded-r-md flex items-center justify-center bg-gray-100 text-gray-900 focus:outline-none`,
               !saveAsAFile && "bg-gray-600"
             )}
             disabled={!saveAsAFile}

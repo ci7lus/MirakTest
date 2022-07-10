@@ -137,7 +137,7 @@ export const ExperimentalSettingForm: React.FC<{
                 type="text"
                 placeholder="F4"
                 className={clsx(
-                  "block mt-2 form-input rounded-l-md w-full text-gray-900 focus:outline-none cursor-text"
+                  "block mt-2 form-input rounded-l-md w-full text-gray-900"
                 )}
                 value={globalScreenshotAccelerator || ""}
                 onChange={(e) => setGlobalScreenshotAccelerator(e.target.value)}
@@ -145,7 +145,7 @@ export const ExperimentalSettingForm: React.FC<{
               />
               <button
                 className={clsx(
-                  `px-4 py-2 mt-2 rounded-r-md flex items-center justify-center bg-gray-100 text-gray-900 focus:outline-none cursor-pointer`,
+                  `px-4 py-2 mt-2 rounded-r-md flex items-center justify-center bg-gray-100 text-gray-900 focus:outline-none`,
                   isKeyboradCaptureing && "bg-gray-400 cursor-not-allowed"
                 )}
                 disabled={isKeyboradCaptureing}

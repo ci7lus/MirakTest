@@ -131,8 +131,7 @@ export const ProgramModal = ({
           "bg-gray-800",
           "bg-opacity-80",
           "rounded-md",
-          "mt-4",
-          "cursor-pointer"
+          "mt-4"
         )}
       >
         閉じる

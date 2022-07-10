@@ -66,7 +66,7 @@ export const SeekableControl: React.FC<{
             type="button"
             title="最初から再生"
             aria-label="最初から再生"
-            className={clsx("focus:outline-none", "cursor-pointer", "p-2")}
+            className={clsx("p-2")}
             onClick={() => setPosition(0)}
           >
             <SkipBack className="pointer-events-none" size="1.5rem" />
@@ -75,14 +75,7 @@ export const SeekableControl: React.FC<{
             type="button"
             title="10秒戻す"
             aria-label="10秒戻す"
-            className={clsx(
-              "focus:outline-none",
-              "cursor-pointer",
-              "p-2",
-              "flex",
-              "flex-col",
-              "items-center"
-            )}
+            className={clsx("p-2", "flex", "flex-col", "items-center")}
             onClick={() => relativeMove(-10_000)}
           >
             <Rewind className="pointer-events-none" size="1.5rem" />
@@ -96,14 +89,7 @@ export const SeekableControl: React.FC<{
             type="button"
             title="30秒進む"
             aria-label="30秒進む"
-            className={clsx(
-              "focus:outline-none",
-              "cursor-pointer",
-              "p-2",
-              "flex",
-              "flex-col",
-              "items-center"
-            )}
+            className={clsx("p-2", "flex", "flex-col", "items-center")}
             onClick={() => relativeMove(30_000)}
           >
             <FastForward className="pointer-events-none" size="1.5rem" />
@@ -115,7 +101,7 @@ export const SeekableControl: React.FC<{
           </button>
         </div>
         <input
-          className="w-full focus:outline-none cursor-pointer"
+          className="w-full focus:outline-none"
           aria-label="再生位置"
           type="range"
           min={0}

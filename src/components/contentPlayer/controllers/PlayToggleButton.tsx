@@ -9,7 +9,7 @@ export const PlayToggleButton: React.FC<{
     aria-label={`映像は${isPlaying ? "再生中" : "停止中"}`}
     title="再生切り替え"
     type="button"
-    className={`focus:outline-none cursor-pointer p-2`}
+    className={`focus:outline-none p-2`}
     onClick={() => setIsPlaying((value) => !value)}
   >
     {isPlaying ? (

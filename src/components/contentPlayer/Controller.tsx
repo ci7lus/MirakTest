@@ -335,7 +335,7 @@ export const CoiledController: React.FC<{}> = () => {
             <CoiledScreenshotButton />
             <Popover className="relative">
               <Popover.Button
-                className={`focus:outline-none cursor-pointer p-2 text-gray-100`}
+                className={`focus:outline-none p-2 text-gray-100`}
               >
                 <Settings className="pointer-events-none" size="1.75rem" />
               </Popover.Button>
@@ -452,8 +452,6 @@ export const CoiledController: React.FC<{}> = () => {
               "border-1",
               "border-gray-800",
               "py-3",
-              "focus:outline-none",
-              "cursor-pointer",
               "pointer-events-auto",
               "rounded-l-md"
             )}
@@ -496,14 +494,14 @@ export const CoiledController: React.FC<{}> = () => {
           className={clsx(
             "focus:outline-none transition-opacity duration-150 ease-in-out",
             isPlayButtonShowing || !isPlaying
-              ? "opacity-80 cursor-pointer pointer-events-auto"
+              ? "opacity-80 pointer-events-auto"
               : "opacity-0",
             isPlaying && "animate-ping-once"
           )}
           onClick={() => setIsPlaying((isPlaying) => !isPlaying)}
           onDoubleClick={(e) => e.stopPropagation()}
         >
-          <div className="p-4 rounded-full bg-opacity-50 bg-gray-800 cursor-pointer">
+          <div className="p-4 rounded-full bg-opacity-50 bg-gray-800">
             {isPlaying ? (
               <PauseCircle className="pointer-events-none" size="3rem" />
             ) : (

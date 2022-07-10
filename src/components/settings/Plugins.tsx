@@ -27,7 +27,7 @@ export const CoiledPluginsSetting: React.FC<{}> = () => {
           >
             <input
               type="checkbox"
-              className="block form-checkbox text-lg p-3 mr-3 ml-1 cursor-pointer shrink-0"
+              className="block form-checkbox text-lg p-3 mr-3 ml-1 shrink-0"
               checked={!disabledFileNames.includes(plugin.fileName)}
               onChange={() => {
                 let copied = structuredClone(disabledFileNames)
@@ -47,12 +47,7 @@ export const CoiledPluginsSetting: React.FC<{}> = () => {
                 {plugin.name} {plugin.version}
                 {plugin.authorUrl ? (
                   <a
-                    className={clsx(
-                      "text-sm",
-                      "text-blue-400",
-                      "ml-2",
-                      "cursor-pointer"
-                    )}
+                    className={clsx("text-sm", "text-blue-400", "ml-2")}
                     href={plugin.authorUrl}
                     target="_blank"
                   >
@@ -72,13 +67,7 @@ export const CoiledPluginsSetting: React.FC<{}> = () => {
                 <a
                   href={plugin.url}
                   target="_blank"
-                  className={clsx(
-                    "block",
-                    "text-blue-400",
-                    "text-sm",
-                    "cursor-pointer",
-                    "mt-1"
-                  )}
+                  className={clsx("block", "text-blue-400", "text-sm", "mt-1")}
                 >
                   リンク
                 </a>
@@ -104,7 +93,7 @@ export const CoiledPluginsSetting: React.FC<{}> = () => {
           >
             <input
               type="checkbox"
-              className="block form-checkbox text-lg p-3 mr-3 text-red-600 ml-1 cursor-pointer shrink-0"
+              className="block form-checkbox text-lg p-3 mr-3 text-red-600 ml-1 shrink-0"
               checked={!disabledFileNames.includes(plugin)}
               onChange={() => {
                 let copied = structuredClone(disabledFileNames)

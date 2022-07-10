@@ -27,7 +27,6 @@ export const SidebarServiceQuickButton = memo(
           "flex-col",
           "truncate",
           "p-2",
-          "cursor-pointer",
           "overflow-hidden"
         )}
         onClick={(e) => {

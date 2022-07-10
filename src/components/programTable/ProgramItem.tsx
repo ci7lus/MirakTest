@@ -58,7 +58,7 @@ export const ProgramItem: React.FC<{
         }}
         className={`absolute truncate w-48 ${
           genreColor || "bg-gray-100"
-        } border border-gray-400 cursor-pointer select-none content-visibility-auto contain-paint transition-maxHeight ${
+        } border border-gray-400 select-none content-visibility-auto contain-paint transition-maxHeight ${
           (isHovering || program.duration === 1) && "z-50"
         }`}
         title={convertVariationSelectedClosed(
