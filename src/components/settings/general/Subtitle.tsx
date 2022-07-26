@@ -23,8 +23,7 @@ export const SubtitleSettingForm: React.FC<{
       <label className="block mt-4">
         <span>フォント</span>
         <datalist
-          className="overflow-scroll"
-          style={{ maxHeight: "50vh" }}
+          className="overflow-scroll max-h-halfscreen"
           id="subtitleFonts"
         >
           {fonts.map((font) => (

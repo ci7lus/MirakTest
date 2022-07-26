@@ -1,29 +1,31 @@
+import { css, StyleSheet } from "aphrodite"
 import clsx from "clsx"
 import React from "react"
+import { HOUR_HEIGHT } from "../../constants/style"
 import { Service, Program } from "../../infra/mirakurun/api"
 import { ProgramItem } from "./ProgramItem"
+
+const style = StyleSheet.create({
+  containIntrinsicSize: {
+    containIntrinsicSize: `10rem ${HOUR_HEIGHT * 24}rem`,
+  },
+})
 
 export const ServiceRoll: React.FC<{
   service: Service
   programs: Program[]
   displayStartTimeInString: string
-  hourHeight: number
   setSelectedProgram: (program: Program | null) => void
-}> = ({
-  service,
-  programs,
-  displayStartTimeInString,
-  hourHeight,
-  setSelectedProgram,
-}) => (
+}> = ({ service, programs, displayStartTimeInString, setSelectedProgram }) => (
   <div
     id={service.id.toString()}
-    className={clsx("relative", "content-visibility-auto", "w-48", "shrink-0")}
-    style={{
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-expect-error
-      containIntrinsicSize: `10rem ${hourHeight * 24}px`,
-    }}
+    className={clsx(
+      "relative",
+      "content-visibility-auto",
+      "w-48",
+      "shrink-0",
+      css(style.containIntrinsicSize)
+    )}
   >
     {programs.map((program) => (
       <ProgramItem

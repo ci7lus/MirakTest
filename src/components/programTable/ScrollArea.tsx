@@ -4,14 +4,13 @@ import React, { useEffect, useRef, useState } from "react"
 import { useQuery } from "react-query"
 import { useRecoilValue } from "recoil"
 import { lastEpgUpdatedAtom } from "../../atoms/contentPlayer"
+import { HOUR_HEIGHT } from "../../constants/style"
 import { useNow } from "../../hooks/date"
 import { Program, Service } from "../../infra/mirakurun/api"
 import { MirakurunSetting } from "../../types/setting"
 import { HourIndicator } from "./HourIndicator"
 import { ServiceRoll } from "./ServiceRoll"
 import { ScrollServices } from "./Services"
-
-const HOUR_HEIGHT = 180
 
 export const ScrollArea: React.FC<{
   mirakurunSetting: MirakurunSetting
@@ -167,7 +166,6 @@ export const ScrollArea: React.FC<{
             }
           >
             <HourIndicator
-              hourHeight={HOUR_HEIGHT}
               displayStartTimeInString={displayStartTimeInString}
             />
           </div>
@@ -194,7 +192,6 @@ export const ScrollArea: React.FC<{
                   service={service}
                   programs={filteredPrograms}
                   displayStartTimeInString={displayStartTimeInString}
-                  hourHeight={HOUR_HEIGHT}
                   setSelectedProgram={setSelectedProgram}
                 />
               )
@@ -204,7 +201,7 @@ export const ScrollArea: React.FC<{
                 add === 0 ? "border-red-400" : "border-red-200"
               } transition-all pointer-events-none`}
               style={{
-                top: `${(now.minute() / 60) * 180}px`,
+                top: `${(now.minute() / 60) * HOUR_HEIGHT}rem`,
               }}
             />
           </div>

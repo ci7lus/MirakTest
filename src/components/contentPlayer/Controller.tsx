@@ -1,4 +1,5 @@
 import { Popover } from "@headlessui/react"
+import { css, StyleSheet } from "aphrodite"
 import clsx from "clsx"
 import dayjs from "dayjs"
 import React, { useCallback, useEffect, useRef, useState } from "react"
@@ -202,6 +203,12 @@ export const CoiledController: React.FC<{}> = () => {
 
   const [isSidebarOpen, setIsSidebarOpen] = useState(false)
 
+  const style = StyleSheet.create({
+    paddingTop: {
+      paddingTop: "calc(env(titlebar-area-height) - 1.2rem)",
+    },
+  })
+
   return (
     <div
       ref={componentRef}
@@ -265,8 +272,7 @@ export const CoiledController: React.FC<{}> = () => {
           }`}
         >
           <div
-            className="flex items-center space-x-4"
-            style={{ paddingTop: "calc(env(titlebar-area-height) - 1.2rem)" }}
+            className={`flex items-center space-x-4 ${css(style.paddingTop)}`}
           >
             {service?.logoData && (
               <img

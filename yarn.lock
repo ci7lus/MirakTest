@@ -4083,6 +4083,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"aphrodite@npm:^2.4.0":
+  version: 2.4.0
+  resolution: "aphrodite@npm:2.4.0"
+  dependencies:
+    asap: ^2.0.3
+    inline-style-prefixer: ^5.1.0
+    string-hash: ^1.1.3
+  checksum: 85b741731e5bd6786c64b674b9355196ffaf4daab376e7b17d3c32b8e8e1477617c4a6b761b4680a3388034ac1f86c9a1b621925d9e98fedec14322461d8e6d2
+  languageName: node
+  linkType: hard
+
 "app-builder-bin@npm:4.0.0":
   version: 4.0.0
   resolution: "app-builder-bin@npm:4.0.0"
@@ -4230,6 +4241,13 @@ __metadata:
     define-properties: ^1.1.3
     es-abstract: ^1.19.0
   checksum: 9cc6414b111abfc7717e39546e4887b1e5ec74df8f1618d83425deaa95752bf05d475d1d241253b4d88d4a01f8e1bc84845ad5b7cc2047f8db2f614512acd40e
+  languageName: node
+  linkType: hard
+
+"asap@npm:^2.0.3":
+  version: 2.0.6
+  resolution: "asap@npm:2.0.6"
+  checksum: b296c92c4b969e973260e47523207cd5769abd27c245a68c26dc7a0fe8053c55bb04360237cb51cab1df52be939da77150ace99ad331fb7fb13b3423ed73ff3d
   languageName: node
   linkType: hard
 
@@ -8212,6 +8230,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"inline-style-prefixer@npm:^5.1.0":
+  version: 5.1.2
+  resolution: "inline-style-prefixer@npm:5.1.2"
+  dependencies:
+    css-in-js-utils: ^2.0.0
+  checksum: 765feb078a2ab378006f8a300b328672c5db4b6a81a5f467da8e97dad713aec6cae1a669636aaf943cd8da6997a76a999f50ef63745260d91de5fe60469cfb0f
+  languageName: node
+  linkType: hard
+
 "inline-style-prefixer@npm:^6.0.0":
   version: 6.0.0
   resolution: "inline-style-prefixer@npm:6.0.0"
@@ -10173,6 +10200,7 @@ __metadata:
     "@types/react-dom": ^18.0.5
     "@types/stream-json": ^1.7.2
     "@welldone-software/why-did-you-render": ^7.0.1
+    aphrodite: ^2.4.0
     aribb24.js: ^1.9.18
     autoprefixer: ^10.4.7
     axios: ^0.27.2
@@ -13008,6 +13036,13 @@ __metadata:
   version: 0.3.1
   resolution: "string-argv@npm:0.3.1"
   checksum: efbd0289b599bee808ce80820dfe49c9635610715429c6b7cc50750f0437e3c2f697c81e5c390208c13b5d5d12d904a1546172a88579f6ee5cbaaaa4dc9ec5cf
+  languageName: node
+  linkType: hard
+
+"string-hash@npm:^1.1.3":
+  version: 1.1.3
+  resolution: "string-hash@npm:1.1.3"
+  checksum: 104b8667a5e0dc71bfcd29fee09cb88c6102e27bfb07c55f95535d90587d016731d52299380052e514266f4028a7a5172e0d9ac58e2f8f5001be61dc77c0754d
   languageName: node
   linkType: hard
 

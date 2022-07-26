@@ -96,13 +96,13 @@ export const CoiledSubtitleRenderer: React.FC<{
       width={1920}
       height={1080}
       className={clsx(
+        "aspect-video",
         "pointer-events-none",
         "w-full",
         "h-full",
         "object-contain",
         !isSubtitleEnabled && "opacity-0"
       )}
-      style={{ aspectRatio: "16/9" }}
       ref={canvasRef}
     ></canvas>
   )
