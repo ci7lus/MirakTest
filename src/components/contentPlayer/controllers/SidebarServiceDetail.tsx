@@ -29,7 +29,7 @@ export const SidebarServiceDetail = memo(
     const [, /*isHovering*/ setIsHovering] = useState(false)
     const [whenMouseDown, setWhenMouseDown] = useState(0)
     return (
-      <a
+      <button
         key={service.id}
         onMouseDown={() => setWhenMouseDown(performance.now())}
         onMouseUp={() => {
@@ -40,7 +40,13 @@ export const SidebarServiceDetail = memo(
         onClick={(e) => e.preventDefault()}
         onMouseEnter={() => setIsHovering(true)}
         onMouseLeave={() => setIsHovering(false)}
-        className={clsx("cursor-pointer", "w-full")}
+        className={clsx(
+          "cursor-pointer",
+          "w-full",
+          "app-region-no-drag",
+          "text-left",
+          "align-top"
+        )}
       >
         <div
           className={clsx(
@@ -123,7 +129,7 @@ export const SidebarServiceDetail = memo(
             </div>
           )}
         </div>
-      </a>
+      </button>
     )
   },
   (prev, next) =>

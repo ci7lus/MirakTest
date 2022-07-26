@@ -103,7 +103,7 @@ export const ControllerSidebar: React.FC<{
         "duration-150 ease-in-out",
         isVisible ? "opacity-100" : "opacity-0",
         !isVisible && "cursor-none",
-        "p-4",
+        isVisible && "p-4",
         "flex",
         "flex-col"
       )}

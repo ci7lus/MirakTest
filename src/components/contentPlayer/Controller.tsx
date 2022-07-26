@@ -145,7 +145,8 @@ export const CoiledController: React.FC<{}> = () => {
         setSeekRequest(-10_000)
       } else if (e.key === "m") {
         setVolume((volume) => (0 < volume ? 0 : 100))
-      } else if (e.key === " ") {
+      } else if (e.code === "Space" && e.target === document.body) {
+        // 要素にフォーカスがあるときは発火しないようにする（buttonでのSpace発火との競合を防ぐ）
         setIsPlaying((isPlaying) => !isPlaying)
       } else if (e.key === "Escape") {
         window.Preload.public.exitFullScreen()
@@ -290,16 +291,17 @@ export const CoiledController: React.FC<{}> = () => {
             >
               {program ? (
                 <div className={clsx("flex", "flex-col")}>
-                  <h2
+                  <h1
                     className={clsx(
                       "font-semibold",
                       "text-2xl",
                       "truncate",
                       "align-middle"
                     )}
+                    tabIndex={0}
                   >
                     <EscapeEnclosed str={program.name || ""} />
-                  </h2>
+                  </h1>
                   <div
                     className={clsx(
                       "flex",
@@ -309,7 +311,11 @@ export const CoiledController: React.FC<{}> = () => {
                       "truncate"
                     )}
                   >
-                    {serviceLabel ? <p>{serviceLabel}</p> : <></>}
+                    {serviceLabel ? (
+                      <h2 tabIndex={0}>{serviceLabel}</h2>
+                    ) : (
+                      <></>
+                    )}
                     <p>
                       {`${startAt}〜${program.duration !== 1 ? endAt : ""}`}
                     </p>
@@ -509,7 +515,7 @@ export const CoiledController: React.FC<{}> = () => {
         className={clsx(
           "h-full",
           "transition-width",
-          isSidebarOpen ? "w-1/3" : "w-0"
+          isSidebarOpen ? "w-1/3" : "w-0 invisible"
         )}
         onMouseDown={(e) => e.stopPropagation()}
       >

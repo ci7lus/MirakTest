@@ -21,6 +21,7 @@ const RightArrow = ({ onClick }: { onClick: () => void }) => {
         "transform"
       )}
       onClick={onClick}
+      tabIndex={-1}
     >
       <ChevronRight className="pointer-events-none" size={24} />
     </button>
@@ -43,6 +44,7 @@ const LeftArrow = ({ onClick }: { onClick: () => void }) => {
         "transform"
       )}
       onClick={onClick}
+      tabIndex={-1}
     >
       <ChevronLeft className="pointer-events-none" size={24} />
     </button>
