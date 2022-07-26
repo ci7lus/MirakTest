@@ -156,7 +156,15 @@ export const ExperimentalSettingForm: React.FC<{
               />
               <button
                 className={clsx(
-                  `px-4 py-2 mt-2 rounded-r-md flex items-center justify-center bg-gray-100 text-gray-900 focus:outline-none`,
+                  "px-4",
+                  "py-2",
+                  "mt-2",
+                  "rounded-r-md",
+                  "flex",
+                  "items-center",
+                  "justify-center",
+                  "bg-gray-100",
+                  "text-gray-900",
                   isKeyboradCaptureing && "bg-gray-400 cursor-not-allowed"
                 )}
                 disabled={isKeyboradCaptureing}

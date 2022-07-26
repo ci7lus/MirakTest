@@ -14,7 +14,7 @@ export const CoiledScreenshotButton: React.FC<{}> = memo(() => {
       aria-label="画面をキャプチャします"
       title="画面キャプチャ"
       type="button"
-      className={clsx("focus:outline-none", "p-2", "text-gray-100")}
+      className={clsx("p-2", "text-gray-100")}
       onClick={() => setScreenshotTrigger(performance.now())}
     >
       <Camera className="pointer-events-none" size="1.75rem" />

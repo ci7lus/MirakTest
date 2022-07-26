@@ -74,7 +74,6 @@ export const MirakurunSettingForm: React.FC<{}> = () => {
           "px-2",
           "my-4",
           "rounded-md",
-          "focus:outline-none",
           "active:bg-gray-200"
         )}
       >

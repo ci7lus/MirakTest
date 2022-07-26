@@ -15,7 +15,7 @@ export const AudioTrackSelector: React.FC<{
       "py-2",
       "px-2",
       "leading-tight",
-      "focus:outline-none",
+
       "bg-gray-800",
       "text-gray-100"
     )}

@@ -28,7 +28,7 @@ export const VolumeSlider: React.FC<{
     >
       <button
         type="button"
-        className={clsx("focus:outline-none", "cursor-pointer")}
+        className="cursor-pointer"
         onClick={() => setRangeVolume((volume) => (0 < volume ? 0 : 100))}
       >
         {rangeVolume === 0 ? (
@@ -40,7 +40,7 @@ export const VolumeSlider: React.FC<{
         )}
       </button>
       <input
-        className={clsx("focus:outline-none", "cursor-pointer")}
+        className="cursor-pointer"
         aria-label="音量"
         type="range"
         min={min}

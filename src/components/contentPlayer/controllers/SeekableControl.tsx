@@ -103,7 +103,7 @@ export const SeekableControl: React.FC<{
           </button>
         </div>
         <input
-          className={clsx("w-full", "focus:outline-none")}
+          className="w-full"
           aria-label="再生位置"
           type="range"
           min={0}

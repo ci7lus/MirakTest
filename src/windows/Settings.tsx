@@ -127,9 +127,14 @@ export const Settings: React.FC<{}> = () => {
           <button
             key={key}
             type="button"
-            className={`focus:outline-none p-4 border-b border-gray-400 text-left ${
-              route === key && "bg-blue-500"
-            }`}
+            className={clsx(
+              route === key && "bg-blue-500",
+              "p-4",
+              "border-b",
+              "border-gray-400",
+              "text-left",
+              ""
+            )}
             onClick={() => setRoute(key)}
           >
             {displayName}
@@ -157,9 +162,13 @@ export const Settings: React.FC<{}> = () => {
             key={pluginId}
             title={pluginId}
             type="button"
-            className={`focus:outline-none p-4 border-b border-gray-400 text-left ${
+            className={clsx(
+              "p-4",
+              "border-b",
+              "border-gray-400",
+              "text-left",
               route === pluginId && "bg-blue-500"
-            }`}
+            )}
             onClick={() => setRoute(pluginId)}
           >
             {name}

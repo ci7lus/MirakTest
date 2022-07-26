@@ -87,8 +87,7 @@ export const CoiledGeneralSetting: React.FC<{}> = () => {
           "p-2",
           "px-2",
           "my-4",
-          "rounded-md",
-          "focus:outline-none"
+          "rounded-md"
         )}
       >
         保存

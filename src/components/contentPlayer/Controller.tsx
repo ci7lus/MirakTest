@@ -370,9 +370,7 @@ export const CoiledController: React.FC<{}> = () => {
             />
             <CoiledScreenshotButton />
             <Popover className="relative">
-              <Popover.Button
-                className={clsx("focus:outline-none", "p-2", "text-gray-100")}
-              >
+              <Popover.Button className={clsx("p-2", "text-gray-100")}>
                 <Settings className="pointer-events-none" size="1.75rem" />
               </Popover.Button>
               <Popover.Panel
@@ -538,7 +536,9 @@ export const CoiledController: React.FC<{}> = () => {
         <button
           type="button"
           className={clsx(
-            "focus:outline-none transition-opacity duration-150 ease-in-out",
+            "transition-opacity",
+            "duration-150",
+            "ease-in-out",
             isPlayButtonShowing || !isPlaying
               ? "opacity-80 pointer-events-auto"
               : "opacity-0",
