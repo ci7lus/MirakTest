@@ -1,3 +1,4 @@
+import clsx from "clsx"
 import React, { useEffect, useRef } from "react"
 import { useRecoilValue, useSetRecoilState } from "recoil"
 import pkg from "../../package.json"
@@ -78,20 +79,43 @@ export const CoiledContentPlayer: React.FC<{}> = () => {
       <MirakurunManager />
       <CoiledEpgUpdatedObserver />
       <CoiledProgramTitleManager />
-      <div className="w-full h-screen text-gray-100 flex items-center justify-center">
-        <div className="relative w-full h-full overflow-hidden">
-          <div id="Splash" className="absolute top-0 left-0 w-full h-full">
+      <div
+        className={clsx(
+          "w-full",
+          "h-screen",
+          "text-gray-100",
+          "flex",
+          "items-center",
+          "justify-center"
+        )}
+      >
+        <div
+          className={clsx("relative", "w-full", "h-full", "overflow-hidden")}
+        >
+          <div
+            id="Splash"
+            className={clsx("absolute", "top-0", "left-0", "w-full", "h-full")}
+          >
             <Splash />
           </div>
           <div
             id="OnSplashComponents"
-            className="absolute top-0 left-0 w-full h-full"
+            className={clsx("absolute", "top-0", "left-0", "w-full", "h-full")}
           >
             <PluginPositionComponents position="onSplash" />
           </div>
           <div
             id="VideoPlayer"
-            className="absolute top-0 left-0 w-full h-full flex items-center justify-center"
+            className={clsx(
+              "absolute",
+              "top-0",
+              "left-0",
+              "w-full",
+              "h-full",
+              "flex",
+              "items-center",
+              "justify-center"
+            )}
           >
             <CoiledVideoPlayer
               internalPlayingTimeRef={internalPlayingTimeRef}
@@ -99,13 +123,22 @@ export const CoiledContentPlayer: React.FC<{}> = () => {
           </div>
           <div
             id="OnPlayerComponents"
-            className="absolute top-0 left-0 w-full h-full"
+            className={clsx("absolute", "top-0", "left-0", "w-full", "h-full")}
           >
             <PluginPositionComponents position="onPlayer" />
           </div>
           <div
             id="SubtitleRenderer"
-            className="absolute top-0 left-0 w-full h-full flex items-center justify-center"
+            className={clsx(
+              "absolute",
+              "top-0",
+              "left-0",
+              "w-full",
+              "h-full",
+              "flex",
+              "items-center",
+              "justify-center"
+            )}
           >
             <CoiledSubtitleRenderer
               internalPlayingTimeRef={internalPlayingTimeRef}
@@ -113,16 +146,26 @@ export const CoiledContentPlayer: React.FC<{}> = () => {
           </div>
           <div
             id="OnSubtitleComponents"
-            className="absolute top-0 left-0 w-full h-full"
+            className={clsx("absolute", "top-0", "left-0", "w-full", "h-full")}
           >
             <PluginPositionComponents position="onSubtitle" />
           </div>
-          <div id="Controller" className="absolute top-0 left-0 w-full h-full">
+          <div
+            id="Controller"
+            className={clsx("absolute", "top-0", "left-0", "w-full", "h-full")}
+          >
             <CoiledController />
           </div>
           <div
             id="OnForwardComponents"
-            className="absolute top-0 left-0 w-full h-full pointer-events-none"
+            className={clsx(
+              "absolute",
+              "top-0",
+              "left-0",
+              "w-full",
+              "h-full",
+              "pointer-events-none"
+            )}
           >
             <PluginPositionComponents position="onForward" />
           </div>

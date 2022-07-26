@@ -22,7 +22,7 @@ const RightArrow = ({ onClick }: { onClick: () => void }) => {
       )}
       onClick={onClick}
     >
-      <ChevronRight className={clsx("pointer-events-none")} size={24} />
+      <ChevronRight className="pointer-events-none" size={24} />
     </button>
   )
 }
@@ -44,7 +44,7 @@ const LeftArrow = ({ onClick }: { onClick: () => void }) => {
       )}
       onClick={onClick}
     >
-      <ChevronLeft className={clsx("pointer-events-none")} size={24} />
+      <ChevronLeft className="pointer-events-none" size={24} />
     </button>
   )
 }

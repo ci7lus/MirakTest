@@ -87,7 +87,16 @@ export const ScrollArea: React.FC<{
           "text-lg"
         )}
       >
-        <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-gray-200" />
+        <div
+          className={clsx(
+            "animate-spin",
+            "rounded-full",
+            "h-16",
+            "w-16",
+            "border-b-2",
+            "border-gray-200"
+          )}
+        />
       </div>
     )
   }

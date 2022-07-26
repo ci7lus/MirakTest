@@ -64,7 +64,7 @@ export const CoiledProgramTable: React.FC<{}> = () => {
         <h1 className={clsx("text-2xl", "font-semibold", "shrink-0", "pl-2")}>
           番組表
         </h1>
-        <div className={clsx()}>
+        <div>
           <WeekdaySelector now={now} add={add} setAdd={setAdd} />
         </div>
       </div>

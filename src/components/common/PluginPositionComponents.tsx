@@ -25,7 +25,7 @@ export const PluginPositionComponents: React.FC<{
   }, [])
   if (components === null) return <></>
   return (
-    <div className="w-full h-full relative">
+    <div className={clsx("w-full", "h-full", "relative")}>
       {components.map((component) => (
         <ComponentShadowWrapper
           _id={component.id}

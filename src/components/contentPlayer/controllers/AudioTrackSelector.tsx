@@ -1,3 +1,4 @@
+import clsx from "clsx"
 import React, { memo } from "react"
 
 export const AudioTrackSelector: React.FC<{
@@ -6,7 +7,18 @@ export const AudioTrackSelector: React.FC<{
   audioTracks: string[]
 }> = memo(({ audioTrack, setAudioTrack, audioTracks }) => (
   <select
-    className="appearance-none border border-gray-800 rounded py-2 px-2 leading-tight focus:outline-none bg-gray-800 text-gray-100"
+    className={clsx(
+      "appearance-none",
+      "border",
+      "border-gray-800",
+      "rounded",
+      "py-2",
+      "px-2",
+      "leading-tight",
+      "focus:outline-none",
+      "bg-gray-800",
+      "text-gray-100"
+    )}
     value={audioTrack}
     onChange={(e) => {
       const selectedTrack = parseInt(e.target.value)

@@ -212,7 +212,7 @@ export const CoiledController: React.FC<{}> = () => {
   return (
     <div
       ref={componentRef}
-      className="w-full h-full relative flex"
+      className={clsx("w-full", "h-full", "relative", "flex")}
       onMouseMove={() => {
         setIsVisible(true)
         setLastCurMoved(new Date().getSeconds())
@@ -276,17 +276,39 @@ export const CoiledController: React.FC<{}> = () => {
           >
             {service?.logoData && (
               <img
-                className="shrink-0 h-6 rounded-md overflow-hidden"
+                className={clsx(
+                  "shrink-0",
+                  "h-6",
+                  "rounded-md",
+                  "overflow-hidden"
+                )}
                 src={`data:image/png;base64,${service.logoData}`}
               />
             )}
-            <div className="relative text-gray-200 overflow-hidden">
+            <div
+              className={clsx("relative", "text-gray-200", "overflow-hidden")}
+            >
               {program ? (
-                <div className="flex flex-col">
-                  <h2 className="font-semibold text-2xl truncate align-middle">
+                <div className={clsx("flex", "flex-col")}>
+                  <h2
+                    className={clsx(
+                      "font-semibold",
+                      "text-2xl",
+                      "truncate",
+                      "align-middle"
+                    )}
+                  >
                     <EscapeEnclosed str={program.name || ""} />
                   </h2>
-                  <div className="flex space-x-3 font-normal text-lg truncate">
+                  <div
+                    className={clsx(
+                      "flex",
+                      "space-x-3",
+                      "font-normal",
+                      "text-lg",
+                      "truncate"
+                    )}
+                  >
                     {serviceLabel ? <p>{serviceLabel}</p> : <></>}
                     <p>
                       {`${startAt}〜${program.duration !== 1 ? endAt : ""}`}
@@ -294,7 +316,15 @@ export const CoiledController: React.FC<{}> = () => {
                   </div>
                 </div>
               ) : serviceLabel ? (
-                <p className="font-semibold text-2xl flex items-center space-x-1">
+                <p
+                  className={clsx(
+                    "font-semibold",
+                    "text-2xl",
+                    "flex",
+                    "items-center",
+                    "space-x-1"
+                  )}
+                >
                   {serviceLabel}
                 </p>
               ) : (
@@ -322,7 +352,7 @@ export const CoiledController: React.FC<{}> = () => {
           ) : (
             <></>
           )}
-          <div className="flex space-x-2 app-region-no-drag">
+          <div className={clsx("flex", "space-x-2", "app-region-no-drag")}>
             <PlayToggleButton
               isPlaying={isPlaying}
               setIsPlaying={setIsPlaying}
@@ -341,7 +371,7 @@ export const CoiledController: React.FC<{}> = () => {
             <CoiledScreenshotButton />
             <Popover className="relative">
               <Popover.Button
-                className={`focus:outline-none p-2 text-gray-100`}
+                className={clsx("focus:outline-none", "p-2", "text-gray-100")}
               >
                 <Settings className="pointer-events-none" size="1.75rem" />
               </Popover.Button>
@@ -494,7 +524,17 @@ export const CoiledController: React.FC<{}> = () => {
           />
         )}
       </div>
-      <div className="absolute w-full h-full flex items-center justify-center pointer-events-none">
+      <div
+        className={clsx(
+          "absolute",
+          "w-full",
+          "h-full",
+          "flex",
+          "items-center",
+          "justify-center",
+          "pointer-events-none"
+        )}
+      >
         <button
           type="button"
           className={clsx(
@@ -507,7 +547,14 @@ export const CoiledController: React.FC<{}> = () => {
           onClick={() => setIsPlaying((isPlaying) => !isPlaying)}
           onDoubleClick={(e) => e.stopPropagation()}
         >
-          <div className="p-4 rounded-full bg-opacity-50 bg-gray-800">
+          <div
+            className={clsx(
+              "p-4",
+              "rounded-full",
+              "bg-opacity-50",
+              "bg-gray-800"
+            )}
+          >
             {isPlaying ? (
               <PauseCircle className="pointer-events-none" size="3rem" />
             ) : (

@@ -67,7 +67,7 @@ export const ScrollServices: React.FC<{
               "rounded-md"
             )}
           >
-            <div className={clsx("p-2")}>
+            <div className="p-2">
               <div
                 className={clsx(
                   "flex",
@@ -85,13 +85,13 @@ export const ScrollServices: React.FC<{
                     src={`data:image/jpeg;base64,${service.logoData}`}
                   />
                 )}
-                <h3 className={clsx("shrink-0")}>{`${
+                <h3 className="shrink-0">{`${
                   service.remoteControlKeyId ?? service.serviceId
                 } ${service.name}`}</h3>
               </div>
             </div>
             <Switch.Group>
-              <div className="flex items-center">
+              <div className={clsx("flex", "items-center")}>
                 <Switch
                   checked={isOpenInNewWindow}
                   onChange={(e: boolean | ((prevState: boolean) => boolean)) =>
@@ -107,7 +107,7 @@ export const ScrollServices: React.FC<{
                     } inline-block w-4 h-4 transform bg-white rounded-full transition ease-in-out duration-200`}
                   />
                 </Switch>
-                <Switch.Label className="ml-2 text-sm">
+                <Switch.Label className={clsx("ml-2", "text-sm")}>
                   新しいウィンドウで開く
                 </Switch.Label>
               </div>

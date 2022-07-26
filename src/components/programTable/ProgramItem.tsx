@@ -1,4 +1,5 @@
 import { StyleSheet, css } from "aphrodite"
+import clsx from "clsx"
 import dayjs from "dayjs"
 import React, { memo } from "react"
 import { GenreColors } from "../../constants/genreColor"
@@ -92,12 +93,26 @@ export const ProgramItem: React.FC<{
         )}
       >
         <div>
-          <p className="whitespace-pre-wrap leading-snug pointer-events-none">
+          <p
+            className={clsx(
+              "whitespace-pre-wrap",
+              "leading-snug",
+              "pointer-events-none"
+            )}
+          >
             {startAt.format("HH:mm")}{" "}
             <EscapeEnclosed str={program.name || ""} />
           </p>
           <p
-            className="whitespace-pre-wrap pt-1 px-2 pb-2 text-xs text-gray-600 h-full"
+            className={clsx(
+              "whitespace-pre-wrap",
+              "pt-1",
+              "px-2",
+              "pb-2",
+              "text-xs",
+              "text-gray-600",
+              "h-full"
+            )}
             /*dangerouslySetInnerHTML={{
                                 __html: program.detail,
                               }}*/

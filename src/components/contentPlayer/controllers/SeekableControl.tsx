@@ -46,7 +46,9 @@ export const SeekableControl: React.FC<{
     )
 
     return (
-      <div className="w-full flex items-center space-x-2 px-2">
+      <div
+        className={clsx("w-full", "flex", "items-center", "space-x-2", "px-2")}
+      >
         <div
           className={clsx(
             "shrink-0",
@@ -66,7 +68,7 @@ export const SeekableControl: React.FC<{
             type="button"
             title="最初から再生"
             aria-label="最初から再生"
-            className={clsx("p-2")}
+            className="p-2"
             onClick={() => setPosition(0)}
           >
             <SkipBack className="pointer-events-none" size="1.5rem" />
@@ -101,7 +103,7 @@ export const SeekableControl: React.FC<{
           </button>
         </div>
         <input
-          className="w-full focus:outline-none"
+          className={clsx("w-full", "focus:outline-none")}
           aria-label="再生位置"
           type="range"
           min={0}

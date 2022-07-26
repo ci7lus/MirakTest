@@ -1,3 +1,4 @@
+import clsx from "clsx"
 import React from "react"
 import { QueryClient, QueryClientProvider } from "react-query"
 import { RecoilRoot } from "recoil"
@@ -30,10 +31,18 @@ export const StateRoot: React.FC<{
       <RecoilStoredSync />
       <RecoilSharedSync initialStates={states} />
       <QueryClientProvider client={queryClient}>
-        <div className="w-full h-full relative">
+        <div className={clsx("w-full", "h-full", "relative")}>
           <div
             id="OnBackgroundComponents"
-            className="absolute top-0 left-0 w-full h-full pointer-events-none hidden"
+            className={clsx(
+              "absolute",
+              "top-0",
+              "left-0",
+              "w-full",
+              "h-full",
+              "pointer-events-none",
+              "hidden"
+            )}
           >
             <PluginPositionComponents position="onBackground" />
           </div>
