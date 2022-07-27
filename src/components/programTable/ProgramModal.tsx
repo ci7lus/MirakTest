@@ -55,8 +55,11 @@ export const ProgramModal = ({
       )}
     >
       <div className="overflow-auto" ref={ref}>
-        <Dialog.Title className={clsx("text-2xl", "select-text")} tabIndex={0}>
-          <EscapeEnclosed str={program.name || ""} />
+        <Dialog.Title
+          className={clsx("text-2xl", "select-text", "align-middle")}
+          tabIndex={0}
+        >
+          <EscapeEnclosed str={program.name || ""} size="before:text-xl" />
         </Dialog.Title>
         <p className={clsx("mt-2", "text-gray-300", "select-text")}>
           {`${service.remoteControlKeyId || service.serviceId} ${service.name}`}
@@ -79,7 +82,10 @@ export const ProgramModal = ({
         <Dialog.Description
           className={clsx("mt-2", "whitespace-pre-wrap", "select-text")}
         >
-          <EscapeEnclosed str={program.description || ""} />
+          <EscapeEnclosed
+            str={program.description || ""}
+            size="before:text-base"
+          />
         </Dialog.Description>
 
         <div>

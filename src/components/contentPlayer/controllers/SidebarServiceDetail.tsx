@@ -89,7 +89,10 @@ export const SidebarServiceDetail = memo(
           {current?.name && (
             <div className={clsx(service.logoData ? "mt-2" : "mt-1")}>
               <h4 className={clsx("text-lg", "leading-snug")}>
-                <EscapeEnclosed str={current.name || ""} />
+                <EscapeEnclosed
+                  str={current.name || ""}
+                  size="before:text-base"
+                />
               </h4>
               <p>
                 {`${dayjs(current.startAt).format("HH:mm")}〜${
@@ -107,6 +110,7 @@ export const SidebarServiceDetail = memo(
                     Object.values(current.extended || {}).shift() ||
                     ""
                   }
+                  size="before:text-sm"
                 />
               </p>
             </div>
@@ -121,7 +125,7 @@ export const SidebarServiceDetail = memo(
                     ? dayjs(next.startAt + next.duration).format("HH:mm")
                     : ""
                 } `}
-                <EscapeEnclosed str={next.name || ""} />
+                <EscapeEnclosed str={next.name || ""} size="before:text-sm" />
                 {next.duration !== 1
                   ? ` (${Math.floor(next.duration / 1000 / 60)}分間)`
                   : ""}

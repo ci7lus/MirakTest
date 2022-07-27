@@ -101,7 +101,7 @@ export const ProgramItem: React.FC<{
             )}
           >
             {startAt.format("HH:mm")}{" "}
-            <EscapeEnclosed str={program.name || ""} />
+            <EscapeEnclosed str={program.name || ""} size="before:text-base" />
           </p>
           <p
             className={clsx(
