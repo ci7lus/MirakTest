@@ -103,7 +103,7 @@ export const ControllerSidebar: React.FC<{
         "duration-150 ease-in-out",
         isVisible ? "opacity-100" : "opacity-0",
         !isVisible && "cursor-none",
-        "p-4",
+        isVisible && "p-4",
         "flex",
         "flex-col"
       )}
@@ -128,7 +128,6 @@ export const ControllerSidebar: React.FC<{
               key={type}
               type="button"
               className={clsx(
-                "cursor-pointer",
                 type === selectedType ? "bg-gray-600" : "bg-gray-800",
                 "text-gray-100",
                 idx === 0 && "rounded-l-md",
@@ -136,7 +135,6 @@ export const ControllerSidebar: React.FC<{
                 idx !== serviceTypes.length - 1 && "border-r border-gray-100",
                 "px-3",
                 "py-2",
-                "focus:outline-none",
                 "bg-opacity-70"
               )}
               onClick={() => setSelectedType(type)}

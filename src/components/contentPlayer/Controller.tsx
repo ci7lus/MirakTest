@@ -1,4 +1,5 @@
 import { Popover } from "@headlessui/react"
+import { css, StyleSheet } from "aphrodite"
 import clsx from "clsx"
 import dayjs from "dayjs"
 import React, { useCallback, useEffect, useRef, useState } from "react"
@@ -144,7 +145,8 @@ export const CoiledController: React.FC<{}> = () => {
         setSeekRequest(-10_000)
       } else if (e.key === "m") {
         setVolume((volume) => (0 < volume ? 0 : 100))
-      } else if (e.key === " ") {
+      } else if (e.code === "Space" && e.target === document.body) {
+        // 要素にフォーカスがあるときは発火しないようにする（buttonでのSpace発火との競合を防ぐ）
         setIsPlaying((isPlaying) => !isPlaying)
       } else if (e.key === "Escape") {
         window.Preload.public.exitFullScreen()
@@ -202,10 +204,16 @@ export const CoiledController: React.FC<{}> = () => {
 
   const [isSidebarOpen, setIsSidebarOpen] = useState(false)
 
+  const style = StyleSheet.create({
+    paddingTop: {
+      paddingTop: "calc(env(titlebar-area-height) - 1.2rem)",
+    },
+  })
+
   return (
     <div
       ref={componentRef}
-      className="w-full h-full relative flex"
+      className={clsx("w-full", "h-full", "relative", "flex")}
       onMouseMove={() => {
         setIsVisible(true)
         setLastCurMoved(new Date().getSeconds())
@@ -265,30 +273,64 @@ export const CoiledController: React.FC<{}> = () => {
           }`}
         >
           <div
-            className="flex items-center space-x-4"
-            style={{ paddingTop: "calc(env(titlebar-area-height) - 1.2rem)" }}
+            className={`flex items-center space-x-4 ${css(style.paddingTop)}`}
           >
             {service?.logoData && (
               <img
-                className="shrink-0 h-6 rounded-md overflow-hidden"
+                className={clsx(
+                  "shrink-0",
+                  "h-6",
+                  "rounded-md",
+                  "overflow-hidden"
+                )}
                 src={`data:image/png;base64,${service.logoData}`}
               />
             )}
-            <div className="relative text-gray-200 overflow-hidden">
+            <div
+              className={clsx("relative", "text-gray-200", "overflow-hidden")}
+            >
               {program ? (
-                <div className="flex flex-col">
-                  <h2 className="font-semibold text-2xl truncate align-middle">
+                <div className={clsx("flex", "flex-col")}>
+                  <h1
+                    className={clsx(
+                      "font-semibold",
+                      "text-2xl",
+                      "truncate",
+                      "align-middle"
+                    )}
+                    tabIndex={0}
+                  >
                     <EscapeEnclosed str={program.name || ""} />
-                  </h2>
-                  <div className="flex space-x-3 font-normal text-lg truncate">
-                    {serviceLabel ? <p>{serviceLabel}</p> : <></>}
+                  </h1>
+                  <div
+                    className={clsx(
+                      "flex",
+                      "space-x-3",
+                      "font-normal",
+                      "text-lg",
+                      "truncate"
+                    )}
+                  >
+                    {serviceLabel ? (
+                      <h2 tabIndex={0}>{serviceLabel}</h2>
+                    ) : (
+                      <></>
+                    )}
                     <p>
                       {`${startAt}〜${program.duration !== 1 ? endAt : ""}`}
                     </p>
                   </div>
                 </div>
               ) : serviceLabel ? (
-                <p className="font-semibold text-2xl flex items-center space-x-1">
+                <p
+                  className={clsx(
+                    "font-semibold",
+                    "text-2xl",
+                    "flex",
+                    "items-center",
+                    "space-x-1"
+                  )}
+                >
                   {serviceLabel}
                 </p>
               ) : (
@@ -316,7 +358,7 @@ export const CoiledController: React.FC<{}> = () => {
           ) : (
             <></>
           )}
-          <div className="flex space-x-2 app-region-no-drag">
+          <div className={clsx("flex", "space-x-2", "app-region-no-drag")}>
             <PlayToggleButton
               isPlaying={isPlaying}
               setIsPlaying={setIsPlaying}
@@ -334,9 +376,7 @@ export const CoiledController: React.FC<{}> = () => {
             />
             <CoiledScreenshotButton />
             <Popover className="relative">
-              <Popover.Button
-                className={`focus:outline-none cursor-pointer p-2 text-gray-100`}
-              >
+              <Popover.Button className={clsx("p-2", "text-gray-100")}>
                 <Settings className="pointer-events-none" size="1.75rem" />
               </Popover.Button>
               <Popover.Panel
@@ -452,8 +492,6 @@ export const CoiledController: React.FC<{}> = () => {
               "border-1",
               "border-gray-800",
               "py-3",
-              "focus:outline-none",
-              "cursor-pointer",
               "pointer-events-auto",
               "rounded-l-md"
             )}
@@ -477,7 +515,7 @@ export const CoiledController: React.FC<{}> = () => {
         className={clsx(
           "h-full",
           "transition-width",
-          isSidebarOpen ? "w-1/3" : "w-0"
+          isSidebarOpen ? "w-1/3" : "w-0 invisible"
         )}
         onMouseDown={(e) => e.stopPropagation()}
       >
@@ -490,20 +528,39 @@ export const CoiledController: React.FC<{}> = () => {
           />
         )}
       </div>
-      <div className="absolute w-full h-full flex items-center justify-center pointer-events-none">
+      <div
+        className={clsx(
+          "absolute",
+          "w-full",
+          "h-full",
+          "flex",
+          "items-center",
+          "justify-center",
+          "pointer-events-none"
+        )}
+      >
         <button
           type="button"
           className={clsx(
-            "focus:outline-none transition-opacity duration-150 ease-in-out",
+            "transition-opacity",
+            "duration-150",
+            "ease-in-out",
             isPlayButtonShowing || !isPlaying
-              ? "opacity-80 cursor-pointer pointer-events-auto"
+              ? "opacity-80 pointer-events-auto"
               : "opacity-0",
             isPlaying && "animate-ping-once"
           )}
           onClick={() => setIsPlaying((isPlaying) => !isPlaying)}
           onDoubleClick={(e) => e.stopPropagation()}
         >
-          <div className="p-4 rounded-full bg-opacity-50 bg-gray-800 cursor-pointer">
+          <div
+            className={clsx(
+              "p-4",
+              "rounded-full",
+              "bg-opacity-50",
+              "bg-gray-800"
+            )}
+          >
             {isPlaying ? (
               <PauseCircle className="pointer-events-none" size="3rem" />
             ) : (

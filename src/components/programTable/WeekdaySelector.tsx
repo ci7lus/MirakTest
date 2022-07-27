@@ -29,9 +29,7 @@ export const WeekdaySelector: React.FC<{
             "truncate",
             "font-semibold",
             add === i ? "bg-gray-600" : "hover:bg-gray-700",
-            color,
-            "focus:outline-none",
-            "cursor-pointer"
+            color
           )}
           type="button"
           onClick={() => {

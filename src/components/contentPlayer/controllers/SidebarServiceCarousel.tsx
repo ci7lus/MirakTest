@@ -12,7 +12,6 @@ const RightArrow = ({ onClick }: { onClick: () => void }) => {
         "absolute",
         "bg-gray-800",
         "bg-opacity-80",
-        "cursor-pointer",
         "right-0",
         "py-2",
         "rounded-md",
@@ -22,8 +21,9 @@ const RightArrow = ({ onClick }: { onClick: () => void }) => {
         "transform"
       )}
       onClick={onClick}
+      tabIndex={-1}
     >
-      <ChevronRight className={clsx("pointer-events-none")} size={24} />
+      <ChevronRight className="pointer-events-none" size={24} />
     </button>
   )
 }
@@ -35,7 +35,6 @@ const LeftArrow = ({ onClick }: { onClick: () => void }) => {
         "absolute",
         "bg-gray-800",
         "bg-opacity-80",
-        "cursor-pointer",
         "left-0",
         "py-2",
         "rounded-md",
@@ -45,8 +44,9 @@ const LeftArrow = ({ onClick }: { onClick: () => void }) => {
         "transform"
       )}
       onClick={onClick}
+      tabIndex={-1}
     >
-      <ChevronLeft className={clsx("pointer-events-none")} size={24} />
+      <ChevronLeft className="pointer-events-none" size={24} />
     </button>
   )
 }

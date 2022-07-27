@@ -5,4 +5,11 @@ module.exports = {
   parserOptions: {
     project: ["./tsconfig.eslint.json"],
   },
+  plugins: ["classnames"],
+  rules: {
+    "classnames/prefer-classnames-function": [
+      "error",
+      { functionName: "clsx" },
+    ],
+  },
 }

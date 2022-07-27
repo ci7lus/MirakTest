@@ -2,10 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
-*,
-a,
-button {
-  cursor: default;
+* {
   user-select: none;
 }
 
@@ -50,7 +47,6 @@ button {
 .programDescription {
   a {
     @apply text-blue-400;
-    @apply cursor-pointer;
   }
 
   * {

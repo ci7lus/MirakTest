@@ -1,10 +1,23 @@
+import { StyleSheet, css } from "aphrodite"
+import clsx from "clsx"
 import dayjs from "dayjs"
-import React, { memo, useState } from "react"
+import React, { memo } from "react"
 import { GenreColors } from "../../constants/genreColor"
 import { Genre, SubGenre } from "../../constants/program"
+import { HOUR_HEIGHT } from "../../constants/style"
 import { Program, Service } from "../../infra/mirakurun/api"
 import { convertVariationSelectedClosed } from "../../utils/enclosed"
 import { EscapeEnclosed } from "../common/EscapeEnclosed"
+
+const { hover } = StyleSheet.create({
+  hover: {
+    ":hover": {
+      height: "auto",
+      maxHeight: `${HOUR_HEIGHT * 24}rem`,
+      zIndex: 50,
+    },
+  },
+})
 
 export const ProgramItem: React.FC<{
   program: Program
@@ -17,7 +30,7 @@ export const ProgramItem: React.FC<{
     //const remain = startAt.diff(now, "minute")
     const displayStartTime = dayjs(displayStartTimeInString)
     const diffInMinutes = startAt.diff(displayStartTime, "minute")
-    const top = (diffInMinutes / 60) * 180
+    const top = (diffInMinutes / 60) * HOUR_HEIGHT
     // 終了時間未定の場合はdurationが1になるので表示長さを調節する
     const duration =
       program.duration === 1
@@ -27,7 +40,7 @@ export const ProgramItem: React.FC<{
           : // 未来の長さ未定番組はとりあえず1時間にする
             60 * 60
         : program.duration / 1000
-    const height = (duration / 3600) * 180
+    const height = (duration / 3600) * HOUR_HEIGHT
 
     const firstGenre = program.genres?.[0]
     const lv1 = firstGenre?.lv1
@@ -38,29 +51,30 @@ export const ProgramItem: React.FC<{
     const genreColor =
       genre && ((subGenre && GenreColors[subGenre]) || GenreColors[genre])
 
-    const [isHovering, setIsHovering] = useState(false)
-
     const calcHeight = 0 < top ? height : height + top
 
-    const [whenMouseDown, setWhenMouseDown] = useState(0)
+    const style = StyleSheet.create({
+      button: {
+        top: `${Math.max(top, 0)}rem`,
+        height: `${calcHeight}rem`,
+        minHeight: `${calcHeight}rem`,
+        containIntrinsicSize: `10rem ${calcHeight}rem`,
+        maxHeight: `${calcHeight}rem`,
+      },
+    })
 
     return (
-      <div
+      <button
         id={`${service.id}-${program.id}`}
-        style={{
-          top: `${Math.max(top, 0)}px`,
-          height: isHovering ? "auto" : `${calcHeight}px`,
-          minHeight: `${calcHeight}px`,
-          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-          // @ts-expect-error
-          containIntrinsicSize: `10rem ${calcHeight}px`,
-          maxHeight: isHovering ? `${180 * 24}px` : `${calcHeight}px`,
-        }}
-        className={`absolute truncate w-48 ${
+        className={`text-left align-top absolute truncate w-48 ${
           genreColor || "bg-gray-100"
-        } border border-gray-400 cursor-pointer select-none content-visibility-auto contain-paint transition-maxHeight ${
-          (isHovering || program.duration === 1) && "z-50"
-        }`}
+        } border border-gray-400 select-none content-visibility-auto contain-paint transition-maxHeight hover:h-auto hover:max-h-96 hover:z-50 ${
+          program.duration === 1 && "z-50"
+        } flex ${css(style.button)} ${css(hover)}`}
+        onClick={() => {
+          setSelectedProgram(program)
+        }}
+        type="button"
         title={convertVariationSelectedClosed(
           [
             program.name,
@@ -77,27 +91,36 @@ export const ProgramItem: React.FC<{
             .filter((s) => !!s)
             .join("\n\n")
         )}
-        onMouseEnter={() => setIsHovering(true)}
-        onMouseLeave={() => setIsHovering(false)}
-        onMouseDown={() => setWhenMouseDown(performance.now())}
-        onMouseUp={() => {
-          if (performance.now() - whenMouseDown < 200) {
-            setSelectedProgram(program)
-          }
-        }}
       >
-        <p className="whitespace-pre-wrap leading-snug pointer-events-none">
-          {startAt.format("HH:mm")} <EscapeEnclosed str={program.name || ""} />
-        </p>
-        <p
-          className="whitespace-pre-wrap pt-1 px-2 pb-2 text-xs text-gray-600"
-          /*dangerouslySetInnerHTML={{
+        <div>
+          <p
+            className={clsx(
+              "whitespace-pre-wrap",
+              "leading-snug",
+              "pointer-events-none"
+            )}
+          >
+            {startAt.format("HH:mm")}{" "}
+            <EscapeEnclosed str={program.name || ""} />
+          </p>
+          <p
+            className={clsx(
+              "whitespace-pre-wrap",
+              "pt-1",
+              "px-2",
+              "pb-2",
+              "text-xs",
+              "text-gray-600",
+              "h-full"
+            )}
+            /*dangerouslySetInnerHTML={{
                                 __html: program.detail,
                               }}*/
-        >
-          {program.description}
-        </p>
-      </div>
+          >
+            {program.description}
+          </p>
+        </div>
+      </button>
     )
   },
   (prev, next) =>

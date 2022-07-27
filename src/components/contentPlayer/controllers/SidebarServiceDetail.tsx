@@ -29,7 +29,7 @@ export const SidebarServiceDetail = memo(
     const [, /*isHovering*/ setIsHovering] = useState(false)
     const [whenMouseDown, setWhenMouseDown] = useState(0)
     return (
-      <a
+      <button
         key={service.id}
         onMouseDown={() => setWhenMouseDown(performance.now())}
         onMouseUp={() => {
@@ -40,7 +40,13 @@ export const SidebarServiceDetail = memo(
         onClick={(e) => e.preventDefault()}
         onMouseEnter={() => setIsHovering(true)}
         onMouseLeave={() => setIsHovering(false)}
-        className={clsx("cursor-pointer", "w-full")}
+        className={clsx(
+          "cursor-pointer",
+          "w-full",
+          "app-region-no-drag",
+          "text-left",
+          "align-top"
+        )}
       >
         <div
           className={clsx(
@@ -78,7 +84,7 @@ export const SidebarServiceDetail = memo(
             >
               {service.name}
             </Marquee>*/}
-            <h3 className={clsx("shrink-0")}>{service.name}</h3>
+            <h3 className="shrink-0">{service.name}</h3>
           </div>
           {current?.name && (
             <div className={clsx(service.logoData ? "mt-2" : "mt-1")}>
@@ -106,7 +112,7 @@ export const SidebarServiceDetail = memo(
             </div>
           )}
           {next?.name && (
-            <div className={clsx("text-sm")}>
+            <div className="text-sm">
               次の番組
               <ChevronsRight size="1rem" className={clsx("inline", "mb-0.5")} />
               <span>
@@ -123,7 +129,7 @@ export const SidebarServiceDetail = memo(
             </div>
           )}
         </div>
-      </a>
+      </button>
     )
   },
   (prev, next) =>

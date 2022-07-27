@@ -9,7 +9,7 @@ export const CoiledPluginsSetting: React.FC<{}> = () => {
   )
 
   return (
-    <div className={clsx("m-4")}>
+    <div className="m-4">
       <h2 className={clsx("text-lg", "mb-2")}>プラグイン</h2>
       <ul>
         {window.plugins?.map((plugin) => (
@@ -27,7 +27,15 @@ export const CoiledPluginsSetting: React.FC<{}> = () => {
           >
             <input
               type="checkbox"
-              className="block form-checkbox text-lg p-3 mr-3 ml-1 cursor-pointer shrink-0"
+              className={clsx(
+                "block",
+                "form-checkbox",
+                "text-lg",
+                "p-3",
+                "mr-3",
+                "ml-1",
+                "shrink-0"
+              )}
               checked={!disabledFileNames.includes(plugin.fileName)}
               onChange={() => {
                 let copied = structuredClone(disabledFileNames)
@@ -43,16 +51,11 @@ export const CoiledPluginsSetting: React.FC<{}> = () => {
               title={`${plugin.name}を切り替える`}
             />
             <div>
-              <h3 className={clsx("text-lg")}>
+              <h3 className="text-lg">
                 {plugin.name} {plugin.version}
                 {plugin.authorUrl ? (
                   <a
-                    className={clsx(
-                      "text-sm",
-                      "text-blue-400",
-                      "ml-2",
-                      "cursor-pointer"
-                    )}
+                    className={clsx("text-sm", "text-blue-400", "ml-2")}
                     href={plugin.authorUrl}
                     target="_blank"
                   >
@@ -67,18 +70,12 @@ export const CoiledPluginsSetting: React.FC<{}> = () => {
               <span className={clsx("text-sm", "text-gray-300", "select-text")}>
                 {plugin.id}
               </span>
-              <h4 className={clsx("mt-1")}>{plugin.description}</h4>
+              <h4 className="mt-1">{plugin.description}</h4>
               {plugin.url && (
                 <a
                   href={plugin.url}
                   target="_blank"
-                  className={clsx(
-                    "block",
-                    "text-blue-400",
-                    "text-sm",
-                    "cursor-pointer",
-                    "mt-1"
-                  )}
+                  className={clsx("block", "text-blue-400", "text-sm", "mt-1")}
                 >
                   リンク
                 </a>
@@ -104,7 +101,16 @@ export const CoiledPluginsSetting: React.FC<{}> = () => {
           >
             <input
               type="checkbox"
-              className="block form-checkbox text-lg p-3 mr-3 text-red-600 ml-1 cursor-pointer shrink-0"
+              className={clsx(
+                "block",
+                "form-checkbox",
+                "text-lg",
+                "p-3",
+                "mr-3",
+                "text-red-600",
+                "ml-1",
+                "shrink-0"
+              )}
               checked={!disabledFileNames.includes(plugin)}
               onChange={() => {
                 let copied = structuredClone(disabledFileNames)
@@ -118,12 +124,12 @@ export const CoiledPluginsSetting: React.FC<{}> = () => {
               title={`${plugin}を切り替える`}
             />
             <div>
-              <h3 className={clsx("text-lg")}>{plugin}</h3>
+              <h3 className="text-lg">{plugin}</h3>
             </div>
           </li>
         ))}
       </ul>
-      <p className={clsx("text-sm")}>
+      <p className="text-sm">
         チェックを入れたプラグインは次回再起動時に読み込まれます
       </p>
     </div>

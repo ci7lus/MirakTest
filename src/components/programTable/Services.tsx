@@ -24,12 +24,10 @@ export const ScrollServices: React.FC<{
               "text-center",
               "p-1",
               "py-2",
-              "cursor-pointer",
               "border-r-2",
               "border-gray-400",
               "truncate",
               "select-none",
-              "focus:outline-none",
               "hover:bg-gray-600",
               "flex",
               "items-center",
@@ -69,7 +67,7 @@ export const ScrollServices: React.FC<{
               "rounded-md"
             )}
           >
-            <div className={clsx("p-2")}>
+            <div className="p-2">
               <div
                 className={clsx(
                   "flex",
@@ -87,13 +85,13 @@ export const ScrollServices: React.FC<{
                     src={`data:image/jpeg;base64,${service.logoData}`}
                   />
                 )}
-                <h3 className={clsx("shrink-0")}>{`${
+                <h3 className="shrink-0">{`${
                   service.remoteControlKeyId ?? service.serviceId
                 } ${service.name}`}</h3>
               </div>
             </div>
             <Switch.Group>
-              <div className="flex items-center">
+              <div className={clsx("flex", "items-center")}>
                 <Switch
                   checked={isOpenInNewWindow}
                   onChange={(e: boolean | ((prevState: boolean) => boolean)) =>
@@ -109,7 +107,7 @@ export const ScrollServices: React.FC<{
                     } inline-block w-4 h-4 transform bg-white rounded-full transition ease-in-out duration-200`}
                   />
                 </Switch>
-                <Switch.Label className="ml-2 text-sm">
+                <Switch.Label className={clsx("ml-2", "text-sm")}>
                   新しいウィンドウで開く
                 </Switch.Label>
               </div>
@@ -133,7 +131,6 @@ export const ScrollServices: React.FC<{
               }}
               className={clsx(
                 "p-1",
-                "cursor-pointer",
                 "bg-gray-800",
                 "bg-opacity-70",
                 "rounded-md"

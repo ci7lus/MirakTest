@@ -54,7 +54,7 @@ export const ProgramModal = ({
         "flex-col"
       )}
     >
-      <div className={clsx("overflow-auto")} ref={ref}>
+      <div className="overflow-auto" ref={ref}>
         <Dialog.Title className={clsx("text-2xl", "select-text")} tabIndex={0}>
           <EscapeEnclosed str={program.name || ""} />
         </Dialog.Title>
@@ -131,8 +131,7 @@ export const ProgramModal = ({
           "bg-gray-800",
           "bg-opacity-80",
           "rounded-md",
-          "mt-4",
-          "cursor-pointer"
+          "mt-4"
         )}
       >
         閉じる

@@ -1,3 +1,4 @@
+import clsx from "clsx"
 import React, { useEffect, useState } from "react"
 import { useRecoilValue } from "recoil"
 import { globalFontsAtom } from "../../../atoms/global"
@@ -20,11 +21,10 @@ export const SubtitleSettingForm: React.FC<{
   return (
     <div>
       <p className="text-lg">字幕設定</p>
-      <label className="block mt-4">
+      <label className={clsx("block", "mt-4")}>
         <span>フォント</span>
         <datalist
-          className="overflow-scroll"
-          style={{ maxHeight: "50vh" }}
+          className={clsx("overflow-scroll", "max-h-halfscreen")}
           id="subtitleFonts"
         >
           {fonts.map((font) => (
@@ -33,7 +33,14 @@ export const SubtitleSettingForm: React.FC<{
         </datalist>
         <input
           type="text"
-          className="block mt-2 form-input rounded-md w-full text-gray-900"
+          className={clsx(
+            "block",
+            "mt-2",
+            "form-input",
+            "rounded-md",
+            "w-full",
+            "text-gray-900"
+          )}
           value={font || ""}
           onChange={(e) => {
             setFont(e.target.value)

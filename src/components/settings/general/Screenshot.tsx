@@ -29,41 +29,46 @@ export const ScreenshotSettingForm: React.FC<{
   return (
     <div>
       <p className="text-lg">スクリーンショットの設定</p>
-      <label className="block mt-4">
+      <label className={clsx("block", "mt-4")}>
         <span>スクリーンショットを圧縮しない</span>
         <input
           type="checkbox"
-          className="block mt-2 form-checkbox"
+          className={clsx("block", "mt-2", "form-checkbox")}
           checked={keepQuality}
           onChange={() => setKeepQuality((enabled) => !enabled)}
         />
       </label>
-      <label className="block mt-4">
+      <label className={clsx("block", "mt-4")}>
         <span>ファイルに保存する</span>
         <input
           type="checkbox"
-          className="block mt-2 form-checkbox"
+          className={clsx("block", "mt-2", "form-checkbox")}
           checked={saveAsAFile || false}
           onChange={() => setSaveAsAFile((enabled) => !enabled)}
         />
       </label>
-      <label className="block mt-4">
+      <label className={clsx("block", "mt-4")}>
         <span>スクリーンショットに字幕を含める</span>
         <input
           type="checkbox"
-          className="block mt-2 form-checkbox"
+          className={clsx("block", "mt-2", "form-checkbox")}
           checked={includeSubtitle || false}
           onChange={() => setIncludeSubtitle((enabled) => !enabled)}
         />
       </label>
-      <label className="mt-4 mb-2 block">
+      <label className={clsx("mt-4", "mb-2", "block")}>
         <span>保存するフォルダ</span>
-        <div className="flex justify-center flex-grow">
+        <div className={clsx("flex", "justify-center", "flex-grow")}>
           <input
             type="text"
             placeholder="/Users/User/Pictures"
             className={clsx(
-              "block mt-2 form-input rounded-l-md w-full text-gray-900 focus:outline-none cursor-pointer",
+              "block",
+              "mt-2",
+              "form-input",
+              "rounded-l-md",
+              "w-full",
+              "text-gray-900",
               !saveAsAFile && "bg-gray-600"
             )}
             value={basePath || ""}
@@ -73,7 +78,15 @@ export const ScreenshotSettingForm: React.FC<{
           />
           <button
             className={clsx(
-              `px-4 py-2 mt-2 rounded-r-md flex items-center justify-center bg-gray-100 text-gray-900 focus:outline-none cursor-pointer`,
+              "px-4",
+              "py-2",
+              "mt-2",
+              "rounded-r-md",
+              "flex",
+              "items-center",
+              "justify-center",
+              "bg-gray-100",
+              "text-gray-900",
               !saveAsAFile && "bg-gray-600"
             )}
             disabled={!saveAsAFile}

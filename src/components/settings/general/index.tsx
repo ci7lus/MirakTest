@@ -1,3 +1,4 @@
+import clsx from "clsx"
 import React, { useState } from "react"
 import { useRecoilState } from "recoil"
 import {
@@ -60,7 +61,7 @@ export const CoiledGeneralSetting: React.FC<{}> = () => {
         })
       }}
     >
-      <div className="flex flex-col space-y-8">
+      <div className={clsx("flex", "flex-col", "space-y-8")}>
         <ControllerSettingForm
           controllerSetting={controller}
           setControllerSetting={setController}
@@ -80,7 +81,14 @@ export const CoiledGeneralSetting: React.FC<{}> = () => {
       </div>
       <button
         type="submit"
-        className="bg-gray-100 text-gray-800 p-2 px-2 my-4 rounded-md focus:outline-none cursor-pointer"
+        className={clsx(
+          "bg-gray-100",
+          "text-gray-800",
+          "p-2",
+          "px-2",
+          "my-4",
+          "rounded-md"
+        )}
       >
         保存
       </button>

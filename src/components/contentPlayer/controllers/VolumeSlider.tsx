@@ -1,3 +1,4 @@
+import clsx from "clsx"
 import React, { memo, useEffect, useState } from "react"
 import { VolumeX, Volume1, Volume2 } from "react-feather"
 import { useDebounce } from "react-use"
@@ -22,10 +23,12 @@ export const VolumeSlider: React.FC<{
   }, [volume])
 
   return (
-    <div className="flex items-center justify-center space-x-1">
+    <div
+      className={clsx("flex", "items-center", "justify-center", "space-x-1")}
+    >
       <button
         type="button"
-        className="focus:outline-none cursor-pointer"
+        className="cursor-pointer"
         onClick={() => setRangeVolume((volume) => (0 < volume ? 0 : 100))}
       >
         {rangeVolume === 0 ? (
@@ -37,7 +40,7 @@ export const VolumeSlider: React.FC<{
         )}
       </button>
       <input
-        className="focus:outline-none cursor-pointer"
+        className="cursor-pointer"
         aria-label="音量"
         type="range"
         min={min}
