@@ -31,7 +31,9 @@ export const StateRoot: React.FC<{
       <RecoilStoredSync />
       <RecoilSharedSync initialStates={states} />
       <QueryClientProvider client={queryClient}>
-        <div className={clsx("w-full", "h-full", "relative")}>
+        <div
+          className={clsx("w-full", "h-full", "relative", "app-region-no-drag")}
+        >
           <div
             id="OnBackgroundComponents"
             className={clsx(

@@ -9,7 +9,13 @@ export const Splash: React.FC<{ children?: React.ReactNode }> = ({
     setOpacity(1)
   }, [])
   return (
-    <div className={clsx("overflow-hidden", "select-none")}>
+    <div
+      className={clsx(
+        "overflow-hidden",
+        "select-none",
+        !children && "app-region-drag"
+      )}
+    >
       <div
         className={clsx(
           "w-full",
