@@ -1,5 +1,9 @@
 import React, { useEffect, useState } from "react"
-import { useRecoilBridgeAcrossReactRoots_UNSTABLE } from "recoil"
+import {
+  useRecoilBridgeAcrossReactRoots_UNSTABLE,
+  useSetRecoilState,
+} from "recoil"
+import { windowRootFontSizeAtom } from "./atoms/window"
 import { ComponentShadowWrapper } from "./components/common/ComponentShadowWrapper"
 import { Splash } from "./components/global/Splash"
 import { ROUTES } from "./constants/routes"
@@ -21,6 +25,7 @@ export const Router: React.FC<{}> = () => {
     window.Preload.public.showWindow()
     return () => window.removeEventListener("hashchange", onHashChange)
   }, [])
+  const setRootFontSize = useSetRecoilState(windowRootFontSizeAtom)
   useEffect(() => {
     const root = document.querySelector<HTMLHtmlElement>(":root")
     if (!root) {
@@ -34,8 +39,12 @@ export const Router: React.FC<{}> = () => {
       timer = setTimeout(() => {
         // clamp(14px, 1.25vw, 100%);
         // max(14px, min(1.25vw, 16px))
-        root.style.fontSize =
-          Math.max(14, Math.min((window.innerWidth / 100) * 1.25, 16)) + "px"
+        const fontSize = Math.max(
+          14,
+          Math.min((window.innerWidth / 100) * 1.25, 16)
+        )
+        root.style.fontSize = fontSize + "px"
+        setRootFontSize(fontSize)
         timer = null
       }, 50)
     }

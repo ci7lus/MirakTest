@@ -43,6 +43,7 @@ export type Preload = {
     ) => void
     onMediaChanged: (listener: () => void) => void
     onEncounteredError: (listener: () => void) => void
+    onBuffering: (listener: (percents: number) => void) => void
     onStopped: (listener: () => void) => void
     onEndReached: (listener: () => void) => void
     onPaused: (listener: () => void) => void
