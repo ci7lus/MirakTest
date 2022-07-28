@@ -85,6 +85,12 @@ const preload: Preload = {
       }
       wc.onEncounteredError = () => listener()
     },
+    onBuffering(listener) {
+      if (!wc) {
+        throw new Error("wc is not initialized")
+      }
+      wc.onBuffering = (p) => listener(p)
+    },
     onStopped(listener) {
       if (!wc) {
         throw new Error("wc is not initialized")

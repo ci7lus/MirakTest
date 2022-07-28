@@ -11,6 +11,7 @@ import {
   contentPlayerAudioChannelAtom,
   contentPlayerAudioTrackAtom,
   contentPlayerAudioTracksAtom,
+  contentPlayerBufferingAtom,
   contentPlayerDisplayingAribSubtitleDataAtom,
   contentPlayerIsPlayingAtom,
   contentPlayerIsSeekableAtom,
@@ -297,6 +298,7 @@ export const CoiledVideoPlayer: React.FC<{
   const isAudioSelectedWithDualMonoRef = useRefFromState(
     isAudioSelectedWithDualMono
   )
+  const setBuffering = useSetRecoilState(contentPlayerBufferingAtom)
   useEffect(() => setPlayingPosition(position), [position])
   useEffect(() => {
     if (!window.Preload.webchimera.isOk()) return
@@ -460,6 +462,9 @@ export const CoiledVideoPlayer: React.FC<{
       })
       renderContext.fillTransparent()
       setIsErrorEncounted(true)
+    })
+    window.Preload.webchimera.onBuffering((percentage) => {
+      setBuffering(percentage)
     })
     window.Preload.webchimera.onStopped(() => {
       setIsPlaying(false)

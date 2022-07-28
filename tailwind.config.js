@@ -32,6 +32,7 @@ module.exports = {
       transitionProperty: {
         maxHeight: "max-height",
         width: "width",
+        strokeDashoffset: "stroke-dashoffset",
       },
       keyframes: {
         hidden: {

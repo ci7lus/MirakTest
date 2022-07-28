@@ -10,6 +10,7 @@ import {
   contentPlayerAudioChannelAtom,
   contentPlayerAudioTrackAtom,
   contentPlayerAudioTracksAtom,
+  contentPlayerBufferingAtom,
   contentPlayerIsPlayingAtom,
   contentPlayerIsSeekableAtom,
   contentPlayerPlayingPositionAtom,
@@ -30,6 +31,7 @@ import { controllerSetting, experimentalSetting } from "../../atoms/settings"
 import { useRefFromState } from "../../hooks/ref"
 import { EscapeEnclosed } from "../common/EscapeEnclosed"
 import { PluginPositionComponents } from "../common/PluginPositionComponents"
+import { CoiledLoadingCircle } from "./LoadingCircle"
 import { AudioChannelSelector } from "./controllers/AudioChannelSelector"
 import { AudioTrackSelector } from "./controllers/AudioTrackSelector"
 import { FullScreenToggleButton } from "./controllers/FullScreenToggleButton"
@@ -42,6 +44,7 @@ import { SubtitleToggleButton } from "./controllers/SubtitleToggleButton"
 import { VolumeSlider } from "./controllers/VolumeSlider"
 
 import "dayjs/locale/ja"
+
 dayjs.locale("ja")
 
 export const CoiledController: React.FC<{}> = () => {
@@ -201,6 +204,7 @@ export const CoiledController: React.FC<{}> = () => {
     )
   }, [service])
   const time = useRecoilValue(contentPlayerPlayingTimeAtom)
+  const buffering = useRecoilValue(contentPlayerBufferingAtom)
 
   const [isSidebarOpen, setIsSidebarOpen] = useState(false)
 
@@ -568,6 +572,23 @@ export const CoiledController: React.FC<{}> = () => {
             )}
           </div>
         </button>
+      </div>
+      <div
+        className={clsx(
+          "absolute",
+          "w-full",
+          "h-full",
+          "flex",
+          "items-center",
+          "justify-center",
+          "pointer-events-none",
+          "transition-opacity",
+          "ease-in-out",
+          "duration-150",
+          buffering < 100 ? "opacity-80" : "opacity-0"
+        )}
+      >
+        <CoiledLoadingCircle percentage={buffering} />
       </div>
     </div>
   )

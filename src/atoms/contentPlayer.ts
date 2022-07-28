@@ -86,6 +86,11 @@ export const contentPlayerPlayingTimeAtom = atom<number>({
   default: 0,
 })
 
+export const contentPlayerBufferingAtom = atom<number>({
+  key: `${prefix}.buffering`,
+  default: 100,
+})
+
 export const contentPlayerTotAtom = atom<number>({
   key: `${prefix}.tot`,
   default: 0,
