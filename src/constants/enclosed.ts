@@ -1,3 +1,5 @@
+import type { StyleDeclaration } from "aphrodite"
+
 // https://github.com/l3tnun/EPGStation/blob/7949ffe4b4e3b79c896181e0f95526409818330f/src/util/StrUtil.ts#L10
 export const ENCLOSED_CHARACTERS_TABLE: { [key: string]: string } = {
   "\u{1f14a}": "HV",
@@ -38,3 +40,22 @@ export const ENCLOSED_CHARACTERS_TABLE: { [key: string]: string } = {
 }
 
 export const ENCLOSED_CHARACTERS = Object.keys(ENCLOSED_CHARACTERS_TABLE)
+
+export const ENCLOSED_STYLES: StyleDeclaration = Object.fromEntries(
+  Object.entries(ENCLOSED_CHARACTERS_TABLE).map(([k, v]) => [
+    `reverse_${k.codePointAt(0)}`,
+    {
+      ":before": {
+        content: `"${v}"`,
+        border: "0.1rem solid currentColor",
+        /*fontSize: ".8em",
+        width: "1.25rem",
+        height: "1.25rem",
+        display: "inline-block",
+        justifyContent: "center",
+        alignContent: "center",
+        textAlign: "center",*/
+      },
+    },
+  ])
+)

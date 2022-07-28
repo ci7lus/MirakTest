@@ -300,7 +300,10 @@ export const CoiledController: React.FC<{}> = () => {
                     )}
                     tabIndex={0}
                   >
-                    <EscapeEnclosed str={program.name || ""} />
+                    <EscapeEnclosed
+                      str={program.name || ""}
+                      size="before:text-xl"
+                    />
                   </h1>
                   <div
                     className={clsx(

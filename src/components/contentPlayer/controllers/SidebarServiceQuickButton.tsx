@@ -86,7 +86,7 @@ export const SidebarServiceQuickButton = memo(
               "text-sm"
             )}
           >
-            <EscapeEnclosed str={program.name || ""} />
+            <EscapeEnclosed str={program.name || ""} size="before:text-xs" />
           </span>
         )}
       </button>
