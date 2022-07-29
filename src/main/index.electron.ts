@@ -591,6 +591,17 @@ const loadPlugins = async ({
   )
 }
 
+app.on("before-quit", () => {
+  pluginData.forEach((datum, key) => {
+    try {
+      vm.runInContext("destroyPlugin", pluginsVMContext)(datum.fileName)
+      console.info(`[Plugin] Destroyed: ${datum.fileName}`)
+    } catch (error) {
+      console.error(error, key)
+    }
+  })
+})
+
 ipcMain.handle(REQUEST_INITIAL_DATA, (event) => {
   const data: InitialData = {
     pluginData: Array.from(pluginData.values()),
