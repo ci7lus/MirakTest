@@ -68,7 +68,11 @@ import {
 import { AppInfo, InitPlugin, PluginInMainArgs } from "../../src/types/plugin"
 import { InitialData, ObjectLiteral, PluginDatum } from "../../src/types/struct"
 import { ExperimentalSetting, ScreenshotSetting } from "../types/setting"
-import { FORBIDDEN_MODULES } from "./constants"
+import {
+  ALLOWED_MODULES,
+  BUILTIN_MODULES,
+  FORBIDDEN_MODULES,
+} from "./constants"
 import { generateContentPlayerContextMenu } from "./contextmenu"
 import { EPGManager } from "./epgManager"
 import { exists, isChildOfHome, isHidden } from "./fsUtils"
@@ -387,26 +391,26 @@ const fakeModule = (fileName: string) => ({
   SourceMap,
 })
 const pluginRequire = (fileName: string) => (s: string) => {
-  if (["buffer", "console", "process", "timers"].includes(s)) {
+  if (ALLOWED_MODULES.includes(s)) {
     return require(/* webpackIgnore: true */ s)
   }
   console.info(`[Plugin] ${fileName}" requesting "${s}".`)
   if (s === "electron") {
     return electron
   }
-  if (s === "fs") {
+  if (["fs", "node:fs"].includes(s)) {
     return { promises }
   }
-  if (s === "fs/promises") {
+  if (["fs/promises", "node:fs/promises"].includes(s)) {
     return promises
   }
-  if (s === "module") {
+  if (["module", "node:module"].includes(s)) {
     return fakeModule(fileName)
   }
   if (
     s.startsWith("_") ||
     FORBIDDEN_MODULES.includes(s) ||
-    !builtinModules.includes(s)
+    !BUILTIN_MODULES.includes(s)
   ) {
     return
   }
