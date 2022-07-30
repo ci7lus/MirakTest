@@ -22,7 +22,10 @@ import {
   contentPlayerTotSelector,
   contentPlayerTsFirstPcrSelector,
 } from "./atoms/contentPlayerSelectors"
-import { globalContentPlayerPlayingContentFamily } from "./atoms/globalFamilies"
+import {
+  globalContentPlayerPlayingContentFamily,
+  globalContentPlayerSelectedServiceFamily,
+} from "./atoms/globalFamilies"
 import {
   globalActiveContentPlayerIdSelector,
   globalContentPlayerIdsSelector,
@@ -102,6 +105,7 @@ export const PluginLoader: React.FC<{
         globalContentPlayerIdsSelector,
         globalContentPlayerPlayingContentFamily,
         globalActiveContentPlayerIdSelector,
+        globalContentPlayerSelectedServiceFamily,
         contentPlayerPlayingContentAtom:
           globalContentPlayerPlayingContentFamily(window.id ?? -1),
         contentPlayerServiceSelector,
