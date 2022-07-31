@@ -117,5 +117,9 @@ export type Preload = {
       query: (arg: QuerySchema) => Promise<Program[]>
     }
     invoke: (channel: string, ...args: unknown[]) => Promise<unknown>
+    onCustomIpcListener: (
+      channel: string,
+      listener: (...args: unknown[]) => void
+    ) => () => void
   }
 }

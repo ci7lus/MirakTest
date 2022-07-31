@@ -391,6 +391,14 @@ const preload: Preload = {
     invoke(channel, ...args) {
       return ipcRenderer.invoke(channel, ...args)
     },
+    onCustomIpcListener(channel, listener) {
+      ipcRenderer.on(channel, (_, arg) => {
+        listener(arg)
+      })
+      return () => {
+        ipcRenderer.off(channel, listener)
+      }
+    },
   },
 }
 

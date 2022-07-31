@@ -22,7 +22,10 @@ import {
   contentPlayerTotSelector,
   contentPlayerTsFirstPcrSelector,
 } from "./atoms/contentPlayerSelectors"
-import { globalContentPlayerPlayingContentFamily } from "./atoms/globalFamilies"
+import {
+  globalContentPlayerPlayingContentFamily,
+  globalContentPlayerSelectedServiceFamily,
+} from "./atoms/globalFamilies"
 import {
   globalActiveContentPlayerIdSelector,
   globalContentPlayerIdsSelector,
@@ -32,6 +35,12 @@ import {
   mirakurunServicesSelector,
   mirakurunVersionSelector,
 } from "./atoms/mirakurunSelectors"
+import {
+  controllerSettingSelector,
+  experimentalSettingSelector,
+  screenshotSettingSelector,
+  subtitleSettingSelector,
+} from "./atoms/settingsSelector"
 import { Splash } from "./components/global/Splash"
 import {
   RECOIL_SYNC_SHARED_KEY,
@@ -102,6 +111,7 @@ export const PluginLoader: React.FC<{
         globalContentPlayerIdsSelector,
         globalContentPlayerPlayingContentFamily,
         globalActiveContentPlayerIdSelector,
+        globalContentPlayerSelectedServiceFamily,
         contentPlayerPlayingContentAtom:
           globalContentPlayerPlayingContentFamily(window.id ?? -1),
         contentPlayerServiceSelector,
@@ -124,6 +134,10 @@ export const PluginLoader: React.FC<{
         mirakurunCompatibilitySelector,
         mirakurunVersionSelector,
         mirakurunServicesSelector,
+        controllerSettingSelector,
+        subtitleSettingSelector,
+        screenshotSettingSelector,
+        experimentalSettingSelector,
       },
       constants: {
         recoil: {
