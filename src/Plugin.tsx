@@ -35,6 +35,12 @@ import {
   mirakurunServicesSelector,
   mirakurunVersionSelector,
 } from "./atoms/mirakurunSelectors"
+import {
+  controllerSettingSelector,
+  experimentalSettingSelector,
+  screenshotSettingSelector,
+  subtitleSettingSelector,
+} from "./atoms/settingsSelector"
 import { Splash } from "./components/global/Splash"
 import {
   RECOIL_SYNC_SHARED_KEY,
@@ -128,6 +134,10 @@ export const PluginLoader: React.FC<{
         mirakurunCompatibilitySelector,
         mirakurunVersionSelector,
         mirakurunServicesSelector,
+        controllerSettingSelector,
+        subtitleSettingSelector,
+        screenshotSettingSelector,
+        experimentalSettingSelector,
       },
       constants: {
         recoil: {

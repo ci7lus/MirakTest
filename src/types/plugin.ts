@@ -10,6 +10,12 @@ import {
   Preload,
 } from "./ipc"
 import { MirakurunCompatibilityTypes } from "./mirakurun"
+import {
+  ControllerSetting,
+  ExperimentalSetting,
+  ScreenshotSetting,
+  SubtitleSetting,
+} from "./setting"
 export type { ContentPlayerPlayingContent } from "./contentPlayer"
 
 export type AppInfo = {
@@ -110,6 +116,10 @@ export type PluginInRendererArgs = {
     mirakurunCompatibilitySelector: Recoil.RecoilValueReadOnly<MirakurunCompatibilityTypes | null>
     mirakurunVersionSelector: Recoil.RecoilValueReadOnly<string | null>
     mirakurunServicesSelector: Recoil.RecoilValueReadOnly<Service[] | null>
+    controllerSettingSelector: Recoil.RecoilValueReadOnly<ControllerSetting>
+    subtitleSettingSelector: Recoil.RecoilValueReadOnly<SubtitleSetting>
+    screenshotSettingSelector: Recoil.RecoilValueReadOnly<ScreenshotSetting>
+    experimentalSettingSelector: Recoil.RecoilValueReadOnly<ExperimentalSetting>
   }
   constants: {
     recoil: {
