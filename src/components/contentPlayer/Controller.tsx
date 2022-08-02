@@ -47,7 +47,7 @@ import "dayjs/locale/ja"
 
 dayjs.locale("ja")
 
-export const CoiledController: React.FC<{}> = () => {
+export const CoiledController: React.FC<{ isHide: boolean }> = ({ isHide }) => {
   const [isVisible, setIsVisible] = useState(false)
 
   const [lastCurMoved, setLastCurMoved] = useState(0)
@@ -126,8 +126,8 @@ export const CoiledController: React.FC<{}> = () => {
   const [seekRequest, setSeekRequest] = useState<number | null>(null)
   useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "s") {
-        setScreenshotTrigger(performance.now())
+      if (e.key === "s" || e.code === "KeyS") {
+        setScreenshotTrigger(performance.now() * (e.altKey ? -1 : 1))
       } else if (e.key === "ArrowUp") {
         // 音量+10
         setVolume((volume) =>
@@ -266,6 +266,7 @@ export const CoiledController: React.FC<{}> = () => {
           "h-full flex flex-col justify-between",
           "transition-width",
           !isVisible && "cursor-none",
+          isHide && "invisible",
           isSidebarOpen ? "w-2/3" : "w-full",
           "relative",
           "app-region-drag"
@@ -485,6 +486,7 @@ export const CoiledController: React.FC<{}> = () => {
             "h-full",
             "transition-opacity",
             isVisible || isSidebarOpen ? "opacity-100" : "opacity-0",
+            isHide && "invisible",
             "flex",
             "items-center",
             "justify-end",
@@ -522,13 +524,13 @@ export const CoiledController: React.FC<{}> = () => {
         className={clsx(
           "h-full",
           "transition-width",
-          isSidebarOpen ? "w-1/3" : "w-0 invisible"
+          isSidebarOpen && !isHide ? "w-1/3" : "w-0 invisible"
         )}
         onMouseDown={(e) => e.stopPropagation()}
       >
-        {services && (
+        {services && !isHide && (
           <ControllerSidebar
-            isVisible={isVisible || isSidebarOpen}
+            isVisible={isVisible || (isSidebarOpen && !isHide)}
             setIsSidebarOpen={setIsSidebarOpen}
             services={services}
             setService={setSelectedService}

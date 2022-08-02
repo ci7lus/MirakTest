@@ -19,6 +19,7 @@ import electron, {
   Notification,
   globalShortcut,
   session,
+  clipboard,
 } from "electron"
 import Store from "electron-store"
 import fontList from "font-list"
@@ -58,6 +59,7 @@ import {
   UPDATE_GLOBAL_SCREENSHOT_ACCELERATOR,
   EXIT_FULL_SCREEN,
   SET_WINDOW_BUTTON_VISIBILITY,
+  REQUEST_WINDOW_SCREENSHOT,
 } from "../../src/constants/ipc"
 import { ROUTES } from "../../src/constants/routes"
 import {
@@ -997,6 +999,29 @@ ipcMain.handle(SHOW_NOTIFICATION, (_, arg, path) => {
     n.on("click", () => shell.openPath(path))
   }
   n.show()
+})
+
+ipcMain.handle(REQUEST_WINDOW_SCREENSHOT, async (event, fileName: string) => {
+  const setting = store?.get(screenshotSettingAtomKey) as ScreenshotSetting
+  const { basePath, keepQuality } = setting
+  const window = BrowserWindow.fromWebContents(event.sender)
+  if (!window || !basePath || !fileName) {
+    return
+  }
+  const filePath = path.join(basePath, fileName)
+  const image = await window.webContents.capturePage()
+  clipboard.writeImage(image)
+  await fs.promises.writeFile(
+    filePath,
+    keepQuality === true ? image.toPNG() : image.toJPEG(95)
+  )
+  const n = new Notification({
+    title: "スクリーンショットを撮影しました",
+    body: `${fileName} (クリックで開く)`,
+  })
+  n.on("click", () => shell.openPath(filePath))
+  n.show()
+  return image.toDataURL()
 })
 
 ipcMain.handle(TOGGLE_ALWAYS_ON_TOP, (event) => {
