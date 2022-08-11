@@ -8,6 +8,7 @@ import { ProgramItem } from "./ProgramItem"
 const style = StyleSheet.create({
   containIntrinsicSize: {
     containIntrinsicSize: `10rem ${HOUR_HEIGHT * 24}rem`,
+    height: `${HOUR_HEIGHT * 24}rem`,
   },
 })
 
