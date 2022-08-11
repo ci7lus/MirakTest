@@ -44,7 +44,8 @@ import { VLCLogFilter } from "../../utils/vlc"
 
 export const CoiledVideoPlayer: React.FC<{
   internalPlayingTimeRef: React.MutableRefObject<number>
-}> = memo(({ internalPlayingTimeRef }) => {
+  setIsHideController: React.Dispatch<React.SetStateAction<boolean>>
+}> = memo(({ internalPlayingTimeRef, setIsHideController }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null)
 
   const [size, setSize] = useState<[number, number]>([1920, 1080])
@@ -174,6 +175,29 @@ export const CoiledVideoPlayer: React.FC<{
   const screenshotTrigger = useRecoilValue(contentPlayerScreenshotTriggerAtom)
   const setScreenshotUrl = useSetRecoilState(contentPlayerScreenshotUrlAtom)
   useEffect(() => {
+    const baseName = [
+      "mirak",
+      dayjs().format("YYYY-MM-DD-HH-mm-ss-SSS"),
+      service?.name,
+    ]
+      .filter((s) => s)
+      .join("_")
+    if (screenshotTrigger < 0) {
+      setIsHideController(true)
+      setTimeout(
+        () =>
+          window.Preload.requestWindowScreenshot(baseName)
+            .then((dataUrl) => {
+              fetch(dataUrl).then(async (res) => {
+                const url = URL.createObjectURL(await res.blob())
+                setScreenshotUrl(url)
+              })
+            })
+            .finally(() => setIsHideController(false)),
+        10
+      )
+      return
+    }
     const canvas = canvasRef.current
     if (!screenshotTrigger || !canvas) return
     ;(async () => {
@@ -239,13 +263,6 @@ export const CoiledVideoPlayer: React.FC<{
 
         if (screenshot.saveAsAFile && screenshot.basePath) {
           try {
-            const baseName = [
-              "mirak",
-              dayjs().format("YYYY-MM-DD-HH-mm-ss-SSS"),
-              service?.name,
-            ]
-              .filter((s) => s)
-              .join("_")
             const fileName = `${baseName}.${
               screenshot.keepQuality ? "png" : "jpg"
             }`

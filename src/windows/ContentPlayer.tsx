@@ -1,5 +1,5 @@
 import clsx from "clsx"
-import React, { useEffect, useRef } from "react"
+import React, { useEffect, useRef, useState } from "react"
 import { useRecoilValue, useSetRecoilState } from "recoil"
 import pkg from "../../package.json"
 import {
@@ -73,6 +73,7 @@ export const CoiledContentPlayer: React.FC<{}> = () => {
       window.Preload.public.setWindowTitle(pkg.productName)
     }
   }, [title])
+  const [isHideController, setIsHideController] = useState(false)
 
   return (
     <>
@@ -119,6 +120,7 @@ export const CoiledContentPlayer: React.FC<{}> = () => {
           >
             <CoiledVideoPlayer
               internalPlayingTimeRef={internalPlayingTimeRef}
+              setIsHideController={setIsHideController}
             />
           </div>
           <div
@@ -154,7 +156,7 @@ export const CoiledContentPlayer: React.FC<{}> = () => {
             id="Controller"
             className={clsx("absolute", "top-0", "left-0", "w-full", "h-full")}
           >
-            <CoiledController />
+            <CoiledController isHide={isHideController} />
           </div>
           <div
             id="OnForwardComponents"
