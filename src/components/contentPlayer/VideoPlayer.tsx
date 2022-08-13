@@ -249,7 +249,7 @@ export const CoiledVideoPlayer: React.FC<{
         if (!blob) throw new Error("blob")
         const buffer = await blob.arrayBuffer()
         try {
-          window.Preload.public.writeArrayBufferToClipboard(buffer)
+          await window.Preload.public.writeArrayBufferToClipboard(buffer)
         } catch (error) {
           console.error(error)
         }

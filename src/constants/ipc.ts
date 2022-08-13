@@ -23,6 +23,8 @@ export const SET_WINDOW_BUTTON_VISIBILITY = "set-window-button-visibility"
 export const SET_WINDOW_CONTENT_BOUNDS = "set-window-content-bounds"
 export const REQUEST_SHELL_OPEN_PATH = "request-shell-open-path"
 export const REQUEST_DIALOG = "request-dialog"
+export const REQUEST_WRITE_IMAGE_TO_CLIPBOARD =
+  "request-write-image-to-clipboard"
 export const ON_WINDOW_MOVED = "on-window-moved"
 export const REQUEST_CONFIRM_DIALOG = "request-confirm-dialog"
 export const REQUEST_SCREENSHOT_BASE_PATH = "request-screenshot-base-path"
