@@ -1,12 +1,6 @@
 import fs from "fs"
 import path from "path"
-import {
-  clipboard,
-  contextBridge,
-  ipcRenderer,
-  nativeImage,
-  shell,
-} from "electron"
+import { contextBridge, ipcRenderer, shell } from "electron"
 import WebChimera from "webchimera.js"
 import {
   REQUEST_CONFIRM_DIALOG,
@@ -34,6 +28,7 @@ import {
   EXIT_FULL_SCREEN,
   SET_WINDOW_BUTTON_VISIBILITY,
   REQUEST_WINDOW_SCREENSHOT,
+  REQUEST_WRITE_IMAGE_TO_CLIPBOARD,
 } from "../constants/ipc"
 import {
   EPGManagerRegisterArg,
@@ -320,8 +315,7 @@ const preload: Preload = {
       return ipcRenderer.invoke(REQUEST_DIALOG, arg)
     },
     writeArrayBufferToClipboard(buff) {
-      const image = nativeImage.createFromBuffer(Buffer.from(buff))
-      clipboard.writeImage(image)
+      return ipcRenderer.invoke(REQUEST_WRITE_IMAGE_TO_CLIPBOARD, buff)
     },
     requestCursorScreenPoint() {
       return ipcRenderer.invoke(REQUEST_CURSOR_SCREEN_POINT)

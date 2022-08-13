@@ -20,6 +20,7 @@ import electron, {
   globalShortcut,
   session,
   clipboard,
+  nativeImage,
 } from "electron"
 import Store from "electron-store"
 import fontList from "font-list"
@@ -60,6 +61,7 @@ import {
   EXIT_FULL_SCREEN,
   SET_WINDOW_BUTTON_VISIBILITY,
   REQUEST_WINDOW_SCREENSHOT,
+  REQUEST_WRITE_IMAGE_TO_CLIPBOARD,
 } from "../../src/constants/ipc"
 import { ROUTES } from "../../src/constants/routes"
 import {
@@ -1043,6 +1045,14 @@ ipcMain.handle(SET_WINDOW_CONTENT_BOUNDS, (event, bounds) => {
 ipcMain.handle(REQUEST_DIALOG, async (_, args) => {
   return await dialog.showOpenDialog(args)
 })
+
+ipcMain.handle(
+  REQUEST_WRITE_IMAGE_TO_CLIPBOARD,
+  async (_, arr: ArrayBuffer) => {
+    const image = nativeImage.createFromBuffer(Buffer.from(arr))
+    clipboard.writeImage(image)
+  }
+)
 
 ipcMain.handle(REQUEST_CONFIRM_DIALOG, async (event, message, buttons) => {
   return await dialog.showMessageBox(
