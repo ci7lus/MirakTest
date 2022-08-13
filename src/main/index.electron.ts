@@ -732,7 +732,7 @@ const openWindow = ({
         process.platform === "darwin" && name === ROUTES.ContentPlayer
           ? true
           : undefined,
-      autoHideMenuBar: process.platform !== "win32" ? true : undefined,
+      autoHideMenuBar: process.platform === "win32" ? true : undefined,
       ...args,
     })
     const [, contentHeight] = window.getContentSize()
