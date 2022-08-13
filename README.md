@@ -83,8 +83,8 @@ yarn build
 choco install -y cmake powershell-core
 git clone git@github.com:ci7lus/MirakTest.git
 cd MirakTest
-yarn --ignore-scripts
-pwsh ./setup_wcjs.ps1
+yarn
+pwsh .\setup_wcjs.ps1
 yarn build:tsc
 yarn dev:webpack
 yarn dev:electron
