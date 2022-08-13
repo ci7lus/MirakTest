@@ -2,10 +2,9 @@ import { useEffect, useRef } from "react"
 import { useRecoilValue } from "recoil"
 import type { MutableSnapshot, RecoilState } from "recoil"
 import { globalFontsAtom } from "../atoms/global"
-import { ObjectLiteral } from "../types/struct"
 
 export const initializeState =
-  ({ fonts }: { states: ObjectLiteral; fonts: string[] }) =>
+  ({ fonts }: { fonts: string[] }) =>
   (mutableSnapShot: MutableSnapshot) => {
     mutableSnapShot.set(globalFontsAtom, fonts)
   }

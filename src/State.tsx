@@ -24,7 +24,6 @@ export const StateRoot: React.FC<{
   return (
     <RecoilRoot
       initializeState={initializeState({
-        states,
         fonts,
       })}
     >
