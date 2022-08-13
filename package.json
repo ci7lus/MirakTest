@@ -108,8 +108,8 @@
     "react-resize-detector": "^7.1.1",
     "react-spring-carousel-js": "^1.9.32",
     "react-use": "^17.4.0",
-    "recoil": "^0.7.3",
-    "recoil-sync": "0.1.1-alpha.1",
+    "recoil": "^0.7.5",
+    "recoil-sync": "^0.1.0",
     "stream-json": "^1.7.4",
     "webchimera.js": "patch:webchimera.js@^0.5.2#patches/webchimera.js+0.5.2.patch",
     "zod": "^3.17.3"

@@ -2775,10 +2775,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@recoiljs/refine@npm:0.1.1-alpha.1":
-  version: 0.1.1-alpha.1
-  resolution: "@recoiljs/refine@npm:0.1.1-alpha.1"
-  checksum: 62023cf01cef0e5fa848028ca1714b9c5c9482c568cd191a3d59ac1adcf28aede50a92f9762c1585daa246500bd204a4daf81f131e77634e8ce812bbf4a5f745
+"@recoiljs/refine@npm:^0.1.0":
+  version: 0.1.0
+  resolution: "@recoiljs/refine@npm:0.1.0"
+  checksum: 92e900d83a33d02124c18a875a9ab29b3ffff828b5fc9cfc9fe83c45cd1f41ac12a3112c9434cc9deecb6f73f9b9d076cabc13898820acc3aee8e44380036b82
   languageName: node
   linkType: hard
 
@@ -10167,8 +10167,8 @@ __metadata:
     react-resize-detector: ^7.1.1
     react-spring-carousel-js: ^1.9.32
     react-use: ^17.4.0
-    recoil: ^0.7.3
-    recoil-sync: 0.1.1-alpha.1
+    recoil: ^0.7.5
+    recoil-sync: ^0.1.0
     sass: ^1.52.3
     sass-loader: ^13.0.0
     stream-json: ^1.7.4
@@ -11818,21 +11818,21 @@ __metadata:
   languageName: node
   linkType: hard
 
-"recoil-sync@npm:0.1.1-alpha.1":
-  version: 0.1.1-alpha.1
-  resolution: "recoil-sync@npm:0.1.1-alpha.1"
+"recoil-sync@npm:^0.1.0":
+  version: 0.1.0
+  resolution: "recoil-sync@npm:0.1.0"
   dependencies:
-    "@recoiljs/refine": 0.1.1-alpha.1
+    "@recoiljs/refine": ^0.1.0
     transit-js: ^0.8.874
   peerDependencies:
     recoil: ">=0.7.3"
-  checksum: 6a292c9940fe64181f099f1490dc90557a8712b74de201e37dde66b17d8073919b8f6dd801c211bddc193632984181da3858689e5d3fc7f55babb98e824501dc
+  checksum: b638778176703be335838a1decb523a6ed9929df921ff6c26fdeed1b9bcf89fc8439a0887ac31c39445ac5f5db4ce32f41a079b7077d267165fa6e281a48a71e
   languageName: node
   linkType: hard
 
-"recoil@npm:^0.7.3":
-  version: 0.7.3
-  resolution: "recoil@npm:0.7.3"
+"recoil@npm:^0.7.5":
+  version: 0.7.5
+  resolution: "recoil@npm:0.7.5"
   dependencies:
     hamt_plus: 1.0.2
   peerDependencies:
@@ -11842,7 +11842,7 @@ __metadata:
       optional: true
     react-native:
       optional: true
-  checksum: 6f48077eea4da8a4b0434eb9567210b74d603086bf5760810719bb12cc74d31b93291e7b80d26caa1e3b7e8cf3ec5fc44308fae8be22228cbcc64c78b048751e
+  checksum: 19b410cca6839c8b886b91378112e12de3e0393b547211dafcf7a272c1aa2d7af6c09a9ed39fb3e1997abe5f3d6583e3774dc9f9cdda8c36e4cb0be64a1b17ce
   languageName: node
   linkType: hard
 
