@@ -9727,7 +9727,7 @@ __metadata:
     ts-node: ^10.8.1
     type-fest: ^2.13.0
     typescript: ^4.7.3
-    webchimera.js: "git+https://github.com/neneka/WebChimera.js.git#20220814"
+    webchimera.js: "git+https://github.com/neneka/WebChimera.js.git#v0.5.3"
     webpack: ^5.73.0
     webpack-cli: ^4.9.2
     webpack-dev-server: ^4.9.2
@@ -13399,12 +13399,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"webchimera.js@git+https://github.com/neneka/WebChimera.js.git#20220814":
-  version: 0.5.2
-  resolution: "webchimera.js@https://github.com/neneka/WebChimera.js.git#commit=29df4d7b1e8e5c3ed8f520729bfcce7fb1b3e8fa"
+"webchimera.js@git+https://github.com/neneka/WebChimera.js.git#v0.5.3":
+  version: 0.5.3
+  resolution: "webchimera.js@https://github.com/neneka/WebChimera.js.git#commit=ca7d3c16bd405957335333237b056aa0523847ed"
   dependencies:
     bindings: ~1.2.1
-  checksum: 569d74dd6b98df3989c70839737e1f17bee30dfb68c256f996e13141edd55601bdc9d014be0170516e3919559880180e69b1275a2e2535bdde794f50456afda3
+  checksum: 03869b95b2d7937c143af6dd08851ab1b617147eedb7f21d7abf529556ab337fac5dda73df7d441ff906f2678420c77df00b3ccd853336e3791236e71e64a30a
   languageName: node
   linkType: hard
 
