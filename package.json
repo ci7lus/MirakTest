@@ -61,7 +61,7 @@
     "cross-env": "^7.0.3",
     "css-loader": "^6.7.1",
     "dts-bundle-generator": "^6.11.0",
-    "electron": "^19.0.4",
+    "electron": "^20.0.2",
     "electron-builder": "^23.0.3",
     "eslint": "^8.17.0",
     "eslint-plugin-classnames": "^0.2.1",
@@ -111,7 +111,7 @@
     "recoil": "^0.7.5",
     "recoil-sync": "^0.1.0",
     "stream-json": "^1.7.4",
-    "webchimera.js": "patch:webchimera.js@^0.5.2#patches/webchimera.js+0.5.2.patch",
+    "webchimera.js": "git+https://github.com/neneka/WebChimera.js.git#v0.5.3",
     "zod": "^3.17.3"
   },
   "browserslist": "chrome 100",

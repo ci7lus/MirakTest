@@ -722,6 +722,7 @@ const openWindow = ({
         preload: `${__dirname}/src/main/preload.js`,
         contextIsolation: true,
         nodeIntegration: false,
+        sandbox: false,
       },
       backgroundColor,
       titleBarStyle:

@@ -33,10 +33,10 @@ export WCJS_FULL_ARCHIVE=WebChimera.js_${npm_config_wcjs_runtime}_v${npm_config_
 if [ "$OS_NAME" = "Darwin" ]; then export WCJS_FULL_ARCHIVE_PATH=$BUILD_DIR/$WCJS_FULL_ARCHIVE; else export WCJS_FULL_ARCHIVE_PATH=$WCJS_ARCHIVE_PATH; fi
 echo 'nodeLinker: node-modules' > .yarnrc.yml
 echo '' > yarn.lock
+rm -rf deps/libvlc_wrapper
+git clone --depth 1 --recursive https://github.com/RSATom/ya-libvlc-wrapper.git deps/libvlc_wrapper
 YARN_ENABLE_IMMUTABLE_INSTALLS=false yarn install
-if ! grep -q rebuild.js package.json; then
-  node rebuild.js
-fi
+node rebuild.js
 file ./build/Release/WebChimera.js.node
 mv ./build/Release/WebChimera.js.node .
 echo "module.exports = require('./WebChimera.js.node')" > index.js
