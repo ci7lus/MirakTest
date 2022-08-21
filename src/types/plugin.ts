@@ -138,9 +138,10 @@ export type PluginInMainArgs = {
   packages: {
     Electron: {
       app: Electron.App
-      ipcMain: Electron.IpcMain
       browserWindow: typeof Electron.BrowserWindow
       dialog: Electron.Dialog
+      ipcMain: Electron.IpcMain
+      session: typeof Electron.Session
     }
   }
   functions: {
