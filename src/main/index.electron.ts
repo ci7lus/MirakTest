@@ -468,7 +468,13 @@ const loadPlugins = async ({
   const args: PluginInMainArgs = {
     appInfo,
     packages: {
-      Electron: { ipcMain, app, browserWindow: BrowserWindow, dialog },
+      Electron: {
+        app,
+        browserWindow: BrowserWindow,
+        dialog,
+        ipcMain,
+        session,
+      },
     },
     functions: {
       openWindow: (args: OpenWindowArg) => {
