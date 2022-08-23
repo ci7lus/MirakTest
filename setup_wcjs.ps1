@@ -40,7 +40,7 @@ Expand-Archive -Path ".\libvlc.zip" -DestinationPath ".\deps\vlc-${LIBVLC_VER}" 
 Remove-Item ".\libvlc.zip"
 Write-Output "nodeLinker: node-modules" | Set-Content ".\.yarnrc.yml"
 Write-Output "" | Set-Content ".\yarn.lock"
-rm -rf deps/libvlc_wrapper
+Remove-Item ".\deps\libvlc_wrapper" -Recurse -Force
 git clone --depth 1 --recursive https://github.com/RSATom/ya-libvlc-wrapper.git deps/libvlc_wrapper
 yarn install
 node rebuild.js
