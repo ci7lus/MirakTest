@@ -1,3 +1,4 @@
+import { EventEmitter } from "events"
 import fs from "fs"
 import { builtinModules, findSourceMap, SourceMap } from "module"
 import path from "path"
@@ -430,6 +431,7 @@ const esmToCjs = async (code: string) => {
   }
   return transformed.code
 }
+const eventEmitter = new EventEmitter()
 const loadPlugins = async ({
   ignoreFileNames,
 }: {
@@ -474,6 +476,9 @@ const loadPlugins = async ({
         dialog,
         ipcMain,
         session,
+      },
+      events: {
+        eventEmitter,
       },
     },
     functions: {
