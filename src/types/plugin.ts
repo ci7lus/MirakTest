@@ -1,3 +1,4 @@
+import type { EventEmitter } from "events"
 import React from "react"
 import * as Recoil from "recoil"
 import { Program, Service } from "../infra/mirakurun/api"
@@ -142,6 +143,9 @@ export type PluginInMainArgs = {
       dialog: Electron.Dialog
       ipcMain: Electron.IpcMain
       session: typeof Electron.Session
+    }
+    events: {
+      eventEmitter: EventEmitter
     }
   }
   functions: {
