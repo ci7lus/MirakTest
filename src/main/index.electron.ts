@@ -1022,7 +1022,8 @@ ipcMain.handle(REQUEST_WINDOW_SCREENSHOT, async (event, fileName: string) => {
   if (!window || !basePath || !fileName) {
     return
   }
-  const filePath = path.join(basePath, fileName)
+  const fileNameWithExt = fileName + (keepQuality ? ".png" : ".jpg")
+  const filePath = path.join(basePath, fileNameWithExt)
   const image = await window.webContents.capturePage()
   clipboard.writeImage(image)
   await fs.promises.writeFile(
@@ -1031,7 +1032,7 @@ ipcMain.handle(REQUEST_WINDOW_SCREENSHOT, async (event, fileName: string) => {
   )
   const n = new Notification({
     title: "スクリーンショットを撮影しました",
-    body: `${fileName} (クリックで開く)`,
+    body: `${fileNameWithExt} (クリックで開く)`,
   })
   n.on("click", () => shell.openPath(filePath))
   n.show()
