@@ -417,7 +417,7 @@ const pluginRequire = (fileName: string) => (s: string) => {
     FORBIDDEN_MODULES.includes(s) ||
     !BUILTIN_MODULES.includes(s)
   ) {
-    return
+    throw new Error("Forbidden module: " + s)
   }
   return require(/* webpackIgnore: true */ s)
 }
