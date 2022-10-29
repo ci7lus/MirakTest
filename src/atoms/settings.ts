@@ -22,7 +22,7 @@ import {
 const prefix = `${pkg.name}.settings`
 
 const mirakurunSettingRefine = $.object({
-  isEnableServiceTypeFilter: $.withDefault($.boolean(), true),
+  isEnableServiceTypeFilter: $.withDefault($.bool(), true),
   baseUrl: $.voidable($.string()),
   userAgent: $.voidable($.string()),
 })
@@ -57,7 +57,7 @@ export const mirakurunUrlHistory = atom<string[]>({
 
 const controllerSettingRefine = $.object({
   volumeRange: $.withDefault($.array($.number()), [0, 150]),
-  isVolumeWheelDisabled: $.withDefault($.boolean(), false),
+  isVolumeWheelDisabled: $.withDefault($.bool(), false),
 })
 
 export const controllerSetting = atom<ControllerSetting>({
@@ -100,9 +100,9 @@ export const subtitleSetting = atom<SubtitleSetting>({
 })
 
 const screenshotSettingRefine = $.object({
-  saveAsAFile: $.withDefault($.boolean(), true),
-  includeSubtitle: $.withDefault($.boolean(), true),
-  keepQuality: $.withDefault($.boolean(), true),
+  saveAsAFile: $.withDefault($.bool(), true),
+  includeSubtitle: $.withDefault($.bool(), true),
+  keepQuality: $.withDefault($.bool(), true),
   basePath: $.voidable($.string()),
 })
 
@@ -126,15 +126,12 @@ export const screenshotSetting = atom<ScreenshotSetting>({
 })
 
 const experimentalSettingRefine = $.object({
-  isWindowDragMoveEnabled: $.withDefault($.boolean(), false),
-  isVlcAvCodecHwAny: $.withDefault($.boolean(), false),
+  isWindowDragMoveEnabled: $.withDefault($.bool(), false),
+  isVlcAvCodecHwAny: $.withDefault($.bool(), false),
   vlcNetworkCaching: $.withDefault($.number(), -1),
-  isDualMonoAutoAdjustEnabled: $.withDefault($.boolean(), true),
-  globalScreenshotAccelerator: $.withDefault(
-    $.or($.string(), $.boolean()),
-    false
-  ),
-  isCodeBlack: $.withDefault($.boolean(), false),
+  isDualMonoAutoAdjustEnabled: $.withDefault($.bool(), true),
+  globalScreenshotAccelerator: $.withDefault($.or($.string(), $.bool()), false),
+  isCodeBlack: $.withDefault($.bool(), false),
 })
 
 export const experimentalSetting = atom<ExperimentalSetting>({

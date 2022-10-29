@@ -5,7 +5,7 @@ export type MirakurunSetting = {
 }
 
 export type ControllerSetting = {
-  volumeRange: [number, number]
+  volumeRange: readonly [number, number]
   isVolumeWheelDisabled: boolean
 }
 

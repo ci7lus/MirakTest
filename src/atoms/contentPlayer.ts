@@ -33,7 +33,7 @@ export const contentPlayerSubtitleEnabledAtom = atom<boolean>({
   effects: [
     syncEffect({
       storeKey: RECOIL_SYNC_STORED_KEY,
-      refine: $.boolean(),
+      refine: $.bool(),
     }),
   ],
 })
