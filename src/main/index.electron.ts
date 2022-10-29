@@ -842,6 +842,19 @@ const openWindow = ({
     window.on("moved", () => {
       window.webContents.send(ON_WINDOW_MOVED)
     })
+    const setActiveContentPlayer = () => {
+      if (name !== ROUTES["ContentPlayer"]) {
+        return
+      }
+      // 生Recoil
+      states[globalActiveContentPlayerIdAtomKey] = window.id
+      recoilStateUpdate({
+        key: globalActiveContentPlayerIdAtomKey,
+        value: window.id,
+      })
+    }
+    window.on("focus", setActiveContentPlayer)
+    setActiveContentPlayer()
     // TODO: フルスクリーン操作周辺で信号機が消えていると消失しちゃうのの Workaround
     window.on("enter-full-screen", () => {
       isEnteringFullScreen = true
