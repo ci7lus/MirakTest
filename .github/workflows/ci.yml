@@ -93,11 +93,25 @@ jobs:
           node-version: ${{ matrix.node-version }}
       - name: Get yarn cache directory path
         id: yarn-cache-dir-path
+        if: runner.os != 'Windows'
         run: echo "dir=$(yarn config get cacheFolder)" >> $GITHUB_OUTPUT
+      - name: Get yarn cache directory path
+        id: yarn-cache-dir-path-win
+        if: runner.os == 'Windows'
+        run: echo "dir=$(yarn config get cacheFolder)" >> Env:$GITHUB_OUTPUT # TODO: workaround?
       - uses: actions/cache@v3
         id: yarn-cache # use this to check for `cache-hit` (`steps.yarn-cache.outputs.cache-hit != 'true'`)
+        if: runner.os != 'Windows'
         with:
           path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
+          key: ${{ matrix.target }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ matrix.target }}-yarn-
+      - uses: actions/cache@v3
+        id: yarn-cache-win
+        if: runner.os == 'Windows'
+        with:
+          path: ${{ steps.yarn-cache-dir-path-win.outputs.dir }}
           key: ${{ matrix.target }}-yarn-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
             ${{ matrix.target }}-yarn-
