@@ -23,7 +23,7 @@ macOS / Windows 版ビルドでは [aribb24.js](https://github.com/monyone/aribb
 brew install --cask ci7lus/miraktest/miraktest
 ```
 
-Intel / Apple Silicon mac (aarch64) 上で動作する macOS Monterey での動作を確認しています。<br />
+Intel / Apple Silicon mac (aarch64) 上で動作する macOS Monterey / Ventura での動作を確認しています。<br />
 
 #### Windows での実行
 
