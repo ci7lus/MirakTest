@@ -7,7 +7,6 @@ import {
   contentPlayerIsPlayingAtom,
   contentPlayerTitleAtom,
 } from "../atoms/contentPlayer"
-import { globalActiveContentPlayerIdAtom } from "../atoms/global"
 import { PluginPositionComponents } from "../components/common/PluginPositionComponents"
 import { CoiledController } from "../components/contentPlayer/Controller"
 import { MirakurunManager } from "../components/contentPlayer/MirakurunManager"
@@ -19,9 +18,6 @@ import { Splash } from "../components/global/Splash"
 
 export const CoiledContentPlayer: React.FC<{}> = () => {
   const setBounds = useSetRecoilState(contentPlayerBoundsAtom)
-  const setActiveContentPlayerId = useSetRecoilState(
-    globalActiveContentPlayerIdAtom
-  )
   const setIsPlaying = useSetRecoilState(contentPlayerIsPlayingAtom)
   const internalPlayingTimeRef = useRef(-1)
 
@@ -44,11 +40,6 @@ export const CoiledContentPlayer: React.FC<{}> = () => {
     window.addEventListener("resize", onResizedOrMoved)
     const onWindowMoved = window.Preload.onWindowMoved(() => onResizedOrMoved())
     onResizedOrMoved()
-    const onFocus = () => {
-      setActiveContentPlayerId(window.id ?? -1)
-    }
-    onFocus()
-    window.addEventListener("focus", onFocus)
     const onUpdateIsPlayingState = window.Preload.onUpdateIsPlayingState(
       (isPlaying) => {
         setIsPlaying(isPlaying)
@@ -56,7 +47,6 @@ export const CoiledContentPlayer: React.FC<{}> = () => {
     )
     return () => {
       window.removeEventListener("resize", onResizedOrMoved)
-      window.removeEventListener("focus", onFocus)
       onUpdateIsPlayingState()
       onWindowMoved()
       if (timer) {
