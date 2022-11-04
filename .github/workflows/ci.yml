@@ -141,13 +141,13 @@ jobs:
       - name: Download VLC
         if: steps.vlc-cache.outputs.cache-hit != 'true' && matrix.target == 'x86_64-apple-darwin'
         run: |
-          wget -q https://github.com/vivid-lapin/vlc-miraktest/releases/download/3.0.17.2/vlc-3.0.17.2-x86_64.dmg -O /tmp/vlc.dmg
+          wget -q https://github.com/vivid-lapin/vlc-miraktest/releases/download/3.0.18/vlc-3.0.18-x86_64.dmg -O /tmp/vlc.dmg
           hdiutil mount /tmp/vlc.dmg
           cp -Ra "/Volumes/VLC media player/VLC.app" /Applications
       - name: Download VLC (aarch64)
         if: steps.vlc-cache.outputs.cache-hit != 'true' && matrix.target == 'x86_64-apple-darwin-as-aarch64'
         run: |
-          wget -q https://github.com/vivid-lapin/vlc-miraktest/releases/download/3.0.17.2/vlc-3.0.17.2-arm64.dmg -O /tmp/vlc.dmg
+          wget -q https://github.com/vivid-lapin/vlc-miraktest/releases/download/3.0.18/vlc-3.0.18-arm64.dmg -O /tmp/vlc.dmg
           hdiutil mount /tmp/vlc.dmg
           cp -Ra "/Volumes/VLC media player/VLC.app" /Applications
       - name: Install deps
