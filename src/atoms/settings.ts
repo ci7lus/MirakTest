@@ -130,6 +130,7 @@ const experimentalSettingRefine = $.object({
   isVlcAvCodecHwAny: $.withDefault($.bool(), false),
   vlcNetworkCaching: $.withDefault($.number(), -1),
   isDualMonoAutoAdjustEnabled: $.withDefault($.bool(), true),
+  isSurroundAutoAdjustEnabeld: $.withDefault($.bool(), true),
   globalScreenshotAccelerator: $.withDefault($.or($.string(), $.bool()), false),
   isCodeBlack: $.withDefault($.bool(), false),
 })
@@ -141,6 +142,7 @@ export const experimentalSetting = atom<ExperimentalSetting>({
     isVlcAvCodecHwAny: false,
     vlcNetworkCaching: -1,
     isDualMonoAutoAdjustEnabled: true,
+    isSurroundAutoAdjustEnabeld: true,
     globalScreenshotAccelerator: false,
     isCodeBlack: false,
   },
