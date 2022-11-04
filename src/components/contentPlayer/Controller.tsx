@@ -8,6 +8,7 @@ import { useDebounce } from "react-use"
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil"
 import {
   contentPlayerAudioChannelAtom,
+  contentPlayerAudioChannelTypeAtom,
   contentPlayerAudioTrackAtom,
   contentPlayerAudioTracksAtom,
   contentPlayerBufferingAtom,
@@ -93,6 +94,7 @@ export const CoiledController: React.FC<{ isHide: boolean }> = ({ isHide }) => {
   const [audioChannel, setAudioChannel] = useRecoilState(
     contentPlayerAudioChannelAtom
   )
+  const audioChannelType = useRecoilValue(contentPlayerAudioChannelTypeAtom)
 
   const componentRef = useRef<HTMLDivElement>(null)
 
@@ -416,32 +418,31 @@ export const CoiledController: React.FC<{ isHide: boolean }> = ({ isHide }) => {
                       "text-gray-300"
                     )}
                   >
+                    オーディオトラック
+                  </span>
+                  <AudioTrackSelector
+                    audioTrack={audioTrack}
+                    setAudioTrack={setAudioTrack}
+                    audioTracks={audioTracks}
+                  />
+                </label>
+                <label>
+                  <span
+                    className={clsx(
+                      "block",
+                      "mb-1",
+                      "text-sm",
+                      "text-gray-300"
+                    )}
+                  >
                     オーディオチャンネル
                   </span>
                   <AudioChannelSelector
                     audioChannel={audioChannel}
                     setAudioChannel={setAudioChannel}
+                    isStereo={audioChannelType === "stereo"}
                   />
                 </label>
-                {3 <= audioTracks.length && (
-                  <label>
-                    <span
-                      className={clsx(
-                        "block",
-                        "mb-1",
-                        "text-sm",
-                        "text-gray-300"
-                      )}
-                    >
-                      オーディオトラック
-                    </span>
-                    <AudioTrackSelector
-                      audioTrack={audioTrack}
-                      setAudioTrack={setAudioTrack}
-                      audioTracks={audioTracks}
-                    />
-                  </label>
-                )}
                 {isSeekable && (
                   <label>
                     <span

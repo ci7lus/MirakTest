@@ -75,6 +75,14 @@ export const VLCLogFilter = (s: string) => {
     return { category: "es_out_program_epg" } as const
   } else if (s.startsWith("PMTCallBack called for program")) {
     return { category: "PMTCallBack_called_for_program" } as const
+  } else if (s.startsWith("VLC is looking for: 'f32l'")) {
+    return { category: "looking_f32l" } as const
+  } else if (s.startsWith("playback too late")) {
+    return { category: "playback_too_late" }
+  } else if (s.endsWith("3F2R/LFE->3F2R/LFE")) {
+    return { category: "surround-to-surround" } as const
+  } else if (s.endsWith("Stereo->Stereo")) {
+    return { category: "stereo-to-stereo" } as const
   } else if (s.startsWith("end of stream")) {
     return { category: "end_of_stream" } as const
   } else if (s.startsWith("EOF reached")) {
@@ -107,11 +115,26 @@ export const VLCAudioChannel = {
   Dolby: 5,
 }
 
+export const VLCAudioStereoChannel = {
+  Monaural: 1,
+  Original: 2,
+  Stereo: 3,
+  Headphone: 4,
+}
+
 export const VLCAudioChannelTranslated = [
-  "ステレオ",
+  "?",
   "ステレオ",
   "反転ステレオ",
   "左",
   "右",
   "ドルビー",
+]
+
+export const VLCAudioChannelSurroundTranslated = [
+  "?",
+  "モノラル",
+  "オリジナル",
+  "ステレオ",
+  "ヘッドフォン",
 ]

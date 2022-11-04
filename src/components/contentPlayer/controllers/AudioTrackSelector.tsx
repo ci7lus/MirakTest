@@ -27,10 +27,9 @@ export const AudioTrackSelector: React.FC<{
     }}
   >
     {audioTracks.map((trackName, i) => {
-      if (i === 0) return <React.Fragment key={i}></React.Fragment>
       return (
         <option key={i} value={i}>
-          {trackName.replace("Track", "トラック")}
+          {trackName.replace("Disable", "オフ").replace("Track", "トラック")}
         </option>
       )
     })}

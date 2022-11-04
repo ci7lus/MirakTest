@@ -71,6 +71,11 @@ export const contentPlayerAudioTracksAtom = atom<string[]>({
   default: [],
 })
 
+export const contentPlayerAudioChannelTypeAtom = atom<"surround" | "stereo">({
+  key: `${prefix}.audioChannelType`,
+  default: "stereo",
+})
+
 export const contentPlayerIsSeekableAtom = atom<boolean>({
   key: `${prefix}.isSeekable`,
   default: false,

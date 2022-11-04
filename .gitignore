@@ -119,4 +119,3 @@ VLC.app
 .yarn/*
 !.yarn/releases 
 !.yarn/plugins
-vlc-miraktest-aarch64.zip

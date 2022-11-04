@@ -9,6 +9,7 @@ import pkg from "../../../package.json"
 import {
   contentPlayerAribSubtitleDataAtom,
   contentPlayerAudioChannelAtom,
+  contentPlayerAudioChannelTypeAtom,
   contentPlayerAudioTrackAtom,
   contentPlayerAudioTracksAtom,
   contentPlayerBufferingAtom,
@@ -147,6 +148,9 @@ export const CoiledVideoPlayer: React.FC<{
     console.info("オーディオトラック変更:", audioTrack)
   }, [audioTrack])
   const setAudioTracks = useSetRecoilState(contentPlayerAudioTracksAtom)
+  const setAudioChannelType = useSetRecoilState(
+    contentPlayerAudioChannelTypeAtom
+  )
 
   // スクリーンショットフォルダ初期設定
   const [screenshot, setScreenshot] = useRecoilState(screenshotSetting)
@@ -441,6 +445,43 @@ export const CoiledVideoPlayer: React.FC<{
             window.Preload.webchimera.setSubtitleTrack(1)
           }
           window.Preload.webchimera.setVolume(volumeRef.current)
+          break
+        }
+        case "playback_too_late": {
+          // 変なデコードをして再生が遅延しているとき
+          console.debug(message)
+          if (experimental.isSurroundAutoAdjustEnabeld) {
+            console.info(
+              "再生が遅延しています。サラウンドの可能性があるためオーディオをリセットします"
+            )
+            window.Preload.webchimera.setAudioTrack(0)
+            window.Preload.webchimera.setAudioTrack(1)
+          }
+          break
+        }
+        case "surround-to-surround": {
+          console.debug(message)
+          console.info("サラウンドを検出しました")
+          setAudioChannelType("surround")
+          if (experimental.isSurroundAutoAdjustEnabeld) {
+            if (window.Preload.webchimera.getAudioChannel() === 0) {
+              console.info(
+                "オーディオチャンネルが0のためサラウンド中は2に整合します"
+              )
+              setAudioChannel(2)
+            } else {
+              setAudioChannel(window.Preload.webchimera.getAudioChannel())
+            }
+          }
+          break
+        }
+        case "stereo-to-stereo": {
+          console.debug(message)
+          console.info("ステレオを検出しました")
+          setAudioChannelType("stereo")
+          if (experimental.isSurroundAutoAdjustEnabeld) {
+            setAudioChannel(window.Preload.webchimera.getAudioChannel())
+          }
           break
         }
         case "unknown":

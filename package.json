@@ -1,7 +1,7 @@
 {
   "name": "miraktest",
   "productName": "MirakTest",
-  "version": "2.0.0-rc.3",
+  "version": "2.0.0-rc.4",
   "description": "Mirakurun 映像視聴確認用アプリ",
   "author": "ci7lus <7887955+ci7lus@users.noreply.github.com>",
   "license": "MIT",
@@ -24,8 +24,7 @@
     "lint:eslint": "eslint --max-warnings 0 --cache './src/**/*.{js,ts,tsx}'",
     "format:eslint": "eslint './src/**/*.{js,ts,tsx}' --cache --fix",
     "build:dts-plugin": "yarn dts-bundle-generator --export-referenced-types=false --external-inlines=electron -o dist/plugin.d.ts --no-check src/types/plugin.ts && ts-node setLicenseInDts.ts && prettier --write dist/plugin.d.ts",
-    "typecheck": "yarn tsc --noEmit && yarn tsc -p ./src/main/tsconfig.json --noEmit",
-    "make-aarch64-assets-zip": "rm -rf vlc-miraktest-aarch64.zip && zip vlc-miraktest-aarch64 -ry node_modules/webchimera.js vlc_libs -x 'node_modules/webchimera.js/deps/**/*' -x 'node_modules/webchimera.js/src/*'"
+    "typecheck": "yarn tsc --noEmit && yarn tsc -p ./src/main/tsconfig.json --noEmit"
   },
   "lint-staged": {
     "*.{js,ts,tsx}": [

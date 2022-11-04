@@ -24,6 +24,8 @@ export const ExperimentalSettingForm: React.FC<{
   )
   const [isDualMonoAutoAdjustEnabled, setIsDualMonoAutoAdjustEnabled] =
     useState(experimentalSetting.isDualMonoAutoAdjustEnabled)
+  const [isSurroundAutoAdjustEnabeld, setIsSurroundAutoAdjustEnabeld] =
+    useState(experimentalSetting.isSurroundAutoAdjustEnabeld)
   const [globalScreenshotAccelerator, setGlobalScreenshotAccelerator] =
     useState(experimentalSetting.globalScreenshotAccelerator)
   const [isCodeBlack, setIsCodeBlack] = useState(
@@ -35,6 +37,7 @@ export const ExperimentalSettingForm: React.FC<{
       vlcNetworkCaching,
       isVlcAvCodecHwAny,
       isDualMonoAutoAdjustEnabled,
+      isSurroundAutoAdjustEnabeld,
       globalScreenshotAccelerator,
       isCodeBlack,
     })
@@ -60,6 +63,18 @@ export const ExperimentalSettingForm: React.FC<{
         />
         <p className={clsx("text-sm", "text-gray-300", "mt-2")}>
           左右で言語が異なる音声を流している番組を検知した際に、自動で切り替えます。
+        </p>
+      </label>
+      <label className={clsx("block", "mt-4")}>
+        <span>サラウンドに対する修正を有効にする</span>
+        <input
+          type="checkbox"
+          className={clsx("block", "mt-2", "form-checkbox")}
+          checked={isSurroundAutoAdjustEnabeld}
+          onChange={() => setIsSurroundAutoAdjustEnabeld((enabled) => !enabled)}
+        />
+        <p className={clsx("text-sm", "text-gray-300", "mt-2")}>
+          サラウンドの音声が正常に再生されない可能性がある問題を修正しますが、実験中のため他の不具合が生じることがあります。
         </p>
       </label>
       {process.platform !== "darwin" && (

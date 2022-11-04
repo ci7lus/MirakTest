@@ -1,11 +1,17 @@
 import clsx from "clsx"
 import React, { memo } from "react"
-import { VLCAudioChannel, VLCAudioChannelTranslated } from "../../../utils/vlc"
+import {
+  VLCAudioChannel,
+  VLCAudioChannelSurroundTranslated,
+  VLCAudioChannelTranslated,
+  VLCAudioStereoChannel,
+} from "../../../utils/vlc"
 
 export const AudioChannelSelector: React.FC<{
   audioChannel: number
   setAudioChannel: React.Dispatch<React.SetStateAction<number>>
-}> = memo(({ audioChannel, setAudioChannel }) => (
+  isStereo: boolean
+}> = memo(({ audioChannel, setAudioChannel, isStereo }) => (
   <select
     className={clsx(
       "appearance-none",
@@ -26,10 +32,14 @@ export const AudioChannelSelector: React.FC<{
       setAudioChannel(selectedChannel)
     }}
   >
-    {Object.entries(VLCAudioChannel).map(([k, v]) => (
-      <option key={k} value={v}>
-        {VLCAudioChannelTranslated[v]}
-      </option>
-    ))}
+    {Object.entries(isStereo ? VLCAudioChannel : VLCAudioStereoChannel).map(
+      ([k, v]) => (
+        <option key={k} value={v}>
+          {isStereo
+            ? VLCAudioChannelTranslated[v]
+            : VLCAudioChannelSurroundTranslated[v]}
+        </option>
+      )
+    )}
   </select>
 ))
