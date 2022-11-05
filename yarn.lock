@@ -3166,6 +3166,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/dom-screen-wake-lock@npm:^1.0.0":
+  version: 1.0.0
+  resolution: "@types/dom-screen-wake-lock@npm:1.0.0"
+  checksum: 8be2f21ba9be1178319758515e0ea71c2ca37ed8631cc6ab4ac076c2ff4bddd741a70e9238e36c2c7bc8c01433300852489a2751757b7cb13f2d6d9ba54ce6ce
+  languageName: node
+  linkType: hard
+
 "@types/eslint-scope@npm:^3.7.3":
   version: 3.7.3
   resolution: "@types/eslint-scope@npm:3.7.3"
@@ -9628,6 +9635,7 @@ __metadata:
     "@rushstack/eslint-patch": ^1.2.0
     "@tailwindcss/custom-forms": ^0.2.1
     "@tailwindcss/forms": ^0.5.3
+    "@types/dom-screen-wake-lock": ^1.0.0
     "@types/mini-css-extract-plugin": ^2.5.1
     "@types/react": ^18.0.24
     "@types/react-dom": ^18.0.8
