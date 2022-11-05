@@ -4,7 +4,6 @@ import { useRecoilValue, useSetRecoilState } from "recoil"
 import pkg from "../../package.json"
 import {
   contentPlayerBoundsAtom,
-  contentPlayerIsPlayingAtom,
   contentPlayerTitleAtom,
 } from "../atoms/contentPlayer"
 import { PluginPositionComponents } from "../components/common/PluginPositionComponents"
@@ -18,7 +17,6 @@ import { Splash } from "../components/global/Splash"
 
 export const CoiledContentPlayer: React.FC<{}> = () => {
   const setBounds = useSetRecoilState(contentPlayerBoundsAtom)
-  const setIsPlaying = useSetRecoilState(contentPlayerIsPlayingAtom)
   const internalPlayingTimeRef = useRef(-1)
 
   useEffect(() => {
@@ -40,14 +38,8 @@ export const CoiledContentPlayer: React.FC<{}> = () => {
     window.addEventListener("resize", onResizedOrMoved)
     const onWindowMoved = window.Preload.onWindowMoved(() => onResizedOrMoved())
     onResizedOrMoved()
-    const onUpdateIsPlayingState = window.Preload.onUpdateIsPlayingState(
-      (isPlaying) => {
-        setIsPlaying(isPlaying)
-      }
-    )
     return () => {
       window.removeEventListener("resize", onResizedOrMoved)
-      onUpdateIsPlayingState()
       onWindowMoved()
       if (timer) {
         clearTimeout(timer)

@@ -12,7 +12,6 @@ import {
   contentPlayerAudioTrackAtom,
   contentPlayerAudioTracksAtom,
   contentPlayerBufferingAtom,
-  contentPlayerIsPlayingAtom,
   contentPlayerIsSeekableAtom,
   contentPlayerPlayingPositionAtom,
   contentPlayerPlayingTimeAtom,
@@ -22,6 +21,7 @@ import {
   contentPlayerSubtitleEnabledAtom,
   contentPlayerVolumeAtom,
 } from "../../atoms/contentPlayer"
+import { contentPlayerIsPlayingFamilyAtom } from "../../atoms/contentPlayerFamilies"
 import {
   contentPlayerProgramSelector,
   contentPlayerServiceSelector,
@@ -49,6 +49,10 @@ import "dayjs/locale/ja"
 dayjs.locale("ja")
 
 export const CoiledController: React.FC<{ isHide: boolean }> = ({ isHide }) => {
+  const contentPlayerIsPlayingAtom = contentPlayerIsPlayingFamilyAtom(
+    window.id ?? 0
+  )
+
   const [isVisible, setIsVisible] = useState(false)
 
   const [lastCurMoved, setLastCurMoved] = useState(0)
@@ -184,7 +188,7 @@ export const CoiledController: React.FC<{ isHide: boolean }> = ({ isHide }) => {
   }, [isPlaying])
 
   useEffect(() => {
-    window.Preload.updateIsPlayingState(isPlaying).catch(console.error)
+    // TODO: sleep timer
   }, [isPlaying])
 
   const startAt = dayjs(program?.startAt).format(

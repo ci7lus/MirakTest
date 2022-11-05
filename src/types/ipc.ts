@@ -69,14 +69,12 @@ export type Preload = {
   requestInitialData: () => Promise<InitialData>
   recoilStateUpdate: (_: SerializableKV) => Promise<void>
   onRecoilStateUpdate: (listener: (arg: SerializableKV) => void) => () => void
-  updateIsPlayingState: (isPlaying: boolean) => Promise<void>
   store: {
     set: <T = unknown>(key: string, value: T) => void
     get: <T = unknown>(key: string) => T
     delete: (key: string) => void
     openConfig: () => void
   }
-  onUpdateIsPlayingState: (listener: (isPlaying: boolean) => void) => () => void
   onWindowMoved: (listener: () => void) => () => void
   onScreenshotRequest: (listener: () => void) => () => void
   requestScreenshotBasePath: () => Promise<string>

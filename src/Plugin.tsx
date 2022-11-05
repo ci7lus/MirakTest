@@ -4,12 +4,12 @@ import { StateRoot } from "./State"
 import {
   contentPlayerAudioChannelAtom,
   contentPlayerAudioTrackAtom,
-  contentPlayerIsPlayingAtom,
   contentPlayerPositionUpdateTriggerAtom,
   contentPlayerScreenshotTriggerAtom,
   contentPlayerSpeedAtom,
   contentPlayerVolumeAtom,
 } from "./atoms/contentPlayer"
+import { contentPlayerIsPlayingFamilyAtom } from "./atoms/contentPlayerFamilies"
 import {
   contentPlayerAribSubtitleDataSelector,
   contentPlayerAudioTracksSelector,
@@ -67,6 +67,10 @@ export const PluginLoader: React.FC<{
   fonts: string[]
   disabledPluginFileNames: string[]
 }> = ({ states, pluginData, fonts, disabledPluginFileNames }) => {
+  const contentPlayerIsPlayingAtom = contentPlayerIsPlayingFamilyAtom(
+    window.id ?? 0
+  )
+
   const [isLoading, setIsLoading] = useState(true)
   useEffect(() => {
     if (isLoading === false) {

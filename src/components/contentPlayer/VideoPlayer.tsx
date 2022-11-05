@@ -14,7 +14,6 @@ import {
   contentPlayerAudioTracksAtom,
   contentPlayerBufferingAtom,
   contentPlayerDisplayingAribSubtitleDataAtom,
-  contentPlayerIsPlayingAtom,
   contentPlayerIsSeekableAtom,
   contentPlayerPlayingPositionAtom,
   contentPlayerPlayingTimeAtom,
@@ -27,6 +26,7 @@ import {
   contentPlayerTsFirstPcrAtom,
   contentPlayerVolumeAtom,
 } from "../../atoms/contentPlayer"
+import { contentPlayerIsPlayingFamilyAtom } from "../../atoms/contentPlayerFamilies"
 import {
   contentPlayerProgramSelector,
   contentPlayerServiceSelector,
@@ -47,6 +47,9 @@ export const CoiledVideoPlayer: React.FC<{
   internalPlayingTimeRef: React.MutableRefObject<number>
   setIsHideController: React.Dispatch<React.SetStateAction<boolean>>
 }> = memo(({ internalPlayingTimeRef, setIsHideController }) => {
+  const contentPlayerIsPlayingAtom = contentPlayerIsPlayingFamilyAtom(
+    window.id ?? 0
+  )
   const canvasRef = useRef<HTMLCanvasElement>(null)
 
   const [size, setSize] = useState<[number, number]>([1920, 1080])
