@@ -21,12 +21,14 @@ import {
   contentPlayerSubtitleEnabledAtom,
   contentPlayerVolumeAtom,
 } from "../../atoms/contentPlayer"
-import { contentPlayerIsPlayingFamilyAtom } from "../../atoms/contentPlayerFamilies"
 import {
   contentPlayerProgramSelector,
   contentPlayerServiceSelector,
 } from "../../atoms/contentPlayerSelectors"
-import { globalContentPlayerSelectedServiceFamily } from "../../atoms/globalFamilies"
+import {
+  globalContentPlayerIsPlayingFamily,
+  globalContentPlayerSelectedServiceFamily,
+} from "../../atoms/globalFamilies"
 import { mirakurunServicesAtom } from "../../atoms/mirakurun"
 import { controllerSetting, experimentalSetting } from "../../atoms/settings"
 import { useRefFromState } from "../../hooks/ref"
@@ -49,7 +51,7 @@ import "dayjs/locale/ja"
 dayjs.locale("ja")
 
 export const CoiledController: React.FC<{ isHide: boolean }> = ({ isHide }) => {
-  const contentPlayerIsPlayingAtom = contentPlayerIsPlayingFamilyAtom(
+  const contentPlayerIsPlayingAtom = globalContentPlayerIsPlayingFamily(
     window.id ?? 0
   )
 

@@ -26,8 +26,10 @@ import Store from "electron-store"
 import fontList from "font-list"
 import WebChimeraJs from "webchimera.js"
 import pkg from "../../package.json"
-import { contentPlayerIsPlayingAtomKey } from "../../src/atoms/contentPlayerKeys"
-import { globalContentPlayerPlayingContentFamilyKey } from "../../src/atoms/globalFamilyKeys"
+import {
+  globalContentPlayerIsPlayingFamilyKey,
+  globalContentPlayerPlayingContentFamilyKey,
+} from "../../src/atoms/globalFamilyKeys"
 import {
   globalActiveContentPlayerIdAtomKey,
   globalLastEpgUpdatedAtomKey,
@@ -772,7 +774,7 @@ const openWindow = ({
       }
     })
 
-    const isPlayingKey = `${contentPlayerIsPlayingAtomKey}__${window.id}`
+    const isPlayingKey = `${globalContentPlayerIsPlayingFamilyKey}__${window.id}`
 
     window.webContents.on("context-menu", (e, params) => {
       vm.runInContext(

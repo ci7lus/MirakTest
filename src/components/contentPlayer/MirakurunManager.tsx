@@ -5,9 +5,9 @@ import {
   contentPlayerKeyForRestorationAtom,
   lastEpgUpdatedAtom,
 } from "../../atoms/contentPlayer"
-import { contentPlayerIsPlayingFamilyAtom } from "../../atoms/contentPlayerFamilies"
 import { contentPlayerServiceSelector } from "../../atoms/contentPlayerSelectors"
 import {
+  globalContentPlayerIsPlayingFamily,
   globalContentPlayerPlayingContentFamily,
   globalContentPlayerSelectedServiceFamily,
 } from "../../atoms/globalFamilies"
@@ -24,7 +24,7 @@ import { ServiceWithLogoData } from "../../types/mirakurun"
 import { generateStreamUrlForMirakurun } from "../../utils/mirakurun"
 
 export const MirakurunManager: React.FC<{}> = () => {
-  const contentPlayerIsPlayingAtom = contentPlayerIsPlayingFamilyAtom(
+  const contentPlayerIsPlayingAtom = globalContentPlayerIsPlayingFamily(
     window.id ?? 0
   )
 

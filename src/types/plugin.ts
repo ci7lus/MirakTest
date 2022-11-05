@@ -94,6 +94,9 @@ export type PluginInRendererArgs = {
     globalContentPlayerSelectedServiceFamily: (
       n: number
     ) => Recoil.RecoilState<Service | null>
+    globalContentPlayerIsPlayingFamily: (
+      n: number
+    ) => Recoil.RecoilState<boolean>
     contentPlayerPlayingContentAtom: Recoil.RecoilState<ContentPlayerPlayingContent | null>
     contentPlayerServiceSelector: Recoil.RecoilValueReadOnly<Service | null>
     contentPlayerProgramSelector: Recoil.RecoilValueReadOnly<Program | null>

@@ -9,7 +9,6 @@ import {
   contentPlayerSpeedAtom,
   contentPlayerVolumeAtom,
 } from "./atoms/contentPlayer"
-import { contentPlayerIsPlayingFamilyAtom } from "./atoms/contentPlayerFamilies"
 import {
   contentPlayerAribSubtitleDataSelector,
   contentPlayerAudioTracksSelector,
@@ -23,6 +22,7 @@ import {
   contentPlayerTsFirstPcrSelector,
 } from "./atoms/contentPlayerSelectors"
 import {
+  globalContentPlayerIsPlayingFamily,
   globalContentPlayerPlayingContentFamily,
   globalContentPlayerSelectedServiceFamily,
 } from "./atoms/globalFamilies"
@@ -67,7 +67,7 @@ export const PluginLoader: React.FC<{
   fonts: string[]
   disabledPluginFileNames: string[]
 }> = ({ states, pluginData, fonts, disabledPluginFileNames }) => {
-  const contentPlayerIsPlayingAtom = contentPlayerIsPlayingFamilyAtom(
+  const contentPlayerIsPlayingAtom = globalContentPlayerIsPlayingFamily(
     window.id ?? 0
   )
 
@@ -116,6 +116,7 @@ export const PluginLoader: React.FC<{
         globalContentPlayerPlayingContentFamily,
         globalActiveContentPlayerIdSelector,
         globalContentPlayerSelectedServiceFamily,
+        globalContentPlayerIsPlayingFamily,
         contentPlayerPlayingContentAtom:
           globalContentPlayerPlayingContentFamily(window.id ?? -1),
         contentPlayerServiceSelector,

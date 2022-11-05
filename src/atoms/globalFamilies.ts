@@ -6,6 +6,7 @@ import { Service } from "../infra/mirakurun/api"
 
 import { ContentPlayerPlayingContent } from "../types/contentPlayer"
 import {
+  globalContentPlayerIsPlayingFamilyKey,
   globalContentPlayerPlayingContentFamilyKey,
   globalContentPlayerSelectedServiceFamilyKey,
 } from "./globalFamilyKeys"
@@ -43,4 +44,10 @@ export const globalContentPlayerSelectedServiceFamily = atomFamily<
       refine: $.nullable($.mixed()),
     }),
   ],
+})
+
+export const globalContentPlayerIsPlayingFamily = atomFamily<boolean, number>({
+  key: globalContentPlayerIsPlayingFamilyKey,
+  default: false,
+  effects: [syncEffect({ storeKey: RECOIL_SYNC_SHARED_KEY, refine: $.bool() })],
 })

@@ -10,8 +10,10 @@ import {
   contentPlayerSubtitleEnabledAtom,
   contentPlayerTsFirstPcrAtom,
 } from "../../atoms/contentPlayer"
-import { contentPlayerIsPlayingFamilyAtom } from "../../atoms/contentPlayerFamilies"
-import { globalContentPlayerPlayingContentFamily } from "../../atoms/globalFamilies"
+import {
+  globalContentPlayerIsPlayingFamily,
+  globalContentPlayerPlayingContentFamily,
+} from "../../atoms/globalFamilies"
 import { subtitleSetting } from "../../atoms/settings"
 import { SUBTITLE_DEFAULT_FONT } from "../../constants/font"
 import { tryBase64ToUint8Array } from "../../utils/string"
@@ -24,7 +26,7 @@ import {
 export const CoiledSubtitleRenderer: React.FC<{
   internalPlayingTimeRef: React.MutableRefObject<number>
 }> = memo(({ internalPlayingTimeRef }) => {
-  const contentPlayerIsPlayingAtom = contentPlayerIsPlayingFamilyAtom(
+  const contentPlayerIsPlayingAtom = globalContentPlayerIsPlayingFamily(
     window.id ?? 0
   )
 
