@@ -193,39 +193,43 @@ export const CoiledController: React.FC<{ isHide: boolean }> = ({ isHide }) => {
     if (!isPlaying) {
       return
     }
-    let isReleased = false
-    let lock: WakeLockSentinel | null = null
-    navigator.wakeLock
-      .request("screen")
-      .then((locked) => {
-        lock = locked
-        if (isReleased) {
+    try {
+      let isReleased = false
+      let lock: WakeLockSentinel | null = null
+      navigator.wakeLock
+        .request("screen")
+        .then((locked) => {
+          lock = locked
+          if (isReleased) {
+            lock
+              .release()
+              .then(() =>
+                console.info(
+                  "WakeLock: 既にライフサイクルが終了しているためリリースしました"
+                )
+              )
+              .catch((e) =>
+                console.warn(
+                  e,
+                  "WakeLock: 既にライフサイクルが終了しているためリリースを試みましたが失敗しました"
+                )
+              )
+          } else {
+            console.info("WakeLock: 有効になりました")
+          }
+        })
+        .catch((e) => console.warn(e, "WakeLock: 有効にできませんでした"))
+      return () => {
+        isReleased = true
+        if (lock) {
           lock
             .release()
-            .then(() =>
-              console.info(
-                "WakeLock: 既にライフサイクルが終了しているためリリースしました"
-              )
-            )
-            .catch((e) =>
-              console.warn(
-                e,
-                "WakeLock: 既にライフサイクルが終了しているためリリースに失敗しました"
-              )
-            )
-        } else {
-          console.info("WakeLock: 有効になりました")
+            .then(() => console.info("WakeLock: リリースしました"))
+            .catch((e) => console.warn(e, "WakeLock: リリースに失敗しました"))
         }
-      })
-      .catch((e) => console.warn(e, "WakeLock: 有効にできませんでした"))
-    return () => {
-      isReleased = true
-      if (lock) {
-        lock
-          .release()
-          .then(() => console.info("WakeLock: リリースしました"))
-          .catch((e) => console.warn(e, "WakeLock: リリースに失敗しました"))
       }
+    } catch (error) {
+      console.error(error, "WakeLock: APIが使用できませんでした")
     }
   }, [isPlaying])
 
