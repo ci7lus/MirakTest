@@ -128,6 +128,8 @@ export const CoiledController: React.FC<{ isHide: boolean }> = ({ isHide }) => {
   const [seekRequest, setSeekRequest] = useState<number | null>(null)
   useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {
+      const metaOrCtrlPressed = e.metaKey || e.ctrlKey
+
       if (e.key === "s" || e.code === "KeyS") {
         setScreenshotTrigger(performance.now() * (e.altKey ? -1 : 1))
       } else if (e.key === "ArrowUp") {
@@ -148,7 +150,7 @@ export const CoiledController: React.FC<{ isHide: boolean }> = ({ isHide }) => {
         setSeekRequest(30_000)
       } else if (e.key === "ArrowLeft") {
         setSeekRequest(-10_000)
-      } else if (e.key === "m") {
+      } else if (e.key === "m" && !metaOrCtrlPressed) {
         setVolume((volume) => (0 < volume ? 0 : 100))
       } else if (e.code === "Space" && e.target === document.body) {
         // 要素にフォーカスがあるときは発火しないようにする（buttonでのSpace発火との競合を防ぐ）
