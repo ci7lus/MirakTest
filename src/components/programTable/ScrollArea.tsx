@@ -149,6 +149,7 @@ export const ScrollArea: React.FC<{
             timerRef.current = undefined
           }, 100)
         }}
+        onMouseLeave={() => setIsPushing(false)}
       >
         {filteredServices && (
           <div
