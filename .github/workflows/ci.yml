@@ -152,7 +152,7 @@ jobs:
           cp -Ra "/Volumes/VLC media player/VLC.app" /Applications
       - name: Install deps
         if: runner.os == 'Linux'
-        run: sudo apt-get install cmake=3.16.3-1ubuntu1 libvlc-dev=3.0.9.2-1
+        run: sudo apt-get install cmake libvlc-dev=3.0.9.2-1
       - name: Install
         run: yarn
       - name: Build webchimera.js (unix like, without aarch64)
