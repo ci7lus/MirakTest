@@ -5,13 +5,15 @@ import { useRecoilValue, useSetRecoilState } from "recoil"
 import {
   contentPlayerAribSubtitleDataAtom,
   contentPlayerDisplayingAribSubtitleDataAtom,
-  contentPlayerIsPlayingAtom,
   contentPlayerIsSeekableAtom,
   contentPlayerPositionUpdateTriggerAtom,
   contentPlayerSubtitleEnabledAtom,
   contentPlayerTsFirstPcrAtom,
 } from "../../atoms/contentPlayer"
-import { globalContentPlayerPlayingContentFamily } from "../../atoms/globalFamilies"
+import {
+  globalContentPlayerIsPlayingFamily,
+  globalContentPlayerPlayingContentFamily,
+} from "../../atoms/globalFamilies"
 import { subtitleSetting } from "../../atoms/settings"
 import { SUBTITLE_DEFAULT_FONT } from "../../constants/font"
 import { tryBase64ToUint8Array } from "../../utils/string"
@@ -24,6 +26,10 @@ import {
 export const CoiledSubtitleRenderer: React.FC<{
   internalPlayingTimeRef: React.MutableRefObject<number>
 }> = memo(({ internalPlayingTimeRef }) => {
+  const contentPlayerIsPlayingAtom = globalContentPlayerIsPlayingFamily(
+    window.id ?? 0
+  )
+
   const canvasRef = useRef<HTMLCanvasElement>(null)
 
   const isSubtitleEnabled = useRecoilValue(contentPlayerSubtitleEnabledAtom)

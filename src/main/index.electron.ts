@@ -16,7 +16,6 @@ import electron, {
   Menu,
   shell,
   dialog,
-  powerSaveBlocker,
   Notification,
   globalShortcut,
   session,
@@ -27,7 +26,10 @@ import Store from "electron-store"
 import fontList from "font-list"
 import WebChimeraJs from "webchimera.js"
 import pkg from "../../package.json"
-import { globalContentPlayerPlayingContentFamilyKey } from "../../src/atoms/globalFamilyKeys"
+import {
+  globalContentPlayerIsPlayingFamilyKey,
+  globalContentPlayerPlayingContentFamilyKey,
+} from "../../src/atoms/globalFamilyKeys"
 import {
   globalActiveContentPlayerIdAtomKey,
   globalLastEpgUpdatedAtomKey,
@@ -55,7 +57,6 @@ import {
   SHOW_WINDOW,
   TOGGLE_ALWAYS_ON_TOP,
   TOGGLE_FULL_SCREEN,
-  UPDATE_IS_PLAYING_STATE,
   REQUEST_SCREENSHOT_BASE_PATH,
   ON_SCREENSHOT_REQUEST,
   UPDATE_GLOBAL_SCREENSHOT_ACCELERATOR,
@@ -88,8 +89,6 @@ const contentPlayerWindows: BrowserWindow[] = []
 
 const CONTENT_PLAYER_BOUNDS = `${pkg.name}.contentPlayer.bounds`
 const GLOBAL_CONTENT_PLAYER_IDS = `${pkg.name}.global.contentPlayerIds`
-
-const blockerIdBycontentPlayerWindow: { [key: number]: number | null } = {}
 
 const isDev = process.env.NODE_ENV === "development"
 
@@ -632,34 +631,15 @@ ipcMain.handle(REQUEST_INITIAL_DATA, (event) => {
   return data
 })
 
-ipcMain.handle(UPDATE_IS_PLAYING_STATE, (event, isPlaying: boolean) => {
-  const windowId = BrowserWindow.fromWebContents(event.sender)?.id
-  if (!windowId) {
-    return
-  }
-  if (isPlaying) {
-    const blockerId = blockerIdBycontentPlayerWindow[windowId]
-    if (typeof blockerId !== "number") {
-      blockerIdBycontentPlayerWindow[windowId] = powerSaveBlocker.start(
-        "prevent-display-sleep"
-      )
-    }
-  } else {
-    const blockerId = blockerIdBycontentPlayerWindow[windowId]
-    if (typeof blockerId === "number") {
-      powerSaveBlocker.stop(blockerId)
-      blockerIdBycontentPlayerWindow[windowId] = null
-    }
-  }
-})
-
 const states: ObjectLiteral<unknown> = {}
 const statesHash: ObjectLiteral<string> = {}
 
+// 生Recoil総括
 const recoilStateUpdate = (payload: SerializableKV) => {
   for (const window of BrowserWindow.getAllWindows()) {
     window.webContents.send(RECOIL_STATE_UPDATE, payload)
   }
+  states[payload.key] = payload.value
 }
 
 const updateContentPlayerIds = () => {
@@ -667,8 +647,6 @@ const updateContentPlayerIds = () => {
     key: GLOBAL_CONTENT_PLAYER_IDS,
     value: contentPlayerWindows.map((w) => w.id),
   })
-  // 生Recoil
-  states[GLOBAL_CONTENT_PLAYER_IDS] = contentPlayerWindows.map((w) => w.id)
 }
 
 ipcMain.handle(RECOIL_STATE_UPDATE, (event, payload: SerializableKV) => {
@@ -796,6 +774,8 @@ const openWindow = ({
       }
     })
 
+    const isPlayingKey = `${globalContentPlayerIsPlayingFamilyKey}__${window.id}`
+
     window.webContents.on("context-menu", (e, params) => {
       vm.runInContext(
         "showContextMenu",
@@ -804,12 +784,12 @@ const openWindow = ({
         generateContentPlayerContextMenu(
           {
             isPlaying:
-              name === ROUTES.ContentPlayer
-                ? window.id in blockerIdBycontentPlayerWindow &&
-                  blockerIdBycontentPlayerWindow[window.id] !== null
-                : null,
+              name === ROUTES.ContentPlayer ? !!states[isPlayingKey] : null,
             toggleIsPlaying: () => {
-              window.webContents.send(UPDATE_IS_PLAYING_STATE)
+              recoilStateUpdate({
+                key: isPlayingKey,
+                value: !states[isPlayingKey],
+              })
             },
             isAlwaysOnTop: window.isAlwaysOnTop(),
             toggleIsAlwaysOnTop: () => {
@@ -846,8 +826,6 @@ const openWindow = ({
       if (name !== ROUTES["ContentPlayer"]) {
         return
       }
-      // 生Recoil
-      states[globalActiveContentPlayerIdAtomKey] = window.id
       recoilStateUpdate({
         key: globalActiveContentPlayerIdAtomKey,
         value: window.id,
@@ -925,17 +903,11 @@ const openWindow = ({
       const idx = windowMapping[name].indexOf(window)
       windowMapping[name].splice(idx, 1)
       if (name === ROUTES["ContentPlayer"]) {
-        const blockerId = blockerIdBycontentPlayerWindow[_id]
-        if (typeof blockerId === "number") {
-          powerSaveBlocker.stop(blockerId)
-        }
         const idx = contentPlayerWindows.indexOf(window)
         contentPlayerWindows.splice(idx, 1)
         updateContentPlayerIds()
         if (states[globalActiveContentPlayerIdAtomKey] === _id) {
           const value = contentPlayerWindows.slice(0).shift()?.id ?? null
-          // 生Recoil
-          states[globalActiveContentPlayerIdAtomKey] = value
           recoilStateUpdate({
             key: globalActiveContentPlayerIdAtomKey,
             value,

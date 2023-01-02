@@ -2,12 +2,12 @@ import { encode as arrayBufferToBase64 } from "base64-arraybuffer"
 import React, { useEffect, useRef, useState } from "react"
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil"
 import {
-  contentPlayerIsPlayingAtom,
   contentPlayerKeyForRestorationAtom,
   lastEpgUpdatedAtom,
 } from "../../atoms/contentPlayer"
 import { contentPlayerServiceSelector } from "../../atoms/contentPlayerSelectors"
 import {
+  globalContentPlayerIsPlayingFamily,
   globalContentPlayerPlayingContentFamily,
   globalContentPlayerSelectedServiceFamily,
 } from "../../atoms/globalFamilies"
@@ -24,6 +24,10 @@ import { ServiceWithLogoData } from "../../types/mirakurun"
 import { generateStreamUrlForMirakurun } from "../../utils/mirakurun"
 
 export const MirakurunManager: React.FC<{}> = () => {
+  const contentPlayerIsPlayingAtom = globalContentPlayerIsPlayingFamily(
+    window.id ?? 0
+  )
+
   const mirakurunSettingValue = useRecoilValue(mirakurunSetting)
   const setCompatibility = useSetRecoilState(mirakurunCompatibilityAtom)
   const setVersion = useSetRecoilState(mirakurunVersionAtom)

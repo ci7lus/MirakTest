@@ -12,7 +12,6 @@ import {
   contentPlayerAudioTrackAtom,
   contentPlayerAudioTracksAtom,
   contentPlayerBufferingAtom,
-  contentPlayerIsPlayingAtom,
   contentPlayerIsSeekableAtom,
   contentPlayerPlayingPositionAtom,
   contentPlayerPlayingTimeAtom,
@@ -26,7 +25,10 @@ import {
   contentPlayerProgramSelector,
   contentPlayerServiceSelector,
 } from "../../atoms/contentPlayerSelectors"
-import { globalContentPlayerSelectedServiceFamily } from "../../atoms/globalFamilies"
+import {
+  globalContentPlayerIsPlayingFamily,
+  globalContentPlayerSelectedServiceFamily,
+} from "../../atoms/globalFamilies"
 import { mirakurunServicesAtom } from "../../atoms/mirakurun"
 import { controllerSetting, experimentalSetting } from "../../atoms/settings"
 import { useRefFromState } from "../../hooks/ref"
@@ -49,6 +51,10 @@ import "dayjs/locale/ja"
 dayjs.locale("ja")
 
 export const CoiledController: React.FC<{ isHide: boolean }> = ({ isHide }) => {
+  const contentPlayerIsPlayingAtom = globalContentPlayerIsPlayingFamily(
+    window.id ?? 0
+  )
+
   const [isVisible, setIsVisible] = useState(false)
 
   const [lastCurMoved, setLastCurMoved] = useState(0)
@@ -186,7 +192,47 @@ export const CoiledController: React.FC<{ isHide: boolean }> = ({ isHide }) => {
   }, [isPlaying])
 
   useEffect(() => {
-    window.Preload.updateIsPlayingState(isPlaying).catch(console.error)
+    if (!isPlaying) {
+      return
+    }
+    try {
+      let isReleased = false
+      let lock: WakeLockSentinel | null = null
+      navigator.wakeLock
+        .request("screen")
+        .then((locked) => {
+          lock = locked
+          if (isReleased) {
+            lock
+              .release()
+              .then(() =>
+                console.info(
+                  "WakeLock: 既にライフサイクルが終了しているためリリースしました"
+                )
+              )
+              .catch((e) =>
+                console.warn(
+                  e,
+                  "WakeLock: 既にライフサイクルが終了しているためリリースを試みましたが失敗しました"
+                )
+              )
+          } else {
+            console.info("WakeLock: 有効になりました")
+          }
+        })
+        .catch((e) => console.warn(e, "WakeLock: 有効にできませんでした"))
+      return () => {
+        isReleased = true
+        if (lock) {
+          lock
+            .release()
+            .then(() => console.info("WakeLock: リリースしました"))
+            .catch((e) => console.warn(e, "WakeLock: リリースに失敗しました"))
+        }
+      }
+    } catch (error) {
+      console.error(error, "WakeLock: APIが使用できませんでした")
+    }
   }, [isPlaying])
 
   const startAt = dayjs(program?.startAt).format(

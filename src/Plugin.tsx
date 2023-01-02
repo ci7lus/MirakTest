@@ -4,7 +4,6 @@ import { StateRoot } from "./State"
 import {
   contentPlayerAudioChannelAtom,
   contentPlayerAudioTrackAtom,
-  contentPlayerIsPlayingAtom,
   contentPlayerPositionUpdateTriggerAtom,
   contentPlayerScreenshotTriggerAtom,
   contentPlayerSpeedAtom,
@@ -23,6 +22,7 @@ import {
   contentPlayerTsFirstPcrSelector,
 } from "./atoms/contentPlayerSelectors"
 import {
+  globalContentPlayerIsPlayingFamily,
   globalContentPlayerPlayingContentFamily,
   globalContentPlayerSelectedServiceFamily,
 } from "./atoms/globalFamilies"
@@ -67,6 +67,10 @@ export const PluginLoader: React.FC<{
   fonts: string[]
   disabledPluginFileNames: string[]
 }> = ({ states, pluginData, fonts, disabledPluginFileNames }) => {
+  const contentPlayerIsPlayingAtom = globalContentPlayerIsPlayingFamily(
+    window.id ?? 0
+  )
+
   const [isLoading, setIsLoading] = useState(true)
   useEffect(() => {
     if (isLoading === false) {
@@ -112,6 +116,7 @@ export const PluginLoader: React.FC<{
         globalContentPlayerPlayingContentFamily,
         globalActiveContentPlayerIdSelector,
         globalContentPlayerSelectedServiceFamily,
+        globalContentPlayerIsPlayingFamily,
         contentPlayerPlayingContentAtom:
           globalContentPlayerPlayingContentFamily(window.id ?? -1),
         contentPlayerServiceSelector,

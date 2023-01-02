@@ -21,7 +21,6 @@ import {
   SHOW_WINDOW,
   TOGGLE_ALWAYS_ON_TOP,
   TOGGLE_FULL_SCREEN,
-  UPDATE_IS_PLAYING_STATE,
   REQUEST_SCREENSHOT_BASE_PATH,
   ON_SCREENSHOT_REQUEST,
   UPDATE_GLOBAL_SCREENSHOT_ACCELERATOR,
@@ -230,9 +229,6 @@ const preload: Preload = {
       ipcRenderer.removeListener(RECOIL_STATE_UPDATE, _listener)
     }
   },
-  updateIsPlayingState: (arg) => {
-    return ipcRenderer.invoke(UPDATE_IS_PLAYING_STATE, arg)
-  },
   store: {
     get: <T = unknown>(key: string): T => {
       return store.get(key)
@@ -246,14 +242,6 @@ const preload: Preload = {
     openConfig() {
       store.openInEditor()
     },
-  },
-  onUpdateIsPlayingState(listener) {
-    ipcRenderer.on(UPDATE_IS_PLAYING_STATE, (_, arg) => {
-      listener(arg)
-    })
-    return () => {
-      ipcRenderer.off(UPDATE_IS_PLAYING_STATE, listener)
-    }
   },
   onWindowMoved(listener) {
     ipcRenderer.on(ON_WINDOW_MOVED, () => {

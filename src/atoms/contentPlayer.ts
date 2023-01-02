@@ -38,11 +38,6 @@ export const contentPlayerSubtitleEnabledAtom = atom<boolean>({
   ],
 })
 
-export const contentPlayerIsPlayingAtom = atom<boolean>({
-  key: `${prefix}.isPlaying`,
-  default: false,
-})
-
 export const contentPlayerVolumeAtom = atom<number>({
   key: `${prefix}.volume`,
   default: 100,
