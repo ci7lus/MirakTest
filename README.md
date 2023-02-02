@@ -3,7 +3,7 @@
 [![GitHub release (latest by date including pre-releases)](https://img.shields.io/github/v/release/ci7lus/MirakTest?include_prereleases)](https://github.com/ci7lus/MirakTest/releases)
 [![CI](https://github.com/ci7lus/MirakTest/actions/workflows/ci.yml/badge.svg)](https://github.com/ci7lus/MirakTest/actions/workflows/ci.yml)
 
-[Mirakurun](https://github.com/Chinachu/Mirakurun) 用映像視聴アプリ実装研究資料
+[Mirakurun](https://github.com/Chinachu/Mirakurun) 用映像視聴アプリ実装研究資料<br />
 
 ## 概要
 
