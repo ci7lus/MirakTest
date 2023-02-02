@@ -493,7 +493,7 @@ const loadPlugins = async ({
       openBuiltinWindow: ({
         name,
       }: {
-        name: Omit<keyof typeof ROUTES, typeof ROUTES["ContentPlayer"]>
+        name: Omit<keyof typeof ROUTES, (typeof ROUTES)["ContentPlayer"]>
       }) => {
         openWindow({
           name: name as string,
