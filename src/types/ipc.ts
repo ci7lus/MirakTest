@@ -14,7 +14,7 @@ export type OpenWindowArg = {
 }
 
 export type OpenBuiltinWindowArg = {
-  name: Omit<keyof typeof ROUTES, typeof ROUTES["ContentPlayer"]>
+  name: Omit<keyof typeof ROUTES, (typeof ROUTES)["ContentPlayer"]>
 }
 
 export type OpenContentPlayerWindowArgs = {

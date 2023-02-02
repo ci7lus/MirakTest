@@ -109,7 +109,7 @@ export const ChannelPolarityEnum = {
 } as const
 
 export type ChannelPolarityEnum =
-  typeof ChannelPolarityEnum[keyof typeof ChannelPolarityEnum]
+  (typeof ChannelPolarityEnum)[keyof typeof ChannelPolarityEnum]
 
 /**
  *
@@ -124,7 +124,7 @@ export const ChannelType = {
   Sky: "SKY",
 } as const
 
-export type ChannelType = typeof ChannelType[keyof typeof ChannelType]
+export type ChannelType = (typeof ChannelType)[keyof typeof ChannelType]
 
 /**
  *
@@ -194,7 +194,7 @@ export const ConfigChannelsItemPolarityEnum = {
 } as const
 
 export type ConfigChannelsItemPolarityEnum =
-  typeof ConfigChannelsItemPolarityEnum[keyof typeof ConfigChannelsItemPolarityEnum]
+  (typeof ConfigChannelsItemPolarityEnum)[keyof typeof ConfigChannelsItemPolarityEnum]
 
 /**
  *
@@ -428,7 +428,7 @@ export const EventResource = {
   Tuner: "tuner",
 } as const
 
-export type EventResource = typeof EventResource[keyof typeof EventResource]
+export type EventResource = (typeof EventResource)[keyof typeof EventResource]
 
 /**
  *
@@ -442,7 +442,7 @@ export const EventType = {
   Remove: "remove",
 } as const
 
-export type EventType = typeof EventType[keyof typeof EventType]
+export type EventType = (typeof EventType)[keyof typeof EventType]
 
 /**
  *
@@ -582,7 +582,7 @@ export const ProgramAudioSamplingRate = {
 } as const
 
 export type ProgramAudioSamplingRate =
-  typeof ProgramAudioSamplingRate[keyof typeof ProgramAudioSamplingRate]
+  (typeof ProgramAudioSamplingRate)[keyof typeof ProgramAudioSamplingRate]
 
 /**
  *
@@ -636,7 +636,7 @@ export const ProgramAudiosLangsEnum = {
 } as const
 
 export type ProgramAudiosLangsEnum =
-  typeof ProgramAudiosLangsEnum[keyof typeof ProgramAudiosLangsEnum]
+  (typeof ProgramAudiosLangsEnum)[keyof typeof ProgramAudiosLangsEnum]
 
 /**
  *
@@ -767,7 +767,7 @@ export const ProgramVideoResolution = {
 } as const
 
 export type ProgramVideoResolution =
-  typeof ProgramVideoResolution[keyof typeof ProgramVideoResolution]
+  (typeof ProgramVideoResolution)[keyof typeof ProgramVideoResolution]
 
 /**
  *
@@ -782,7 +782,7 @@ export const ProgramVideoType = {
 } as const
 
 export type ProgramVideoType =
-  typeof ProgramVideoType[keyof typeof ProgramVideoType]
+  (typeof ProgramVideoType)[keyof typeof ProgramVideoType]
 
 /**
  *
@@ -823,7 +823,7 @@ export const RelatedItemTypeEnum = {
 } as const
 
 export type RelatedItemTypeEnum =
-  typeof RelatedItemTypeEnum[keyof typeof RelatedItemTypeEnum]
+  (typeof RelatedItemTypeEnum)[keyof typeof RelatedItemTypeEnum]
 
 /**
  *
