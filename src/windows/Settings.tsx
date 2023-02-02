@@ -1,70 +1,215 @@
-import React, { useState } from "react"
+import clsx from "clsx"
+import React, { useEffect, useState } from "react"
+import { useRecoilBridgeAcrossReactRoots_UNSTABLE } from "recoil"
+import pkg from "../../package.json"
+import { ComponentShadowWrapper } from "../components/common/ComponentShadowWrapper"
 import { MirakurunSettingForm } from "../components/settings/Mirakurun"
-import { SayaSettingForm } from "../components/settings/Saya"
+import { CoiledPluginsSetting } from "../components/settings/Plugins"
 import { CoiledGeneralSetting } from "../components/settings/general"
-import { store } from "../utils/store"
+import { OnSettingComponent } from "../types/plugin"
 
-type Routes = "General" | "Mirakurun" | "Saya"
+type Routes = "General" | "Mirakurun" | "Plugins" | (string & {})
 
-const Router: React.VFC<{ route: Routes }> = ({ route }) => {
+const Right: React.FC<{ children: React.ReactNode }> = ({ children }) => (
+  <div
+    className={clsx(
+      "h-full",
+      "w-2/3",
+      "my-4p-4",
+      "text-gray-100",
+      "overflow-auto"
+    )}
+  >
+    {children}
+  </div>
+)
+
+const Router: React.FC<{ route: Routes }> = ({ route }) => {
+  const RecoilBridge = useRecoilBridgeAcrossReactRoots_UNSTABLE()
   if (route === "General") {
-    return <CoiledGeneralSetting />
+    return (
+      <Right>
+        <CoiledGeneralSetting />
+      </Right>
+    )
   } else if (route === "Mirakurun") {
-    return <MirakurunSettingForm />
-  } else if (route === "Saya") {
-    return <SayaSettingForm />
+    return (
+      <Right>
+        <MirakurunSettingForm />
+      </Right>
+    )
+  } else if (route === "Plugins") {
+    return (
+      <Right>
+        <CoiledPluginsSetting />
+      </Right>
+    )
   } else {
-    return <>その設定項目はありません</>
+    const plugin = window.plugins
+      ?.find((plugin) =>
+        plugin.components.find((component) => component.id === route)
+      )
+      ?.components?.find((component) => component.id === route)
+    if (plugin?.component) {
+      return (
+        <ComponentShadowWrapper
+          _id={plugin.id}
+          className={clsx(
+            "h-full",
+            "w-2/3",
+            "my-4p-4",
+            "text-gray-100",
+            "overflow-auto"
+          )}
+          Component={() => (
+            <RecoilBridge>
+              <plugin.component />
+            </RecoilBridge>
+          )}
+        />
+      )
+    }
+    return (
+      <Right>
+        <p className="p-2">その設定項目はありません（参照エラー）</p>
+      </Right>
+    )
   }
 }
 
-export const Settings: React.VFC<{}> = () => {
+export const Settings: React.FC<{}> = () => {
   const [route, setRoute] = useState<Routes>("General")
+  const [aditionalRoutes, setAditionalRoutes] = useState<[string, string][]>([])
+  useEffect(() => {
+    window.Preload.public.setWindowTitle(`設定 - ${pkg.productName}`)
+    try {
+      const plugins: [string, string][] =
+        window.plugins
+          ?.map(
+            (plugin) =>
+              plugin.components?.filter(
+                (component): component is OnSettingComponent =>
+                  component.position === "onSetting"
+              ) || []
+          )
+          .flat()
+          .map((component) => [component.id, component.label]) || []
+      setAditionalRoutes(plugins)
+    } catch (error) {
+      console.error(error)
+    }
+  }, [])
   return (
     <div
-      className="w-full h-full flex bg-gray-800 text-gray-100"
-      style={{ height: "80vh" }}
+      className={clsx(
+        "w-full",
+        "h-screen",
+        "flex",
+        "bg-gray-800",
+        "text-gray-100"
+      )}
     >
-      <div className="w-1/3 border-r border-gray-600 py-4 overflow-auto flex flex-col">
-        <button
-          type="button"
-          className={`focus:outline-none p-4 border-b border-gray-400 text-left ${
-            route === "General" && "bg-blue-500"
-          }`}
-          onClick={() => setRoute("General")}
+      <div
+        className={clsx(
+          "w-1/3",
+          "border-r",
+          "border-gray-600",
+          "overflow-auto",
+          "flex",
+          "flex-col"
+        )}
+      >
+        {[
+          ["General", "一般設定"],
+          ["Mirakurun", "Mirakurun"],
+          ["Plugins", "プラグイン"],
+        ].map(([key, displayName]) => (
+          <button
+            key={key}
+            type="button"
+            className={clsx(
+              route === key && "bg-blue-500",
+              "p-4",
+              "border-b",
+              "border-gray-400",
+              "text-left",
+              ""
+            )}
+            onClick={() => setRoute(key)}
+          >
+            {displayName}
+          </button>
+        ))}
+        {0 < aditionalRoutes.length && (
+          <p
+            className={clsx(
+              "bg-gray-700",
+              "pt-4",
+              "pb-2",
+              "px-2",
+              "text-center",
+              "text-base",
+              "w-full",
+              "border-b",
+              "border-gray-400"
+            )}
+          >
+            プラグイン設定
+          </p>
+        )}
+        {aditionalRoutes.map(([pluginId, name]) => (
+          <button
+            key={pluginId}
+            title={pluginId}
+            type="button"
+            className={clsx(
+              "p-4",
+              "border-b",
+              "border-gray-400",
+              "text-left",
+              route === pluginId && "bg-blue-500"
+            )}
+            onClick={() => setRoute(pluginId)}
+          >
+            {name}
+          </button>
+        ))}
+        <div
+          className={clsx(
+            "flex",
+            "flex-col",
+            "items-center",
+            "justify-center",
+            "space-y-2",
+            "pb-4",
+            "pt-6"
+          )}
         >
-          一般設定
-        </button>
-        <button
-          type="button"
-          className={`focus:outline-none p-4 border-b border-gray-400 text-left ${
-            route === "Mirakurun" && "bg-blue-500"
-          }`}
-          onClick={() => setRoute("Mirakurun")}
-        >
-          Mirakurun
-        </button>
-        <button
-          type="button"
-          className={`focus:outline-none p-4 border-b border-gray-400 text-left ${
-            route === "Saya" && "bg-blue-500"
-          }`}
-          onClick={() => setRoute("Saya")}
-        >
-          Saya
-        </button>
-        <div className="flex items-center justify-center">
           <a
-            className="text-blue-400 hover:underline text-sm py-4"
-            onClick={() => store.openInEditor()}
+            className={clsx("text-blue-400", "hover:underline", "text-sm")}
+            onClick={() => {
+              window.Preload.store.openConfig()
+            }}
           >
             設定ファイルを開く
           </a>
+          <a
+            className={clsx("text-blue-400", "hover:underline", "text-sm")}
+            onClick={async () => {
+              const userData = await window.Preload.public.requestAppPath(
+                "userData"
+              )
+              window.Preload.public.requestShellOpenPath(
+                window.Preload.public.joinPath(userData, "plugins")
+              )
+            }}
+          >
+            プラグインフォルダを開く
+          </a>
         </div>
       </div>
-      <div className="h-full w-2/3 my-4p-4 text-gray-100 overflow-auto">
-        <Router route={route} />
-      </div>
+
+      <Router route={route} />
     </div>
   )
 }

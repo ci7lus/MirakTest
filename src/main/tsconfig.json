@@ -1,0 +1,10 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "jsx": "preserve",
+    "outDir": "../../dist",
+    "noEmit": false
+  },
+  "include": ["."],
+  "exclude": ["../../node_modules"]
+}

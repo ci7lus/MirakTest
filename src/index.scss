@@ -1,27 +1,56 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-@import "react-toastify/dist/ReactToastify.css";
 
-html {
-  font-size: 14px;
-}
-
-*,
-a,
-button {
-  cursor: default;
+* {
   user-select: none;
 }
 
-.emoji {
-  display: inline-block;
-  width: auto;
-  height: 1rem;
+.content-visibility-auto {
+  content-visibility: auto;
 }
 
-.serviceNameOutline {
-  text-shadow: 2px 2px 1px #000000, -2px 2px 1px #000000, 2px -2px 1px #000000,
-    -2px -2px 1px #000000, 2px 0px 1px #000000, 0px 2px 1px #000000,
-    -2px 0px 1px #000000, 0px -2px 1px #000000;
+.contain-paint {
+  contain: paint;
+}
+
+#react-refresh-overlay,
+.app-region-drag {
+  -webkit-app-region: drag;
+}
+
+.app-region-no-drag {
+  -webkit-app-region: no-drag;
+}
+
+@font-face {
+  font-family: "AribEnclosedFontFace";
+  src: url("../assets/rounded-mplus-1m-arib.woff2") format("woff2");
+  font-weight: normal;
+  font-style: normal;
+  unicode-range: U+1f13f-225, U+26bf, U+3299;
+}
+
+.AribEnclosedFontFace {
+  font-family: "Windows TV MaruGothic", "ヒラギノTV丸ゴS", AribEnclosedFontFace,
+    ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif,
+    "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+}
+
+@font-face {
+  font-family: "Rounded M+ 1m for ARIB";
+  src: url("../assets/rounded-mplus-1m-arib.woff2") format("woff2");
+  font-weight: normal;
+  font-style: normal;
+}
+
+.programDescription {
+  a {
+    @apply text-blue-400;
+  }
+
+  * {
+    user-select: text;
+  }
 }

@@ -1,25 +1,31 @@
 export type MirakurunSetting = {
   baseUrl?: string
-  isEnableWaitForSingleTuner: boolean
-}
-
-export type SayaSetting = {
-  baseUrl?: string
-  replaces: [string, string][]
+  isEnableServiceTypeFilter?: boolean
+  userAgent?: string
 }
 
 export type ControllerSetting = {
-  volumeRange: [number, number]
+  volumeRange: readonly [number, number]
+  isVolumeWheelDisabled: boolean
+}
+
+export type SubtitleSetting = {
+  font: string
 }
 
 export type ScreenshotSetting = {
   saveAsAFile: boolean
   includeSubtitle: boolean
   basePath?: string
+  keepQuality: boolean
 }
 
 export type ExperimentalSetting = {
   isWindowDragMoveEnabled: boolean
-  isProgramDetailInServiceSelectorEnabled: boolean
-  isRichPresenceEnabled: boolean
+  isVlcAvCodecHwAny: boolean
+  vlcNetworkCaching: number
+  isDualMonoAutoAdjustEnabled: boolean
+  isSurroundAutoAdjustEnabeld: boolean
+  globalScreenshotAccelerator: string | false
+  isCodeBlack: boolean
 }

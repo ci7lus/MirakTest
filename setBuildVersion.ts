@@ -8,11 +8,11 @@ const main = async () => {
   if (yml.includes("buildVersion"))
     throw new Error("already buildVersion included")
   let buildVersion: string
-  if (process.env.IS_WINDOWS) {
+  if (process.env.OS === "Windows") {
     const [version] = pkg.version.split("-")
     buildVersion = `${version}.${sha1.slice(0, 7)}`
   } else {
-    buildVersion = sha1
+    buildVersion = sha1.slice(0, 7)
   }
   const rewrited = yml.replace(
     "productName: MirakTest",

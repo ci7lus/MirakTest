@@ -1,11 +1,16 @@
 export const VLCLogFilter = (s: string) => {
   if (
+    // 表示遅延
     s.startsWith("picture is too late to be displayed") ||
     s.startsWith("picture might be displayed late") ||
     s.startsWith("More than") ||
-    s.startsWith("buffer too late")
+    s.startsWith("buffer too late") ||
+    s.startsWith("discontinuity received 0") ||
+    // gnutls
+    s.startsWith("in DATA (0x00) frame of") ||
+    s.startsWith("out WINDOW_UPDATE (0x08) frame ")
   ) {
-    return { category: "picture_late_warn" } as const
+    return { category: "commonplace" } as const
   } else if (s.startsWith("libdvbpsi error")) {
     return { category: "libdvbpsi_error" } as const
   } else if (s.startsWith("Stream buffering done")) {
@@ -32,6 +37,15 @@ export const VLCLogFilter = (s: string) => {
       category: "resize",
       width: parseInt(width),
       height: parseInt(height),
+    } as const
+  } else if (s.startsWith("tot,")) {
+    const tot = parseInt(s.split(",").pop() || "NaN")
+    if (Number.isNaN(tot)) {
+      return { category: "tot" } as const
+    }
+    return {
+      category: "tot",
+      tot: (tot - 3600 * 9 * 2) * 1000,
     } as const
   } else if (s.startsWith("arib_data")) {
     const m = s.match(/^arib_data \[(.+)\]\[(\d+)\]$/)
@@ -61,8 +75,14 @@ export const VLCLogFilter = (s: string) => {
     return { category: "es_out_program_epg" } as const
   } else if (s.startsWith("PMTCallBack called for program")) {
     return { category: "PMTCallBack_called_for_program" } as const
-  } else if (s.startsWith("discontinuity received 0")) {
-    return { category: "discontinuity_received_0" } as const
+  } else if (s.startsWith("VLC is looking for: 'f32l'")) {
+    return { category: "looking_f32l" } as const
+  } else if (s.startsWith("playback too late")) {
+    return { category: "playback_too_late" }
+  } else if (s.endsWith("3F2R/LFE->3F2R/LFE")) {
+    return { category: "surround-to-surround" } as const
+  } else if (s.endsWith("Stereo->Stereo")) {
+    return { category: "stereo-to-stereo" } as const
   } else if (s.startsWith("end of stream")) {
     return { category: "end_of_stream" } as const
   } else if (s.startsWith("EOF reached")) {
@@ -73,6 +93,15 @@ export const VLCLogFilter = (s: string) => {
     const m = s.match(/Buffering (\d+)%/)
     if (!m) return { category: "buffering" } as const
     return { category: "buffering", progress: parseInt(m[1]) } as const
+  } else if (s.startsWith("configured with")) {
+    return {
+      category: "configured_with",
+      isCustomized: s.includes("vlc-miraktest"),
+    } as const
+  } else if (s.startsWith("looking for audio resampler module matching")) {
+    return {
+      category: "audio_channel_updated",
+    } as const
   } else {
     return { category: "unknown" } as const
   }
@@ -86,11 +115,26 @@ export const VLCAudioChannel = {
   Dolby: 5,
 }
 
+export const VLCAudioStereoChannel = {
+  Monaural: 1,
+  Original: 2,
+  Stereo: 3,
+  Headphone: 4,
+}
+
 export const VLCAudioChannelTranslated = [
-  "ステレオ",
+  "?",
   "ステレオ",
   "反転ステレオ",
   "左",
   "右",
   "ドルビー",
+]
+
+export const VLCAudioChannelSurroundTranslated = [
+  "?",
+  "モノラル",
+  "オリジナル",
+  "ステレオ",
+  "ヘッドフォン",
 ]

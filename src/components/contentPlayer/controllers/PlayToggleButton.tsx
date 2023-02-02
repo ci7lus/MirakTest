@@ -1,0 +1,21 @@
+import React, { memo } from "react"
+import { Pause, Play } from "react-feather"
+
+export const PlayToggleButton: React.FC<{
+  isPlaying: boolean
+  setIsPlaying: React.Dispatch<React.SetStateAction<boolean>>
+}> = memo(({ isPlaying, setIsPlaying }) => (
+  <button
+    aria-label={`映像は${isPlaying ? "再生中" : "停止中"}`}
+    title="再生切り替え"
+    type="button"
+    className="p-2"
+    onClick={() => setIsPlaying((value) => !value)}
+  >
+    {isPlaying ? (
+      <Pause className="pointer-events-none" size="1.75rem" />
+    ) : (
+      <Play className="pointer-events-none" size="1.75rem" />
+    )}
+  </button>
+))

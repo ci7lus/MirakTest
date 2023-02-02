@@ -1,131 +1,79 @@
 import path from "path"
+import ReactRefreshWebpackPlugin from "@pmmmwh/react-refresh-webpack-plugin"
 import MiniCSSExtractPlugin from "mini-css-extract-plugin"
 import webpack from "webpack"
+import {
+  babelLoaderConfiguration,
+  assetLoaderConfiguration,
+  imageLoaderConfiguration,
+  scssConfiguration,
+  nodeConfiguration,
+} from "./webpack-loaders"
 
 type MultiConfigurationFactory = (
   env: string | Record<string, boolean | number | string> | undefined,
   args: webpack.WebpackOptionsNormalized
 ) => webpack.Configuration[]
 
-const nodeConfiguration: webpack.RuleSetRule = {
-  test: /\.node$/,
-  loader: "node-loader",
-}
+const factory: MultiConfigurationFactory = (_, args) => {
+  const isDev = args.mode !== "production"
+  return [
+    {
+      entry: path.resolve(__dirname, "./src/index.web.tsx"),
 
-const scssConfiguration: webpack.RuleSetRule = {
-  test: /\.scss$/,
-  use: [
-    {
-      loader: MiniCSSExtractPlugin.loader,
-    },
-    {
-      loader: "css-loader",
-      options: {
-        importLoaders: 1,
+      output: {
+        path: path.resolve(__dirname, "dist/"),
       },
-    },
-    {
-      loader: "postcss-loader",
-    },
-    {
-      loader: "sass-loader",
-    },
-  ],
-}
 
-const babelLoaderConfiguration: webpack.RuleSetRule = {
-  test: [/\.tsx?$/, /\.ts$/, /\.js$/],
-  use: {
-    loader: "babel-loader",
-    options: {
-      cacheDirectory: true,
-      presets: [
-        [
-          "@babel/preset-env",
-          {
-            targets: {
-              browsers: ["last 1 versions"],
-            },
-          },
+      target: "web",
+
+      module: {
+        rules: [
+          babelLoaderConfiguration(isDev),
+          assetLoaderConfiguration,
+          imageLoaderConfiguration,
+          scssConfiguration,
+          nodeConfiguration,
         ],
-        "@babel/preset-typescript",
-        "@babel/preset-react",
-      ],
-      plugins: [
-        "@babel/plugin-transform-runtime",
-        ["@babel/plugin-transform-typescript", { isTSX: true }],
-        "@babel/plugin-transform-react-jsx",
-        "@babel/plugin-proposal-class-properties",
-        "@babel/plugin-transform-modules-commonjs",
-      ],
-    },
-  },
-}
-
-const imageLoaderConfiguration: webpack.RuleSetRule = {
-  test: /\.(gif|jpe?g|png|svg)$/,
-  use: {
-    loader: "url-loader",
-    options: {
-      name: "[name].[ext]",
-      esModule: false,
-    },
-  },
-}
-
-const assetLoaderConfiguration: webpack.RuleSetRule = {
-  test: /\.(ttf)$/,
-  type: "asset/resource",
-}
-
-const factory: MultiConfigurationFactory = (env, args) => [
-  {
-    entry: path.resolve(__dirname, "./src/index.web.tsx"),
-
-    output: {
-      path: path.resolve(__dirname, "dist/"),
-    },
-
-    target: "electron-renderer",
-
-    module: {
-      rules: [
-        babelLoaderConfiguration,
-        assetLoaderConfiguration,
-        imageLoaderConfiguration,
-        scssConfiguration,
-        nodeConfiguration,
-      ],
-    },
-
-    resolve: {
-      alias: {
-        "react-native": "react-native-web",
-        dplayer: "@neneka/dplayer",
       },
-      extensions: [
-        ".webpack.js",
-        ".web.ts",
-        ".web.tsx",
-        ".web.js",
-        ".ts",
-        ".tsx",
-        ".js",
-      ],
-    },
 
-    plugins: [
-      new webpack.DefinePlugin({
-        __DEV__: args.mode !== "production",
-      }),
-      // TODO: FIX TYPE (型 'DefinePlugin' と 'MiniCssExtractPlugin' を比較するスタックが深すぎます。ts(2321))
-      new MiniCSSExtractPlugin() as never,
-    ],
+      resolve: {
+        alias: {
+          "react-native": "react-native-web",
+          "react-query": "react-query/lib",
+        },
+        extensions: [
+          ".webpack.js",
+          ".web.ts",
+          ".web.tsx",
+          ".web.js",
+          ".ts",
+          ".tsx",
+          ".js",
+        ],
+        fallback: { path: require.resolve("path-browserify") },
+      },
 
-    externals: {
-      "webchimera.js": "commonjs webchimera.js",
+      devServer: {
+        hot: isDev,
+        devMiddleware: { publicPath: "/dist" },
+        static: {
+          directory: __dirname,
+          watch: false,
+        },
+        port: 10170,
+      },
+
+      plugins: [
+        new webpack.DefinePlugin({
+          "process.platform": JSON.stringify(process.platform),
+        }),
+        // TODO: 型 'import("node_modules/tapable/tapable").SyncBailHook<[import("node_modules/webpack/types").Compilation], boolean, import("node_modules/tapable/tapable").UnsetAdditionalOptions>' を型 'import("node_modules/tapable/tapable").SyncBailHook<[import("node_modules/@types/mini-css-extract-plugin/node_modules/webpack/types").Compilation], boolean, import("node_modules/tapable/tapab...' に割り当てることはできません。ts(2322)
+        new MiniCSSExtractPlugin() as never,
+        isDev ? new ReactRefreshWebpackPlugin() : (undefined as never),
+      ].filter((p: unknown) => p),
     },
-  },
-]
+  ]
+}
 
 module.exports = factory

@@ -1,25 +1,23 @@
 module.exports = {
-  purge: {
-    enabled: process.env.NODE_ENV === "production",
-    mode: "all",
-    content: [
-      "./index.html",
-      "./src/**/*.{ts,tsx,scss}",
-      "node_modules/react-toastify/dist/ReactToastify.css",
-    ],
-    whitelist: [],
-    whitelistPatterns: [],
-  },
+  content: [
+    "./index.html",
+    "./src/**/*.{ts,tsx,scss}",
+    "./node_modules/react-multi-carousel/lib/styles.css",
+  ],
   future: {
     removeDeprecatedGapUtilities: true,
     purgeLayersByDefault: true,
   },
-  darkMode: "media",
   plugins: [
     require("tailwindcss-textshadow"),
-    require("@tailwindcss/custom-forms"),
+    require("@tailwindcss/forms"),
+    require("tailwind-scrollbar"),
   ],
   theme: {
+    gradientColorStops: (theme) => ({
+      ...theme("colors"),
+      blackOpacity: "rgba(0, 0, 0, var(--tw-bg-opacity))",
+    }),
     extend: {
       cursor: {
         none: "none",
@@ -27,6 +25,14 @@ module.exports = {
       animation: {
         "ping-once":
           "ping 1s cubic-bezier(0, 0, 0.2, 1), hidden 1s linear 1s infinite",
+      },
+      maxHeight: {
+        halfscreen: "50vh",
+      },
+      transitionProperty: {
+        maxHeight: "max-height",
+        width: "width",
+        strokeDashoffset: "stroke-dashoffset",
       },
       keyframes: {
         hidden: {
