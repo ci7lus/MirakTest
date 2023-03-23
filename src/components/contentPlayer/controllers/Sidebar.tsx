@@ -7,6 +7,47 @@ import { useNow } from "../../../hooks/date"
 import { ChannelType, Program, Service } from "../../../infra/mirakurun/api"
 import { SidebarSelectedServiceList } from "./SidebarSelectedServiceList"
 
+/**
+ * BS 放送のサービス ID をワンタッチ選局 ID に変換
+ *
+ * 一部の局ではサブチャンネルの運用をしているがクイック選局セレクタには表示したくないのでワンタッチ選局 ID ごとに纏める
+ *
+ * https://www.apab.or.jp/bs/
+ */
+const BSSidToOneTouch: Record<
+  number,
+  { service: number; oneTouch: number | null } | undefined
+> = {
+  101: { service: 101, oneTouch: 1 }, // NHK BS1
+  102: { service: 101, oneTouch: 1 }, // NHK BS1
+  103: { service: 103, oneTouch: 3 }, // NHK BSP
+  104: { service: 103, oneTouch: 3 }, // NHK BSP
+  141: { service: 141, oneTouch: 4 }, // BS日テレ
+  142: { service: 141, oneTouch: 4 }, // BS日テレ
+  143: { service: 141, oneTouch: 4 }, // BS日テレ
+  151: { service: 151, oneTouch: 5 }, // BS朝日
+  152: { service: 151, oneTouch: 5 }, // BS朝日
+  153: { service: 151, oneTouch: 5 }, // BS朝日
+  161: { service: 161, oneTouch: 6 }, // BS-TBS
+  162: { service: 161, oneTouch: 6 }, // BS-TBS
+  163: { service: 161, oneTouch: 6 }, // BS-TBS
+  171: { service: 171, oneTouch: 7 }, // BSテレ東
+  172: { service: 171, oneTouch: 7 }, // BSテレ東
+  173: { service: 171, oneTouch: 7 }, // BSテレ東
+  181: { service: 181, oneTouch: 8 }, // BSフジ
+  182: { service: 181, oneTouch: 8 }, // BSフジ
+  183: { service: 181, oneTouch: 8 }, // BSフジ
+  // 以下の放送局はワンタッチ選局対象だけどサブチャンネルの運用をしていないのでサービス単位でよい
+  // 191: { service: 191, oneTouch: 9 }, //  WOWOWプライム
+  // 192: { service: 191, oneTouch: null }, // WOWOWライブ
+  // 193: { service: 191, oneTouch: null }, // WOWOWシネマ
+  // 200: { service: 200, oneTouch: 10 }, // スターチャンネル1
+  // 201: { service: 200, oneTouch: null }, // スターチャンネル2
+  // 202: { service: 200, oneTouch: null }, // スターチャンネル3
+  // 211: { service: 211, oneTouch: 11 }, // BS11
+  // 222: { service: 222, oneTouch: 12 }, // TwellV
+}
+
 export const ControllerSidebar: React.FC<{
   isVisible: boolean
   services: Service[]
@@ -32,12 +73,44 @@ export const ControllerSidebar: React.FC<{
       Object.values(
         services
           .filter((service) => service.channel?.type === selectedType)
-          .reduce((services: Record<string, Service[]>, service) => {
-            const identifier =
-              service.channel?.type === "CS"
-                ? service.id
-                : service.channel?.channel ?? service.id
-            if (!identifier) {
+          .reduce<Record<string, Service[]>>((services, service) => {
+            let identifier = ""
+            switch (service.channel?.type) {
+              // 区域外再放送などで別な放送局が同じリモコンキー ID を使う可能性があるので、ネットワーク ID とリモコンキー ID で纏める
+              case ChannelType.Gr: {
+                identifier = [
+                  service.networkId,
+                  service.remoteControlKeyId ?? -1,
+                ].join("_")
+
+                break
+              }
+
+              // ワンタッチ選局があればそれで纏める、無い場合はサブチャンネルの運用はないはずなのでサービス単位
+              case ChannelType.Bs: {
+                const oneTouch = BSSidToOneTouch[service.serviceId]
+                identifier = String(oneTouch?.service ?? service.serviceId)
+                service.remoteControlKeyId = oneTouch?.oneTouch ?? undefined
+
+                break
+              }
+
+              // CS はサービス単位
+              case ChannelType.Cs: {
+                identifier = String(service.id)
+
+                break
+              }
+
+              // SKY などはチャンネル単位で纏める?
+              default: {
+                identifier = service.channel?.channel ?? ""
+
+                break
+              }
+            }
+
+            if (identifier === "") {
               return services
             }
             if (!services[identifier]) {
