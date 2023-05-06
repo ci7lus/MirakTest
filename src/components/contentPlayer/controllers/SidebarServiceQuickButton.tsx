@@ -1,6 +1,7 @@
 import clsx from "clsx"
 import dayjs from "dayjs"
-import React, { memo } from "react"
+import React, { memo, useState } from "react"
+import Marquee from "react-fast-marquee"
 import { Service, Program } from "../../../infra/mirakurun/api"
 import { ServiceWithLogoData } from "../../../types/mirakurun"
 import { convertVariationSelectedClosed } from "../../../utils/enclosed"
@@ -16,8 +17,11 @@ export const SidebarServiceQuickButton = memo(
     setService: (s: Service) => void
     program: Program | undefined
   }) => {
+    const [isHovering, setIsHovering] = useState(false)
     return (
       <button
+        onMouseEnter={() => setIsHovering(true)}
+        onMouseLeave={() => setIsHovering(false)}
         type="button"
         className={clsx(
           "bg-gray-800",
@@ -76,7 +80,9 @@ export const SidebarServiceQuickButton = memo(
           </span>
         </span>
         {program?.name && (
-          <span
+          <Marquee
+            play={isHovering}
+            gradient={false}
             className={clsx(
               "pointer-events-none",
               "truncate",
@@ -85,9 +91,10 @@ export const SidebarServiceQuickButton = memo(
               "text-left",
               "text-sm"
             )}
+            speed={40}
           >
             <EscapeEnclosed str={program.name || ""} size="before:text-xs" />
-          </span>
+          </Marquee>
         )}
       </button>
     )
