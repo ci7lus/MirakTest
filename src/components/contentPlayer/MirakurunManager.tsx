@@ -224,7 +224,7 @@ export const MirakurunManager: React.FC<{}> = () => {
         serviceId: service.id,
       })
     },
-    [setPlayingContent, setLastSelectedServiceId]
+    [setPlayingContent, setLastSelectedServiceId, mirakurunSettingValue]
   )
 
   const previousSelectedServiceId = useRef(0)
