@@ -1373,6 +1373,7 @@ export interface TunerUserStreamSetting {
  * @interface Version
  */
 export interface Version {
+  server?: string
   /**
    *
    * @type {string}

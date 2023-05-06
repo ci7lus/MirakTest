@@ -20,7 +20,10 @@ import { mirakurunSetting } from "../../atoms/settings"
 import { useNow } from "../../hooks/date"
 import { MirakurunAPI } from "../../infra/mirakurun"
 import { Service } from "../../infra/mirakurun/api"
-import { ServiceWithLogoData } from "../../types/mirakurun"
+import {
+  MirakurunCompatibilityServers,
+  ServiceWithLogoData,
+} from "../../types/mirakurun"
 import { generateStreamUrlForMirakurun } from "../../utils/mirakurun"
 
 export const MirakurunManager: React.FC<{}> = () => {
@@ -56,20 +59,28 @@ export const MirakurunManager: React.FC<{}> = () => {
       try {
         const status = await mirakurun.status.getStatus()
         let message: string
+        const checkVersion = await mirakurun.version
+          .checkVersion()
+          .catch(() => null)
         // mirakcのstatusの返り値は{}
-        if (Object.keys(status.data).length === 0) {
-          const checkVersion = await mirakurun.version.checkVersion()
+        if (Object.keys(status.data).length === 0 && checkVersion) {
           const version =
             typeof checkVersion.data === "string"
               ? checkVersion.data
               : checkVersion.data.current || null
-          setCompatibility("Mirakc")
+          setCompatibility(MirakurunCompatibilityServers.Mirakc)
           setVersion(version)
-          message = `Mirakc (${version})`
+          message = `${MirakurunCompatibilityServers.Mirakc} (${version})`
         } else if (typeof status.data.version === "string") {
-          setCompatibility("Mirakurun")
-          setVersion(status.data.version || null)
-          message = `Mirakurun (${status.data.version})`
+          if (checkVersion && checkVersion.data.server === "mahiron") {
+            setCompatibility(MirakurunCompatibilityServers.Mahiron)
+            setVersion(status.data.version || null)
+            message = `${MirakurunCompatibilityServers.Mahiron} (${status.data.version})`
+          } else {
+            setCompatibility(MirakurunCompatibilityServers.Mirakurun)
+            setVersion(status.data.version || null)
+            message = `${MirakurunCompatibilityServers.Mirakurun} (${status.data.version})`
+          }
         } else {
           throw new Error()
         }
