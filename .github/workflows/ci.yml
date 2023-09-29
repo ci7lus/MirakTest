@@ -11,10 +11,6 @@ on:
       - LICENSE
       - "**.md"
   pull_request:
-    paths-ignore:
-      - .gitignore
-      - LICENSE
-      - "**.md"
   release:
     types: [published]
   workflow_dispatch:
@@ -40,7 +36,7 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
-          cache: 'yarn'
+          cache: "yarn"
       - name: Install
         run: |
           yarn install
@@ -82,7 +78,7 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
-          cache: 'yarn'
+          cache: "yarn"
       - name: Obtain electron cache dir
         if: runner.os == 'Windows'
         id: electron-cache-dir-path
