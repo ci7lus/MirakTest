@@ -2,10 +2,9 @@ import path from "path"
 import { CanvasProvider } from "aribb24.js"
 import clsx from "clsx"
 import dayjs from "dayjs"
-import React, { memo, useEffect, useMemo, useRef, useState } from "react"
+import React, { memo, useEffect, useMemo, useState } from "react"
 import { useDebounce } from "react-use"
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil"
-import pkg from "../../../package.json"
 import {
   contentPlayerAribSubtitleDataAtom,
   contentPlayerAudioChannelAtom,
@@ -40,7 +39,6 @@ import {
 import { SUBTITLE_DEFAULT_FONT } from "../../constants/font"
 import { useRefFromState } from "../../hooks/ref"
 import { getAribb24Configuration } from "../../utils/subtitle"
-import { VideoRenderer } from "../../utils/videoRenderer"
 import { VLCLogFilter } from "../../utils/vlc"
 
 export const CoiledVideoPlayer: React.FC<{
@@ -50,8 +48,6 @@ export const CoiledVideoPlayer: React.FC<{
   const contentPlayerIsPlayingAtom = globalContentPlayerIsPlayingFamily(
     window.id ?? 0
   )
-  const canvasRef = useRef<HTMLCanvasElement>(null)
-
   const [size, setSize] = useState<[number, number]>([1920, 1080])
   useDebounce(
     () => {
@@ -205,27 +201,26 @@ export const CoiledVideoPlayer: React.FC<{
       )
       return
     }
-    const canvas = canvasRef.current
-    if (!screenshotTrigger || !canvas) return
+    if (!screenshotTrigger) return
     ;(async () => {
       try {
-        const contentCanvas = document.createElement("canvas")
-        contentCanvas.height = canvas.height
-        contentCanvas.width = Math.ceil(canvas.height * aspect)
-        const context = contentCanvas.getContext("2d", { alpha: false })
-        if (!context) throw new Error("ctx")
-        context.drawImage(
-          canvas,
-          0,
-          0,
-          contentCanvas.width,
-          contentCanvas.height
-        )
+        const rawBuffer = await (window.Preload as any).requestMpvScreenshot?.()
+        if (!rawBuffer) throw new Error("mpv screenshot failed")
+        let blob: Blob
         if (
           displayingAribSubtitleData &&
           screenshot.includeSubtitle === true &&
           isSubtitleEnabled === true
         ) {
+          const img = await createImageBitmap(
+            new Blob([rawBuffer], { type: "image/png" })
+          )
+          const contentCanvas = document.createElement("canvas")
+          contentCanvas.width = img.width
+          contentCanvas.height = img.height
+          const context = contentCanvas.getContext("2d", { alpha: false })
+          if (!context) throw new Error("ctx")
+          context.drawImage(img, 0, 0)
           const subtitleCanvas = document.createElement("canvas")
           subtitleCanvas.height = contentCanvas.height
           subtitleCanvas.width = contentCanvas.width
@@ -245,15 +240,16 @@ export const CoiledVideoPlayer: React.FC<{
             contentCanvas.width,
             contentCanvas.height
           )
-        }
-        const blob = await new Promise<Blob | null>((res) =>
-          contentCanvas.toBlob(
-            (blob) => res(blob),
-            screenshot.keepQuality ? "image/png" : "image/jpeg",
-            screenshot.keepQuality ? 1 : 0.95
+          blob = await new Promise<Blob>((res, rej) =>
+            contentCanvas.toBlob(
+              (b) => (b ? res(b) : rej(new Error("blob"))),
+              screenshot.keepQuality ? "image/png" : "image/jpeg",
+              screenshot.keepQuality ? 1 : 0.95
+            )
           )
-        )
-        if (!blob) throw new Error("blob")
+        } else {
+          blob = new Blob([rawBuffer], { type: "image/png" })
+        }
         const buffer = await blob.arrayBuffer()
         try {
           await window.Preload.public.writeArrayBufferToClipboard(buffer)
@@ -331,23 +327,14 @@ export const CoiledVideoPlayer: React.FC<{
   }, [positionUpdate])
   const experimental = useRecoilValue(experimentalSetting)
   useEffect(() => {
-    const canvas = canvasRef.current
-    if (!canvas) return
-    const renderContext = new VideoRenderer(canvas, {
-      preserveDrawingBuffer: true,
-    })
-    const args = [
-      process.env.NODE_ENV !== "production" ? "-vvv" : "",
-      0 <= (experimental.vlcNetworkCaching ?? -1)
-        ? `--network-caching=${experimental.vlcNetworkCaching}`
-        : "",
-      `--avcodec-hw=${
-        experimental.isVlcAvCodecHwAny === true ? "any" : "none"
-      }`,
-      `--http-user-agent=${pkg.productName}/${pkg.version}`,
-    ].filter((s) => s)
-    console.info("VLC Args:", args)
-    window.Preload.webchimera.setup(args)
+    window.Preload.webchimera.setup([])
+    if ("onVideoParamsChanged" in window.Preload.webchimera) {
+      ;(window.Preload.webchimera as any).onVideoParamsChanged(
+        (w: number, h: number, dw: number, dh: number) => {
+          setSize([dw || w, dh || h])
+        }
+      )
+    }
     let pcr_i_first = 0
     let last = 0
     window.Preload.webchimera.onTimeChanged((time) => {
@@ -494,11 +481,6 @@ export const CoiledVideoPlayer: React.FC<{
           break
       }
     })
-    window.Preload.webchimera.onFrameReady(
-      (frame, width, height, uOffset, vOffset) => {
-        renderContext.render(frame, width, height, uOffset, vOffset)
-      }
-    )
     window.Preload.webchimera.onMediaChanged(() => {
       setIsPlaying(true)
       if (!isCustomized) {
@@ -521,7 +503,6 @@ export const CoiledVideoPlayer: React.FC<{
       window.Preload.public.showNotification({
         title: "映像の受信に失敗しました",
       })
-      renderContext.fillTransparent()
       setIsErrorEncounted(true)
     })
     window.Preload.webchimera.onBuffering((percentage) => {
@@ -556,12 +537,9 @@ export const CoiledVideoPlayer: React.FC<{
     }
   }, [])
   return (
-    <canvas
+    <div
       className={clsx("object-contain", "w-full", "h-full", "block")}
-      style={{ aspectRatio: aspect.toString() }}
-      width={debouncedSize[0]}
-      height={debouncedSize[1]}
-      ref={canvasRef}
+      style={{ aspectRatio: aspect.toString(), background: "transparent" }}
     />
   )
 })

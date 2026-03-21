@@ -74,6 +74,7 @@ export const CoiledContentPlayer: React.FC<{}> = () => {
       >
         <div
           className={clsx("relative", "w-full", "h-full", "overflow-hidden")}
+          style={{ background: "transparent" }}
         >
           <div
             id="Splash"
@@ -99,6 +100,7 @@ export const CoiledContentPlayer: React.FC<{}> = () => {
               "items-center",
               "justify-center"
             )}
+            style={{ background: "transparent" }}
           >
             <CoiledVideoPlayer
               internalPlayingTimeRef={internalPlayingTimeRef}
