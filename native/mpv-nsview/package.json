@@ -1,0 +1,14 @@
+{
+  "name": "mpv-nsview",
+  "version": "1.0.0",
+  "description": "N-API addon to embed mpv NSView in Electron",
+  "main": "build/Release/mpv_nsview.node",
+  "scripts": {
+    "build": "node-gyp rebuild",
+    "build:debug": "node-gyp build --debug"
+  },
+  "dependencies": {
+    "node-addon-api": "^8.6.0",
+    "node-gyp": "^12.2.0"
+  }
+}
