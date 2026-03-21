@@ -55,20 +55,12 @@ jobs:
     strategy:
       matrix:
         node-version: [16.x]
+        # TODO: re-enable Linux/Windows after mpv cross-platform support
         target:
-          - x86_64-unknown-linux-gnu
-          - x86_64-pc-windows-gnu
-          - x86_64-apple-darwin
-          - x86_64-apple-darwin-as-aarch64
+          - aarch64-apple-darwin
         include:
-          - target: x86_64-unknown-linux-gnu
-            os: ubuntu-22.04
-          - target: x86_64-pc-windows-gnu
-            os: windows-2019
-          - target: x86_64-apple-darwin
-            os: macos-12
-          - target: x86_64-apple-darwin-as-aarch64
-            os: macos-12
+          - target: aarch64-apple-darwin
+            os: macos-14  # Apple Silicon runner
 
     runs-on: ${{ matrix.os }}
 
@@ -79,23 +71,7 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
           cache: "yarn"
-      - name: Obtain electron cache dir
-        if: runner.os == 'Windows'
-        id: electron-cache-dir-path
-        # https://github.com/electron/get#how-it-works
-        run: |
-          echo "::set-output name=dir::$(Join-Path (Resolve-Path $env:LOCALAPPDATA) electron/Cache)"
-          echo "::set-output name=dir::$(Join-Path (Resolve-Path $env:USERPROFILE) AppData/Local/electron/Cache)"
       - uses: actions/cache@v3
-        if: runner.os == 'Windows'
-        id: electron-cache-win
-        with:
-          path: ${{ steps.electron-cache-dir-path.outputs.dir }}
-          key: ${{ matrix.target }}-electron-${{ hashFiles('**/yarn.lock') }}
-          restore-keys: |
-            ${{ matrix.target }}-electron-
-      - uses: actions/cache@v3
-        if: runner.os != 'Windows'
         id: electron-cache
         # https://github.com/electron/get#how-it-works
         with:
@@ -108,48 +84,18 @@ jobs:
           key: ${{ matrix.target }}-electron-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
             ${{ matrix.target }}-electron-
-      - uses: actions/cache@v3
-        if: runner.os == 'macOS'
-        id: vlc-cache
-        with:
-          path: /Applications/VLC.app
-          key: ${{ matrix.target }}-vlc-
-          restore-keys: |
-            ${{ matrix.target }}-vlc-
-      - name: Download VLC
-        if: steps.vlc-cache.outputs.cache-hit != 'true' && matrix.target == 'x86_64-apple-darwin'
+      - name: Install mpv and dylibbundler
         run: |
-          wget -q https://github.com/vivid-lapin/vlc-miraktest/releases/download/3.0.18/vlc-3.0.18-x86_64.dmg -O /tmp/vlc.dmg
-          hdiutil mount /tmp/vlc.dmg
-          cp -Ra "/Volumes/VLC media player/VLC.app" /Applications
-      - name: Download VLC (aarch64)
-        if: steps.vlc-cache.outputs.cache-hit != 'true' && matrix.target == 'x86_64-apple-darwin-as-aarch64'
-        run: |
-          wget -q https://github.com/vivid-lapin/vlc-miraktest/releases/download/3.0.18/vlc-3.0.18-arm64.dmg -O /tmp/vlc.dmg
-          hdiutil mount /tmp/vlc.dmg
-          cp -Ra "/Volumes/VLC media player/VLC.app" /Applications
-      - name: Install deps
-        if: runner.os == 'Linux'
-        run: sudo apt-get install cmake=3.22.1-1ubuntu1.$(cut -f2 <<< $(lsb_release -r)).1 libvlc-dev=3.0.16-1build7
+          brew install mpv dylibbundler
       - name: Install
         run: yarn
-      - name: Build webchimera.js (unix like, without aarch64)
-        if: runner.os != 'Windows' && matrix.target != 'x86_64-apple-darwin-as-aarch64'
-        run: ./setup_wcjs.sh
-      - name: Build webchimera.js (aarch64)
-        if: matrix.target == 'x86_64-apple-darwin-as-aarch64'
-        run: ./setup_wcjs.sh
-        env:
-          npm_config_wcjs_arch: arm64
-      - name: Setup libvlc (darwin) VLC related libs are licensed under LGPL and GPLv2
-        if: runner.os == 'macOS'
-        run: ./setup_libvlc_mac.sh
-      - name: Build WebChiemra.js (windows)
-        if: runner.os == 'Windows'
-        run: pwsh ./setup_wcjs.ps1
-      - name: Setup libvlc (windows) VLC related libs are licensed under LGPL and GPLv2
-        if: runner.os == 'Windows'
-        run: pwsh ./setup_libvlc.ps1
+      - name: Setup mpv libs
+        run: ./setup_mpv_mac.sh
+      - name: Build native addon
+        run: |
+          cd native/mpv-nsview
+          npm install
+          npx node-gyp rebuild --arch=arm64
       - name: Set nightly version
         if: ${{ github.event_name != 'release' && (!github.event.inputs.override_version || github.event.inputs.override_version == 'true') }}
         run: yarn ts-node setPackageVersion.ts
@@ -161,10 +107,6 @@ jobs:
           SHA1: ${{ github.sha }}
           OS: ${{ runner.os }}
       - name: Build
-        if: matrix.target != 'x86_64-apple-darwin-as-aarch64'
-        run: yarn build
-      - name: Build (as aarch64)
-        if: matrix.target == 'x86_64-apple-darwin-as-aarch64'
         run: yarn build --mac --arm64
       - name: Upload build artifact
         uses: actions/upload-artifact@v3
@@ -172,8 +114,8 @@ jobs:
           name: ${{ matrix.target }}-build
           path: |
             build
-            !build/mac/MirakTest.app
-            !build/mac-*/MirakTest.app
+            !build/mac/mirak.app
+            !build/mac-*/mirak.app
             !build/*-unpacked
           if-no-files-found: ignore
       - name: Upload dist artifact
@@ -187,38 +129,21 @@ jobs:
           name: ${{ matrix.target }}-build-image
           path: |
             build/*.dmg
-            build/*.exe
-            build/*-win.zip
-            build/*.AppImage
-            build/*.tar.gz
+            build/*.zip
           if-no-files-found: ignore
       - name: Upload build-image artifact (mac zip)
         uses: actions/upload-artifact@v3
-        if: runner.os == 'macOS'
         with:
           name: ${{ matrix.target }}-build-image-maczip
           path: |
             build/*-mac.zip
           if-no-files-found: ignore
-      - name: Build dts for plugin
-        if: runner.os == 'Linux'
-        run: yarn build:dts-plugin
-      - name: Upload plugin.d.ts
-        if: runner.os == 'Linux'
-        uses: actions/upload-artifact@v3
-        with:
-          name: plugin-dts
-          path: dist/plugin.d.ts
       - name: Upload app to release
         uses: softprops/action-gh-release@v1
         if: startsWith(github.ref, 'refs/tags/')
         with:
           files: |
             build/*.dmg
-            build/*.exe
             build/*.zip
-            build/*.AppImage
-            build/*.tar.gz
-            dist/plugin.d.ts
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
