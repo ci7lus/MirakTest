@@ -41,8 +41,8 @@ files:
   - "node_modules/lru-cache"
   - "node_modules/yallist"
   - "node_modules/type-fest"
-  - from: node_modules/webchimera.js
-    to: node_modules/webchimera.js
+  - from: native/mpv-nsview/build/Release/mpv_nsview.node
+    to: native/mpv_nsview.node
 publish: null
 npmRebuild: false
 npmArgs: "--runtime=node "
@@ -52,7 +52,13 @@ mac:
   entitlements: "entitlements.plist"
   entitlementsInherit: "entitlements.plist"
   extendInfo:
-    NSHumanReadableCopyright: "Copyright © 2021 ci7lus\nこのアプリは libVLC を同梱しています。このアプリイメージには LGPLv2.1 または GPLv2 が適用されます。"
+    NSHumanReadableCopyright: "Copyright © 2021 ci7lus\nThis app bundles mpv and its dependencies (ffmpeg, etc.) under LGPL/GPL."
+  extraFiles:
+    - from: mpv_libs/bin/mpv
+      to: MacOS/mpv
+    - from: mpv_libs/lib/
+      to: Frameworks/
+      filter: "*.dylib"
   identity: null
 win:
   icon: "assets/miraktest.ico"

@@ -1,9 +1,7 @@
 import child from "child_process"
 import fs from "fs"
 import path from "path"
-import axios from "axios"
 import { Arch, Target, Packager } from "electron-builder"
-import glob from "glob"
 
 // https://www.electron.build/configuration/configuration#afterpack
 interface AfterPackContext {
@@ -26,60 +24,34 @@ const exec = async (command: string) => {
 
 exports.default = async (ctx: AfterPackContext) => {
   console.info(`${ctx.electronPlatformName} 用の変更を適用します`)
-  let dest = "./build"
-  if (ctx.electronPlatformName === "darwin") {
-    const src = path.resolve("./vlc_libs/")
-    dest = path.resolve(
-      `./build/mac${
-        ctx.arch === Arch.arm64 ? "-arm64" : ""
-      }/MirakTest.app/Contents/Frameworks/`
-    )
 
-    if (!fs.existsSync(src) || !fs.existsSync(dest)) {
-      console.info("ファイルが存在しません、スキップします")
+  if (ctx.electronPlatformName === "darwin") {
+    const appName = ctx.packager.appInfo.productName
+    const mpvBin = path.resolve("./mpv_libs/bin/mpv")
+    const mpvLibs = path.resolve("./mpv_libs/lib/")
+    const appDir = `./build/mac${ctx.arch === Arch.arm64 ? "-arm64" : ""}/${appName}.app`
+    const frameworksDest = path.resolve(`${appDir}/Contents/Frameworks/`)
+    const macosDest = path.resolve(`${appDir}/Contents/MacOS/`)
+
+    if (!fs.existsSync(mpvBin) || !fs.existsSync(mpvLibs)) {
+      console.info("mpv_libs が存在しません、スキップします")
       return
     }
-    console.info("libVLC を Contents/Frameworks にコピーします")
-    const files = await new Promise<string[]>((res, rej) => {
-      glob(path.join(src, "*"), (err, files) => {
-        if (err) rej(err)
-        res(files)
-      })
-    })
-    for (const file of files) {
-      await exec(`cp -Ra ${file} ${dest}`)
-    }
-    dest = path.resolve(
-      `./build/mac${
-        ctx.arch === Arch.arm64 ? "-arm64" : ""
-      }/MirakTest.app/Contents/`
-    )
-  } else if (ctx.electronPlatformName === "win32") {
-    dest = path.resolve("./build/win-unpacked/")
-  }
 
-  console.info("libVLC の COPYRING, COPYRING.LIB をコピーします")
-  const COPYRING = await axios.get(
-    "https://raw.githubusercontent.com/videolan/vlc/master/COPYING",
-    { responseType: "text" }
-  )
-  await fs.promises.writeFile(
-    path.join(dest, "./LICENSE.VLC-COPYRING.txt"),
-    COPYRING.data
-  )
-  const COPYRING_LIB = await axios.get(
-    "https://raw.githubusercontent.com/videolan/vlc/master/COPYING.LIB",
-    { responseType: "text" }
-  )
-  await fs.promises.writeFile(
-    path.join(dest, "./LICENSE.VLC-COPYRING.LIB.txt"),
-    COPYRING_LIB.data
-  )
-  if (ctx.electronPlatformName === "darwin" && ctx.arch === Arch.arm64) {
-    // aarch64のみappをcodesignしなおす
-    console.info("codesignを実行します")
-    await exec(
-      "codesign --force --deep -s - -i - ./build/mac-arm64/MirakTest.app"
-    )
+    await exec(`cp "${mpvBin}" "${macosDest}/mpv" && chmod +x "${macosDest}/mpv"`)
+
+    const libFiles = fs.readdirSync(mpvLibs).filter(f => f.endsWith('.dylib'))
+    for (const lib of libFiles) {
+      await exec(`cp "${path.join(mpvLibs, lib)}" "${frameworksDest}/"`)
+    }
+
+    console.log(`[afterpack] Copied mpv binary and ${libFiles.length} dylibs`)
+    console.log("[afterpack] Note: mpv and its dependencies (ffmpeg etc.) are bundled under LGPL/GPL")
+
+    if (ctx.arch === Arch.arm64) {
+      // aarch64のみappをcodesignしなおす
+      console.info("codesignを実行します")
+      await exec(`codesign --force --deep -s - -i - ./build/mac-arm64/${appName}.app`)
+    }
   }
 }

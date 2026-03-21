@@ -115,6 +115,7 @@ dist
 lib
 build
 vlc_libs
+mpv_libs/
 VLC.app
 .yarn/*
 !.yarn/releases 
