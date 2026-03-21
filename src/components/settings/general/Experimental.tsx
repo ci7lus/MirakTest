@@ -16,11 +16,11 @@ export const ExperimentalSettingForm: React.FC<{
   const [isWindowDragMoveEnabled, setIsWindowDragMoveEnabled] = useState(
     experimentalSetting.isWindowDragMoveEnabled
   )
-  const [vlcNetworkCaching, setVlcNetworkCaching] = useState(
-    experimentalSetting.vlcNetworkCaching
+  const [mpvHwdec, setMpvHwdec] = useState(
+    experimentalSetting.mpvHwdec
   )
-  const [isVlcAvCodecHwAny, setIsVlcAvCodecHwAny] = useState(
-    experimentalSetting.isVlcAvCodecHwAny
+  const [mpvCacheSecs, setMpvCacheSecs] = useState(
+    experimentalSetting.mpvCacheSecs
   )
   const [isDualMonoAutoAdjustEnabled, setIsDualMonoAutoAdjustEnabled] =
     useState(experimentalSetting.isDualMonoAutoAdjustEnabled)
@@ -34,8 +34,8 @@ export const ExperimentalSettingForm: React.FC<{
   useEffect(() => {
     setExperimentalSetting({
       isWindowDragMoveEnabled,
-      vlcNetworkCaching,
-      isVlcAvCodecHwAny,
+      mpvHwdec,
+      mpvCacheSecs,
       isDualMonoAutoAdjustEnabled,
       isSurroundAutoAdjustEnabeld,
       globalScreenshotAccelerator,
@@ -43,8 +43,8 @@ export const ExperimentalSettingForm: React.FC<{
     })
   }, [
     isWindowDragMoveEnabled,
-    vlcNetworkCaching,
-    isVlcAvCodecHwAny,
+    mpvHwdec,
+    mpvCacheSecs,
     isDualMonoAutoAdjustEnabled,
     globalScreenshotAccelerator,
     isCodeBlack,
@@ -92,7 +92,28 @@ export const ExperimentalSettingForm: React.FC<{
         </label>
       )}
       <label className={clsx("block", "mt-4")}>
-        <span>VLC network caching</span>
+        <span>mpv ハードウェアデコード</span>
+        <select
+          className={clsx(
+            "block",
+            "mt-2",
+            "form-select",
+            "rounded-md",
+            "w-48",
+            "text-gray-900"
+          )}
+          value={mpvHwdec ?? "videotoolbox"}
+          onChange={(e) =>
+            setMpvHwdec(e.target.value as "videotoolbox" | "auto" | "no")
+          }
+        >
+          <option value="videotoolbox">VideoToolbox (推奨)</option>
+          <option value="auto">自動</option>
+          <option value="no">無効</option>
+        </select>
+      </label>
+      <label className={clsx("block", "mt-4")}>
+        <span>mpv キャッシュ秒数</span>
         <input
           type="number"
           className={clsx(
@@ -103,43 +124,17 @@ export const ExperimentalSettingForm: React.FC<{
             "w-24",
             "text-gray-900"
           )}
-          value={vlcNetworkCaching ?? -1}
+          min={0}
+          max={30}
+          value={mpvCacheSecs ?? 3}
           onChange={(e) => {
             const value = parseInt(e.target.value)
             if (Number.isNaN(value)) {
               return
             }
-            setVlcNetworkCaching(value)
+            setMpvCacheSecs(value)
           }}
-          min={-1}
-          max={60000}
         />
-        <p className={clsx("text-sm", "text-gray-300", "mt-2")}>
-          VLCの引数に設定する
-          <code className={clsx("font-mono", "bg-gray-500", "mx-1")}>
-            --network-caching
-          </code>
-          を指定します。
-          <code className={clsx("font-mono", "bg-gray-500", "mx-1")}>-1</code>
-          を指定すると引数を渡さないようになります。
-          新しいプレイヤーウィンドウから反映されます。
-        </p>
-      </label>
-      <label className={clsx("block", "mt-4")}>
-        <span>VLC AvCodec Hw</span>
-        <input
-          type="checkbox"
-          className={clsx("block", "mt-2", "form-checkbox")}
-          checked={isVlcAvCodecHwAny || false}
-          onChange={() => setIsVlcAvCodecHwAny((enabled) => !enabled)}
-        />
-        <p className={clsx("text-sm", "text-gray-300", "mt-2")}>
-          VLCの引数に
-          <code className={clsx("font-mono", "bg-gray-500", "mx-1")}>
-            --avcodec-hw=any
-          </code>
-          を指定します。効果は不明の上に、gstreamerを用いる一部ディストリビューションでは動作が不安定になる可能性があります。
-        </p>
       </label>
       <label className={clsx("block", "mt-4")}>
         <span>グローバルスクリーンショットキー</span>

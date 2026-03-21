@@ -22,8 +22,8 @@ export type ScreenshotSetting = {
 
 export type ExperimentalSetting = {
   isWindowDragMoveEnabled: boolean
-  isVlcAvCodecHwAny: boolean
-  vlcNetworkCaching: number
+  mpvHwdec: "videotoolbox" | "auto" | "no"
+  mpvCacheSecs: number
   isDualMonoAutoAdjustEnabled: boolean
   isSurroundAutoAdjustEnabeld: boolean
   globalScreenshotAccelerator: string | false

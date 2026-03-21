@@ -127,8 +127,9 @@ export const screenshotSetting = atom<ScreenshotSetting>({
 
 const experimentalSettingRefine = $.object({
   isWindowDragMoveEnabled: $.withDefault($.bool(), false),
-  isVlcAvCodecHwAny: $.withDefault($.bool(), false),
-  vlcNetworkCaching: $.withDefault($.number(), -1),
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  mpvHwdec: $.withDefault($.string() as any, "videotoolbox"),
+  mpvCacheSecs: $.withDefault($.number(), 3),
   isDualMonoAutoAdjustEnabled: $.withDefault($.bool(), true),
   isSurroundAutoAdjustEnabeld: $.withDefault($.bool(), true),
   globalScreenshotAccelerator: $.withDefault($.or($.string(), $.bool()), false),
@@ -139,8 +140,8 @@ export const experimentalSetting = atom<ExperimentalSetting>({
   key: experimentalSettingAtomKey,
   default: {
     isWindowDragMoveEnabled: false,
-    isVlcAvCodecHwAny: false,
-    vlcNetworkCaching: -1,
+    mpvHwdec: "videotoolbox" as const,
+    mpvCacheSecs: 3,
     isDualMonoAutoAdjustEnabled: true,
     isSurroundAutoAdjustEnabeld: true,
     globalScreenshotAccelerator: false,

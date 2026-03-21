@@ -50,6 +50,14 @@ export type Preload = {
     onPlaying: (listener: () => void) => void
     onSeekableChanged: (listener: (isSeekable: boolean) => void) => void
     onPositionChanged: (listener: (position: number) => void) => void
+    onVideoParamsChanged: (
+      listener: (
+        w: number,
+        h: number,
+        displayW: number,
+        displayH: number
+      ) => void
+    ) => void
     destroy: () => void
     setVolume: (volume: number) => void
     play: (url: string) => void
@@ -65,7 +73,22 @@ export type Preload = {
     setPosition: (position: number) => void
     getAudioTracks: () => string[]
     setSpeed: (speed: number) => void
+    getNativeHandle: () => Promise<Buffer | null>
+    createNSView: (
+      x: number,
+      y: number,
+      w: number,
+      h: number
+    ) => Promise<{ viewId: number; wid: string } | null>
+    resizeNSView: (
+      viewId: number,
+      x: number,
+      y: number,
+      w: number,
+      h: number
+    ) => void
   }
+  requestMpvScreenshot: () => Promise<Buffer | null>
   requestInitialData: () => Promise<InitialData>
   recoilStateUpdate: (_: SerializableKV) => Promise<void>
   onRecoilStateUpdate: (listener: (arg: SerializableKV) => void) => () => void

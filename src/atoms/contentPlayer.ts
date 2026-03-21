@@ -7,7 +7,7 @@ import type {
   AribSubtitleData,
   ContentPlayerKeyForRestoration,
 } from "../types/contentPlayer"
-import { VLCAudioChannel } from "../utils/vlc"
+const VLC_AUDIO_CHANNEL_STEREO = 1
 
 const prefix = `${pkg.name}.contentPlayer`
 
@@ -53,7 +53,7 @@ export const contentPlayerSpeedAtom = atom<number>({
 
 export const contentPlayerAudioChannelAtom = atom<number>({
   key: `${prefix}.audioChannel`,
-  default: VLCAudioChannel.Stereo,
+  default: VLC_AUDIO_CHANNEL_STEREO,
 })
 
 export const contentPlayerAudioTrackAtom = atom<number>({

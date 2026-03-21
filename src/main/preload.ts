@@ -1,7 +1,6 @@
 import fs from "fs"
 import path from "path"
 import { contextBridge, ipcRenderer, shell } from "electron"
-import WebChimera from "webchimera.js"
 import {
   REQUEST_CONFIRM_DIALOG,
   EPG_MANAGER,
@@ -39,180 +38,273 @@ import { store } from "../utils/store"
 import { QuerySchema } from "./epgManager"
 import { exists, isChildOf, isChildOfHome, isHidden } from "./fsUtils"
 
-let wc: WebChimera.Player | null = null
+const MPV_EVENT = "mpv-event"
+const MPV_SETUP = "mpv-setup"
+const MPV_DESTROY = "mpv-destroy"
+const MPV_COMMAND = "mpv-command"
+const MPV_SET_PROPERTY = "mpv-set-property"
+const MPV_LOAD_FILE = "mpv-load-file"
+const MPV_STOP = "mpv-stop"
+const MPV_NATIVE_HANDLE = "mpv-native-handle"
+const MPV_RESIZE_VIEW = "mpv-resize-view"
+const MPV_SCREENSHOT = "mpv-screenshot"
 
 const preload: Preload = {
-  webchimera: {
-    setup(args) {
-      wc = WebChimera.createPlayer(args)
-    },
-    isOk() {
-      return !!wc
-    },
-    onTimeChanged(listener) {
-      if (!wc) {
-        throw new Error("wc is not initialized")
+  webchimera: (() => {
+    let isSetUp = false
+    let isPlayingCached = false
+    let hasVoutCached = false
+    let cachedSubtitleTrack = 0
+    let cachedAudioChannel = 1
+    const cachedAudioTracks: string[] = []
+
+    type Listener = (...args: unknown[]) => void
+    const listeners = new Map<string, Set<Listener>>()
+
+    const addListener = (event: string, fn: Listener) => {
+      if (!listeners.has(event)) listeners.set(event, new Set())
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      listeners.get(event)!.add(fn)
+    }
+
+    ipcRenderer.on(
+      MPV_EVENT,
+      (_, payload: { event: string; data: unknown }) => {
+        const { event, data } = payload
+        // Update cache before dispatching so synchronous callbacks see current state
+        if (event === "property-change") {
+          const p = data as { name: string; data: unknown }
+          if (p.name === "pause") isPlayingCached = p.data === false
+          if (p.name === "video-params") hasVoutCached = p.data != null
+        }
+        if (event === "file-loaded") {
+          isPlayingCached = true
+          hasVoutCached = false
+        }
+        if (event === "end-file") isPlayingCached = false
+        listeners.get(event)?.forEach((fn) => fn(data))
       }
-      wc.onTimeChanged = (time) => listener(time)
-    },
-    onLogMessage(listener) {
-      if (!wc) {
-        throw new Error("wc is not initialized")
-      }
-      wc.onLogMessage = (level, message) => listener(level, message)
-    },
-    onFrameReady(listener) {
-      if (!wc) {
-        throw new Error("wc is not initialized")
-      }
-      wc.onFrameReady = (frame) =>
-        listener(frame, frame.width, frame.height, frame.uOffset, frame.vOffset)
-    },
-    onMediaChanged(listener) {
-      if (!wc) {
-        throw new Error("wc is not initialized")
-      }
-      wc.onMediaChanged = () => listener()
-    },
-    onEncounteredError(listener) {
-      if (!wc) {
-        throw new Error("wc is not initialized")
-      }
-      wc.onEncounteredError = () => listener()
-    },
-    onBuffering(listener) {
-      if (!wc) {
-        throw new Error("wc is not initialized")
-      }
-      wc.onBuffering = (p) => listener(p)
-    },
-    onStopped(listener) {
-      if (!wc) {
-        throw new Error("wc is not initialized")
-      }
-      wc.onStopped = () => listener()
-    },
-    onEndReached(listener) {
-      if (!wc) {
-        throw new Error("wc is not initialized")
-      }
-      wc.onEndReached = () => listener()
-    },
-    onPaused(listener) {
-      if (!wc) {
-        throw new Error("wc is not initialized")
-      }
-      wc.onPaused = () => listener()
-    },
-    onPlaying(listener) {
-      if (!wc) {
-        throw new Error("wc is not initialized")
-      }
-      wc.onPlaying = () => listener()
-    },
-    onSeekableChanged(listener) {
-      if (!wc) {
-        throw new Error("wc is not initialized")
-      }
-      wc.onSeekableChanged = (isSeekable) => listener(isSeekable)
-    },
-    onPositionChanged(listener) {
-      if (!wc) {
-        throw new Error("wc is not initialized")
-      }
-      wc.onPositionChanged = (position) => listener(position)
-    },
-    destroy() {
-      wc?.close()
-      wc = null
-    },
-    setVolume(volume) {
-      if (!wc) {
-        throw new Error("wc is not initialized")
-      }
-      wc.volume = volume
-    },
-    play(url: string) {
-      if (!wc) {
-        throw new Error("wc is not initialized")
-      }
-      wc.play(url)
-    },
-    togglePause() {
-      if (!wc) {
-        throw new Error("wc is not initialized")
-      }
-      wc.togglePause()
-    },
-    stop() {
-      if (!wc) {
-        throw new Error("wc is not initialized")
-      }
-      wc.stop()
-    },
-    hasVout() {
-      if (!wc) {
-        throw new Error("wc is not initialized")
-      }
-      return wc.input.hasVout
-    },
-    isPlaying() {
-      if (!wc) {
-        throw new Error("wc is not initialized")
-      }
-      return wc.playing
-    },
-    getSubtitleTrack() {
-      if (!wc) {
-        throw new Error("wc is not initialized")
-      }
-      return wc.subtitles.track
-    },
-    setSubtitleTrack(track) {
-      if (!wc) {
-        throw new Error("wc is not initialized")
-      }
-      wc.subtitles.track = track
-    },
-    getAudioChannel() {
-      if (!wc) {
-        throw new Error("wc is not initialized")
-      }
-      return wc.audio.channel
-    },
-    setAudioChannel(channel) {
-      if (!wc) {
-        throw new Error("wc is not initialized")
-      }
-      wc.audio.channel = channel
-    },
-    setPosition(position) {
-      if (!wc) {
-        throw new Error("wc is not initialized")
-      }
-      wc.position = position
-    },
-    getAudioTracks() {
-      if (!wc) {
-        throw new Error("wc is not initialized")
-      }
-      return [...Array(wc.audio.count).keys()].map(
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        (trackId) => wc!.audio[trackId]
-      )
-    },
-    setAudioTrack(track) {
-      if (!wc) {
-        throw new Error("wc is not initialized")
-      }
-      wc.audio.track = track
-    },
-    setSpeed(speed) {
-      if (!wc) {
-        throw new Error("wc is not initialized")
-      }
-      wc.input.rate = speed
-    },
+    )
+
+    return {
+      async setup(args: string[]) {
+        isSetUp = (await ipcRenderer.invoke(MPV_SETUP, args)) as boolean
+      },
+      isOk() {
+        return isSetUp
+      },
+
+      onTimeChanged(listener: (time: number) => void) {
+        addListener("property-change", (data: unknown) => {
+          const p = data as { name: string; data: unknown }
+          if (p?.name === "time-pos" && p.data != null) {
+            listener(Math.round((p.data as number) * 1000)) // seconds → ms
+          }
+        })
+      },
+
+      onLogMessage(listener: (level: string, message: string) => void) {
+        addListener("arib-data", (data: unknown) => {
+          const d = data as { data: string; pts: number }
+          listener("status", `arib_data [${d.data}][${d.pts}]`)
+        })
+        addListener("pcr", (data: unknown) => {
+          const d = data as { pcr: number; firstPcr: number }
+          listener("status", `i_pcr [${d.pcr}][${d.firstPcr}]`)
+        })
+        addListener("tot", (data: unknown) => {
+          const d = data as { tot: number }
+          listener("status", `tot [${d.tot}]`)
+        })
+      },
+
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      onFrameReady(_listener) {
+        // No-op: mpv renders directly to NSView, no frame callbacks
+      },
+
+      onMediaChanged(listener: () => void) {
+        addListener("file-loaded", () => listener())
+      },
+
+      onEncounteredError(listener: () => void) {
+        addListener("end-file", (data: unknown) => {
+          if ((data as { reason?: string })?.reason === "error") listener()
+        })
+      },
+
+      onBuffering(listener: (percent: number) => void) {
+        addListener("property-change", (data: unknown) => {
+          const p = data as { name: string; data: unknown }
+          if (p?.name === "demuxer-cache-state") {
+            const cs = p.data as { "cache-duration"?: number } | null
+            listener(
+              cs?.["cache-duration"] != null && cs["cache-duration"] > 0
+                ? 100
+                : 0
+            )
+          }
+        })
+      },
+
+      onStopped(listener: () => void) {
+        addListener("end-file", (data: unknown) => {
+          const reason = (data as { reason?: string })?.reason
+          if (reason === "stop" || reason === "quit") listener()
+        })
+      },
+
+      onEndReached(listener: () => void) {
+        addListener("end-file", (data: unknown) => {
+          if ((data as { reason?: string })?.reason === "eof") listener()
+        })
+      },
+
+      onPaused(listener: () => void) {
+        addListener("property-change", (data: unknown) => {
+          const p = data as { name: string; data: unknown }
+          if (p?.name === "pause" && p.data === true) listener()
+        })
+      },
+
+      onPlaying(listener: () => void) {
+        addListener("property-change", (data: unknown) => {
+          const p = data as { name: string; data: unknown }
+          if (p?.name === "pause" && p.data === false) listener()
+        })
+        addListener("playback-restart", () => listener())
+      },
+
+      onSeekableChanged(listener: (seekable: boolean) => void) {
+        addListener("property-change", (data: unknown) => {
+          const p = data as { name: string; data: unknown }
+          if (p?.name === "seekable") listener(!!p.data)
+        })
+      },
+
+      onPositionChanged(listener: (position: number) => void) {
+        addListener("property-change", (data: unknown) => {
+          const p = data as { name: string; data: unknown }
+          if (p?.name === "percent-pos" && p.data != null) {
+            listener((p.data as number) / 100)
+          }
+        })
+      },
+
+      onVideoParamsChanged(
+        listener: (w: number, h: number, dw: number, dh: number) => void
+      ) {
+        addListener("property-change", (data: unknown) => {
+          const p = data as { name: string; data: unknown }
+          if (p?.name === "video-params" && p.data) {
+            const vp = p.data as {
+              w: number
+              h: number
+              "display-w"?: number
+              "display-h"?: number
+            }
+            listener(
+              vp.w,
+              vp.h,
+              vp["display-w"] ?? vp.w,
+              vp["display-h"] ?? vp.h
+            )
+          }
+        })
+      },
+
+      destroy() {
+        ipcRenderer.invoke(MPV_DESTROY)
+        isSetUp = false
+        isPlayingCached = false
+        hasVoutCached = false
+        listeners.clear()
+      },
+
+      setVolume(volume: number) {
+        ipcRenderer.invoke(MPV_SET_PROPERTY, "volume", volume)
+      },
+      play(url: string) {
+        ipcRenderer.invoke(MPV_LOAD_FILE, url)
+      },
+      togglePause() {
+        ipcRenderer.invoke(MPV_COMMAND, "cycle", "pause")
+      },
+      stop() {
+        ipcRenderer.invoke(MPV_STOP)
+      },
+      hasVout() {
+        return hasVoutCached
+      },
+      isPlaying() {
+        return isPlayingCached
+      },
+
+      getSubtitleTrack() {
+        return cachedSubtitleTrack
+      },
+      setSubtitleTrack(track: number) {
+        cachedSubtitleTrack = track
+        ipcRenderer.invoke(MPV_SET_PROPERTY, "sid", track === 0 ? "no" : track)
+      },
+
+      getAudioChannel() {
+        return cachedAudioChannel
+      },
+      setAudioChannel(channel: number) {
+        cachedAudioChannel = channel
+        // Map VLC audio channel model to mpv audio-channels
+        const channelMap: Record<number, string> = {
+          1: "stereo",
+          2: "stereo",
+          3: "stereo",
+          4: "stereo",
+          5: "stereo",
+        }
+        ipcRenderer.invoke(
+          MPV_SET_PROPERTY,
+          "audio-channels",
+          channelMap[channel] ?? "stereo"
+        )
+      },
+
+      setPosition(position: number) {
+        ipcRenderer.invoke(MPV_SET_PROPERTY, "percent-pos", position * 100)
+      },
+
+      getAudioTracks() {
+        return cachedAudioTracks
+      },
+      setAudioTrack(track: number) {
+        ipcRenderer.invoke(MPV_SET_PROPERTY, "aid", track)
+      },
+      setSpeed(speed: number) {
+        ipcRenderer.invoke(MPV_SET_PROPERTY, "speed", speed)
+      },
+
+      async getNativeHandle() {
+        return ipcRenderer.invoke(MPV_NATIVE_HANDLE) as Promise<Buffer | null>
+      },
+
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      async createNSView(_: number, _y: number, _w: number, _h: number) {
+        // The main process handles NSView creation internally via MPV_SETUP
+        return null
+      },
+
+      resizeNSView(
+        viewId: number,
+        x: number,
+        y: number,
+        w: number,
+        h: number
+      ) {
+        ipcRenderer.invoke(MPV_RESIZE_VIEW, viewId, x, y, w, h)
+      },
+    }
+  })(),
+  requestMpvScreenshot() {
+    return ipcRenderer.invoke(MPV_SCREENSHOT) as Promise<Buffer | null>
   },
   requestInitialData() {
     return ipcRenderer.invoke(REQUEST_INITIAL_DATA)

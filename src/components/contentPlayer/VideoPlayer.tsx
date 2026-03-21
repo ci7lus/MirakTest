@@ -338,15 +338,11 @@ export const CoiledVideoPlayer: React.FC<{
     })
     const args = [
       process.env.NODE_ENV !== "production" ? "-vvv" : "",
-      0 <= (experimental.vlcNetworkCaching ?? -1)
-        ? `--network-caching=${experimental.vlcNetworkCaching}`
-        : "",
-      `--avcodec-hw=${
-        experimental.isVlcAvCodecHwAny === true ? "any" : "none"
-      }`,
+      `--hwdec=${experimental.mpvHwdec ?? "videotoolbox"}`,
+      `--cache-secs=${experimental.mpvCacheSecs ?? 3}`,
       `--http-user-agent=${pkg.productName}/${pkg.version}`,
     ].filter((s) => s)
-    console.info("VLC Args:", args)
+    console.info("mpv Args:", args)
     window.Preload.webchimera.setup(args)
     let pcr_i_first = 0
     let last = 0
@@ -496,7 +492,13 @@ export const CoiledVideoPlayer: React.FC<{
     })
     window.Preload.webchimera.onFrameReady(
       (frame, width, height, uOffset, vOffset) => {
-        renderContext.render(frame, width, height, uOffset, vOffset)
+        renderContext.render(
+          frame as Uint8Array,
+          width as number,
+          height as number,
+          uOffset as number,
+          vOffset as number
+        )
       }
     )
     window.Preload.webchimera.onMediaChanged(() => {
