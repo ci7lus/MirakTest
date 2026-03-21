@@ -29,7 +29,7 @@ const config: webpack.Configuration = {
     extensions: [".ts", ".js"],
   },
   externals: {
-    "webchimera.js": "commonjs webchimera.js",
+    "../native/mpv_nsview.node": "commonjs ../native/mpv_nsview.node",
     "font-list": "commonjs font-list",
     electron: "commonjs electron",
   },

@@ -9,7 +9,6 @@ files:
   - "dist/**/*"
   - "assets/*.{png,svg}"
   - "!node_modules"
-  - "node_modules/bindings"
   - "node_modules/font-list"
   - "node_modules/electron-store"
   - "node_modules/conf"
@@ -41,8 +40,6 @@ files:
   - "node_modules/lru-cache"
   - "node_modules/yallist"
   - "node_modules/type-fest"
-  - from: node_modules/webchimera.js
-    to: node_modules/webchimera.js
 publish: null
 npmRebuild: false
 npmArgs: "--runtime=node "

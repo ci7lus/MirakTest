@@ -109,7 +109,6 @@
     "recoil": "0.7.6",
     "recoil-sync": "0.1.0",
     "stream-json": "^1.7.5",
-    "webchimera.js": "git+https://github.com/neneka/WebChimera.js.git#v0.5.4",
     "zod": "^3.21.4"
   },
   "browserslist": "chrome 100",

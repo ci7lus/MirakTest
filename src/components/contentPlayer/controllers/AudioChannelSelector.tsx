@@ -5,7 +5,7 @@ import {
   VLCAudioChannelSurroundTranslated,
   VLCAudioChannelTranslated,
   VLCAudioStereoChannel,
-} from "../../../utils/vlc"
+} from "../../../utils/mediaLogFilter"
 
 export const AudioChannelSelector: React.FC<{
   audioChannel: number

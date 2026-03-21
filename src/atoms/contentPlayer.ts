@@ -7,7 +7,7 @@ import type {
   AribSubtitleData,
   ContentPlayerKeyForRestoration,
 } from "../types/contentPlayer"
-import { VLCAudioChannel } from "../utils/vlc"
+import { VLCAudioChannel } from "../utils/mediaLogFilter"
 
 const prefix = `${pkg.name}.contentPlayer`
 

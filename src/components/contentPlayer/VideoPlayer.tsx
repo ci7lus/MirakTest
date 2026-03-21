@@ -41,7 +41,7 @@ import { SUBTITLE_DEFAULT_FONT } from "../../constants/font"
 import { useRefFromState } from "../../hooks/ref"
 import { getAribb24Configuration } from "../../utils/subtitle"
 import { VideoRenderer } from "../../utils/videoRenderer"
-import { VLCLogFilter } from "../../utils/vlc"
+import { VLCLogFilter } from "../../utils/mediaLogFilter"
 
 export const CoiledVideoPlayer: React.FC<{
   internalPlayingTimeRef: React.MutableRefObject<number>
