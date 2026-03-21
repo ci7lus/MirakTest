@@ -1,5 +1,5 @@
-appId: io.github.ci7lus.miraktest
-productName: MirakTest
+appId: mirak
+productName: mirak
 copyright: Copyright © 2021 ci7lus
 directories:
   output: "./build"
