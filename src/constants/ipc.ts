@@ -30,3 +30,19 @@ export const REQUEST_SCREENSHOT_BASE_PATH = "request-screenshot-base-path"
 export const ON_SCREENSHOT_REQUEST = "on-screenshot-request"
 export const UPDATE_GLOBAL_SCREENSHOT_ACCELERATOR =
   "update-global-screenshot-accelerator"
+
+export const MPV = {
+  SETUP: "mpv-setup",
+  DESTROY: "mpv-destroy",
+  COMMAND: "mpv-command",
+  SET_PROPERTY: "mpv-set-property",
+  GET_PROPERTY: "mpv-get-property",
+  LOAD_FILE: "mpv-load-file",
+  STOP: "mpv-stop",
+  EVENT: "mpv-event",
+  START_CAPTION: "mpv-start-caption",
+  STOP_CAPTION: "mpv-stop-caption",
+  SCREENSHOT: "mpv-screenshot",
+  NATIVE_HANDLE: "mpv-native-handle",
+  RESIZE_VIEW: "mpv-resize-view",
+} as const

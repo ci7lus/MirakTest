@@ -24,7 +24,6 @@ import electron, {
 } from "electron"
 import Store from "electron-store"
 import fontList from "font-list"
-import WebChimeraJs from "webchimera.js"
 import pkg from "../../package.json"
 import {
   globalContentPlayerIsPlayingFamilyKey,
@@ -39,6 +38,7 @@ import {
   experimentalSettingAtomKey,
   screenshotSettingAtomKey,
 } from "../../src/atoms/settingsKey"
+import { MPV } from "../../src/constants/ipc"
 import {
   REQUEST_CONFIRM_DIALOG,
   ON_WINDOW_MOVED,
@@ -82,13 +82,32 @@ import {
 import { generateContentPlayerContextMenu } from "./contextmenu"
 import { EPGManager } from "./epgManager"
 import { exists, isChildOfHome, isHidden } from "./fsUtils"
+// eslint-disable-next-line import/no-unresolved
+import { MpvProcessManager } from "./mpv"
 
 let backgroundColor = "#111827"
 
 const contentPlayerWindows: BrowserWindow[] = []
 
+const mpvManager = new MpvProcessManager()
+let mpvNsviewAddon: { resizePlayerView: (viewId: number, x: number, y: number, w: number, h: number) => void } | null = null
+
+function loadMpvNsview() {
+  try {
+    if (isDev) {
+      return require(/* webpackIgnore: true */ path.resolve("./native/mpv-nsview/build/Release/mpv_nsview.node"))
+    } else {
+      return require(/* webpackIgnore: true */ path.join(__dirname, "../native/mpv_nsview.node"))
+    }
+  } catch (e) {
+    console.error("Failed to load mpv-nsview native addon:", e)
+    return null
+  }
+}
+
 const CONTENT_PLAYER_BOUNDS = `${pkg.name}.contentPlayer.bounds`
 const GLOBAL_CONTENT_PLAYER_IDS = `${pkg.name}.global.contentPlayerIds`
+const MPV_USER_AGENT = `${pkg.productName}/${pkg.version}`
 
 const isDev = process.env.NODE_ENV === "development"
 
@@ -128,12 +147,6 @@ const registerGlobalScreenshotAccelerator = (accelerator: string | false) => {
 }
 
 const init = async () => {
-  if (process.platform == "win32" && WebChimeraJs.path) {
-    const VLCPluginPath = path.join(WebChimeraJs.path, "plugins")
-    console.info("win32 detected, VLC_PLUGIN_PATH:", VLCPluginPath)
-    process.env["VLC_PLUGIN_PATH"] = VLCPluginPath
-  }
-
   const REACT_EXT_PATH = process.env.REACT_EXT_PATH
   if (REACT_EXT_PATH) {
     await session.defaultSession.loadExtension(REACT_EXT_PATH)
@@ -148,6 +161,12 @@ const init = async () => {
     .catch(console.warn)
 
   Store.initRenderer()
+  mpvNsviewAddon = loadMpvNsview()
+  if (mpvNsviewAddon) {
+    console.info("mpv-nsview native addon loaded")
+  } else {
+    console.warn("mpv-nsview native addon not available")
+  }
   // store/bounds定義を引っ張ってくると目に見えて容量が増えるので決め打ち
   const _store = new Store({
     // @ts-expect-error workaround for conf's Project name could not be inferred. Please specify the `projectName` option.
@@ -195,12 +214,13 @@ const init = async () => {
 
 app.on("ready", () => init())
 
-app.on("window-all-closed", () => {
+app.on("window-all-closed", async () => {
   if (watching) {
     watching.close()
     watching = null
   }
   registerGlobalScreenshotAccelerator(false)
+  await mpvManager.destroyAll()
   app.quit()
 })
 
@@ -609,7 +629,8 @@ const loadPlugins = async ({
   )
 }
 
-app.on("before-quit", () => {
+app.on("before-quit", async () => {
+  await mpvManager.destroyAll()
   pluginData.forEach((datum, key) => {
     try {
       vm.runInContext("destroyPlugin", pluginsVMContext)(datum.fileName)
@@ -700,6 +721,7 @@ const openWindow = ({
       undefined,
       undefined,
     ]
+    const isContentPlayer = name === ROUTES.ContentPlayer
     const window = new BrowserWindow({
       width,
       height,
@@ -713,7 +735,8 @@ const openWindow = ({
         nodeIntegration: false,
         sandbox: false,
       },
-      backgroundColor,
+      backgroundColor: isContentPlayer ? "#00000000" : backgroundColor,
+      transparent: isContentPlayer,
       titleBarStyle:
         process.platform === "darwin" && name === ROUTES.ContentPlayer
           ? "hiddenInset"
@@ -899,7 +922,7 @@ const openWindow = ({
     }
 
     const _id = window.id
-    window.on("closed", () => {
+    window.on("closed", async () => {
       const idx = windowMapping[name].indexOf(window)
       windowMapping[name].splice(idx, 1)
       if (name === ROUTES["ContentPlayer"]) {
@@ -913,6 +936,7 @@ const openWindow = ({
             value,
           })
         }
+        await mpvManager.destroyInstance(_id)
       }
     })
     return window
@@ -1083,6 +1107,128 @@ ipcMain.handle(
     return isOk
   }
 )
+
+// MPV IPC handlers
+ipcMain.handle(MPV.NATIVE_HANDLE, (event) => {
+  const win = BrowserWindow.fromWebContents(event.sender)
+  if (!win) return null
+  return win.getNativeWindowHandle()
+})
+
+ipcMain.handle(MPV.SETUP, async (event, wid: string, extraArgs: string[]) => {
+  const win = BrowserWindow.fromWebContents(event.sender)
+  if (!win) return false
+  try {
+    await mpvManager.createInstance(win.id, wid, extraArgs, MPV_USER_AGENT)
+    const ipc = mpvManager.getIpc(win.id)
+    if (ipc) {
+      ipc.on("property-change", (data) => {
+        if (!win.isDestroyed()) win.webContents.send(MPV.EVENT, { event: "property-change", data })
+      })
+      ipc.on("file-loaded", (data) => {
+        if (!win.isDestroyed()) win.webContents.send(MPV.EVENT, { event: "file-loaded", data })
+      })
+      ipc.on("end-file", (data) => {
+        if (!win.isDestroyed()) win.webContents.send(MPV.EVENT, { event: "end-file", data })
+      })
+      ipc.on("start-file", (data) => {
+        if (!win.isDestroyed()) win.webContents.send(MPV.EVENT, { event: "start-file", data })
+      })
+      ipc.on("playback-restart", (data) => {
+        if (!win.isDestroyed()) win.webContents.send(MPV.EVENT, { event: "playback-restart", data })
+      })
+      ipc.on("seek", (data) => {
+        if (!win.isDestroyed()) win.webContents.send(MPV.EVENT, { event: "seek", data })
+      })
+    }
+    return true
+  } catch (e) {
+    console.error("[mpv] setup failed:", e)
+    return false
+  }
+})
+
+ipcMain.handle(MPV.DESTROY, async (event) => {
+  const win = BrowserWindow.fromWebContents(event.sender)
+  if (!win) return
+  await mpvManager.destroyInstance(win.id)
+})
+
+ipcMain.handle(MPV.COMMAND, async (event, ...args: unknown[]) => {
+  const win = BrowserWindow.fromWebContents(event.sender)
+  if (!win) return null
+  return mpvManager.getIpc(win.id)?.command(...(args as [string, ...unknown[]]))
+})
+
+ipcMain.handle(MPV.SET_PROPERTY, async (event, name: string, value: unknown) => {
+  const win = BrowserWindow.fromWebContents(event.sender)
+  if (!win) return null
+  return mpvManager.getIpc(win.id)?.setProperty(name, value)
+})
+
+ipcMain.handle(MPV.GET_PROPERTY, async (event, name: string) => {
+  const win = BrowserWindow.fromWebContents(event.sender)
+  if (!win) return null
+  return mpvManager.getIpc(win.id)?.getProperty(name)
+})
+
+ipcMain.handle(MPV.LOAD_FILE, async (event, url: string) => {
+  const win = BrowserWindow.fromWebContents(event.sender)
+  if (!win) return
+  const instance = mpvManager.getInstance(win.id)
+  if (!instance) return
+  await mpvManager.startCaptionExtractor(win.id, url, MPV_USER_AGENT)
+  const extractor = instance.captionExtractor
+  if (extractor) {
+    extractor.removeAllListeners()
+    extractor.on("arib-data", (data) => {
+      if (!win.isDestroyed()) win.webContents.send(MPV.EVENT, { event: "arib-data", data })
+    })
+    extractor.on("pcr", (data) => {
+      if (!win.isDestroyed()) win.webContents.send(MPV.EVENT, { event: "pcr", data })
+    })
+    extractor.on("tot", (data) => {
+      if (!win.isDestroyed()) win.webContents.send(MPV.EVENT, { event: "tot", data })
+    })
+  }
+  return instance.ipc.loadFile(url)
+})
+
+ipcMain.handle(MPV.STOP, async (event) => {
+  const win = BrowserWindow.fromWebContents(event.sender)
+  if (!win) return
+  mpvManager.stopCaptionExtractor(win.id)
+  return mpvManager.getIpc(win.id)?.stop()
+})
+
+ipcMain.handle(MPV.START_CAPTION, async (event, url: string) => {
+  const win = BrowserWindow.fromWebContents(event.sender)
+  if (!win) return
+  await mpvManager.startCaptionExtractor(win.id, url, MPV_USER_AGENT)
+})
+
+ipcMain.handle(MPV.STOP_CAPTION, async (event) => {
+  const win = BrowserWindow.fromWebContents(event.sender)
+  if (!win) return
+  mpvManager.stopCaptionExtractor(win.id)
+})
+
+ipcMain.handle(MPV.SCREENSHOT, async (event) => {
+  const win = BrowserWindow.fromWebContents(event.sender)
+  if (!win) return null
+  const ipc = mpvManager.getIpc(win.id)
+  if (!ipc) return null
+  const tmpPath = path.join(app.getPath("temp"), `mpv-screenshot-${Date.now()}.png`)
+  await ipc.command("screenshot-to-file", tmpPath, "video")
+  const buffer = await fs.promises.readFile(tmpPath)
+  await fs.promises.unlink(tmpPath).catch(console.warn)
+  return buffer
+})
+
+ipcMain.handle(MPV.RESIZE_VIEW, (event, viewId: number, x: number, y: number, w: number, h: number) => {
+  if (!mpvNsviewAddon) return
+  mpvNsviewAddon.resizePlayerView(viewId, x, y, w, h)
+})
 
 let lastEpgUpdated = 0
 
